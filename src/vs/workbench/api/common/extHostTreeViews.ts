@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from 'vs/nls';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as types from './extHostTypes';
 import { basename } from 'vs/base/common/resources';
 import { URI } from 'vs/base/common/uri';
@@ -51,7 +51,7 @@ function toTreeItemLabel(label: any, extension: IExtensionDescription): ITreeIte
 export class ExtHostTreeViews implements ExtHostTreeViewsShape {
 
 	private treeViews: Map<string, ExtHostTreeView<any>> = new Map<string, ExtHostTreeView<any>>();
-	private treeDragAndDropService: ITreeViewsDnDService<vscode.DataTransfer> = new TreeViewsDnDService<vscode.DataTransfer>();
+	private treeDragAndDropService: ITreeViewsDnDService<zycode.DataTransfer> = new TreeViewsDnDService<zycode.DataTransfer>();
 
 	constructor(
 		private _proxy: MainThreadTreeViewsShape,
@@ -79,12 +79,12 @@ export class ExtHostTreeViews implements ExtHostTreeViewsShape {
 		});
 	}
 
-	registerTreeDataProvider<T>(id: string, treeDataProvider: vscode.TreeDataProvider<T>, extension: IExtensionDescription): vscode.Disposable {
+	registerTreeDataProvider<T>(id: string, treeDataProvider: zycode.TreeDataProvider<T>, extension: IExtensionDescription): zycode.Disposable {
 		const treeView = this.createTreeView(id, { treeDataProvider }, extension);
 		return { dispose: () => treeView.dispose() };
 	}
 
-	createTreeView<T>(viewId: string, options: vscode.TreeViewOptions<T>, extension: IExtensionDescription): vscode.TreeView<T> {
+	createTreeView<T>(viewId: string, options: zycode.TreeViewOptions<T>, extension: IExtensionDescription): zycode.TreeView<T> {
 		if (!options || !options.treeDataProvider) {
 			throw new Error('Options with treeDataProvider is mandatory');
 		}
@@ -114,7 +114,7 @@ export class ExtHostTreeViews implements ExtHostTreeViewsShape {
 				return treeView.onDidChangeCheckboxState;
 			},
 			get message() { return treeView.message; },
-			set message(message: string | vscode.MarkdownString) {
+			set message(message: string | zycode.MarkdownString) {
 				if (isMarkdownString(message)) {
 					checkProposedApiEnabled(extension, 'treeViewMarkdownMessage');
 				}
@@ -133,7 +133,7 @@ export class ExtHostTreeViews implements ExtHostTreeViewsShape {
 			get badge() {
 				return treeView.badge;
 			},
-			set badge(badge: vscode.ViewBadge | undefined) {
+			set badge(badge: zycode.ViewBadge | undefined) {
 				if ((badge !== undefined) && ExtHostViewBadge.isViewBadge(badge)) {
 					treeView.badge = {
 						value: Math.floor(Math.abs(badge.value)),
@@ -153,7 +153,7 @@ export class ExtHostTreeViews implements ExtHostTreeViewsShape {
 				treeView.dispose();
 			}
 		};
-		return view as vscode.TreeView<T>;
+		return view as zycode.TreeView<T>;
 	}
 
 	$getChildren(treeViewId: string, treeItemHandle?: string): Promise<ITreeItem[] | undefined> {
@@ -180,8 +180,8 @@ export class ExtHostTreeViews implements ExtHostTreeViewsShape {
 		return treeView.onDrop(treeDataTransfer, targetItemHandle, token);
 	}
 
-	private async addAdditionalTransferItems(treeDataTransfer: vscode.DataTransfer, treeView: ExtHostTreeView<any>,
-		sourceTreeItemHandles: string[], token: CancellationToken, operationUuid?: string): Promise<vscode.DataTransfer | undefined> {
+	private async addAdditionalTransferItems(treeDataTransfer: zycode.DataTransfer, treeView: ExtHostTreeView<any>,
+		sourceTreeItemHandles: string[], token: CancellationToken, operationUuid?: string): Promise<zycode.DataTransfer | undefined> {
 		const existingTransferOperation = this.treeDragAndDropService.removeDragOperationTransfer(operationUuid);
 		if (existingTransferOperation) {
 			(await existingTransferOperation)?.forEach((value, key) => {
@@ -219,7 +219,7 @@ export class ExtHostTreeViews implements ExtHostTreeViewsShape {
 		return treeView.hasResolve;
 	}
 
-	$resolve(treeViewId: string, treeItemHandle: string, token: vscode.CancellationToken): Promise<ITreeItem | undefined> {
+	$resolve(treeViewId: string, treeItemHandle: string, token: zycode.CancellationToken): Promise<ITreeItem | undefined> {
 		const treeView = this.treeViews.get(treeViewId);
 		if (!treeView) {
 			throw new NoTreeViewError(treeViewId);
@@ -259,7 +259,7 @@ export class ExtHostTreeViews implements ExtHostTreeViewsShape {
 		treeView.setCheckboxState(checkboxUpdate);
 	}
 
-	private createExtHostTreeView<T>(id: string, options: vscode.TreeViewOptions<T>, extension: IExtensionDescription): ExtHostTreeView<T> {
+	private createExtHostTreeView<T>(id: string, options: zycode.TreeViewOptions<T>, extension: IExtensionDescription): ExtHostTreeView<T> {
 		const treeView = new ExtHostTreeView<T>(id, options, this._proxy, this.commands.converter, this.logService, extension);
 		this.treeViews.set(id, treeView);
 		return treeView;
@@ -282,7 +282,7 @@ type TreeData<T> = { message: boolean; element: T | T[] | Root | false };
 
 interface TreeNode extends IDisposable {
 	item: ITreeItem;
-	extensionItem: vscode.TreeItem;
+	extensionItem: zycode.TreeItem;
 	parent: TreeNode | Root;
 	children?: TreeNode[];
 	disposableStore: DisposableStore;
@@ -293,8 +293,8 @@ class ExtHostTreeView<T> extends Disposable {
 	private static readonly LABEL_HANDLE_PREFIX = '0';
 	private static readonly ID_HANDLE_PREFIX = '1';
 
-	private readonly dataProvider: vscode.TreeDataProvider<T>;
-	private readonly dndController: vscode.TreeDragAndDropController<T> | undefined;
+	private readonly dataProvider: zycode.TreeDataProvider<T>;
+	private readonly dndController: zycode.TreeDragAndDropController<T> | undefined;
 
 	private roots: TreeNode[] | undefined = undefined;
 	private elements: Map<TreeItemHandle, T> = new Map<TreeItemHandle, T>();
@@ -309,23 +309,23 @@ class ExtHostTreeView<T> extends Disposable {
 	private _focusedHandle: TreeItemHandle | undefined = undefined;
 	get focusedElement(): T | undefined { return <T | undefined>(this._focusedHandle ? this.getExtensionElement(this._focusedHandle) : undefined); }
 
-	private _onDidExpandElement: Emitter<vscode.TreeViewExpansionEvent<T>> = this._register(new Emitter<vscode.TreeViewExpansionEvent<T>>());
-	readonly onDidExpandElement: Event<vscode.TreeViewExpansionEvent<T>> = this._onDidExpandElement.event;
+	private _onDidExpandElement: Emitter<zycode.TreeViewExpansionEvent<T>> = this._register(new Emitter<zycode.TreeViewExpansionEvent<T>>());
+	readonly onDidExpandElement: Event<zycode.TreeViewExpansionEvent<T>> = this._onDidExpandElement.event;
 
-	private _onDidCollapseElement: Emitter<vscode.TreeViewExpansionEvent<T>> = this._register(new Emitter<vscode.TreeViewExpansionEvent<T>>());
-	readonly onDidCollapseElement: Event<vscode.TreeViewExpansionEvent<T>> = this._onDidCollapseElement.event;
+	private _onDidCollapseElement: Emitter<zycode.TreeViewExpansionEvent<T>> = this._register(new Emitter<zycode.TreeViewExpansionEvent<T>>());
+	readonly onDidCollapseElement: Event<zycode.TreeViewExpansionEvent<T>> = this._onDidCollapseElement.event;
 
-	private _onDidChangeSelection: Emitter<vscode.TreeViewSelectionChangeEvent<T>> = this._register(new Emitter<vscode.TreeViewSelectionChangeEvent<T>>());
-	readonly onDidChangeSelection: Event<vscode.TreeViewSelectionChangeEvent<T>> = this._onDidChangeSelection.event;
+	private _onDidChangeSelection: Emitter<zycode.TreeViewSelectionChangeEvent<T>> = this._register(new Emitter<zycode.TreeViewSelectionChangeEvent<T>>());
+	readonly onDidChangeSelection: Event<zycode.TreeViewSelectionChangeEvent<T>> = this._onDidChangeSelection.event;
 
-	private _onDidChangeActiveItem: Emitter<vscode.TreeViewActiveItemChangeEvent<T>> = this._register(new Emitter<vscode.TreeViewActiveItemChangeEvent<T>>());
-	readonly onDidChangeActiveItem: Event<vscode.TreeViewActiveItemChangeEvent<T>> = this._onDidChangeActiveItem.event;
+	private _onDidChangeActiveItem: Emitter<zycode.TreeViewActiveItemChangeEvent<T>> = this._register(new Emitter<zycode.TreeViewActiveItemChangeEvent<T>>());
+	readonly onDidChangeActiveItem: Event<zycode.TreeViewActiveItemChangeEvent<T>> = this._onDidChangeActiveItem.event;
 
-	private _onDidChangeVisibility: Emitter<vscode.TreeViewVisibilityChangeEvent> = this._register(new Emitter<vscode.TreeViewVisibilityChangeEvent>());
-	readonly onDidChangeVisibility: Event<vscode.TreeViewVisibilityChangeEvent> = this._onDidChangeVisibility.event;
+	private _onDidChangeVisibility: Emitter<zycode.TreeViewVisibilityChangeEvent> = this._register(new Emitter<zycode.TreeViewVisibilityChangeEvent>());
+	readonly onDidChangeVisibility: Event<zycode.TreeViewVisibilityChangeEvent> = this._onDidChangeVisibility.event;
 
-	private _onDidChangeCheckboxState = this._register(new Emitter<vscode.TreeCheckboxChangeEvent<T>>());
-	readonly onDidChangeCheckboxState: Event<vscode.TreeCheckboxChangeEvent<T>> = this._onDidChangeCheckboxState.event;
+	private _onDidChangeCheckboxState = this._register(new Emitter<zycode.TreeCheckboxChangeEvent<T>>());
+	readonly onDidChangeCheckboxState: Event<zycode.TreeCheckboxChangeEvent<T>> = this._onDidChangeCheckboxState.event;
 
 	private _onDidChangeData: Emitter<TreeData<T>> = this._register(new Emitter<TreeData<T>>());
 
@@ -333,7 +333,7 @@ class ExtHostTreeView<T> extends Disposable {
 	private refreshQueue: Promise<void> = Promise.resolve();
 
 	constructor(
-		private viewId: string, options: vscode.TreeViewOptions<T>,
+		private viewId: string, options: zycode.TreeViewOptions<T>,
 		private proxy: MainThreadTreeViewsShape,
 		private commands: CommandsConverter,
 		private logService: ILogService,
@@ -431,12 +431,12 @@ class ExtHostTreeView<T> extends Disposable {
 		}
 	}
 
-	private _message: string | vscode.MarkdownString = '';
-	get message(): string | vscode.MarkdownString {
+	private _message: string | zycode.MarkdownString = '';
+	get message(): string | zycode.MarkdownString {
 		return this._message;
 	}
 
-	set message(message: string | vscode.MarkdownString) {
+	set message(message: string | zycode.MarkdownString) {
 		this._message = message;
 		this._onDidChangeData.fire({ message: true, element: false });
 	}
@@ -461,12 +461,12 @@ class ExtHostTreeView<T> extends Disposable {
 		this.proxy.$setTitle(this.viewId, this._title, description);
 	}
 
-	private _badge: vscode.ViewBadge | undefined;
-	get badge(): vscode.ViewBadge | undefined {
+	private _badge: zycode.ViewBadge | undefined;
+	get badge(): zycode.ViewBadge | undefined {
 		return this._badge;
 	}
 
-	set badge(badge: vscode.ViewBadge | undefined) {
+	set badge(badge: zycode.ViewBadge | undefined) {
 		if (this._badge?.value === badge?.value &&
 			this._badge?.tooltip === badge?.tooltip) {
 			return;
@@ -511,7 +511,7 @@ class ExtHostTreeView<T> extends Disposable {
 	}
 
 	async setCheckboxState(checkboxUpdates: CheckboxUpdate[]) {
-		type CheckboxUpdateWithItem = { extensionItem: NonNullable<T>; treeItem: vscode.TreeItem; newState: TreeItemCheckboxState };
+		type CheckboxUpdateWithItem = { extensionItem: NonNullable<T>; treeItem: zycode.TreeItem; newState: TreeItemCheckboxState };
 		const items = (await Promise.all(checkboxUpdates.map(async checkboxUpdate => {
 			const extensionItem = this.getExtensionElement(checkboxUpdate.treeItemHandle);
 			if (extensionItem) {
@@ -531,7 +531,7 @@ class ExtHostTreeView<T> extends Disposable {
 		this._onDidChangeCheckboxState.fire({ items: items.map(item => [item.extensionItem, item.newState]) });
 	}
 
-	async handleDrag(sourceTreeItemHandles: TreeItemHandle[], treeDataTransfer: vscode.DataTransfer, token: CancellationToken): Promise<vscode.DataTransfer | undefined> {
+	async handleDrag(sourceTreeItemHandles: TreeItemHandle[], treeDataTransfer: zycode.DataTransfer, token: CancellationToken): Promise<zycode.DataTransfer | undefined> {
 		const extensionTreeItems: T[] = [];
 		for (const sourceHandle of sourceTreeItemHandles) {
 			const extensionItem = this.getExtensionElement(sourceHandle);
@@ -551,7 +551,7 @@ class ExtHostTreeView<T> extends Disposable {
 		return !!this.dndController?.handleDrag;
 	}
 
-	async onDrop(treeDataTransfer: vscode.DataTransfer, targetHandleOrNode: TreeItemHandle | undefined, token: CancellationToken): Promise<void> {
+	async onDrop(treeDataTransfer: zycode.DataTransfer, targetHandleOrNode: TreeItemHandle | undefined, token: CancellationToken): Promise<void> {
 		const target = targetHandleOrNode ? this.getExtensionElement(targetHandleOrNode) : undefined;
 		if ((!target && targetHandleOrNode) || !this.dndController?.handleDrop) {
 			return;
@@ -565,7 +565,7 @@ class ExtHostTreeView<T> extends Disposable {
 		return !!this.dataProvider.resolveTreeItem;
 	}
 
-	async resolveTreeItem(treeItemHandle: string, token: vscode.CancellationToken): Promise<ITreeItem | undefined> {
+	async resolveTreeItem(treeItemHandle: string, token: zycode.CancellationToken): Promise<ITreeItem | undefined> {
 		if (!this.dataProvider.resolveTreeItem) {
 			return;
 		}
@@ -753,7 +753,7 @@ class ExtHostTreeView<T> extends Disposable {
 		return Promise.resolve(null);
 	}
 
-	private createAndRegisterTreeNode(element: T, extTreeItem: vscode.TreeItem, parentNode: TreeNode | Root): TreeNode {
+	private createAndRegisterTreeNode(element: T, extTreeItem: zycode.TreeItem, parentNode: TreeNode | Root): TreeNode {
 		const node = this.createTreeNode(element, extTreeItem, parentNode);
 		if (extTreeItem.id && this.elements.has(node.item.handle)) {
 			throw new Error(localize('treeView.duplicateElement', 'Element with id {0} is already registered', extTreeItem.id));
@@ -763,18 +763,18 @@ class ExtHostTreeView<T> extends Disposable {
 		return node;
 	}
 
-	private getTooltip(tooltip?: string | vscode.MarkdownString): string | IMarkdownString | undefined {
+	private getTooltip(tooltip?: string | zycode.MarkdownString): string | IMarkdownString | undefined {
 		if (MarkdownStringType.isMarkdownString(tooltip)) {
 			return MarkdownString.from(tooltip);
 		}
 		return tooltip;
 	}
 
-	private getCommand(disposable: DisposableStore, command?: vscode.Command): TreeCommand | undefined {
+	private getCommand(disposable: DisposableStore, command?: zycode.Command): TreeCommand | undefined {
 		return command ? { ...this.commands.toInternal(command, disposable), originalId: command.command } : undefined;
 	}
 
-	private getCheckbox(extensionTreeItem: vscode.TreeItem): ITreeItemCheckboxState | undefined {
+	private getCheckbox(extensionTreeItem: zycode.TreeItem): ITreeItemCheckboxState | undefined {
 		if (extensionTreeItem.checkboxState === undefined) {
 			return undefined;
 		}
@@ -791,13 +791,13 @@ class ExtHostTreeView<T> extends Disposable {
 		return { isChecked: checkboxState === TreeItemCheckboxState.Checked, tooltip, accessibilityInformation };
 	}
 
-	private validateTreeItem(extensionTreeItem: vscode.TreeItem) {
+	private validateTreeItem(extensionTreeItem: zycode.TreeItem) {
 		if (!TreeItem.isTreeItem(extensionTreeItem, this.extension)) {
 			throw new Error(`Extension ${this.extension.identifier.value} has provided an invalid tree item.`);
 		}
 	}
 
-	private createTreeNode(element: T, extensionTreeItem: vscode.TreeItem, parent: TreeNode | Root): TreeNode {
+	private createTreeNode(element: T, extensionTreeItem: zycode.TreeItem, parent: TreeNode | Root): TreeNode {
 		this.validateTreeItem(extensionTreeItem);
 		const disposableStore = new DisposableStore();
 		const handle = this.createHandle(element, extensionTreeItem, parent);
@@ -829,11 +829,11 @@ class ExtHostTreeView<T> extends Disposable {
 		};
 	}
 
-	private getThemeIcon(extensionTreeItem: vscode.TreeItem): ThemeIcon | undefined {
+	private getThemeIcon(extensionTreeItem: zycode.TreeItem): ThemeIcon | undefined {
 		return extensionTreeItem.iconPath instanceof ThemeIcon ? extensionTreeItem.iconPath : undefined;
 	}
 
-	private createHandle(element: T, { id, label, resourceUri }: vscode.TreeItem, parent: TreeNode | Root, returnFirst?: boolean): TreeItemHandle {
+	private createHandle(element: T, { id, label, resourceUri }: zycode.TreeItem, parent: TreeNode | Root, returnFirst?: boolean): TreeItemHandle {
 		if (id) {
 			return `${ExtHostTreeView.ID_HANDLE_PREFIX}/${id}`;
 		}
@@ -861,7 +861,7 @@ class ExtHostTreeView<T> extends Disposable {
 		return handle;
 	}
 
-	private getLightIconPath(extensionTreeItem: vscode.TreeItem): URI | undefined {
+	private getLightIconPath(extensionTreeItem: zycode.TreeItem): URI | undefined {
 		if (extensionTreeItem.iconPath && !(extensionTreeItem.iconPath instanceof ThemeIcon)) {
 			if (typeof extensionTreeItem.iconPath === 'string'
 				|| URI.isUri(extensionTreeItem.iconPath)) {
@@ -872,7 +872,7 @@ class ExtHostTreeView<T> extends Disposable {
 		return undefined;
 	}
 
-	private getDarkIconPath(extensionTreeItem: vscode.TreeItem): URI | undefined {
+	private getDarkIconPath(extensionTreeItem: zycode.TreeItem): URI | undefined {
 		if (extensionTreeItem.iconPath && !(extensionTreeItem.iconPath instanceof ThemeIcon) && (<{ light: string | URI; dark: string | URI }>extensionTreeItem.iconPath).dark) {
 			return this.getIconPath((<{ light: string | URI; dark: string | URI }>extensionTreeItem.iconPath).dark);
 		}

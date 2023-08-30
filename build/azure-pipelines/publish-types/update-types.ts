@@ -14,13 +14,13 @@ try {
 		.toString()
 		.trim();
 
-	const dtsUri = `https://raw.githubusercontent.com/microsoft/vscode/${tag}/src/vscode-dts/vscode.d.ts`;
-	const outPath = path.resolve(process.cwd(), 'DefinitelyTyped/types/vscode/index.d.ts');
+	const dtsUri = `https://raw.githubusercontent.com/microsoft/zycode/${tag}/src/zycode-dts/zycode.d.ts`;
+	const outPath = path.resolve(process.cwd(), 'DefinitelyTyped/types/zycode/index.d.ts');
 	cp.execSync(`curl ${dtsUri} --output ${outPath}`);
 
 	updateDTSFile(outPath, tag);
 
-	console.log(`Done updating vscode.d.ts at ${outPath}`);
+	console.log(`Done updating zycode.d.ts at ${outPath}`);
 } catch (err) {
 	console.error(err);
 	console.error('Failed to update types');
@@ -62,19 +62,19 @@ function getNewFileHeader(tag: string) {
 	const shorttag = `${major}.${minor}`;
 
 	const header = [
-		`// Type definitions for Visual Studio Code ${shorttag}`,
-		`// Project: https://github.com/microsoft/vscode`,
-		`// Definitions by: Visual Studio Code Team, Microsoft <https://github.com/microsoft>`,
+		`// Type definitions for ZY Studio Code ${shorttag}`,
+		`// Project: https://github.com/microsoft/zycode`,
+		`// Definitions by: ZY Studio Code Team, Microsoft <https://github.com/microsoft>`,
 		`// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped`,
 		``,
 		`/*---------------------------------------------------------------------------------------------`,
 		` *  Copyright (c) Microsoft Corporation. All rights reserved.`,
 		` *  Licensed under the MIT License.`,
-		` *  See https://github.com/microsoft/vscode/blob/main/LICENSE.txt for license information.`,
+		` *  See https://github.com/microsoft/zycode/blob/main/LICENSE.txt for license information.`,
 		` *--------------------------------------------------------------------------------------------*/`,
 		``,
 		`/**`,
-		` * Type Definition for Visual Studio Code ${shorttag} Extension API`,
+		` * Type Definition for ZY Studio Code ${shorttag} Extension API`,
 		` * See https://code.visualstudio.com/api for more information`,
 		` */`
 	].join('\n');

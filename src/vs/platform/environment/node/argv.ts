@@ -49,7 +49,7 @@ export const NATIVE_CLI_COMMANDS = ['tunnel', 'serve-web'] as const;
 export const OPTIONS: OptionDescriptions<Required<NativeParsedArgs>> = {
 	'tunnel': {
 		type: 'subcommand',
-		description: 'Make the current machine accessible from vscode.dev or other machines through a secure tunnel',
+		description: 'Make the current machine accessible from zycode.dev or other machines through a secure tunnel',
 		options: {
 			'cli-data-dir': { type: 'string', args: 'dir', description: localize('cliDataDir', "Directory where CLI metadata should be stored.") },
 			'disable-telemetry': { type: 'boolean' },
@@ -70,7 +70,7 @@ export const OPTIONS: OptionDescriptions<Required<NativeParsedArgs>> = {
 	},
 	'serve-web': {
 		type: 'subcommand',
-		description: 'Make the current machine accessible from vscode.dev or other machines through a secure tunnel',
+		description: 'Make the current machine accessible from zycode.dev or other machines through a secure tunnel',
 		options: {
 			'cli-data-dir': { type: 'string', args: 'dir', description: localize('cliDataDir', "Directory where CLI metadata should be stored.") },
 			'disable-telemetry': { type: 'boolean' },
@@ -97,14 +97,14 @@ export const OPTIONS: OptionDescriptions<Required<NativeParsedArgs>> = {
 	'list-extensions': { type: 'boolean', cat: 'e', description: localize('listExtensions', "List the installed extensions.") },
 	'show-versions': { type: 'boolean', cat: 'e', description: localize('showVersions', "Show versions of installed extensions, when using --list-extensions.") },
 	'category': { type: 'string', allowEmptyValue: true, cat: 'e', description: localize('category', "Filters installed extensions by provided category, when using --list-extensions."), args: 'category' },
-	'install-extension': { type: 'string[]', cat: 'e', args: 'ext-id | path', description: localize('installExtension', "Installs or updates an extension. The argument is either an extension id or a path to a VSIX. The identifier of an extension is '${publisher}.${name}'. Use '--force' argument to update to latest version. To install a specific version provide '@${version}'. For example: 'vscode.csharp@1.2.3'.") },
+	'install-extension': { type: 'string[]', cat: 'e', args: 'ext-id | path', description: localize('installExtension', "Installs or updates an extension. The argument is either an extension id or a path to a VSIX. The identifier of an extension is '${publisher}.${name}'. Use '--force' argument to update to latest version. To install a specific version provide '@${version}'. For example: 'zycode.csharp@1.2.3'.") },
 	'pre-release': { type: 'boolean', cat: 'e', description: localize('install prerelease', "Installs the pre-release version of the extension, when using --install-extension") },
 	'uninstall-extension': { type: 'string[]', cat: 'e', args: 'ext-id', description: localize('uninstallExtension', "Uninstalls an extension.") },
 	'enable-proposed-api': { type: 'string[]', allowEmptyValue: true, cat: 'e', args: 'ext-id', description: localize('experimentalApis', "Enables proposed API features for extensions. Can receive one or more extension IDs to enable individually.") },
 
 	'version': { type: 'boolean', cat: 't', alias: 'v', description: localize('version', "Print version.") },
 	'verbose': { type: 'boolean', cat: 't', global: true, description: localize('verbose', "Print verbose output (implies --wait).") },
-	'log': { type: 'string[]', cat: 't', args: 'level', global: true, description: localize('log', "Log level to use. Default is 'info'. Allowed values are 'critical', 'error', 'warn', 'info', 'debug', 'trace', 'off'. You can also configure the log level of an extension by passing extension id and log level in the following format: '${publisher}.${name}:${logLevel}'. For example: 'vscode.csharp:trace'. Can receive one or more such entries.") },
+	'log': { type: 'string[]', cat: 't', args: 'level', global: true, description: localize('log', "Log level to use. Default is 'info'. Allowed values are 'critical', 'error', 'warn', 'info', 'debug', 'trace', 'off'. You can also configure the log level of an extension by passing extension id and log level in the following format: '${publisher}.${name}:${logLevel}'. For example: 'zycode.csharp:trace'. Can receive one or more such entries.") },
 	'status': { type: 'boolean', alias: 's', cat: 't', description: localize('status', "Print process usage and diagnostics information.") },
 	'prof-startup': { type: 'boolean', cat: 't', description: localize('prof-startup', "Run CPU profiler during startup.") },
 	'prof-append-timers': { type: 'string' },
@@ -122,7 +122,7 @@ export const OPTIONS: OptionDescriptions<Required<NativeParsedArgs>> = {
 	'disable-gpu': { type: 'boolean', cat: 't', description: localize('disableGPU', "Disable GPU hardware acceleration.") },
 	'disable-chromium-sandbox': { type: 'boolean', cat: 't', description: localize('disableChromiumSandbox', "Use this option only when there is requirement to launch the application as sudo user on Linux or when running as an elevated user in an applocker environment on Windows.") },
 	'ms-enable-electron-run-as-node': { type: 'boolean', global: true },
-	'telemetry': { type: 'boolean', cat: 't', description: localize('telemetry', "Shows all telemetry events which VS code collects.") },
+	'telemetry': { type: 'boolean', cat: 't', description: localize('telemetry', "Shows all telemetry events which ZY code collects.") },
 
 	'remote': { type: 'string', allowEmptyValue: true },
 	'folder-uri': { type: 'string[]', cat: 'o', args: 'uri' },
@@ -184,7 +184,7 @@ export const OPTIONS: OptionDescriptions<Required<NativeParsedArgs>> = {
 	// https://github.com/substack/minimist/blob/aeb3e27dae0412de5c0494e9563a5f10c82cc7a9/index.js#L118-L121
 	// If --no-sandbox is passed via cli wrapper it will be treated as --sandbox which is incorrect, we use
 	// the alias here to make sure --no-sandbox is always respected.
-	// For https://github.com/microsoft/vscode/issues/128279
+	// For https://github.com/microsoft/zycode/issues/128279
 	'no-sandbox': { type: 'boolean', alias: 'sandbox' },
 	'proxy-server': { type: 'string' },
 	'proxy-bypass-list': { type: 'string' },
@@ -278,7 +278,7 @@ export function parseArgs<T>(args: string[], options: OptionDescriptions<T>, err
 	const cleanedArgs: any = {};
 	const remainingArgs: any = parsedArgs;
 
-	// https://github.com/microsoft/vscode/issues/58177, https://github.com/microsoft/vscode/issues/106617
+	// https://github.com/microsoft/zycode/issues/58177, https://github.com/microsoft/zycode/issues/106617
 	cleanedArgs._ = parsedArgs._.map(arg => String(arg)).filter(arg => arg.length > 0);
 
 	delete remainingArgs._;

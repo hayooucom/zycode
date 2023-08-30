@@ -7,7 +7,7 @@ import { onUnexpectedError } from 'vs/base/common/errors';
 import { URI, UriComponents } from 'vs/base/common/uri';
 import { IDisposable } from 'vs/base/common/lifecycle';
 import { Disposable } from 'vs/workbench/api/common/extHostTypes';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { MainContext, ExtHostDocumentContentProvidersShape, MainThreadDocumentContentProvidersShape, IMainContext } from './extHost.protocol';
 import { ExtHostDocumentsAndEditors } from './extHostDocumentsAndEditors';
 import { Schemas } from 'vs/base/common/network';
@@ -19,7 +19,7 @@ export class ExtHostDocumentContentProvider implements ExtHostDocumentContentPro
 
 	private static _handlePool = 0;
 
-	private readonly _documentContentProviders = new Map<number, vscode.TextDocumentContentProvider>();
+	private readonly _documentContentProviders = new Map<number, zycode.TextDocumentContentProvider>();
 	private readonly _proxy: MainThreadDocumentContentProvidersShape;
 
 	constructor(
@@ -30,7 +30,7 @@ export class ExtHostDocumentContentProvider implements ExtHostDocumentContentPro
 		this._proxy = mainContext.getProxy(MainContext.MainThreadDocumentContentProviders);
 	}
 
-	registerTextDocumentContentProvider(scheme: string, provider: vscode.TextDocumentContentProvider): vscode.Disposable {
+	registerTextDocumentContentProvider(scheme: string, provider: zycode.TextDocumentContentProvider): zycode.Disposable {
 		// todo@remote
 		// check with scheme from fs-providers!
 		if (Object.keys(Schemas).indexOf(scheme) >= 0) {

@@ -9,13 +9,13 @@ import { ILogService } from 'vs/platform/log/common/log';
 import { ExtHostNotebookEditorsShape, INotebookEditorPropertiesChangeData, INotebookEditorViewColumnInfo } from 'vs/workbench/api/common/extHost.protocol';
 import { ExtHostNotebookController } from 'vs/workbench/api/common/extHostNotebook';
 import * as typeConverters from 'vs/workbench/api/common/extHostTypeConverters';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 
 
 export class ExtHostNotebookEditors implements ExtHostNotebookEditorsShape {
 
-	private readonly _onDidChangeNotebookEditorSelection = new Emitter<vscode.NotebookEditorSelectionChangeEvent>({ onListenerError: onUnexpectedExternalError });
-	private readonly _onDidChangeNotebookEditorVisibleRanges = new Emitter<vscode.NotebookEditorVisibleRangesChangeEvent>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidChangeNotebookEditorSelection = new Emitter<zycode.NotebookEditorSelectionChangeEvent>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidChangeNotebookEditorVisibleRanges = new Emitter<zycode.NotebookEditorVisibleRangesChangeEvent>({ onListenerError: onUnexpectedExternalError });
 
 	readonly onDidChangeNotebookEditorSelection = this._onDidChangeNotebookEditorSelection.event;
 	readonly onDidChangeNotebookEditorVisibleRanges = this._onDidChangeNotebookEditorVisibleRanges.event;

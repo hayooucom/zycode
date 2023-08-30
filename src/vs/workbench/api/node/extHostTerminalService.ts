@@ -6,7 +6,7 @@
 import { generateUuid } from 'vs/base/common/uuid';
 import { IExtHostRpcService } from 'vs/workbench/api/common/extHostRpcService';
 import { BaseExtHostTerminalService, ExtHostTerminal, ITerminalInternalOptions } from 'vs/workbench/api/common/extHostTerminalService';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { IExtHostCommands } from 'vs/workbench/api/common/extHostCommands';
 
 export class ExtHostTerminalService extends BaseExtHostTerminalService {
@@ -18,11 +18,11 @@ export class ExtHostTerminalService extends BaseExtHostTerminalService {
 		super(true, extHostCommands, extHostRpc);
 	}
 
-	public createTerminal(name?: string, shellPath?: string, shellArgs?: string[] | string): vscode.Terminal {
+	public createTerminal(name?: string, shellPath?: string, shellArgs?: string[] | string): zycode.Terminal {
 		return this.createTerminalFromOptions({ name, shellPath, shellArgs });
 	}
 
-	public createTerminalFromOptions(options: vscode.TerminalOptions, internalOptions?: ITerminalInternalOptions): vscode.Terminal {
+	public createTerminalFromOptions(options: zycode.TerminalOptions, internalOptions?: ITerminalInternalOptions): zycode.Terminal {
 		const terminal = new ExtHostTerminal(this._proxy, generateUuid(), options, options.name);
 		this._terminals.push(terminal);
 		terminal.create(options, this._serializeParentTerminal(options, internalOptions));

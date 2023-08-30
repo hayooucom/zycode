@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Disposable, Command, EventEmitter, Event, workspace, Uri, l10n } from 'vscode';
+import { Disposable, Command, EventEmitter, Event, workspace, Uri, l10n } from 'zycode';
 import { Repository } from './repository';
 import { anyEvent, dispose, filterEvent } from './util';
 import { Branch, RefType, RemoteSourcePublisher } from './api/git';

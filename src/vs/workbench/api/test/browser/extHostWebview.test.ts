@@ -17,7 +17,7 @@ import { ExtHostWebviews } from 'vs/workbench/api/common/extHostWebview';
 import { ExtHostWebviewPanels } from 'vs/workbench/api/common/extHostWebviewPanels';
 import { decodeAuthority, webviewResourceBaseHost } from 'vs/workbench/contrib/webview/common/webview';
 import { EditorGroupColumn } from 'vs/workbench/services/editor/common/editorGroupColumn';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { SingleProxyRPCProtocol } from 'vs/workbench/api/test/common/testRPCProtocol';
 
 suite('ExtHostWebview', () => {
@@ -36,10 +36,10 @@ suite('ExtHostWebview', () => {
 
 		const extHostWebviewPanels = new ExtHostWebviewPanels(rpcProtocol!, extHostWebviews, undefined);
 
-		let lastInvokedDeserializer: vscode.WebviewPanelSerializer | undefined = undefined;
+		let lastInvokedDeserializer: zycode.WebviewPanelSerializer | undefined = undefined;
 
-		class NoopSerializer implements vscode.WebviewPanelSerializer {
-			async deserializeWebviewPanel(_webview: vscode.WebviewPanel, _state: any): Promise<void> {
+		class NoopSerializer implements zycode.WebviewPanelSerializer {
+			async deserializeWebviewPanel(_webview: zycode.WebviewPanel, _state: any): Promise<void> {
 				lastInvokedDeserializer = this;
 			}
 		}
@@ -83,31 +83,31 @@ suite('ExtHostWebview', () => {
 
 		assert.strictEqual(
 			(webview.webview.asWebviewUri(URI.parse('file:///Users/codey/file.html')).toString()),
-			`https://file%2B.vscode-resource.${webviewResourceBaseHost}/Users/codey/file.html`,
+			`https://file%2B.zycode-resource.${webviewResourceBaseHost}/Users/codey/file.html`,
 			'Unix basic'
 		);
 
 		assert.strictEqual(
 			(webview.webview.asWebviewUri(URI.parse('file:///Users/codey/file.html#frag')).toString()),
-			`https://file%2B.vscode-resource.${webviewResourceBaseHost}/Users/codey/file.html#frag`,
+			`https://file%2B.zycode-resource.${webviewResourceBaseHost}/Users/codey/file.html#frag`,
 			'Unix should preserve fragment'
 		);
 
 		assert.strictEqual(
 			(webview.webview.asWebviewUri(URI.parse('file:///Users/codey/f%20ile.html')).toString()),
-			`https://file%2B.vscode-resource.${webviewResourceBaseHost}/Users/codey/f%20ile.html`,
+			`https://file%2B.zycode-resource.${webviewResourceBaseHost}/Users/codey/f%20ile.html`,
 			'Unix with encoding'
 		);
 
 		assert.strictEqual(
 			(webview.webview.asWebviewUri(URI.parse('file://localhost/Users/codey/file.html')).toString()),
-			`https://file%2Blocalhost.vscode-resource.${webviewResourceBaseHost}/Users/codey/file.html`,
+			`https://file%2Blocalhost.zycode-resource.${webviewResourceBaseHost}/Users/codey/file.html`,
 			'Unix should preserve authority'
 		);
 
 		assert.strictEqual(
 			(webview.webview.asWebviewUri(URI.parse('file:///c:/codey/file.txt')).toString()),
-			`https://file%2B.vscode-resource.${webviewResourceBaseHost}/c%3A/codey/file.txt`,
+			`https://file%2B.zycode-resource.${webviewResourceBaseHost}/c%3A/codey/file.txt`,
 			'Windows C drive'
 		);
 	});
@@ -117,7 +117,7 @@ suite('ExtHostWebview', () => {
 
 		assert.strictEqual(
 			(webview.webview.asWebviewUri(URI.parse('file:///Users/codey/file.html')).toString()),
-			`https://vscode-remote%2Bremote.vscode-resource.${webviewResourceBaseHost}/Users/codey/file.html`,
+			`https://zycode-remote%2Bremote.zycode-resource.${webviewResourceBaseHost}/Users/codey/file.html`,
 			'Unix basic'
 		);
 	});
@@ -127,7 +127,7 @@ suite('ExtHostWebview', () => {
 		const authority = 'ssh-remote+localhost=foo/bar';
 
 		const sourceUri = URI.from({
-			scheme: 'vscode-remote',
+			scheme: 'zycode-remote',
 			authority: authority,
 			path: '/Users/cody/x.png'
 		});
@@ -135,12 +135,12 @@ suite('ExtHostWebview', () => {
 		const webviewUri = webview.webview.asWebviewUri(sourceUri);
 		assert.strictEqual(
 			webviewUri.toString(),
-			`https://vscode-remote%2Bssh-002dremote-002blocalhost-003dfoo-002fbar.vscode-resource.vscode-cdn.net/Users/cody/x.png`,
+			`https://zycode-remote%2Bssh-002dremote-002blocalhost-003dfoo-002fbar.zycode-resource.zycode-cdn.net/Users/cody/x.png`,
 			'Check transform');
 
 		assert.strictEqual(
 			decodeAuthority(webviewUri.authority),
-			`vscode-remote+${authority}.vscode-resource.vscode-cdn.net`,
+			`zycode-remote+${authority}.zycode-resource.zycode-cdn.net`,
 			'Check decoded authority'
 		);
 	});
@@ -150,7 +150,7 @@ suite('ExtHostWebview', () => {
 		const authority = 'localhost:8080';
 
 		const sourceUri = URI.from({
-			scheme: 'vscode-remote',
+			scheme: 'zycode-remote',
 			authority: authority,
 			path: '/Users/cody/x.png'
 		});
@@ -158,12 +158,12 @@ suite('ExtHostWebview', () => {
 		const webviewUri = webview.webview.asWebviewUri(sourceUri);
 		assert.strictEqual(
 			webviewUri.toString(),
-			`https://vscode-remote%2Blocalhost-003a8080.vscode-resource.vscode-cdn.net/Users/cody/x.png`,
+			`https://zycode-remote%2Blocalhost-003a8080.zycode-resource.zycode-cdn.net/Users/cody/x.png`,
 			'Check transform');
 
 		assert.strictEqual(
 			decodeAuthority(webviewUri.authority),
-			`vscode-remote+${authority}.vscode-resource.vscode-cdn.net`,
+			`zycode-remote+${authority}.zycode-resource.zycode-cdn.net`,
 			'Check decoded authority'
 		);
 	});

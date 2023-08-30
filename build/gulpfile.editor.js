@@ -57,7 +57,7 @@ const BUNDLED_FILE_HEADER = [
 	' * Copyright (c) Microsoft Corporation. All rights reserved.',
 	' * Version: ' + headerVersion,
 	' * Released under the MIT license',
-	' * https://github.com/microsoft/vscode/blob/main/LICENSE.txt',
+	' * https://github.com/microsoft/zycode/blob/main/LICENSE.txt',
 	' *-----------------------------------------------------------*/',
 	''
 ].join('\n');
@@ -100,7 +100,7 @@ const optimizeEditorAMDTask = task.define('optimize-editor-amd', optimize.optimi
 					'vs': 'out-editor-build/vs',
 					'vs/css': 'out-editor-build/vs/css.build',
 					'vs/nls': 'out-editor-build/vs/nls.build',
-					'vscode': 'empty:'
+					'zycode': 'empty:'
 				}
 			},
 			header: BUNDLED_FILE_HEADER,
@@ -149,7 +149,7 @@ const compileEditorESMTask = task.define('compile-editor-esm', () => {
 
 	if (FAIL_ON_PURPOSE || result.status !== 0) {
 		console.log(`The TS Compilation failed, preparing analysis folder...`);
-		const destPath = path.join(__dirname, '../../vscode-monaco-editor-esm-analysis');
+		const destPath = path.join(__dirname, '../../zycode-monaco-editor-esm-analysis');
 		const keepPrevAnalysis = (KEEP_PREV_ANALYSIS && fs.existsSync(destPath));
 		const cleanDestPath = (keepPrevAnalysis ? Promise.resolve() : util.rimraf(destPath)());
 		return cleanDestPath.then(() => {
@@ -332,7 +332,7 @@ const finalEditorResourcesTask = task.define('final-editor-resources', () => {
 		// version.txt
 		gulp.src('build/monaco/version.txt')
 			.pipe(es.through(function (data) {
-				data.contents = Buffer.from(`monaco-editor-core: https://github.com/microsoft/vscode/tree/${sha1}`);
+				data.contents = Buffer.from(`monaco-editor-core: https://github.com/microsoft/zycode/tree/${sha1}`);
 				this.emit('data', data);
 			}))
 			.pipe(gulp.dest('out-monaco-editor-core')),

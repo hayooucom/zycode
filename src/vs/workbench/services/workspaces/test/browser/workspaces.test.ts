@@ -11,9 +11,9 @@ suite('Workspaces', () => {
 	test('workspace identifiers are stable', function () {
 
 		// workspace identifier
-		assert.strictEqual(getWorkspaceIdentifier(URI.parse('vscode-remote:/hello/test')).id, '474434e4');
+		assert.strictEqual(getWorkspaceIdentifier(URI.parse('zycode-remote:/hello/test')).id, '474434e4');
 
 		// single folder identifier
-		assert.strictEqual(getSingleFolderWorkspaceIdentifier(URI.parse('vscode-remote:/hello/test'))?.id, '474434e4');
+		assert.strictEqual(getSingleFolderWorkspaceIdentifier(URI.parse('zycode-remote:/hello/test'))?.id, '474434e4');
 	});
 });

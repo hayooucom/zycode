@@ -15,7 +15,7 @@ suite('Workbench - TerminalEnvironment', () => {
 		test('should set expected variables', () => {
 			const env: { [key: string]: any } = {};
 			addTerminalEnvironmentKeys(env, '1.2.3', 'en', 'on');
-			strictEqual(env['TERM_PROGRAM'], 'vscode');
+			strictEqual(env['TERM_PROGRAM'], 'zycode');
 			strictEqual(env['TERM_PROGRAM_VERSION'], '1.2.3');
 			strictEqual(env['COLORTERM'], 'truecolor');
 			strictEqual(env['LANG'], 'en_US.UTF-8');
@@ -285,7 +285,7 @@ suite('Workbench - TerminalEnvironment', () => {
 	suite('createTerminalEnvironment', () => {
 		const commonVariables = {
 			COLORTERM: 'truecolor',
-			TERM_PROGRAM: 'vscode'
+			TERM_PROGRAM: 'zycode'
 		};
 		test('should retain variables equal to the empty string', async () => {
 			deepStrictEqual(

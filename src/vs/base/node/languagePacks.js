@@ -154,7 +154,7 @@
 					locale = resolvedLocale;
 					const packConfig = configs[locale];
 					let mainPack;
-					if (!packConfig || typeof packConfig.hash !== 'string' || !packConfig.translations || typeof (mainPack = packConfig.translations['vscode']) !== 'string') {
+					if (!packConfig || typeof packConfig.hash !== 'string' || !packConfig.translations || typeof (mainPack = packConfig.translations['zycode']) !== 'string') {
 						return defaultResult(initialLocale);
 					}
 					return exists(mainPack).then(fileExists => {

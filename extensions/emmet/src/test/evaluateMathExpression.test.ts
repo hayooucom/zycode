@@ -5,7 +5,7 @@
 
 import 'mocha';
 import * as assert from 'assert';
-import { Position, Selection } from 'vscode';
+import { Position, Selection } from 'zycode';
 import { withRandomFileEditor, closeAllEditors } from './testUtils';
 import { evaluateMathExpression } from '../evaluateMathExpression';
 

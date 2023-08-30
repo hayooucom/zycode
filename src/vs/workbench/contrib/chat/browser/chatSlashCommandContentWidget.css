@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 .chat-slash-command-content-widget {
-	background-color: var(--vscode-chat-slashCommandBackground);
-	color: var(--vscode-chat-slashCommandForeground);
+	background-color: var(--zycode-chat-slashCommandBackground);
+	color: var(--zycode-chat-slashCommandForeground);
 	border-radius: 3px;
 	padding: 1px;
 }

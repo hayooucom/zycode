@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type * as markdownIt from 'markdown-it';
-import type { RendererContext } from 'vscode-notebook-renderer';
+import type { RendererContext } from 'zycode-notebook-renderer';
 
 const styleHref = import.meta.url.replace(/katex.js$/, 'katex.min.css');
 
 export async function activate(ctx: RendererContext<void>) {
-	const markdownItRenderer = (await ctx.getRenderer('vscode.markdown-it-renderer')) as undefined | any;
+	const markdownItRenderer = (await ctx.getRenderer('zycode.markdown-it-renderer')) as undefined | any;
 	if (!markdownItRenderer) {
-		throw new Error(`Could not load 'vscode.markdown-it-renderer'`);
+		throw new Error(`Could not load 'zycode.markdown-it-renderer'`);
 	}
 
 	// Add katex styles to be copied to shadow dom
@@ -31,7 +31,7 @@ export async function activate(ctx: RendererContext<void>) {
 	const style = document.createElement('style');
 	style.textContent = `
 		.katex-error {
-			color: var(--vscode-editorError-foreground);
+			color: var(--zycode-editorError-foreground);
 		}
 		.katex-block {
 			counter-reset: katexEqnNo mmlEqnNo;
@@ -45,7 +45,7 @@ export async function activate(ctx: RendererContext<void>) {
 	styleTemplate.content.appendChild(link);
 	document.head.appendChild(styleTemplate);
 
-	const katex = require('@vscode/markdown-it-katex');
+	const katex = require('@zycode/markdown-it-katex');
 	const macros = {};
 	markdownItRenderer.extendMarkdownIt((md: markdownIt.MarkdownIt) => {
 		return md.use(katex, {

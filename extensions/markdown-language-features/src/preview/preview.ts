@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import * as uri from 'vscode-uri';
+import * as zycode from 'zycode';
+import * as uri from 'zycode-uri';
 import { ILogger } from '../logging';
 import { MarkdownContributionProvider } from '../markdownExtensions';
 import { Disposable } from '../util/dispose';
@@ -20,10 +20,10 @@ import type { FromWebviewMessage, ToWebviewMessage } from '../../types/previewMe
 
 export class PreviewDocumentVersion {
 
-	public readonly resource: vscode.Uri;
+	public readonly resource: zycode.Uri;
 	private readonly _version: number;
 
-	public constructor(document: vscode.TextDocument) {
+	public constructor(document: zycode.TextDocument) {
 		this.resource = document.uri;
 		this._version = document.version;
 	}
@@ -35,9 +35,9 @@ export class PreviewDocumentVersion {
 }
 
 interface MarkdownPreviewDelegate {
-	getTitle?(resource: vscode.Uri): string;
+	getTitle?(resource: zycode.Uri): string;
 	getAdditionalState(): {};
-	openPreviewLinkToMarkdownFile(markdownLink: vscode.Uri, fragment: string | undefined): void;
+	openPreviewLinkToMarkdownFile(markdownLink: zycode.Uri, fragment: string | undefined): void;
 }
 
 class MarkdownPreview extends Disposable implements WebviewResourceProvider {
@@ -49,8 +49,8 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 	private readonly _delay = 300;
 	private _throttleTimer: any;
 
-	private readonly _resource: vscode.Uri;
-	private readonly _webviewPanel: vscode.WebviewPanel;
+	private readonly _resource: zycode.Uri;
+	private readonly _webviewPanel: zycode.WebviewPanel;
 
 	private _line: number | undefined;
 	private _scrollToFragment: string | undefined;
@@ -59,16 +59,16 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 	private _isScrolling = false;
 
 	private _imageInfo: readonly ImageInfo[] = [];
-	private readonly _fileWatchersBySrc = new Map</* src: */ string, vscode.FileSystemWatcher>();
+	private readonly _fileWatchersBySrc = new Map</* src: */ string, zycode.FileSystemWatcher>();
 
-	private readonly _onScrollEmitter = this._register(new vscode.EventEmitter<LastScrollLocation>());
+	private readonly _onScrollEmitter = this._register(new zycode.EventEmitter<LastScrollLocation>());
 	public readonly onScroll = this._onScrollEmitter.event;
 
-	private readonly _disposeCts = this._register(new vscode.CancellationTokenSource());
+	private readonly _disposeCts = this._register(new zycode.CancellationTokenSource());
 
 	constructor(
-		webview: vscode.WebviewPanel,
-		resource: vscode.Uri,
+		webview: zycode.WebviewPanel,
+		resource: zycode.Uri,
 		startingScroll: StartingScrollLocation | undefined,
 		private readonly _delegate: MarkdownPreviewDelegate,
 		private readonly _contentProvider: MdDocumentRenderer,
@@ -98,23 +98,23 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 			setTimeout(() => this.refresh(true), 0);
 		}));
 
-		this._register(vscode.workspace.onDidChangeTextDocument(event => {
+		this._register(zycode.workspace.onDidChangeTextDocument(event => {
 			if (this.isPreviewOf(event.document.uri)) {
 				this.refresh();
 			}
 		}));
 
-		this._register(vscode.workspace.onDidOpenTextDocument(document => {
+		this._register(zycode.workspace.onDidOpenTextDocument(document => {
 			if (this.isPreviewOf(document.uri)) {
 				this.refresh();
 			}
 		}));
 
-		const watcher = this._register(vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(resource, '*')));
+		const watcher = this._register(zycode.workspace.createFileSystemWatcher(new zycode.RelativePattern(resource, '*')));
 		this._register(watcher.onDidChange(uri => {
 			if (this.isPreviewOf(uri)) {
 				// Only use the file system event when VS Code does not already know about the file
-				if (!vscode.workspace.textDocuments.some(doc => doc.uri.toString() === uri.toString())) {
+				if (!zycode.workspace.textDocuments.some(doc => doc.uri.toString() === uri.toString())) {
 					this.refresh();
 				}
 			}
@@ -143,12 +143,12 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 					break;
 
 				case 'showPreviewSecuritySelector':
-					vscode.commands.executeCommand('markdown.showPreviewSecuritySelector', e.source);
+					zycode.commands.executeCommand('markdown.showPreviewSecuritySelector', e.source);
 					break;
 
 				case 'previewStyleLoadError':
-					vscode.window.showWarningMessage(
-						vscode.l10n.t("Could not load 'markdown.styles': {0}", e.unloadedStyles.join(', ')));
+					zycode.window.showWarningMessage(
+						zycode.l10n.t("Could not load 'markdown.styles': {0}", e.unloadedStyles.join(', ')));
 					break;
 			}
 		}));
@@ -170,7 +170,7 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 		this._fileWatchersBySrc.clear();
 	}
 
-	public get resource(): vscode.Uri {
+	public get resource(): zycode.Uri {
 		return this._resource;
 	}
 
@@ -201,7 +201,7 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 	}
 
 
-	public isPreviewOf(resource: vscode.Uri): boolean {
+	public isPreviewOf(resource: zycode.Uri): boolean {
 		return this._resource.fsPath === resource.fsPath;
 	}
 
@@ -238,9 +238,9 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 			return;
 		}
 
-		let document: vscode.TextDocument;
+		let document: zycode.TextDocument;
 		try {
-			document = await vscode.workspace.openTextDocument(this._resource);
+			document = await zycode.workspace.openTextDocument(this._resource);
 		} catch {
 			if (!this._disposed) {
 				await this._showFileNotFoundError();
@@ -264,7 +264,7 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 		this._currentVersion = pendingVersion;
 
 		let selectedLine: number | undefined = undefined;
-		for (const editor of vscode.window.visibleTextEditors) {
+		for (const editor of zycode.window.visibleTextEditors) {
 			if (this.isPreviewOf(editor.document.uri)) {
 				selectedLine = editor.selection.active.line;
 				break;
@@ -291,7 +291,7 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 			return;
 		}
 
-		for (const editor of vscode.window.visibleTextEditors) {
+		for (const editor of zycode.window.visibleTextEditors) {
 			if (!this.isPreviewOf(editor.document.uri)) {
 				continue;
 			}
@@ -303,29 +303,29 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 
 	private async _onDidClickPreview(line: number): Promise<void> {
 		// fix #82457, find currently opened but unfocused source tab
-		await vscode.commands.executeCommand('markdown.showSource');
+		await zycode.commands.executeCommand('markdown.showSource');
 
-		const revealLineInEditor = (editor: vscode.TextEditor) => {
-			const position = new vscode.Position(line, 0);
-			const newSelection = new vscode.Selection(position, position);
+		const revealLineInEditor = (editor: zycode.TextEditor) => {
+			const position = new zycode.Position(line, 0);
+			const newSelection = new zycode.Selection(position, position);
 			editor.selection = newSelection;
-			editor.revealRange(newSelection, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+			editor.revealRange(newSelection, zycode.TextEditorRevealType.InCenterIfOutsideViewport);
 		};
 
-		for (const visibleEditor of vscode.window.visibleTextEditors) {
+		for (const visibleEditor of zycode.window.visibleTextEditors) {
 			if (this.isPreviewOf(visibleEditor.document.uri)) {
-				const editor = await vscode.window.showTextDocument(visibleEditor.document, visibleEditor.viewColumn);
+				const editor = await zycode.window.showTextDocument(visibleEditor.document, visibleEditor.viewColumn);
 				revealLineInEditor(editor);
 				return;
 			}
 		}
 
-		await vscode.workspace.openTextDocument(this._resource)
-			.then(vscode.window.showTextDocument)
+		await zycode.workspace.openTextDocument(this._resource)
+			.then(zycode.window.showTextDocument)
 			.then((editor) => {
 				revealLineInEditor(editor);
 			}, () => {
-				vscode.window.showErrorMessage(vscode.l10n.t('Could not open {0}', this._resource.toString()));
+				zycode.window.showErrorMessage(zycode.l10n.t('Could not open {0}', this._resource.toString()));
 			});
 	}
 
@@ -364,11 +364,11 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 		}
 
 		// Create new file watchers.
-		const root = vscode.Uri.joinPath(this._resource, '../');
+		const root = zycode.Uri.joinPath(this._resource, '../');
 		for (const src of srcs) {
 			const uri = urlToUri(src, root);
 			if (uri && !MarkdownPreview._unwatchedImageSchemes.has(uri.scheme) && !this._fileWatchersBySrc.has(src)) {
-				const watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(uri, '*'));
+				const watcher = zycode.workspace.createFileSystemWatcher(new zycode.RelativePattern(uri, '*'));
 				watcher.onDidChange(() => {
 					this.refresh(true);
 				});
@@ -377,7 +377,7 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 		}
 	}
 
-	private _getWebviewOptions(): vscode.WebviewOptions {
+	private _getWebviewOptions(): zycode.WebviewOptions {
 		return {
 			enableScripts: true,
 			enableForms: false,
@@ -385,12 +385,12 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 		};
 	}
 
-	private _getLocalResourceRoots(): ReadonlyArray<vscode.Uri> {
+	private _getLocalResourceRoots(): ReadonlyArray<zycode.Uri> {
 		const baseRoots = Array.from(this._contributionProvider.contributions.previewResourceRoots);
 
-		const folder = vscode.workspace.getWorkspaceFolder(this._resource);
+		const folder = zycode.workspace.getWorkspaceFolder(this._resource);
 		if (folder) {
-			const workspaceRoots = vscode.workspace.workspaceFolders?.map(folder => folder.uri);
+			const workspaceRoots = zycode.workspace.workspaceFolders?.map(folder => folder.uri);
 			if (workspaceRoots) {
 				baseRoots.push(...workspaceRoots);
 			}
@@ -402,13 +402,13 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 	}
 
 	private async _onDidClickPreviewLink(href: string) {
-		const config = vscode.workspace.getConfiguration('markdown', this.resource);
+		const config = zycode.workspace.getConfiguration('markdown', this.resource);
 		const openLinks = config.get<string>('preview.openMarkdownLinks', 'inPreview');
 		if (openLinks === 'inPreview') {
 			const resolved = await this._opener.resolveDocumentLink(href, this.resource);
 			if (resolved.kind === 'file') {
 				try {
-					const doc = await vscode.workspace.openTextDocument(vscode.Uri.from(resolved.uri));
+					const doc = await zycode.workspace.openTextDocument(zycode.Uri.from(resolved.uri));
 					if (isMarkdownFile(doc)) {
 						return this._delegate.openPreviewLinkToMarkdownFile(doc.uri, resolved.fragment ? decodeURIComponent(resolved.fragment) : undefined);
 					}
@@ -423,7 +423,7 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 
 	//#region WebviewResourceProvider
 
-	asWebviewUri(resource: vscode.Uri) {
+	asWebviewUri(resource: zycode.Uri) {
 		return this._webviewPanel.webview.asWebviewUri(resource);
 	}
 
@@ -436,11 +436,11 @@ class MarkdownPreview extends Disposable implements WebviewResourceProvider {
 
 export interface IManagedMarkdownPreview {
 
-	readonly resource: vscode.Uri;
-	readonly resourceColumn: vscode.ViewColumn;
+	readonly resource: zycode.Uri;
+	readonly resourceColumn: zycode.ViewColumn;
 
-	readonly onDispose: vscode.Event<void>;
-	readonly onDidChangeViewState: vscode.Event<vscode.WebviewPanelOnDidChangeViewStateEvent>;
+	readonly onDispose: zycode.Event<void>;
+	readonly onDidChangeViewState: zycode.Event<zycode.WebviewPanelOnDidChangeViewStateEvent>;
 
 	copyImage(id: string): void;
 	dispose(): void;
@@ -448,19 +448,19 @@ export interface IManagedMarkdownPreview {
 	updateConfiguration(): void;
 
 	matchesResource(
-		otherResource: vscode.Uri,
-		otherPosition: vscode.ViewColumn | undefined,
+		otherResource: zycode.Uri,
+		otherPosition: zycode.ViewColumn | undefined,
 		otherLocked: boolean
 	): boolean;
 }
 
 export class StaticMarkdownPreview extends Disposable implements IManagedMarkdownPreview {
 
-	public static readonly customEditorViewType = 'vscode.markdown.preview.editor';
+	public static readonly customEditorViewType = 'zycode.markdown.preview.editor';
 
 	public static revive(
-		resource: vscode.Uri,
-		webview: vscode.WebviewPanel,
+		resource: zycode.Uri,
+		webview: zycode.WebviewPanel,
 		contentProvider: MdDocumentRenderer,
 		previewConfigurations: MarkdownPreviewConfigurationManager,
 		topmostLineMonitor: TopmostLineMonitor,
@@ -475,8 +475,8 @@ export class StaticMarkdownPreview extends Disposable implements IManagedMarkdow
 	private readonly _preview: MarkdownPreview;
 
 	private constructor(
-		private readonly _webviewPanel: vscode.WebviewPanel,
-		resource: vscode.Uri,
+		private readonly _webviewPanel: zycode.WebviewPanel,
+		resource: zycode.Uri,
 		contentProvider: MdDocumentRenderer,
 		private readonly _previewConfigurations: MarkdownPreviewConfigurationManager,
 		topmostLineMonitor: TopmostLineMonitor,
@@ -490,7 +490,7 @@ export class StaticMarkdownPreview extends Disposable implements IManagedMarkdow
 		this._preview = this._register(new MarkdownPreview(this._webviewPanel, resource, topScrollLocation, {
 			getAdditionalState: () => { return {}; },
 			openPreviewLinkToMarkdownFile: (markdownLink, fragment) => {
-				return vscode.commands.executeCommand('vscode.openWith', markdownLink.with({
+				return zycode.commands.executeCommand('zycode.openWith', markdownLink.with({
 					fragment
 				}), StaticMarkdownPreview.customEditorViewType, this._webviewPanel.viewColumn);
 			}
@@ -524,10 +524,10 @@ export class StaticMarkdownPreview extends Disposable implements IManagedMarkdow
 		});
 	}
 
-	private readonly _onDispose = this._register(new vscode.EventEmitter<void>());
+	private readonly _onDispose = this._register(new zycode.EventEmitter<void>());
 	public readonly onDispose = this._onDispose.event;
 
-	private readonly _onDidChangeViewState = this._register(new vscode.EventEmitter<vscode.WebviewPanelOnDidChangeViewStateEvent>());
+	private readonly _onDidChangeViewState = this._register(new zycode.EventEmitter<zycode.WebviewPanelOnDidChangeViewStateEvent>());
 	public readonly onDidChangeViewState = this._onDidChangeViewState.event;
 
 	override dispose() {
@@ -536,8 +536,8 @@ export class StaticMarkdownPreview extends Disposable implements IManagedMarkdow
 	}
 
 	public matchesResource(
-		_otherResource: vscode.Uri,
-		_otherPosition: vscode.ViewColumn | undefined,
+		_otherResource: zycode.Uri,
+		_otherPosition: zycode.ViewColumn | undefined,
 		_otherLocked: boolean
 	): boolean {
 		return false;
@@ -558,13 +558,13 @@ export class StaticMarkdownPreview extends Disposable implements IManagedMarkdow
 	}
 
 	public get resourceColumn() {
-		return this._webviewPanel.viewColumn || vscode.ViewColumn.One;
+		return this._webviewPanel.viewColumn || zycode.ViewColumn.One;
 	}
 }
 
 interface DynamicPreviewInput {
-	readonly resource: vscode.Uri;
-	readonly resourceColumn: vscode.ViewColumn;
+	readonly resource: zycode.Uri;
+	readonly resourceColumn: zycode.ViewColumn;
 	readonly locked: boolean;
 	readonly line?: number;
 }
@@ -573,15 +573,15 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 
 	public static readonly viewType = 'markdown.preview';
 
-	private readonly _resourceColumn: vscode.ViewColumn;
+	private readonly _resourceColumn: zycode.ViewColumn;
 	private _locked: boolean;
 
-	private readonly _webviewPanel: vscode.WebviewPanel;
+	private readonly _webviewPanel: zycode.WebviewPanel;
 	private _preview: MarkdownPreview;
 
 	public static revive(
 		input: DynamicPreviewInput,
-		webview: vscode.WebviewPanel,
+		webview: zycode.WebviewPanel,
 		contentProvider: MdDocumentRenderer,
 		previewConfigurations: MarkdownPreviewConfigurationManager,
 		logger: ILogger,
@@ -597,7 +597,7 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 
 	public static create(
 		input: DynamicPreviewInput,
-		previewColumn: vscode.ViewColumn,
+		previewColumn: zycode.ViewColumn,
 		contentProvider: MdDocumentRenderer,
 		previewConfigurations: MarkdownPreviewConfigurationManager,
 		logger: ILogger,
@@ -605,7 +605,7 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 		contributionProvider: MarkdownContributionProvider,
 		opener: MdLinkOpener,
 	): DynamicMarkdownPreview {
-		const webview = vscode.window.createWebviewPanel(
+		const webview = zycode.window.createWebviewPanel(
 			DynamicMarkdownPreview.viewType,
 			DynamicMarkdownPreview._getPreviewTitle(input.resource, input.locked),
 			previewColumn, { enableFindWidget: true, });
@@ -617,7 +617,7 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 	}
 
 	private constructor(
-		webview: vscode.WebviewPanel,
+		webview: zycode.WebviewPanel,
 		input: DynamicPreviewInput,
 		private readonly _contentProvider: MdDocumentRenderer,
 		private readonly _previewConfigurations: MarkdownPreviewConfigurationManager,
@@ -647,7 +647,7 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 			}
 		}));
 
-		this._register(vscode.window.onDidChangeTextEditorSelection(event => {
+		this._register(zycode.window.onDidChangeTextEditorSelection(event => {
 			if (this._preview.isPreviewOf(event.textEditor.document.uri)) {
 				this._preview.postMessage({
 					type: 'onDidChangeTextEditorSelection',
@@ -657,7 +657,7 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 			}
 		}));
 
-		this._register(vscode.window.onDidChangeActiveTextEditor(editor => {
+		this._register(zycode.window.onDidChangeActiveTextEditor(editor => {
 			// Only allow previewing normal text editors which have a viewColumn: See #101514
 			if (typeof editor?.viewColumn === 'undefined') {
 				return;
@@ -679,10 +679,10 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 		});
 	}
 
-	private readonly _onDisposeEmitter = this._register(new vscode.EventEmitter<void>());
+	private readonly _onDisposeEmitter = this._register(new zycode.EventEmitter<void>());
 	public readonly onDispose = this._onDisposeEmitter.event;
 
-	private readonly _onDidChangeViewStateEmitter = this._register(new vscode.EventEmitter<vscode.WebviewPanelOnDidChangeViewStateEvent>());
+	private readonly _onDidChangeViewStateEmitter = this._register(new zycode.EventEmitter<zycode.WebviewPanelOnDidChangeViewStateEvent>());
 	public readonly onDidChangeViewState = this._onDidChangeViewStateEmitter.event;
 
 	override dispose() {
@@ -702,7 +702,7 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 		return this._resourceColumn;
 	}
 
-	public reveal(viewColumn: vscode.ViewColumn) {
+	public reveal(viewColumn: zycode.ViewColumn) {
 		this._webviewPanel.reveal(viewColumn);
 	}
 
@@ -716,7 +716,7 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 		}
 	}
 
-	public update(newResource: vscode.Uri, scrollLocation?: StartingScrollLocation) {
+	public update(newResource: zycode.Uri, scrollLocation?: StartingScrollLocation) {
 		if (this._preview.isPreviewOf(newResource)) {
 			switch (scrollLocation?.type) {
 				case 'line':
@@ -741,20 +741,20 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 		this._webviewPanel.title = DynamicMarkdownPreview._getPreviewTitle(this._preview.resource, this._locked);
 	}
 
-	private static _getPreviewTitle(resource: vscode.Uri, locked: boolean): string {
+	private static _getPreviewTitle(resource: zycode.Uri, locked: boolean): string {
 		const resourceLabel = uri.Utils.basename(resource);
 		return locked
-			? vscode.l10n.t('[Preview] {0}', resourceLabel)
-			: vscode.l10n.t('Preview {0}', resourceLabel);
+			? zycode.l10n.t('[Preview] {0}', resourceLabel)
+			: zycode.l10n.t('Preview {0}', resourceLabel);
 	}
 
-	public get position(): vscode.ViewColumn | undefined {
+	public get position(): zycode.ViewColumn | undefined {
 		return this._webviewPanel.viewColumn;
 	}
 
 	public matchesResource(
-		otherResource: vscode.Uri,
-		otherPosition: vscode.ViewColumn | undefined,
+		otherResource: zycode.Uri,
+		otherPosition: zycode.ViewColumn | undefined,
 		otherLocked: boolean
 	): boolean {
 		if (this.position !== otherPosition) {
@@ -772,7 +772,7 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 		return this.matchesResource(otherPreview._preview.resource, otherPreview.position, otherPreview._locked);
 	}
 
-	private _createPreview(resource: vscode.Uri, startingScroll?: StartingScrollLocation): MarkdownPreview {
+	private _createPreview(resource: zycode.Uri, startingScroll?: StartingScrollLocation): MarkdownPreview {
 		return new MarkdownPreview(this._webviewPanel, resource, startingScroll, {
 			getTitle: (resource) => DynamicMarkdownPreview._getPreviewTitle(resource, this._locked),
 			getAdditionalState: () => {
@@ -781,7 +781,7 @@ export class DynamicMarkdownPreview extends Disposable implements IManagedMarkdo
 					locked: this._locked,
 				};
 			},
-			openPreviewLinkToMarkdownFile: (link: vscode.Uri, fragment?: string) => {
+			openPreviewLinkToMarkdownFile: (link: zycode.Uri, fragment?: string) => {
 				this.update(link, fragment ? new StartingScrollFragment(fragment) : undefined);
 			}
 		},

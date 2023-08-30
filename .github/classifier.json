@@ -1,5 +1,5 @@
 {
-	"$schema": "https://raw.githubusercontent.com/microsoft/vscode-github-triage-actions/stable/classifier-deep/apply/apply-labels/deep-classifier-config.schema.json",
+	"$schema": "https://raw.githubusercontent.com/microsoft/zycode-github-triage-actions/stable/classifier-deep/apply/apply-labels/deep-classifier-config.schema.json",
 	"vacation": [],
 	"assignees": {
 		"nameToOverrideAccuracyOf": {"accuracy": 0.8}
@@ -265,9 +265,9 @@
 		"variable-resolving": {"assign": ["alexr00"]},
 		"VIM": {"assign": ["alexdima", "rebornix"]},
 		"virtual-workspaces": {"assign": []},
-		"vscode.dev": {"assign": []},
-		"vscode-build": {"assign": []},
-		"vscode-website": {"assign": ["rzhao271"]},
+		"zycode.dev": {"assign": []},
+		"zycode-build": {"assign": []},
+		"zycode-website": {"assign": ["rzhao271"]},
 		"web": {"assign": []},
 		"webview": {"assign": ["mjbvz"]},
 		"webview-views": {"assign": ["mjbvz"]},

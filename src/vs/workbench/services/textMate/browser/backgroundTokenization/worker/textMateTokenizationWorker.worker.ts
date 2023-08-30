@@ -9,7 +9,7 @@ import { IModelChangedEvent } from 'vs/editor/common/model/mirrorTextModel';
 import { IWorkerContext } from 'vs/editor/common/services/editorSimpleWorker';
 import { ICreateGrammarResult, TMGrammarFactory } from 'vs/workbench/services/textMate/common/TMGrammarFactory';
 import { IValidEmbeddedLanguagesMap, IValidGrammarDefinition, IValidTokenTypeMap } from 'vs/workbench/services/textMate/common/TMScopeRegistry';
-import type { IOnigLib, IRawTheme, StackDiff } from 'vscode-textmate';
+import type { IOnigLib, IRawTheme, StackDiff } from 'zycode-textmate';
 import { TextMateWorkerTokenizer } from './textMateWorkerTokenizer';
 
 /**

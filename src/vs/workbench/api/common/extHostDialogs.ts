@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { URI } from 'vs/base/common/uri';
 import { MainContext, MainThreadDiaglogsShape, IMainContext } from 'vs/workbench/api/common/extHost.protocol';
 import { checkProposedApiEnabled } from 'vs/workbench/services/extensions/common/extensions';
@@ -17,7 +17,7 @@ export class ExtHostDialogs {
 		this._proxy = mainContext.getProxy(MainContext.MainThreadDialogs);
 	}
 
-	showOpenDialog(extension: IRelaxedExtensionDescription, options?: vscode.OpenDialogOptions): Promise<URI[] | undefined> {
+	showOpenDialog(extension: IRelaxedExtensionDescription, options?: zycode.OpenDialogOptions): Promise<URI[] | undefined> {
 		if (options?.allowUIResources) {
 			checkProposedApiEnabled(extension, 'showLocal');
 		}
@@ -26,7 +26,7 @@ export class ExtHostDialogs {
 		});
 	}
 
-	showSaveDialog(options?: vscode.SaveDialogOptions): Promise<URI | undefined> {
+	showSaveDialog(options?: zycode.SaveDialogOptions): Promise<URI | undefined> {
 		return this._proxy.$showSaveDialog(options).then(filepath => {
 			return filepath ? URI.revive(filepath) : undefined;
 		});

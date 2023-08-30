@@ -257,8 +257,8 @@ export function validateExtensionManifest(productVersion: string, productDate: P
 		validations.push([Severity.Error, nls.localize('extensionDescription.engines', "property `{0}` is mandatory and must be of type `object`", 'engines')]);
 		return validations;
 	}
-	if (typeof extensionManifest.engines.vscode !== 'string') {
-		validations.push([Severity.Error, nls.localize('extensionDescription.engines.vscode', "property `{0}` is mandatory and must be of type `string`", 'engines.vscode')]);
+	if (typeof extensionManifest.engines.zycode !== 'string') {
+		validations.push([Severity.Error, nls.localize('extensionDescription.engines.zycode', "property `{0}` is mandatory and must be of type `string`", 'engines.zycode')]);
 		return validations;
 	}
 	if (typeof extensionManifest.extensionDependencies !== 'undefined') {
@@ -330,7 +330,7 @@ export function isValidExtensionVersion(productVersion: string, productDate: Pro
 		return true;
 	}
 
-	return isVersionValid(productVersion, productDate, extensionManifest.engines.vscode, notices);
+	return isVersionValid(productVersion, productDate, extensionManifest.engines.zycode, notices);
 }
 
 export function isEngineValid(engine: string, version: string, date: ProductDate): boolean {
@@ -342,7 +342,7 @@ function isVersionValid(currentVersion: string, date: ProductDate, requestedVers
 
 	const desiredVersion = normalizeVersion(parseVersion(requestedVersion));
 	if (!desiredVersion) {
-		notices.push(nls.localize('versionSyntax', "Could not parse `engines.vscode` value {0}. Please use, for example: ^1.22.0, ^1.22.x, etc.", requestedVersion));
+		notices.push(nls.localize('versionSyntax', "Could not parse `engines.zycode` value {0}. Please use, for example: ^1.22.0, ^1.22.x, etc.", requestedVersion));
 		return false;
 	}
 
@@ -352,13 +352,13 @@ function isVersionValid(currentVersion: string, date: ProductDate, requestedVers
 	if (desiredVersion.majorBase === 0) {
 		// force that major and minor must be specific
 		if (!desiredVersion.majorMustEqual || !desiredVersion.minorMustEqual) {
-			notices.push(nls.localize('versionSpecificity1', "Version specified in `engines.vscode` ({0}) is not specific enough. For vscode versions before 1.0.0, please define at a minimum the major and minor desired version. E.g. ^0.10.0, 0.10.x, 0.11.0, etc.", requestedVersion));
+			notices.push(nls.localize('versionSpecificity1', "Version specified in `engines.zycode` ({0}) is not specific enough. For zycode versions before 1.0.0, please define at a minimum the major and minor desired version. E.g. ^0.10.0, 0.10.x, 0.11.0, etc.", requestedVersion));
 			return false;
 		}
 	} else {
 		// force that major must be specific
 		if (!desiredVersion.majorMustEqual) {
-			notices.push(nls.localize('versionSpecificity2', "Version specified in `engines.vscode` ({0}) is not specific enough. For vscode versions after 1.0.0, please define at a minimum the major desired version. E.g. ^1.10.0, 1.10.x, 1.x.x, 2.x.x, etc.", requestedVersion));
+			notices.push(nls.localize('versionSpecificity2', "Version specified in `engines.zycode` ({0}) is not specific enough. For zycode versions after 1.0.0, please define at a minimum the major desired version. E.g. ^1.10.0, 1.10.x, 1.x.x, 2.x.x, etc.", requestedVersion));
 			return false;
 		}
 	}

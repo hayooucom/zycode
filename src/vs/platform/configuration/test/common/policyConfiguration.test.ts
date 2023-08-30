@@ -25,7 +25,7 @@ suite('PolicyConfiguration', () => {
 	let testObject: PolicyConfiguration;
 	let fileService: IFileService;
 	let policyService: IPolicyService;
-	const policyFile = URI.file('policyFile').with({ scheme: 'vscode-tests' });
+	const policyFile = URI.file('policyFile').with({ scheme: 'zycode-tests' });
 	const disposables = new DisposableStore();
 	const policyConfigurationNode: IConfigurationNode = {
 		'id': 'policyConfiguration',

@@ -437,7 +437,7 @@ export class TextAreaInput extends Disposable {
 		}));
 		this._register(this._textArea.onBlur(() => {
 			if (this._currentComposition) {
-				// See https://github.com/microsoft/vscode/issues/112621
+				// See https://github.com/microsoft/zycode/issues/112621
 				// where compositionend is not triggered when the editor
 				// is taken off-dom during a composition
 
@@ -475,7 +475,7 @@ export class TextAreaInput extends Disposable {
 	}
 
 	private _installSelectionChangeListener(): IDisposable {
-		// See https://github.com/microsoft/vscode/issues/27216 and https://github.com/microsoft/vscode/issues/98256
+		// See https://github.com/microsoft/zycode/issues/27216 and https://github.com/microsoft/zycode/issues/98256
 		// When using a Braille display, it is possible for users to reposition the
 		// system caret. This is reflected in Chrome as a `selectionchange` event.
 		//
@@ -655,7 +655,7 @@ export const ClipboardEventUtils = {
 	getTextData(clipboardData: DataTransfer): [string, ClipboardStoredMetadata | null] {
 		const text = clipboardData.getData(Mimes.text);
 		let metadata: ClipboardStoredMetadata | null = null;
-		const rawmetadata = clipboardData.getData('vscode-editor-data');
+		const rawmetadata = clipboardData.getData('zycode-editor-data');
 		if (typeof rawmetadata === 'string') {
 			try {
 				metadata = <ClipboardStoredMetadata>JSON.parse(rawmetadata);
@@ -681,7 +681,7 @@ export const ClipboardEventUtils = {
 		if (typeof html === 'string') {
 			clipboardData.setData('text/html', html);
 		}
-		clipboardData.setData('vscode-editor-data', JSON.stringify(metadata));
+		clipboardData.setData('zycode-editor-data', JSON.stringify(metadata));
 	}
 };
 

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { CancellationToken } from 'vs/base/common/cancellation';
 import { URI, UriComponents } from 'vs/base/common/uri';
 import { ExtHostQuickDiffShape, IMainContext, MainContext, MainThreadQuickDiffShape } from 'vs/workbench/api/common/extHost.protocol';
@@ -15,7 +15,7 @@ export class ExtHostQuickDiff implements ExtHostQuickDiffShape {
 	private static handlePool: number = 0;
 
 	private proxy: MainThreadQuickDiffShape;
-	private providers: Map<number, vscode.QuickDiffProvider> = new Map();
+	private providers: Map<number, zycode.QuickDiffProvider> = new Map();
 
 	constructor(
 		mainContext: IMainContext,
@@ -36,7 +36,7 @@ export class ExtHostQuickDiff implements ExtHostQuickDiffShape {
 			.then<UriComponents | null>(r => r || null);
 	}
 
-	registerQuickDiffProvider(selector: vscode.DocumentSelector, quickDiffProvider: vscode.QuickDiffProvider, label: string, rootUri?: vscode.Uri): vscode.Disposable {
+	registerQuickDiffProvider(selector: zycode.DocumentSelector, quickDiffProvider: zycode.QuickDiffProvider, label: string, rootUri?: zycode.Uri): zycode.Disposable {
 		const handle = ExtHostQuickDiff.handlePool++;
 		this.providers.set(handle, quickDiffProvider);
 		this.proxy.$registerQuickDiffProvider(handle, DocumentSelector.from(selector, this.uriTransformer), label, rootUri);

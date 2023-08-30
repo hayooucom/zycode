@@ -8,8 +8,8 @@ import { readFileSync, writeFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 
 const rootPath = resolve(fileURLToPath(import.meta.url), '..', '..', '..', '..');
-const vscodePath = join(rootPath, 'vscode');
-const distroPath = join(rootPath, 'vscode-distro');
+const vscodePath = join(rootPath, 'zycode');
+const distroPath = join(rootPath, 'zycode-distro');
 const commit = execSync('git rev-parse HEAD', { cwd: distroPath, encoding: 'utf8' }).trim();
 const packageJsonPath = join(vscodePath, 'package.json');
 const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));

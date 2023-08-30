@@ -3,13 +3,13 @@
   "displayName": "%displayName%",
   "description": "%description%",
   "version": "1.0.0",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "license": "MIT",
   "engines": {
-    "vscode": "*"
+    "zycode": "*"
   },
   "scripts": {
-    "update-grammar": "node ../node_modules/vscode-grammar-updater/bin emilast/vscode-logfile-highlighter syntaxes/log.tmLanguage ./syntaxes/log.tmLanguage.json"
+    "update-grammar": "node ../node_modules/zycode-grammar-updater/bin emilast/zycode-logfile-highlighter syntaxes/log.tmLanguage ./syntaxes/log.tmLanguage.json"
   },
   "contributes": {
     "languages": [
@@ -34,6 +34,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

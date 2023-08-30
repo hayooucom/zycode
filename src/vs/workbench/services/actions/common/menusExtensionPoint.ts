@@ -452,19 +452,19 @@ namespace schema {
 		required: ['command'],
 		properties: {
 			command: {
-				description: localize('vscode.extension.contributes.menuItem.command', 'Identifier of the command to execute. The command must be declared in the \'commands\'-section'),
+				description: localize('zycode.extension.contributes.menuItem.command', 'Identifier of the command to execute. The command must be declared in the \'commands\'-section'),
 				type: 'string'
 			},
 			alt: {
-				description: localize('vscode.extension.contributes.menuItem.alt', 'Identifier of an alternative command to execute. The command must be declared in the \'commands\'-section'),
+				description: localize('zycode.extension.contributes.menuItem.alt', 'Identifier of an alternative command to execute. The command must be declared in the \'commands\'-section'),
 				type: 'string'
 			},
 			when: {
-				description: localize('vscode.extension.contributes.menuItem.when', 'Condition which must be true to show this item'),
+				description: localize('zycode.extension.contributes.menuItem.when', 'Condition which must be true to show this item'),
 				type: 'string'
 			},
 			group: {
-				description: localize('vscode.extension.contributes.menuItem.group', 'Group into which this item belongs'),
+				description: localize('zycode.extension.contributes.menuItem.group', 'Group into which this item belongs'),
 				type: 'string'
 			}
 		}
@@ -475,15 +475,15 @@ namespace schema {
 		required: ['submenu'],
 		properties: {
 			submenu: {
-				description: localize('vscode.extension.contributes.menuItem.submenu', 'Identifier of the submenu to display in this item.'),
+				description: localize('zycode.extension.contributes.menuItem.submenu', 'Identifier of the submenu to display in this item.'),
 				type: 'string'
 			},
 			when: {
-				description: localize('vscode.extension.contributes.menuItem.when', 'Condition which must be true to show this item'),
+				description: localize('zycode.extension.contributes.menuItem.when', 'Condition which must be true to show this item'),
 				type: 'string'
 			},
 			group: {
-				description: localize('vscode.extension.contributes.menuItem.group', 'Group into which this item belongs'),
+				description: localize('zycode.extension.contributes.menuItem.group', 'Group into which this item belongs'),
 				type: 'string'
 			}
 		}
@@ -494,15 +494,15 @@ namespace schema {
 		required: ['id', 'label'],
 		properties: {
 			id: {
-				description: localize('vscode.extension.contributes.submenu.id', 'Identifier of the menu to display as a submenu.'),
+				description: localize('zycode.extension.contributes.submenu.id', 'Identifier of the menu to display as a submenu.'),
 				type: 'string'
 			},
 			label: {
-				description: localize('vscode.extension.contributes.submenu.label', 'The label of the menu item which leads to this submenu.'),
+				description: localize('zycode.extension.contributes.submenu.label', 'The label of the menu item which leads to this submenu.'),
 				type: 'string'
 			},
 			icon: {
-				description: localize({ key: 'vscode.extension.contributes.submenu.icon', comment: ['do not translate or change `\\$(zap)`, \\ in front of $ is important.'] }, '(Optional) Icon which is used to represent the submenu in the UI. Either a file path, an object with file paths for dark and light themes, or a theme icon references, like `\\$(zap)`'),
+				description: localize({ key: 'zycode.extension.contributes.submenu.icon', comment: ['do not translate or change `\\$(zap)`, \\ in front of $ is important.'] }, '(Optional) Icon which is used to represent the submenu in the UI. Either a file path, an object with file paths for dark and light themes, or a theme icon references, like `\\$(zap)`'),
 				anyOf: [{
 					type: 'string'
 				},
@@ -510,11 +510,11 @@ namespace schema {
 					type: 'object',
 					properties: {
 						light: {
-							description: localize('vscode.extension.contributes.submenu.icon.light', 'Icon path when a light theme is used'),
+							description: localize('zycode.extension.contributes.submenu.icon.light', 'Icon path when a light theme is used'),
 							type: 'string'
 						},
 						dark: {
-							description: localize('vscode.extension.contributes.submenu.icon.dark', 'Icon path when a dark theme is used'),
+							description: localize('zycode.extension.contributes.submenu.icon.dark', 'Icon path when a dark theme is used'),
 							type: 'string'
 						}
 					}
@@ -524,7 +524,7 @@ namespace schema {
 	};
 
 	export const menusContribution: IJSONSchema = {
-		description: localize('vscode.extension.contributes.menus', "Contributes menu items to the editor"),
+		description: localize('zycode.extension.contributes.menus', "Contributes menu items to the editor"),
 		type: 'object',
 		properties: index(apiMenus, menu => menu.key, menu => ({
 			markdownDescription: menu.proposed ? localize('proposed', "Proposed API, requires `enabledApiProposal: [\"{0}\"]` - {1}", menu.proposed, menu.description) : menu.description,
@@ -539,7 +539,7 @@ namespace schema {
 	};
 
 	export const submenusContribution: IJSONSchema = {
-		description: localize('vscode.extension.contributes.submenus', "Contributes submenu items to the editor"),
+		description: localize('zycode.extension.contributes.submenus', "Contributes submenu items to the editor"),
 		type: 'array',
 		items: submenu
 	};
@@ -618,27 +618,27 @@ namespace schema {
 		required: ['command', 'title'],
 		properties: {
 			command: {
-				description: localize('vscode.extension.contributes.commandType.command', 'Identifier of the command to execute'),
+				description: localize('zycode.extension.contributes.commandType.command', 'Identifier of the command to execute'),
 				type: 'string'
 			},
 			title: {
-				description: localize('vscode.extension.contributes.commandType.title', 'Title by which the command is represented in the UI'),
+				description: localize('zycode.extension.contributes.commandType.title', 'Title by which the command is represented in the UI'),
 				type: 'string'
 			},
 			shortTitle: {
-				markdownDescription: localize('vscode.extension.contributes.commandType.shortTitle', '(Optional) Short title by which the command is represented in the UI. Menus pick either `title` or `shortTitle` depending on the context in which they show commands.'),
+				markdownDescription: localize('zycode.extension.contributes.commandType.shortTitle', '(Optional) Short title by which the command is represented in the UI. Menus pick either `title` or `shortTitle` depending on the context in which they show commands.'),
 				type: 'string'
 			},
 			category: {
-				description: localize('vscode.extension.contributes.commandType.category', '(Optional) Category string by which the command is grouped in the UI'),
+				description: localize('zycode.extension.contributes.commandType.category', '(Optional) Category string by which the command is grouped in the UI'),
 				type: 'string'
 			},
 			enablement: {
-				description: localize('vscode.extension.contributes.commandType.precondition', '(Optional) Condition which must be true to enable the command in the UI (menu and keybindings). Does not prevent executing the command by other means, like the `executeCommand`-api.'),
+				description: localize('zycode.extension.contributes.commandType.precondition', '(Optional) Condition which must be true to enable the command in the UI (menu and keybindings). Does not prevent executing the command by other means, like the `executeCommand`-api.'),
 				type: 'string'
 			},
 			icon: {
-				description: localize({ key: 'vscode.extension.contributes.commandType.icon', comment: ['do not translate or change `\\$(zap)`, \\ in front of $ is important.'] }, '(Optional) Icon which is used to represent the command in the UI. Either a file path, an object with file paths for dark and light themes, or a theme icon references, like `\\$(zap)`'),
+				description: localize({ key: 'zycode.extension.contributes.commandType.icon', comment: ['do not translate or change `\\$(zap)`, \\ in front of $ is important.'] }, '(Optional) Icon which is used to represent the command in the UI. Either a file path, an object with file paths for dark and light themes, or a theme icon references, like `\\$(zap)`'),
 				anyOf: [{
 					type: 'string'
 				},
@@ -646,11 +646,11 @@ namespace schema {
 					type: 'object',
 					properties: {
 						light: {
-							description: localize('vscode.extension.contributes.commandType.icon.light', 'Icon path when a light theme is used'),
+							description: localize('zycode.extension.contributes.commandType.icon.light', 'Icon path when a light theme is used'),
 							type: 'string'
 						},
 						dark: {
-							description: localize('vscode.extension.contributes.commandType.icon.dark', 'Icon path when a dark theme is used'),
+							description: localize('zycode.extension.contributes.commandType.icon.dark', 'Icon path when a dark theme is used'),
 							type: 'string'
 						}
 					}
@@ -660,7 +660,7 @@ namespace schema {
 	};
 
 	export const commandsContribution: IJSONSchema = {
-		description: localize('vscode.extension.contributes.commands', "Contributes commands to the command palette."),
+		description: localize('zycode.extension.contributes.commands', "Contributes commands to the command palette."),
 		oneOf: [
 			commandType,
 			{

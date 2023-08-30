@@ -4,7 +4,7 @@ setlocal
 pushd %~dp0\..
 
 IF "%~1" == "" (
-	set AUTHORITY=vscode-remote://test+test/
+	set AUTHORITY=zycode-remote://test+test/
 	:: backward to forward slashed
 	set EXT_PATH=%CD:\=/%/extensions
 
@@ -28,7 +28,7 @@ set TESTRESOLVER_LOGS_FOLDER=%VSCODELOGSDIR%\server
 if "%VSCODE_REMOTE_SERVER_PATH%"=="" (
 	echo Using remote server out of sources for integration tests
 ) else (
-	set TESTRESOLVER_INSTALL_BUILTIN_EXTENSION=ms-vscode.vscode-smoketest-check
+	set TESTRESOLVER_INSTALL_BUILTIN_EXTENSION=ms-zycode.zycode-smoketest-check
 	echo Using '%VSCODE_REMOTE_SERVER_PATH%' as server path
 )
 
@@ -44,7 +44,7 @@ if "%INTEGRATION_TEST_ELECTRON_PATH%"=="" (
 	set ELECTRON_ENABLE_LOGGING=1
 
 	:: Extra arguments only when running against a built version
-	set API_TESTS_EXTRA_ARGS_BUILT=--extensions-dir=%EXT_PATH% --enable-proposed-api=vscode.vscode-test-resolver --enable-proposed-api=vscode.vscode-api-tests
+	set API_TESTS_EXTRA_ARGS_BUILT=--extensions-dir=%EXT_PATH% --enable-proposed-api=zycode.zycode-test-resolver --enable-proposed-api=zycode.zycode-api-tests
 
  	echo Using %INTEGRATION_TEST_ELECTRON_PATH% as Electron path
 )
@@ -59,12 +59,12 @@ set API_TESTS_EXTRA_ARGS=--disable-telemetry --skip-welcome --skip-release-notes
 
 echo.
 echo ### API tests (folder)
-call "%INTEGRATION_TEST_ELECTRON_PATH%" --folder-uri=%REMOTE_EXT_PATH%/vscode-api-tests/testWorkspace --extensionDevelopmentPath=%REMOTE_EXT_PATH%/vscode-api-tests --extensionTestsPath=%REMOTE_EXT_PATH%/vscode-api-tests/out/singlefolder-tests %API_TESTS_EXTRA_ARGS% %API_TESTS_EXTRA_ARGS_BUILT%
+call "%INTEGRATION_TEST_ELECTRON_PATH%" --folder-uri=%REMOTE_EXT_PATH%/zycode-api-tests/testWorkspace --extensionDevelopmentPath=%REMOTE_EXT_PATH%/zycode-api-tests --extensionTestsPath=%REMOTE_EXT_PATH%/zycode-api-tests/out/singlefolder-tests %API_TESTS_EXTRA_ARGS% %API_TESTS_EXTRA_ARGS_BUILT%
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 echo.
 echo ### API tests (workspace)
-call "%INTEGRATION_TEST_ELECTRON_PATH%" --file-uri=%REMOTE_EXT_PATH%/vscode-api-tests/testworkspace.code-workspace --extensionDevelopmentPath=%REMOTE_EXT_PATH%/vscode-api-tests --extensionTestsPath=%REMOTE_EXT_PATH%/vscode-api-tests/out/workspace-tests %API_TESTS_EXTRA_ARGS% %API_TESTS_EXTRA_ARGS_BUILT%
+call "%INTEGRATION_TEST_ELECTRON_PATH%" --file-uri=%REMOTE_EXT_PATH%/zycode-api-tests/testworkspace.code-workspace --extensionDevelopmentPath=%REMOTE_EXT_PATH%/zycode-api-tests --extensionTestsPath=%REMOTE_EXT_PATH%/zycode-api-tests/out/workspace-tests %API_TESTS_EXTRA_ARGS% %API_TESTS_EXTRA_ARGS_BUILT%
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 echo.

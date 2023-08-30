@@ -27,7 +27,7 @@ import { UriIdentityService } from 'vs/platform/uriIdentity/common/uriIdentitySe
 suite('ExtensionStorageMigration', () => {
 
 	const disposables = new DisposableStore();
-	const ROOT = URI.file('tests').with({ scheme: 'vscode-tests' });
+	const ROOT = URI.file('tests').with({ scheme: 'zycode-tests' });
 	const workspaceStorageHome = joinPath(ROOT, 'workspaceStorageHome');
 
 	let instantiationService: TestInstantiationService;

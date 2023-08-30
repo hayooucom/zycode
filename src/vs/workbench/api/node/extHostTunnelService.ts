@@ -23,7 +23,7 @@ import { IExtHostInitDataService } from 'vs/workbench/api/common/extHostInitData
 import { IExtHostRpcService } from 'vs/workbench/api/common/extHostRpcService';
 import { ExtHostTunnelService } from 'vs/workbench/api/common/extHostTunnelService';
 import { CandidatePort } from 'vs/workbench/services/remote/common/tunnelModel';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 export function getSockets(stdout: string): Record<string, { pid: number; socket: number }> {
 	const lines = stdout.trim().split('\n');
@@ -104,7 +104,7 @@ export function loadConnectionTable(stdout: string): Record<string, string>[] {
 }
 
 function knownExcludeCmdline(command: string): boolean {
-	return !!command.match(/.*\.vscode-server-[a-zA-Z]+\/bin.*/)
+	return !!command.match(/.*\.zycode-server-[a-zA-Z]+\/bin.*/)
 		|| (command.indexOf('out/server-main.js') !== -1)
 		|| (command.indexOf('_productName=VSCode') !== -1);
 }
@@ -308,7 +308,7 @@ export class NodeExtHostTunnelService extends ExtHostTunnelService {
 		});
 	}
 
-	protected override makeManagedTunnelFactory(authority: vscode.ManagedResolvedAuthority): vscode.RemoteAuthorityResolver['tunnelFactory'] {
+	protected override makeManagedTunnelFactory(authority: zycode.ManagedResolvedAuthority): zycode.RemoteAuthorityResolver['tunnelFactory'] {
 		return async (tunnelOptions) => {
 			const t = new NodeRemoteTunnel(
 				{
@@ -364,7 +364,7 @@ export class NodeExtHostTunnelService extends ExtHostTunnelService {
 
 class ExtHostManagedSocket extends ManagedSocket {
 	public static connect(
-		passing: vscode.ManagedMessagePassing,
+		passing: zycode.ManagedMessagePassing,
 		path: string, query: string, debugLabel: string,
 	): Promise<ExtHostManagedSocket> {
 		const d = new DisposableStore();
@@ -388,7 +388,7 @@ class ExtHostManagedSocket extends ManagedSocket {
 	}
 
 	constructor(
-		private readonly passing: vscode.ManagedMessagePassing,
+		private readonly passing: zycode.ManagedMessagePassing,
 		debugLabel: string,
 		half: RemoteSocketHalf,
 	) {

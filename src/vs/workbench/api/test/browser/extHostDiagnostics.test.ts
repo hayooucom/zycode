@@ -12,7 +12,7 @@ import { IMarkerData, MarkerSeverity } from 'vs/platform/markers/common/markers'
 import { mock } from 'vs/base/test/common/mock';
 import { Emitter, Event } from 'vs/base/common/event';
 import { NullLogService } from 'vs/platform/log/common/log';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { nullExtensionDescription } from 'vs/workbench/services/extensions/common/extensions';
 import { ExtUri, extUri } from 'vs/base/common/resources';
 import { IExtHostFileSystemInfo } from 'vs/workbench/api/common/extHostFileSystemInfo';
@@ -110,7 +110,7 @@ suite('ExtHostDiagnostics', () => {
 		assert.throws(() => array.pop());
 		assert.throws(() => array[0] = new Diagnostic(new Range(0, 0, 0, 0), 'evil'));
 
-		collection.forEach((uri: URI, array: readonly vscode.Diagnostic[]): any => {
+		collection.forEach((uri: URI, array: readonly zycode.Diagnostic[]): any => {
 			assert.throws(() => (array as Diagnostic[]).length = 0);
 			assert.throws(() => (array as Diagnostic[]).pop());
 			assert.throws(() => (array as Diagnostic[])[0] = new Diagnostic(new Range(0, 0, 0, 0), 'evil'));
@@ -358,7 +358,7 @@ suite('ExtHostDiagnostics', () => {
 		await p;
 	});
 
-	test('vscode.languages.onDidChangeDiagnostics Does Not Provide Document URI #49582', async function () {
+	test('zycode.languages.onDidChangeDiagnostics Does Not Provide Document URI #49582', async function () {
 		const emitter = new Emitter<readonly URI[]>();
 		const collection = new DiagnosticCollection('ddd', 'test', 100, 100, versionProvider, extUri, new DiagnosticsShape(), emitter);
 
@@ -407,7 +407,7 @@ suite('ExtHostDiagnostics', () => {
 		collection.set(URI.parse('aa:bb'), [diag]);
 	});
 
-	test('vscode.languages.getDiagnostics appears to return old diagnostics in some circumstances #54359', function () {
+	test('zycode.languages.getDiagnostics appears to return old diagnostics in some circumstances #54359', function () {
 		const ownerHistory: string[] = [];
 		const diags = new ExtHostDiagnostics(new class implements IMainContext {
 			getProxy(id: any): any {

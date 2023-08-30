@@ -45,7 +45,7 @@ import { applicationConfigurationNodeBase } from 'vs/workbench/common/configurat
 		// macOS: behave like other native apps that have documents
 		// but can run without a document opened and allow to close
 		// the window when the last document is closed
-		// (https://github.com/microsoft/vscode/issues/126042)
+		// (https://github.com/microsoft/zycode/issues/126042)
 		KeybindingsRegistry.registerKeybindingRule({
 			id: CloseWindowAction.ID,
 			weight: KeybindingWeight.WorkbenchContrib,
@@ -304,7 +304,7 @@ import { applicationConfigurationNodeBase } from 'vs/workbench/common/configurat
 
 // JSON Schemas
 (function registerJSONSchemas(): void {
-	const argvDefinitionFileSchemaId = 'vscode://schemas/argv';
+	const argvDefinitionFileSchemaId = 'zycode://schemas/argv';
 	const jsonRegistry = Registry.as<IJSONContributionRegistry>(JSONExtensions.JSONContribution);
 	const schema: IJSONSchema = {
 		id: argvDefinitionFileSchemaId,
@@ -336,7 +336,7 @@ import { applicationConfigurationNodeBase } from 'vs/workbench/common/configurat
 			},
 			'enable-proposed-api': {
 				type: 'array',
-				description: localize('argv.enebleProposedApi', "Enable proposed APIs for a list of extension ids (such as \`vscode.git\`). Proposed APIs are unstable and subject to breaking without warning at any time. This should only be set for extension development and testing purposes."),
+				description: localize('argv.enebleProposedApi', "Enable proposed APIs for a list of extension ids (such as \`zycode.git\`). Proposed APIs are unstable and subject to breaking without warning at any time. This should only be set for extension development and testing purposes."),
 				items: {
 					type: 'string'
 				}

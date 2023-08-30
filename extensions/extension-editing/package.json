@@ -3,10 +3,10 @@
   "displayName": "%displayName%",
   "description": "%description%",
   "version": "1.0.0",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.4.0"
+    "zycode": "^1.4.0"
   },
   "icon": "images/icon.png",
   "activationEvents": [
@@ -34,26 +34,26 @@
     "jsonValidation": [
       {
         "fileMatch": "package.json",
-        "url": "vscode://schemas/vscode-extensions"
+        "url": "zycode://schemas/zycode-extensions"
       },
       {
         "fileMatch": "*language-configuration.json",
-        "url": "vscode://schemas/language-configuration"
+        "url": "zycode://schemas/language-configuration"
       },
       {
         "fileMatch": [
           "*icon-theme.json",
           "!*product-icon-theme.json"
         ],
-        "url": "vscode://schemas/icon-theme"
+        "url": "zycode://schemas/icon-theme"
       },
       {
         "fileMatch": "*product-icon-theme.json",
-        "url": "vscode://schemas/product-icon-theme"
+        "url": "zycode://schemas/product-icon-theme"
       },
       {
         "fileMatch": "*color-theme.json",
-        "url": "vscode://schemas/color-theme"
+        "url": "zycode://schemas/color-theme"
       }
     ],
     "languages": [
@@ -71,6 +71,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

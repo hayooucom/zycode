@@ -112,7 +112,7 @@ interface IPathResolveOptions {
 
 	/**
 	 * The remoteAuthority to use if the URL to open is
-	 * neither `file` nor `vscode-remote`.
+	 * neither `file` nor `zycode-remote`.
 	 */
 	readonly remoteAuthority?: string;
 }
@@ -645,7 +645,7 @@ export class WindowsMainService extends Disposable implements IWindowsMainServic
 			filesToWait: filesToOpen?.filesToWait,
 			termProgram: configuration?.userEnv?.['TERM_PROGRAM']
 		};
-		window.sendWhenReady('vscode:openFiles', CancellationToken.None, params);
+		window.sendWhenReady('zycode:openFiles', CancellationToken.None, params);
 
 		return window;
 	}
@@ -656,7 +656,7 @@ export class WindowsMainService extends Disposable implements IWindowsMainServic
 		window.focus(); // make sure window has focus
 
 		const request: IAddFoldersRequest = { foldersToAdd };
-		window.sendWhenReady('vscode:addFolders', CancellationToken.None, request);
+		window.sendWhenReady('zycode:addFolders', CancellationToken.None, request);
 
 		return window;
 	}
@@ -666,7 +666,7 @@ export class WindowsMainService extends Disposable implements IWindowsMainServic
 
 		let windowToUse: ICodeWindow | undefined;
 		if (!forceNewWindow && typeof openConfig.contextWindowId === 'number') {
-			windowToUse = this.getWindowById(openConfig.contextWindowId); // fix for https://github.com/microsoft/vscode/issues/97172
+			windowToUse = this.getWindowById(openConfig.contextWindowId); // fix for https://github.com/microsoft/zycode/issues/97172
 		}
 
 		return this.openInBrowserWindow({
@@ -688,7 +688,7 @@ export class WindowsMainService extends Disposable implements IWindowsMainServic
 		this.logService.trace('windowsManager#doOpenFolderOrWorkspace', { folderOrWorkspace, filesToOpen });
 
 		if (!forceNewWindow && !windowToUse && typeof openConfig.contextWindowId === 'number') {
-			windowToUse = this.getWindowById(openConfig.contextWindowId); // fix for https://github.com/microsoft/vscode/issues/49587
+			windowToUse = this.getWindowById(openConfig.contextWindowId); // fix for https://github.com/microsoft/zycode/issues/49587
 		}
 
 		return this.openInBrowserWindow({
@@ -816,7 +816,7 @@ export class WindowsMainService extends Disposable implements IWindowsMainServic
 			forceOpenWorkspaceAsFile:
 				// special case diff / merge mode to force open
 				// workspace as file
-				// https://github.com/microsoft/vscode/issues/149731
+				// https://github.com/microsoft/zycode/issues/149731
 				cli.diff && cli._.length === 2 ||
 				cli.merge && cli._.length === 4
 		};
@@ -911,7 +911,7 @@ export class WindowsMainService extends Disposable implements IWindowsMainServic
 
 					// Workspaces
 					if (lastSessionWindow.workspace) {
-						const pathToOpen = await this.resolveOpenable({ workspaceUri: lastSessionWindow.workspace.configPath }, { remoteAuthority: lastSessionWindow.remoteAuthority, rejectTransientWorkspaces: true /* https://github.com/microsoft/vscode/issues/119695 */ });
+						const pathToOpen = await this.resolveOpenable({ workspaceUri: lastSessionWindow.workspace.configPath }, { remoteAuthority: lastSessionWindow.remoteAuthority, rejectTransientWorkspaces: true /* https://github.com/microsoft/zycode/issues/119695 */ });
 						if (isWorkspacePathToOpen(pathToOpen)) {
 							return pathToOpen;
 						}
@@ -973,7 +973,7 @@ export class WindowsMainService extends Disposable implements IWindowsMainServic
 	private doResolveRemoteOpenable(openable: IWindowOpenable, options: IPathResolveOptions): IPathToOpen<ITextEditorOptions> | undefined {
 		let uri = this.resourceFromOpenable(openable);
 
-		// use remote authority from vscode
+		// use remote authority from zycode
 		const remoteAuthority = getRemoteAuthority(uri) || options.remoteAuthority;
 
 		// normalize URI
@@ -1131,7 +1131,7 @@ export class WindowsMainService extends Disposable implements IWindowsMainServic
 
 			if (checkboxChecked) {
 				this._register(Event.once(this.onDidOpenWindow)(window => {
-					window.sendWhenReady('vscode:configureAllowedUNCHost', CancellationToken.None, uri.authority);
+					window.sendWhenReady('zycode:configureAllowedUNCHost', CancellationToken.None, uri.authority);
 				}));
 			}
 
@@ -1139,9 +1139,9 @@ export class WindowsMainService extends Disposable implements IWindowsMainServic
 		}
 
 		if (response === 2) {
-			shell.openExternal('https://aka.ms/vscode-windows-unc');
+			shell.openExternal('https://aka.ms/zycode-windows-unc');
 
-			return this.onUNCHostNotAllowed(path, options); // keep showing the dialog until decision (https://github.com/microsoft/vscode/issues/181956)
+			return this.onUNCHostNotAllowed(path, options); // keep showing the dialog until decision (https://github.com/microsoft/zycode/issues/181956)
 		}
 
 		return undefined;
@@ -1234,7 +1234,7 @@ export class WindowsMainService extends Disposable implements IWindowsMainServic
 			// Linux/Windows: by default we open files in the new window unless triggered via DIALOG / MENU context
 			// or from the integrated terminal where we assume the user prefers to open in the current window
 			else {
-				if (openConfig.context !== OpenContext.DIALOG && openConfig.context !== OpenContext.MENU && !(openConfig.userEnv && openConfig.userEnv['TERM_PROGRAM'] === 'vscode')) {
+				if (openConfig.context !== OpenContext.DIALOG && openConfig.context !== OpenContext.MENU && !(openConfig.userEnv && openConfig.userEnv['TERM_PROGRAM'] === 'zycode')) {
 					openFilesInNewWindow = true;
 				}
 			}

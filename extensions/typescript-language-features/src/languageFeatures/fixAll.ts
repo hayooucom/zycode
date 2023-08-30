@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { API } from '../tsServer/api';
 import * as errorCodes from '../tsServer/protocol/errorCodes';
@@ -23,11 +23,11 @@ interface AutoFix {
 
 async function buildIndividualFixes(
 	fixes: readonly AutoFix[],
-	edit: vscode.WorkspaceEdit,
+	edit: zycode.WorkspaceEdit,
 	client: ITypeScriptServiceClient,
 	file: string,
-	diagnostics: readonly vscode.Diagnostic[],
-	token: vscode.CancellationToken,
+	diagnostics: readonly zycode.Diagnostic[],
+	token: zycode.CancellationToken,
 ): Promise<void> {
 	for (const diagnostic of diagnostics) {
 		for (const { codes, fixName } of fixes) {
@@ -60,11 +60,11 @@ async function buildIndividualFixes(
 
 async function buildCombinedFix(
 	fixes: readonly AutoFix[],
-	edit: vscode.WorkspaceEdit,
+	edit: zycode.WorkspaceEdit,
 	client: ITypeScriptServiceClient,
 	file: string,
-	diagnostics: readonly vscode.Diagnostic[],
-	token: vscode.CancellationToken,
+	diagnostics: readonly zycode.Diagnostic[],
+	token: zycode.CancellationToken,
 ): Promise<void> {
 	for (const diagnostic of diagnostics) {
 		for (const { codes, fixName } of fixes) {
@@ -117,25 +117,25 @@ async function buildCombinedFix(
 
 // #region Source Actions
 
-abstract class SourceAction extends vscode.CodeAction {
+abstract class SourceAction extends zycode.CodeAction {
 	abstract build(
 		client: ITypeScriptServiceClient,
 		file: string,
-		diagnostics: readonly vscode.Diagnostic[],
-		token: vscode.CancellationToken,
+		diagnostics: readonly zycode.Diagnostic[],
+		token: zycode.CancellationToken,
 	): Promise<void>;
 }
 
 class SourceFixAll extends SourceAction {
 
-	static readonly kind = vscode.CodeActionKind.SourceFixAll.append('ts');
+	static readonly kind = zycode.CodeActionKind.SourceFixAll.append('ts');
 
 	constructor() {
-		super(vscode.l10n.t("Fix all fixable JS/TS issues"), SourceFixAll.kind);
+		super(zycode.l10n.t("Fix all fixable JS/TS issues"), SourceFixAll.kind);
 	}
 
-	async build(client: ITypeScriptServiceClient, file: string, diagnostics: readonly vscode.Diagnostic[], token: vscode.CancellationToken): Promise<void> {
-		this.edit = new vscode.WorkspaceEdit();
+	async build(client: ITypeScriptServiceClient, file: string, diagnostics: readonly zycode.Diagnostic[], token: zycode.CancellationToken): Promise<void> {
+		this.edit = new zycode.WorkspaceEdit();
 
 		await buildIndividualFixes([
 			{ codes: errorCodes.incorrectlyImplementsInterface, fixName: fixNames.classIncorrectlyImplementsInterface },
@@ -150,14 +150,14 @@ class SourceFixAll extends SourceAction {
 
 class SourceRemoveUnused extends SourceAction {
 
-	static readonly kind = vscode.CodeActionKind.Source.append('removeUnused').append('ts');
+	static readonly kind = zycode.CodeActionKind.Source.append('removeUnused').append('ts');
 
 	constructor() {
-		super(vscode.l10n.t("Remove all unused code"), SourceRemoveUnused.kind);
+		super(zycode.l10n.t("Remove all unused code"), SourceRemoveUnused.kind);
 	}
 
-	async build(client: ITypeScriptServiceClient, file: string, diagnostics: readonly vscode.Diagnostic[], token: vscode.CancellationToken): Promise<void> {
-		this.edit = new vscode.WorkspaceEdit();
+	async build(client: ITypeScriptServiceClient, file: string, diagnostics: readonly zycode.Diagnostic[], token: zycode.CancellationToken): Promise<void> {
+		this.edit = new zycode.WorkspaceEdit();
 		await buildCombinedFix([
 			{ codes: errorCodes.variableDeclaredButNeverUsed, fixName: fixNames.unusedIdentifier },
 		], this.edit, client, file, diagnostics, token);
@@ -166,14 +166,14 @@ class SourceRemoveUnused extends SourceAction {
 
 class SourceAddMissingImports extends SourceAction {
 
-	static readonly kind = vscode.CodeActionKind.Source.append('addMissingImports').append('ts');
+	static readonly kind = zycode.CodeActionKind.Source.append('addMissingImports').append('ts');
 
 	constructor() {
-		super(vscode.l10n.t("Add all missing imports"), SourceAddMissingImports.kind);
+		super(zycode.l10n.t("Add all missing imports"), SourceAddMissingImports.kind);
 	}
 
-	async build(client: ITypeScriptServiceClient, file: string, diagnostics: readonly vscode.Diagnostic[], token: vscode.CancellationToken): Promise<void> {
-		this.edit = new vscode.WorkspaceEdit();
+	async build(client: ITypeScriptServiceClient, file: string, diagnostics: readonly zycode.Diagnostic[], token: zycode.CancellationToken): Promise<void> {
+		this.edit = new zycode.WorkspaceEdit();
 		await buildCombinedFix([
 			{ codes: errorCodes.cannotFindName, fixName: fixNames.fixImport }
 		],
@@ -183,7 +183,7 @@ class SourceAddMissingImports extends SourceAction {
 
 //#endregion
 
-class TypeScriptAutoFixProvider implements vscode.CodeActionProvider {
+class TypeScriptAutoFixProvider implements zycode.CodeActionProvider {
 
 	private static readonly kindProviders = [
 		SourceFixAll,
@@ -197,19 +197,19 @@ class TypeScriptAutoFixProvider implements vscode.CodeActionProvider {
 		private readonly diagnosticsManager: DiagnosticsManager,
 	) { }
 
-	public get metadata(): vscode.CodeActionProviderMetadata {
+	public get metadata(): zycode.CodeActionProviderMetadata {
 		return {
 			providedCodeActionKinds: TypeScriptAutoFixProvider.kindProviders.map(x => x.kind),
 		};
 	}
 
 	public async provideCodeActions(
-		document: vscode.TextDocument,
-		_range: vscode.Range,
-		context: vscode.CodeActionContext,
-		token: vscode.CancellationToken
-	): Promise<vscode.CodeAction[] | undefined> {
-		if (!context.only || !vscode.CodeActionKind.Source.intersects(context.only)) {
+		document: zycode.TextDocument,
+		_range: zycode.Range,
+		context: zycode.CodeActionContext,
+		token: zycode.CancellationToken
+	): Promise<zycode.CodeAction[] | undefined> {
+		if (!context.only || !zycode.CodeActionKind.Source.intersects(context.only)) {
 			return undefined;
 		}
 
@@ -236,7 +236,7 @@ class TypeScriptAutoFixProvider implements vscode.CodeActionProvider {
 		return actions;
 	}
 
-	private getFixAllActions(only: vscode.CodeActionKind): SourceAction[] {
+	private getFixAllActions(only: zycode.CodeActionKind): SourceAction[] {
 		return TypeScriptAutoFixProvider.kindProviders
 			.filter(provider => only.intersects(provider.kind))
 			.map(provider => new provider());
@@ -254,6 +254,6 @@ export function register(
 		requireSomeCapability(client, ClientCapability.Semantic),
 	], () => {
 		const provider = new TypeScriptAutoFixProvider(client, fileConfigurationManager, diagnosticsManager);
-		return vscode.languages.registerCodeActionsProvider(selector.semantic, provider, provider.metadata);
+		return zycode.languages.registerCodeActionsProvider(selector.semantic, provider, provider.metadata);
 	});
 }

@@ -430,7 +430,7 @@ export class EditorPart extends Part implements IEditorGroupsService, IEditorGro
 				layout.orientation,
 				this.isTwoDimensionalGrid() ?
 					this.gridWidget.orientation :			// preserve original orientation for 2-dimensional grids
-					orthogonal(this.gridWidget.orientation) // otherwise flip (fix https://github.com/microsoft/vscode/issues/52975)
+					orthogonal(this.gridWidget.orientation) // otherwise flip (fix https://github.com/microsoft/zycode/issues/52975)
 			),
 			groups: layout.groups
 		});

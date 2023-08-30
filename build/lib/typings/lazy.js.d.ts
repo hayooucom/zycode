@@ -159,7 +159,7 @@ declare module Lazy {
 		map<U>(mapFn: MapCallback<T, U[]>): ArraySequence<U>;
 		map<U>(mapFn: MapCallback<T, U>): Sequence<U>;
 
-		// TODO: vscode addition to workaround strict null errors
+		// TODO: zycode addition to workaround strict null errors
 		flatten(): Sequence<any>;
 
 		max(valueFn?: NumberCallback<T>): T;

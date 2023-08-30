@@ -105,7 +105,7 @@ export class UtilityProcessWorkerWorkbenchService extends Disposable implements 
 
 		// Get ready to acquire the message port from the utility process worker
 		const nonce = generateUuid();
-		const responseChannel = 'vscode:createUtilityProcessWorkerMessageChannelResult';
+		const responseChannel = 'zycode:createUtilityProcessWorkerMessageChannelResult';
 		const portPromise = acquirePort(undefined /* we trigger the request via service call! */, responseChannel, nonce);
 
 		// Actually talk with the utility process service

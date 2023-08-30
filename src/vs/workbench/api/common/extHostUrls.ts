@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { MainContext, IMainContext, ExtHostUrlsShape, MainThreadUrlsShape } from './extHost.protocol';
 import { URI, UriComponents } from 'vs/base/common/uri';
 import { toDisposable } from 'vs/base/common/lifecycle';
@@ -16,7 +16,7 @@ export class ExtHostUrls implements ExtHostUrlsShape {
 	private readonly _proxy: MainThreadUrlsShape;
 
 	private handles = new ExtensionIdentifierSet();
-	private handlers = new Map<number, vscode.UriHandler>();
+	private handlers = new Map<number, zycode.UriHandler>();
 
 	constructor(
 		mainContext: IMainContext
@@ -24,7 +24,7 @@ export class ExtHostUrls implements ExtHostUrlsShape {
 		this._proxy = mainContext.getProxy(MainContext.MainThreadUrls);
 	}
 
-	registerUriHandler(extension: IExtensionDescription, handler: vscode.UriHandler): vscode.Disposable {
+	registerUriHandler(extension: IExtensionDescription, handler: zycode.UriHandler): zycode.Disposable {
 		const extensionId = extension.identifier;
 		if (this.handles.has(extensionId)) {
 			throw new Error(`Protocol handler already registered for extension ${extensionId}`);
@@ -57,7 +57,7 @@ export class ExtHostUrls implements ExtHostUrlsShape {
 		return Promise.resolve(undefined);
 	}
 
-	async createAppUri(uri: URI): Promise<vscode.Uri> {
+	async createAppUri(uri: URI): Promise<zycode.Uri> {
 		return URI.revive(await this._proxy.$createAppUri(uri));
 	}
 }

@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { IDisposable } from 'vs/base/common/lifecycle';
 import { ExtHostStorage } from 'vs/workbench/api/common/extHostStorage';
 import { IExtensionDescription } from 'vs/platform/extensions/common/extensions';
 import { DeferredPromise, RunOnceScheduler } from 'vs/base/common/async';
 
-export class ExtensionMemento implements vscode.Memento {
+export class ExtensionMemento implements zycode.Memento {
 
 	protected readonly _id: string;
 	private readonly _shared: boolean;

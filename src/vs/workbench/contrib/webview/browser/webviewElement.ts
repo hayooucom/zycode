@@ -103,7 +103,7 @@ export class WebviewElement extends Disposable implements IWebview, WebviewFindD
 			return false;
 		}
 		if (document.activeElement && document.activeElement !== this.element) {
-			// looks like https://github.com/microsoft/vscode/issues/132641
+			// looks like https://github.com/microsoft/zycode/issues/132641
 			// where the focus is actually not in the `<iframe>`
 			return false;
 		}
@@ -460,7 +460,7 @@ export class WebviewElement extends Disposable implements IWebview, WebviewFindD
 			swVersion: String(this._expectedServiceWorkerVersion),
 			extensionId: extension?.id.value ?? '',
 			platform: this.platform,
-			'vscode-resource-base-authority': webviewRootResourceAuthority,
+			'zycode-resource-base-authority': webviewRootResourceAuthority,
 			parentOrigin: window.origin,
 		};
 
@@ -810,7 +810,7 @@ export class WebviewElement extends Disposable implements IWebview, WebviewFindD
 			// noop
 		}
 
-		// Workaround for https://github.com/microsoft/vscode/issues/75209
+		// Workaround for https://github.com/microsoft/zycode/issues/75209
 		// Focusing the inner webview is async so for a sequence of actions such as:
 		//
 		// 1. Open webview

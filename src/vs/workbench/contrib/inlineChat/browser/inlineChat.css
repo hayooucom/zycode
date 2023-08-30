@@ -8,16 +8,16 @@
 }
 
 .monaco-editor .zone-widget-container.inside-selection {
-	background-color: var(--vscode-inlineChat-regionHighlight);
+	background-color: var(--zycode-inlineChat-regionHighlight);
 }
 
 .monaco-editor .inline-chat {
 	color: inherit;
 	padding: 6px;
 	border-radius: 6px;
-	border: 1px solid var(--vscode-inlineChat-border);
-	box-shadow: 0 4px 8px var(--vscode-inlineChat-shadow);
-	background: var(--vscode-inlineChat-background);
+	border: 1px solid var(--zycode-inlineChat-border);
+	box-shadow: 0 4px 8px var(--zycode-inlineChat-shadow);
+	background: var(--zycode-inlineChat-background);
 }
 
 /* body */
@@ -29,13 +29,13 @@
 .monaco-editor .inline-chat .body .content {
 	display: flex;
 	box-sizing: border-box;
-	outline: 1px solid var(--vscode-inlineChatInput-border);
+	outline: 1px solid var(--zycode-inlineChatInput-border);
 	outline-offset: -1px;
 	border-radius: 2px;
 }
 
 .monaco-editor .inline-chat .body .content.synthetic-focus {
-	outline: 1px solid var(--vscode-inlineChatInput-focusBorder);
+	outline: 1px solid var(--zycode-inlineChatInput-focusBorder);
 }
 
 .monaco-editor .inline-chat .body .content .input {
@@ -43,18 +43,18 @@
 	align-items: center;
 	justify-content: space-between;
 	padding: 2px 2px 2px 6px;
-	background-color: var(--vscode-inlineChatInput-background);
+	background-color: var(--zycode-inlineChatInput-background);
 	cursor: text;
 }
 
 .monaco-editor .inline-chat .body .content .input .monaco-editor-background {
-	background-color: var(--vscode-inlineChatInput-background);
+	background-color: var(--zycode-inlineChatInput-background);
 }
 
 .monaco-editor .inline-chat .body .content .input .editor-placeholder {
 	position: absolute;
 	z-index: 1;
-	color: var(--vscode-inlineChatInput-placeholderForeground);
+	color: var(--zycode-inlineChatInput-placeholderForeground);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -74,7 +74,7 @@
 	padding-right: 4px;
 	border-top-right-radius: 2px;
 	border-bottom-right-radius: 2px;
-	background: var(--vscode-inlineChatInput-background);
+	background: var(--zycode-inlineChatInput-background);
 }
 
 .monaco-editor .inline-chat .body .toolbar .actions-container {
@@ -115,7 +115,7 @@
 
 .monaco-editor .inline-chat .status .label {
 	overflow: hidden;
-	color: var(--vscode-descriptionForeground);
+	color: var(--zycode-descriptionForeground);
 	font-size: 11px;
 	align-self: baseline;
 	display: flex;
@@ -165,24 +165,24 @@
 }
 
 .monaco-editor .inline-chat .markdownMessage .message[state="cropped"] {
-	-webkit-line-clamp: var(--vscode-inline-chat-cropped, 3);
+	-webkit-line-clamp: var(--zycode-inline-chat-cropped, 3);
 }
 
 .monaco-editor .inline-chat .markdownMessage .message[state="expanded"] {
-	-webkit-line-clamp: var(--vscode-inline-chat-expanded, 10);
+	-webkit-line-clamp: var(--zycode-inline-chat-expanded, 10);
 }
 
 .monaco-editor .inline-chat .status .label A {
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 	cursor: pointer;
 }
 
 .monaco-editor .inline-chat .status .label.error {
-	color: var(--vscode-errorForeground);
+	color: var(--zycode-errorForeground);
 }
 
 .monaco-editor .inline-chat .status .label.warn {
-	color: var(--vscode-editorWarning-foreground);
+	color: var(--zycode-editorWarning-foreground);
 }
 
 .monaco-editor .inline-chat .status .actions  {
@@ -219,14 +219,14 @@
 
 /* TODO@jrieken not needed? */
 .monaco-editor .inline-chat .status .monaco-toolbar .action-label.checked {
-	color: var(--vscode-inputOption-activeForeground);
-	background-color: var(--vscode-inputOption-activeBackground);
-	outline: 1px solid var(--vscode-inputOption-activeBorder);
+	color: var(--zycode-inputOption-activeForeground);
+	background-color: var(--zycode-inputOption-activeBackground);
+	outline: 1px solid var(--zycode-inputOption-activeBorder);
 }
 
 
 .monaco-editor .inline-chat .status .monaco-toolbar .action-item.button-item .action-label:is(:hover, :focus) {
-	background-color: var(--vscode-button-hoverBackground);
+	background-color: var(--zycode-button-hoverBackground);
 }
 
 /* preview */
@@ -238,7 +238,7 @@
 .monaco-editor .inline-chat .previewDiff {
 	display: inherit;
 	padding: 6px;
-	border: 1px solid var(--vscode-inlineChat-border);
+	border: 1px solid var(--zycode-inlineChat-border);
 	border-top: none;
 	border-bottom-left-radius: 2px;
 	border-bottom-right-radius: 2px;
@@ -252,7 +252,7 @@
 .monaco-editor .inline-chat .previewCreate {
 	display: inherit;
 	padding: 6px;
-	border: 1px solid var(--vscode-inlineChat-border);
+	border: 1px solid var(--zycode-inlineChat-border);
 	border-radius: 2px;
 	margin: 0 2px 6px 2px;
 }
@@ -267,15 +267,15 @@
 
 .monaco-editor .inline-chat-lines-deleted-range-inline {
 	text-decoration: line-through;
-	background-color: var(--vscode-diffEditor-removedTextBackground);
+	background-color: var(--zycode-diffEditor-removedTextBackground);
 	opacity: 0.6;
 }
 .monaco-editor .inline-chat-lines-inserted-range {
-	background-color: var(--vscode-diffEditor-insertedTextBackground);
+	background-color: var(--zycode-diffEditor-insertedTextBackground);
 }
 
 .monaco-editor .inline-chat-block-selection {
-	background-color: var(--vscode-inlineChat-regionHighlight);
+	background-color: var(--zycode-inlineChat-regionHighlight);
 }
 
 .monaco-editor .inline-chat-slash-command {
@@ -294,14 +294,14 @@
 
 .monaco-editor .inline-chat-diff-widget .monaco-diff-editor .monaco-editor-background,
 .monaco-editor .inline-chat-diff-widget .monaco-diff-editor .monaco-editor .margin-view-overlays {
-	background-color: var(--vscode-inlineChat-regionHighlight);
+	background-color: var(--zycode-inlineChat-regionHighlight);
 }
 
 /* create zone */
 
 .monaco-editor .inline-chat-newfile-widget {
 	padding: 3px 0 6px 0;
-	background-color: var(--vscode-inlineChat-regionHighlight);
+	background-color: var(--zycode-inlineChat-regionHighlight);
 }
 
 .monaco-editor .inline-chat-newfile-widget .title {

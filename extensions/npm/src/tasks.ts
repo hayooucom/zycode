@@ -7,15 +7,15 @@ import {
 	TaskDefinition, Task, TaskGroup, WorkspaceFolder, RelativePattern, ShellExecution, Uri, workspace,
 	TaskProvider, TextDocument, tasks, TaskScope, QuickPickItem, window, Position, ExtensionContext, env,
 	ShellQuotedString, ShellQuoting, commands, Location, CancellationTokenSource, l10n
-} from 'vscode';
+} from 'zycode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as minimatch from 'minimatch';
-import { Utils } from 'vscode-uri';
+import { Utils } from 'zycode-uri';
 import { findPreferredPM } from './preferred-pm';
 import { readScripts } from './readScripts';
 
-const excludeRegex = new RegExp('^(node_modules|.vscode-test)$', 'i');
+const excludeRegex = new RegExp('^(node_modules|.zycode-test)$', 'i');
 
 export interface INpmTaskDefinition extends TaskDefinition {
 	script: string;
@@ -184,7 +184,7 @@ async function detectNpmScripts(context: ExtensionContext, showWarning: boolean)
 		for (const folder of folders) {
 			if (isAutoDetectionEnabled(folder) && !excludeRegex.test(Utils.basename(folder.uri))) {
 				const relativePattern = new RelativePattern(folder, '**/package.json');
-				const paths = await workspace.findFiles(relativePattern, '**/{node_modules,.vscode-test}/**');
+				const paths = await workspace.findFiles(relativePattern, '**/{node_modules,.zycode-test}/**');
 				for (const path of paths) {
 					if (!isExcluded(folder, path) && !visitedPackageJsonFiles.has(path.fsPath)) {
 						const tasks = await provideNpmScriptsForFolder(context, path, showWarning);

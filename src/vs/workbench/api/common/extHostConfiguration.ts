@@ -5,7 +5,7 @@
 
 import { mixin, deepClone } from 'vs/base/common/objects';
 import { Event, Emitter } from 'vs/base/common/event';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ExtHostWorkspace, IExtHostWorkspace } from 'vs/workbench/api/common/extHostWorkspace';
 import { ExtHostConfigurationShape, MainThreadConfigurationShape, IConfigurationInitData, MainContext } from './extHost.protocol';
 import { ConfigurationTarget as ExtHostConfigurationTarget } from './extHostTypes';
@@ -48,7 +48,7 @@ type ConfigurationInspect<T> = {
 	languageIds?: string[];
 };
 
-function isUri(thing: any): thing is vscode.Uri {
+function isUri(thing: any): thing is zycode.Uri {
 	return thing instanceof URI;
 }
 
@@ -64,14 +64,14 @@ function isLanguage(thing: any): thing is { languageId: string } {
 		&& (thing.languageId && typeof thing.languageId === 'string');
 }
 
-function isWorkspaceFolder(thing: any): thing is vscode.WorkspaceFolder {
+function isWorkspaceFolder(thing: any): thing is zycode.WorkspaceFolder {
 	return thing
 		&& thing.uri instanceof URI
 		&& (!thing.name || typeof thing.name === 'string')
 		&& (!thing.index || typeof thing.index === 'number');
 }
 
-function scopeToOverrides(scope: vscode.ConfigurationScope | undefined | null): IConfigurationOverrides | undefined {
+function scopeToOverrides(scope: zycode.ConfigurationScope | undefined | null): IConfigurationOverrides | undefined {
 	if (isUri(scope)) {
 		return { resource: scope };
 	}
@@ -128,7 +128,7 @@ export class ExtHostConfiguration implements ExtHostConfigurationShape {
 
 export class ExtHostConfigProvider {
 
-	private readonly _onDidChangeConfiguration = new Emitter<vscode.ConfigurationChangeEvent>();
+	private readonly _onDidChangeConfiguration = new Emitter<zycode.ConfigurationChangeEvent>();
 	private readonly _proxy: MainThreadConfigurationShape;
 	private readonly _extHostWorkspace: ExtHostWorkspace;
 	private _configurationScopes: Map<string, ConfigurationScope | undefined>;
@@ -143,7 +143,7 @@ export class ExtHostConfigProvider {
 		this._configurationScopes = this._toMap(data.configurationScopes);
 	}
 
-	get onDidChangeConfiguration(): Event<vscode.ConfigurationChangeEvent> {
+	get onDidChangeConfiguration(): Event<zycode.ConfigurationChangeEvent> {
 		return this._onDidChangeConfiguration && this._onDidChangeConfiguration.event;
 	}
 
@@ -154,7 +154,7 @@ export class ExtHostConfigProvider {
 		this._onDidChangeConfiguration.fire(this._toConfigurationChangeEvent(change, previous));
 	}
 
-	getConfiguration(section?: string, scope?: vscode.ConfigurationScope | null, extensionDescription?: IExtensionDescription): vscode.WorkspaceConfiguration {
+	getConfiguration(section?: string, scope?: zycode.ConfigurationScope | null, extensionDescription?: IExtensionDescription): zycode.WorkspaceConfiguration {
 		const overrides = scopeToOverrides(scope) || {};
 		const config = this._toReadonlyValue(section
 			? lookUp(this._configuration.getValue(undefined, overrides, this._extHostWorkspace.workspace), section)
@@ -179,7 +179,7 @@ export class ExtHostConfigProvider {
 			}
 		}
 
-		const result: vscode.WorkspaceConfiguration = {
+		const result: zycode.WorkspaceConfiguration = {
 			has(key: string): boolean {
 				return typeof lookUp(config, key) !== 'undefined';
 			},
@@ -318,10 +318,10 @@ export class ExtHostConfigProvider {
 		}
 	}
 
-	private _toConfigurationChangeEvent(change: IConfigurationChange, previous: { data: IConfigurationData; workspace: Workspace | undefined }): vscode.ConfigurationChangeEvent {
+	private _toConfigurationChangeEvent(change: IConfigurationChange, previous: { data: IConfigurationData; workspace: Workspace | undefined }): zycode.ConfigurationChangeEvent {
 		const event = new ConfigurationChangeEvent(change, previous, this._configuration, this._extHostWorkspace.workspace);
 		return Object.freeze({
-			affectsConfiguration: (section: string, scope?: vscode.ConfigurationScope) => event.affectsConfiguration(section, scopeToOverrides(scope))
+			affectsConfiguration: (section: string, scope?: zycode.ConfigurationScope) => event.affectsConfiguration(section, scopeToOverrides(scope))
 		});
 	}
 

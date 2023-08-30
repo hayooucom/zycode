@@ -9,7 +9,7 @@ steps:
 
   - task: AzureCLI@2
     inputs:
-      azureSubscription: "vscode-builds-subscription"
+      azureSubscription: "zycode-builds-subscription"
       scriptType: pscore
       scriptLocation: inlineScript
       addSpnToEnvironment: true

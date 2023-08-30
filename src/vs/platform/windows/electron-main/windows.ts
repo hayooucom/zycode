@@ -94,7 +94,7 @@ export interface IOpenConfiguration extends IBaseOpenConfiguration {
 	/**
 	 * The remote authority to use when windows are opened with either
 	 * - no workspace (empty window)
-	 * - a workspace that is neither `file://` nor `vscode-remote://`
+	 * - a workspace that is neither `file://` nor `zycode-remote://`
 	 */
 	readonly remoteAuthority?: string;
 	readonly forceProfile?: string;

@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Disposable, ExtensionContext, Uri, l10n } from 'vscode';
-import { LanguageClientOptions } from 'vscode-languageclient';
+import { Disposable, ExtensionContext, Uri, l10n } from 'zycode';
+import { LanguageClientOptions } from 'zycode-languageclient';
 import { startClient, LanguageClientConstructor, AsyncDisposable } from '../htmlClient';
-import { LanguageClient } from 'vscode-languageclient/browser';
+import { LanguageClient } from 'zycode-languageclient/browser';
 
 declare const Worker: {
 	new(stringUrl: string): any;
@@ -17,7 +17,7 @@ declare const TextDecoder: {
 
 let client: AsyncDisposable | undefined;
 
-// this method is called when vs code is activated
+// this method is called when zy code is activated
 export async function activate(context: ExtensionContext) {
 	const serverMain = Uri.joinPath(context.extensionUri, 'server/dist/browser/htmlServerMain.js');
 	try {

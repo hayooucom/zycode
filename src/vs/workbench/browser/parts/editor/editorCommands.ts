@@ -312,7 +312,7 @@ function registerEditorGroupsLayoutCommands(): void {
 
 	// API Commands
 	CommandsRegistry.registerCommand({
-		id: 'vscode.setEditorLayout',
+		id: 'zycode.setEditorLayout',
 		handler: (accessor: ServicesAccessor, args: EditorGroupLayout) => applyEditorLayout(accessor, args),
 		description: {
 			description: 'Set Editor Layout',
@@ -338,7 +338,7 @@ function registerEditorGroupsLayoutCommands(): void {
 	});
 
 	CommandsRegistry.registerCommand({
-		id: 'vscode.getEditorLayout',
+		id: 'zycode.getEditorLayout',
 		handler: (accessor: ServicesAccessor) => {
 			const editorGroupService = accessor.get(IEditorGroupsService);
 
@@ -347,7 +347,7 @@ function registerEditorGroupsLayoutCommands(): void {
 		description: {
 			description: 'Get Editor Layout',
 			args: [],
-			returns: 'An editor layout object, in the same format as vscode.setEditorLayout'
+			returns: 'An editor layout object, in the same format as zycode.setEditorLayout'
 		}
 	});
 }
@@ -511,9 +511,9 @@ function registerOpenEditorAPICommands(): void {
 	}
 
 	// partial, renderer-side API command to open editor
-	// complements https://github.com/microsoft/vscode/blob/2b164efb0e6a5de3826bff62683eaeafe032284f/src/vs/workbench/api/common/extHostApiCommands.ts#L373
+	// complements https://github.com/microsoft/zycode/blob/2b164efb0e6a5de3826bff62683eaeafe032284f/src/vs/workbench/api/common/extHostApiCommands.ts#L373
 	CommandsRegistry.registerCommand({
-		id: 'vscode.open',
+		id: 'zycode.open',
 		handler: (accessor, arg) => {
 			accessor.get(ICommandService).executeCommand(API_OPEN_EDITOR_COMMAND_ID, arg);
 		},
@@ -569,9 +569,9 @@ function registerOpenEditorAPICommands(): void {
 	});
 
 	// partial, renderer-side API command to open diff editor
-	// complements https://github.com/microsoft/vscode/blob/2b164efb0e6a5de3826bff62683eaeafe032284f/src/vs/workbench/api/common/extHostApiCommands.ts#L397
+	// complements https://github.com/microsoft/zycode/blob/2b164efb0e6a5de3826bff62683eaeafe032284f/src/vs/workbench/api/common/extHostApiCommands.ts#L397
 	CommandsRegistry.registerCommand({
-		id: 'vscode.diff',
+		id: 'zycode.diff',
 		handler: (accessor, left, right, label) => {
 			accessor.get(ICommandService).executeCommand(API_OPEN_DIFF_EDITOR_COMMAND_ID, left, right, label);
 		},

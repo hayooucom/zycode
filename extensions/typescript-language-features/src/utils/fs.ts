@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
-export async function exists(resource: vscode.Uri): Promise<boolean> {
+export async function exists(resource: zycode.Uri): Promise<boolean> {
 	try {
-		const stat = await vscode.workspace.fs.stat(resource);
+		const stat = await zycode.workspace.fs.stat(resource);
 		// stat.type is an enum flag
-		return !!(stat.type & vscode.FileType.File);
+		return !!(stat.type & zycode.FileType.File);
 	} catch {
 		return false;
 	}

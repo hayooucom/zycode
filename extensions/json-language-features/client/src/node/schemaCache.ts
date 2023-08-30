@@ -6,7 +6,7 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { createHash } from 'crypto';
-import { Memento } from 'vscode';
+import { Memento } from 'zycode';
 
 interface CacheEntry {
 	etag: string;

@@ -23,7 +23,7 @@ import { IFileMatch, IFileQuery, IPatternInfo, IRawFileMatch2, ISearchCompleteSt
 import { TextSearchManager } from 'vs/workbench/services/search/common/textSearchManager';
 import { NativeTextSearchManager } from 'vs/workbench/services/search/node/textSearchManager';
 import { TestRPCProtocol } from 'vs/workbench/api/test/common/testRPCProtocol';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 
 let rpcProtocol: TestRPCProtocol;
 let extHostSearch: NativeExtHostSearch;
@@ -63,17 +63,17 @@ class MockMainThreadSearch implements MainThreadSearchShape {
 
 let mockPFS: Partial<typeof pfs>;
 
-function extensionResultIsMatch(data: vscode.TextSearchResult): data is vscode.TextSearchMatch {
-	return !!(<vscode.TextSearchMatch>data).preview;
+function extensionResultIsMatch(data: zycode.TextSearchResult): data is zycode.TextSearchMatch {
+	return !!(<zycode.TextSearchMatch>data).preview;
 }
 
 suite('ExtHostSearch', () => {
-	async function registerTestTextSearchProvider(provider: vscode.TextSearchProvider, scheme = 'file'): Promise<void> {
+	async function registerTestTextSearchProvider(provider: zycode.TextSearchProvider, scheme = 'file'): Promise<void> {
 		disposables.add(extHostSearch.registerTextSearchProvider(scheme, provider));
 		await rpcProtocol.sync();
 	}
 
-	async function registerTestFileSearchProvider(provider: vscode.FileSearchProvider, scheme = 'file'): Promise<void> {
+	async function registerTestFileSearchProvider(provider: zycode.FileSearchProvider, scheme = 'file'): Promise<void> {
 		disposables.add(extHostSearch.registerFileSearchProvider(scheme, provider));
 		await rpcProtocol.sync();
 	}
@@ -148,7 +148,7 @@ suite('ExtHostSearch', () => {
 				this._pfs = mockPFS as any;
 			}
 
-			protected override createTextSearchManager(query: ITextQuery, provider: vscode.TextSearchProvider): TextSearchManager {
+			protected override createTextSearchManager(query: ITextQuery, provider: zycode.TextSearchProvider): TextSearchManager {
 				return new NativeTextSearchManager(query, provider, this._pfs);
 			}
 		};
@@ -187,7 +187,7 @@ suite('ExtHostSearch', () => {
 
 		test('no results', async () => {
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					return Promise.resolve(null!);
 				}
 			});
@@ -205,7 +205,7 @@ suite('ExtHostSearch', () => {
 			];
 
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					return Promise.resolve(reportedResults);
 				}
 			});
@@ -219,7 +219,7 @@ suite('ExtHostSearch', () => {
 		test('Search canceled', async () => {
 			let cancelRequested = false;
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 
 					return new Promise((resolve, reject) => {
 						function onCancel() {
@@ -244,7 +244,7 @@ suite('ExtHostSearch', () => {
 
 		test('provider returns null', async () => {
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					return null!;
 				}
 			});
@@ -259,7 +259,7 @@ suite('ExtHostSearch', () => {
 
 		test('all provider calls get global include/excludes', async () => {
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					assert(options.excludes.length === 2 && options.includes.length === 2, 'Missing global include/excludes');
 					return Promise.resolve(null!);
 				}
@@ -288,7 +288,7 @@ suite('ExtHostSearch', () => {
 
 		test('global/local include/excludes combined', async () => {
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					if (options.folder.toString() === rootFolderA.toString()) {
 						assert.deepStrictEqual(options.includes.sort(), ['*.ts', 'foo']);
 						assert.deepStrictEqual(options.excludes.sort(), ['*.js', 'bar']);
@@ -330,7 +330,7 @@ suite('ExtHostSearch', () => {
 
 		test('include/excludes resolved correctly', async () => {
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					assert.deepStrictEqual(options.includes.sort(), ['*.jsx', '*.ts']);
 					assert.deepStrictEqual(options.excludes.sort(), []);
 
@@ -373,7 +373,7 @@ suite('ExtHostSearch', () => {
 			];
 
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					return Promise.resolve(reportedResults
 						.map(relativePath => joinPath(options.folder, relativePath)));
 				}
@@ -401,7 +401,7 @@ suite('ExtHostSearch', () => {
 				]);
 		});
 
-		// https://github.com/microsoft/vscode-remotehub/issues/255
+		// https://github.com/microsoft/zycode-remotehub/issues/255
 		test('include, sibling exclude, and subfolder', async () => {
 			const reportedResults = [
 				'foo/file1.ts',
@@ -409,7 +409,7 @@ suite('ExtHostSearch', () => {
 			];
 
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					return Promise.resolve(reportedResults
 						.map(relativePath => joinPath(options.folder, relativePath)));
 				}
@@ -441,7 +441,7 @@ suite('ExtHostSearch', () => {
 		test('multiroot sibling exclude clause', async () => {
 
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					let reportedResults: URI[];
 					if (options.folder.fsPath === rootFolderA.fsPath) {
 						reportedResults = [
@@ -511,7 +511,7 @@ suite('ExtHostSearch', () => {
 
 			let wasCanceled = false;
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					token.onCancellationRequested(() => wasCanceled = true);
 
 					return Promise.resolve(reportedResults);
@@ -547,7 +547,7 @@ suite('ExtHostSearch', () => {
 
 			let wasCanceled = false;
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					token.onCancellationRequested(() => wasCanceled = true);
 
 					return Promise.resolve(reportedResults);
@@ -582,7 +582,7 @@ suite('ExtHostSearch', () => {
 
 			let wasCanceled = false;
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					token.onCancellationRequested(() => wasCanceled = true);
 
 					return Promise.resolve(reportedResults);
@@ -612,7 +612,7 @@ suite('ExtHostSearch', () => {
 		test('multiroot max results', async () => {
 			let cancels = 0;
 			await registerTestFileSearchProvider({
-				async provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				async provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					token.onCancellationRequested(() => cancels++);
 
 					// Provice results async so it has a chance to invoke every provider
@@ -655,7 +655,7 @@ suite('ExtHostSearch', () => {
 			];
 
 			await registerTestFileSearchProvider({
-				provideFileSearchResults(query: vscode.FileSearchQuery, options: vscode.FileSearchOptions, token: vscode.CancellationToken): Promise<URI[]> {
+				provideFileSearchResults(query: zycode.FileSearchQuery, options: zycode.FileSearchOptions, token: zycode.CancellationToken): Promise<URI[]> {
 					return Promise.resolve(reportedResults);
 				}
 			}, fancyScheme);
@@ -677,14 +677,14 @@ suite('ExtHostSearch', () => {
 
 	suite('Text:', () => {
 
-		function makePreview(text: string): vscode.TextSearchMatch['preview'] {
+		function makePreview(text: string): zycode.TextSearchMatch['preview'] {
 			return {
 				matches: [new Range(0, 0, 0, text.length)],
 				text
 			};
 		}
 
-		function makeTextResult(baseFolder: URI, relativePath: string): vscode.TextSearchMatch {
+		function makeTextResult(baseFolder: URI, relativePath: string): zycode.TextSearchMatch {
 			return {
 				preview: makePreview('foo'),
 				ranges: [new Range(0, 0, 0, 3)],
@@ -709,8 +709,8 @@ suite('ExtHostSearch', () => {
 			};
 		}
 
-		function assertResults(actual: IFileMatch[], expected: vscode.TextSearchResult[]) {
-			const actualTextSearchResults: vscode.TextSearchResult[] = [];
+		function assertResults(actual: IFileMatch[], expected: zycode.TextSearchResult[]) {
+			const actualTextSearchResults: zycode.TextSearchResult[] = [];
 			for (const fileMatch of actual) {
 				// Make relative
 				for (const lineResult of fileMatch.results!) {
@@ -729,7 +729,7 @@ suite('ExtHostSearch', () => {
 							uri: fileMatch.resource
 						});
 					} else {
-						actualTextSearchResults.push(<vscode.TextSearchContext>{
+						actualTextSearchResults.push(<zycode.TextSearchContext>{
 							text: lineResult.text,
 							lineNumber: lineResult.lineNumber,
 							uri: fileMatch.resource
@@ -738,9 +738,9 @@ suite('ExtHostSearch', () => {
 				}
 			}
 
-			const rangeToString = (r: vscode.Range) => `(${r.start.line}, ${r.start.character}), (${r.end.line}, ${r.end.character})`;
+			const rangeToString = (r: zycode.Range) => `(${r.start.line}, ${r.start.character}), (${r.end.line}, ${r.end.character})`;
 
-			const makeComparable = (results: vscode.TextSearchResult[]) => results
+			const makeComparable = (results: zycode.TextSearchResult[]) => results
 				.sort((a, b) => {
 					const compareKeyA = a.uri.toString() + ': ' + (extensionResultIsMatch(a) ? a.preview.text : a.text);
 					const compareKeyB = b.uri.toString() + ': ' + (extensionResultIsMatch(b) ? b.preview.text : b.text);
@@ -766,7 +766,7 @@ suite('ExtHostSearch', () => {
 
 		test('no results', async () => {
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					return Promise.resolve(null!);
 				}
 			});
@@ -777,13 +777,13 @@ suite('ExtHostSearch', () => {
 		});
 
 		test('basic results', async () => {
-			const providedResults: vscode.TextSearchResult[] = [
+			const providedResults: zycode.TextSearchResult[] = [
 				makeTextResult(rootFolderA, 'file1.ts'),
 				makeTextResult(rootFolderA, 'file2.ts')
 			];
 
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					providedResults.forEach(r => progress.report(r));
 					return Promise.resolve(null!);
 				}
@@ -796,7 +796,7 @@ suite('ExtHostSearch', () => {
 
 		test('all provider calls get global include/excludes', async () => {
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					assert.strictEqual(options.includes.length, 1);
 					assert.strictEqual(options.excludes.length, 1);
 					return Promise.resolve(null!);
@@ -826,7 +826,7 @@ suite('ExtHostSearch', () => {
 
 		test('global/local include/excludes combined', async () => {
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					if (options.folder.toString() === rootFolderA.toString()) {
 						assert.deepStrictEqual(options.includes.sort(), ['*.ts', 'foo']);
 						assert.deepStrictEqual(options.excludes.sort(), ['*.js', 'bar']);
@@ -868,7 +868,7 @@ suite('ExtHostSearch', () => {
 
 		test('include/excludes resolved correctly', async () => {
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					assert.deepStrictEqual(options.includes.sort(), ['*.jsx', '*.ts']);
 					assert.deepStrictEqual(options.excludes.sort(), []);
 
@@ -906,7 +906,7 @@ suite('ExtHostSearch', () => {
 
 		test('provider fail', async () => {
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					throw new Error('Provider fail');
 				}
 			});
@@ -933,13 +933,13 @@ suite('ExtHostSearch', () => {
 				}
 			};
 
-			const providedResults: vscode.TextSearchResult[] = [
+			const providedResults: zycode.TextSearchResult[] = [
 				makeTextResult(rootFolderA, 'file1.js'),
 				makeTextResult(rootFolderA, 'file1.ts')
 			];
 
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					providedResults.forEach(r => progress.report(r));
 					return Promise.resolve(null!);
 				}
@@ -986,7 +986,7 @@ suite('ExtHostSearch', () => {
 			};
 
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					let reportedResults;
 					if (options.folder.fsPath === rootFolderA.fsPath) {
 						reportedResults = [
@@ -1045,13 +1045,13 @@ suite('ExtHostSearch', () => {
 		});
 
 		test('include pattern applied', async () => {
-			const providedResults: vscode.TextSearchResult[] = [
+			const providedResults: zycode.TextSearchResult[] = [
 				makeTextResult(rootFolderA, 'file1.js'),
 				makeTextResult(rootFolderA, 'file1.ts')
 			];
 
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					providedResults.forEach(r => progress.report(r));
 					return Promise.resolve(null!);
 				}
@@ -1075,14 +1075,14 @@ suite('ExtHostSearch', () => {
 		});
 
 		test('max results = 1', async () => {
-			const providedResults: vscode.TextSearchResult[] = [
+			const providedResults: zycode.TextSearchResult[] = [
 				makeTextResult(rootFolderA, 'file1.ts'),
 				makeTextResult(rootFolderA, 'file2.ts')
 			];
 
 			let wasCanceled = false;
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					token.onCancellationRequested(() => wasCanceled = true);
 					providedResults.forEach(r => progress.report(r));
 					return Promise.resolve(null!);
@@ -1107,7 +1107,7 @@ suite('ExtHostSearch', () => {
 		});
 
 		test('max results = 2', async () => {
-			const providedResults: vscode.TextSearchResult[] = [
+			const providedResults: zycode.TextSearchResult[] = [
 				makeTextResult(rootFolderA, 'file1.ts'),
 				makeTextResult(rootFolderA, 'file2.ts'),
 				makeTextResult(rootFolderA, 'file3.ts')
@@ -1115,7 +1115,7 @@ suite('ExtHostSearch', () => {
 
 			let wasCanceled = false;
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					token.onCancellationRequested(() => wasCanceled = true);
 					providedResults.forEach(r => progress.report(r));
 					return Promise.resolve(null!);
@@ -1140,14 +1140,14 @@ suite('ExtHostSearch', () => {
 		});
 
 		test('provider returns maxResults exactly', async () => {
-			const providedResults: vscode.TextSearchResult[] = [
+			const providedResults: zycode.TextSearchResult[] = [
 				makeTextResult(rootFolderA, 'file1.ts'),
 				makeTextResult(rootFolderA, 'file2.ts')
 			];
 
 			let wasCanceled = false;
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					token.onCancellationRequested(() => wasCanceled = true);
 					providedResults.forEach(r => progress.report(r));
 					return Promise.resolve(null!);
@@ -1172,14 +1172,14 @@ suite('ExtHostSearch', () => {
 		});
 
 		test('provider returns early with limitHit', async () => {
-			const providedResults: vscode.TextSearchResult[] = [
+			const providedResults: zycode.TextSearchResult[] = [
 				makeTextResult(rootFolderA, 'file1.ts'),
 				makeTextResult(rootFolderA, 'file2.ts'),
 				makeTextResult(rootFolderA, 'file3.ts')
 			];
 
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					providedResults.forEach(r => progress.report(r));
 					return Promise.resolve({ limitHit: true });
 				}
@@ -1204,7 +1204,7 @@ suite('ExtHostSearch', () => {
 		test('multiroot max results', async () => {
 			let cancels = 0;
 			await registerTestTextSearchProvider({
-				async provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				async provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					token.onCancellationRequested(() => cancels++);
 					await new Promise(r => process.nextTick(r));
 					[
@@ -1234,14 +1234,14 @@ suite('ExtHostSearch', () => {
 		});
 
 		test('works with non-file schemes', async () => {
-			const providedResults: vscode.TextSearchResult[] = [
+			const providedResults: zycode.TextSearchResult[] = [
 				makeTextResult(fancySchemeFolderA, 'file1.ts'),
 				makeTextResult(fancySchemeFolderA, 'file2.ts'),
 				makeTextResult(fancySchemeFolderA, 'file3.ts')
 			];
 
 			await registerTestTextSearchProvider({
-				provideTextSearchResults(query: vscode.TextSearchQuery, options: vscode.TextSearchOptions, progress: vscode.Progress<vscode.TextSearchResult>, token: vscode.CancellationToken): Promise<vscode.TextSearchComplete> {
+				provideTextSearchResults(query: zycode.TextSearchQuery, options: zycode.TextSearchOptions, progress: zycode.Progress<zycode.TextSearchResult>, token: zycode.CancellationToken): Promise<zycode.TextSearchComplete> {
 					providedResults.forEach(r => progress.report(r));
 					return Promise.resolve(null!);
 				}

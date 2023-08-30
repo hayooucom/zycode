@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { memoize } from '../utils/memoize';
 
 export class Logger {
 
 	@memoize
-	private get output(): vscode.LogOutputChannel {
-		return vscode.window.createOutputChannel('TypeScript', { log: true });
+	private get output(): zycode.LogOutputChannel {
+		return zycode.window.createOutputChannel('TypeScript', { log: true });
 	}
 
-	public get logLevel(): vscode.LogLevel {
+	public get logLevel(): zycode.LogLevel {
 		return this.output.logLevel;
 	}
 

@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { equals } from '../util/arrays';
 
 export class MarkdownPreviewConfiguration {
-	public static getForResource(resource: vscode.Uri) {
+	public static getForResource(resource: zycode.Uri) {
 		return new MarkdownPreviewConfiguration(resource);
 	}
 
@@ -24,10 +24,10 @@ export class MarkdownPreviewConfiguration {
 	public readonly fontFamily: string | undefined;
 	public readonly styles: readonly string[];
 
-	private constructor(resource: vscode.Uri) {
-		const editorConfig = vscode.workspace.getConfiguration('editor', resource);
-		const markdownConfig = vscode.workspace.getConfiguration('markdown', resource);
-		const markdownEditorConfig = vscode.workspace.getConfiguration('[markdown]', resource);
+	private constructor(resource: zycode.Uri) {
+		const editorConfig = zycode.workspace.getConfiguration('editor', resource);
+		const markdownConfig = zycode.workspace.getConfiguration('markdown', resource);
+		const markdownEditorConfig = zycode.workspace.getConfiguration('[markdown]', resource);
 
 		this.scrollBeyondLastLine = editorConfig.get<boolean>('scrollBeyondLastLine', false);
 
@@ -68,7 +68,7 @@ export class MarkdownPreviewConfigurationManager {
 	private readonly _previewConfigurationsForWorkspaces = new Map<string, MarkdownPreviewConfiguration>();
 
 	public loadAndCacheConfiguration(
-		resource: vscode.Uri
+		resource: zycode.Uri
 	): MarkdownPreviewConfiguration {
 		const config = MarkdownPreviewConfiguration.getForResource(resource);
 		this._previewConfigurationsForWorkspaces.set(this._getKey(resource), config);
@@ -76,7 +76,7 @@ export class MarkdownPreviewConfigurationManager {
 	}
 
 	public hasConfigurationChanged(
-		resource: vscode.Uri
+		resource: zycode.Uri
 	): boolean {
 		const key = this._getKey(resource);
 		const currentConfig = this._previewConfigurationsForWorkspaces.get(key);
@@ -85,9 +85,9 @@ export class MarkdownPreviewConfigurationManager {
 	}
 
 	private _getKey(
-		resource: vscode.Uri
+		resource: zycode.Uri
 	): string {
-		const folder = vscode.workspace.getWorkspaceFolder(resource);
+		const folder = zycode.workspace.getWorkspaceFolder(resource);
 		return folder ? folder.uri.toString() : '';
 	}
 }

@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { DocumentSelector } from 'vscode-languageclient';
-import { Event, EventEmitter, extensions } from 'vscode';
+import { DocumentSelector } from 'zycode-languageclient';
+import { Event, EventEmitter, extensions } from 'zycode';
 
 /**
  * HTML language participant contribution.

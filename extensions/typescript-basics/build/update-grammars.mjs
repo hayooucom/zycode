@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 // @ts-check
 
-import { update } from 'vscode-grammar-updater';
+import { update } from 'zycode-grammar-updater';
 
 function removeDom(grammar) {
 	grammar.repository['support-objects'].patterns = grammar.repository['support-objects'].patterns.filter(pattern => {

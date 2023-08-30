@@ -7,7 +7,7 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import { join } from 'path';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 export function rndName() {
 	let name = '';
@@ -18,7 +18,7 @@ export function rndName() {
 	return name;
 }
 
-export function createRandomFile(contents = '', fileExtension = 'txt'): Thenable<vscode.Uri> {
+export function createRandomFile(contents = '', fileExtension = 'txt'): Thenable<zycode.Uri> {
 	return new Promise((resolve, reject) => {
 		const tmpFile = join(os.tmpdir(), rndName() + '.' + fileExtension);
 		fs.writeFile(tmpFile, contents, (error) => {
@@ -26,13 +26,13 @@ export function createRandomFile(contents = '', fileExtension = 'txt'): Thenable
 				return reject(error);
 			}
 
-			resolve(vscode.Uri.file(tmpFile));
+			resolve(zycode.Uri.file(tmpFile));
 		});
 	});
 }
 
 
-export function deleteFile(file: vscode.Uri): Thenable<boolean> {
+export function deleteFile(file: zycode.Uri): Thenable<boolean> {
 	return new Promise((resolve, reject) => {
 		fs.unlink(file.fsPath, (err) => {
 			if (err) {
@@ -49,15 +49,15 @@ export const CURSOR = '$$CURSOR$$';
 export function withRandomFileEditor(
 	contents: string,
 	fileExtension: string,
-	run: (editor: vscode.TextEditor, doc: vscode.TextDocument) => Thenable<void>
+	run: (editor: zycode.TextEditor, doc: zycode.TextDocument) => Thenable<void>
 ): Thenable<boolean> {
 	const cursorIndex = contents.indexOf(CURSOR);
 	return createRandomFile(contents.replace(CURSOR, ''), fileExtension).then(file => {
-		return vscode.workspace.openTextDocument(file).then(doc => {
-			return vscode.window.showTextDocument(doc).then((editor) => {
+		return zycode.workspace.openTextDocument(file).then(doc => {
+			return zycode.window.showTextDocument(doc).then((editor) => {
 				if (cursorIndex >= 0) {
 					const pos = doc.positionAt(cursorIndex);
-					editor.selection = new vscode.Selection(pos, pos);
+					editor.selection = new zycode.Selection(pos, pos);
 				}
 				return run(editor, doc).then(_ => {
 					if (doc.isDirty) {
@@ -77,14 +77,14 @@ export const wait = (ms: number) => new Promise<void>(resolve => setTimeout(() =
 
 export const joinLines = (...args: string[]) => args.join(os.platform() === 'win32' ? '\r\n' : '\n');
 
-export async function createTestEditor(uri: vscode.Uri, ...lines: string[]) {
-	const document = await vscode.workspace.openTextDocument(uri);
-	const editor = await vscode.window.showTextDocument(document);
-	await editor.insertSnippet(new vscode.SnippetString(joinLines(...lines)), new vscode.Range(0, 0, 1000, 0));
+export async function createTestEditor(uri: zycode.Uri, ...lines: string[]) {
+	const document = await zycode.workspace.openTextDocument(uri);
+	const editor = await zycode.window.showTextDocument(document);
+	await editor.insertSnippet(new zycode.SnippetString(joinLines(...lines)), new zycode.Range(0, 0, 1000, 0));
 	return editor;
 }
 
-export function assertEditorContents(editor: vscode.TextEditor, expectedDocContent: string, message?: string): void {
+export function assertEditorContents(editor: zycode.TextEditor, expectedDocContent: string, message?: string): void {
 	const cursorIndex = expectedDocContent.indexOf(CURSOR);
 
 	assert.strictEqual(
@@ -104,14 +104,14 @@ export function assertEditorContents(editor: vscode.TextEditor, expectedDocConte
 
 export type VsCodeConfiguration = { [key: string]: any };
 
-export async function updateConfig(documentUri: vscode.Uri, newConfig: VsCodeConfiguration): Promise<VsCodeConfiguration> {
+export async function updateConfig(documentUri: zycode.Uri, newConfig: VsCodeConfiguration): Promise<VsCodeConfiguration> {
 	const oldConfig: VsCodeConfiguration = {};
-	const config = vscode.workspace.getConfiguration(undefined, documentUri);
+	const config = zycode.workspace.getConfiguration(undefined, documentUri);
 
 	for (const configKey of Object.keys(newConfig)) {
 		oldConfig[configKey] = config.get(configKey);
 		await new Promise<void>((resolve, reject) =>
-			config.update(configKey, newConfig[configKey], vscode.ConfigurationTarget.Global)
+			config.update(configKey, newConfig[configKey], zycode.ConfigurationTarget.Global)
 				.then(() => resolve(), reject));
 	}
 	return oldConfig;
@@ -130,7 +130,7 @@ export const Config = Object.freeze({
 export const insertModesValues = Object.freeze(['insert', 'replace']);
 
 export async function enumerateConfig(
-	documentUri: vscode.Uri,
+	documentUri: zycode.Uri,
 	configKey: string,
 	values: readonly string[],
 	f: (message: string) => Promise<void>
@@ -143,8 +143,8 @@ export async function enumerateConfig(
 }
 
 
-export function onChangedDocument(documentUri: vscode.Uri, disposables: vscode.Disposable[]) {
-	return new Promise<vscode.TextDocument>(resolve => vscode.workspace.onDidChangeTextDocument(e => {
+export function onChangedDocument(documentUri: zycode.Uri, disposables: zycode.Disposable[]) {
+	return new Promise<zycode.TextDocument>(resolve => zycode.workspace.onDidChangeTextDocument(e => {
 		if (e.document.uri.toString() === documentUri.toString()) {
 			resolve(e.document);
 		}
@@ -152,9 +152,9 @@ export function onChangedDocument(documentUri: vscode.Uri, disposables: vscode.D
 }
 
 export async function retryUntilDocumentChanges(
-	documentUri: vscode.Uri,
+	documentUri: zycode.Uri,
 	options: { retries: number; timeout: number },
-	disposables: vscode.Disposable[],
+	disposables: zycode.Disposable[],
 	exec: () => Thenable<unknown>,
 ) {
 	const didChangeDocument = onChangedDocument(documentUri, disposables);

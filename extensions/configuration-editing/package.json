@@ -3,10 +3,10 @@
   "displayName": "%displayName%",
   "description": "%description%",
   "version": "1.0.0",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.0.0"
+    "zycode": "^1.0.0"
   },
   "icon": "images/icon.png",
   "activationEvents": [
@@ -63,80 +63,80 @@
     ],
     "jsonValidation": [
       {
-        "fileMatch": "vscode://defaultsettings/keybindings.json",
-        "url": "vscode://schemas/keybindings"
+        "fileMatch": "zycode://defaultsettings/keybindings.json",
+        "url": "zycode://schemas/keybindings"
       },
       {
         "fileMatch": "%APP_SETTINGS_HOME%/keybindings.json",
-        "url": "vscode://schemas/keybindings"
+        "url": "zycode://schemas/keybindings"
       },
       {
         "fileMatch": "%APP_SETTINGS_HOME%/profiles/*/keybindings.json",
-        "url": "vscode://schemas/keybindings"
+        "url": "zycode://schemas/keybindings"
       },
       {
-        "fileMatch": "vscode://defaultsettings/*.json",
-        "url": "vscode://schemas/settings/default"
+        "fileMatch": "zycode://defaultsettings/*.json",
+        "url": "zycode://schemas/settings/default"
       },
       {
         "fileMatch": "%APP_SETTINGS_HOME%/settings.json",
-        "url": "vscode://schemas/settings/user"
+        "url": "zycode://schemas/settings/user"
       },
       {
         "fileMatch": "%APP_SETTINGS_HOME%/profiles/*/settings.json",
-        "url": "vscode://schemas/settings/profile"
+        "url": "zycode://schemas/settings/profile"
       },
       {
         "fileMatch": "%MACHINE_SETTINGS_HOME%/settings.json",
-        "url": "vscode://schemas/settings/machine"
+        "url": "zycode://schemas/settings/machine"
       },
       {
         "fileMatch": "%APP_WORKSPACES_HOME%/*/workspace.json",
-        "url": "vscode://schemas/workspaceConfig"
+        "url": "zycode://schemas/workspaceConfig"
       },
       {
         "fileMatch": "**/*.code-workspace",
-        "url": "vscode://schemas/workspaceConfig"
+        "url": "zycode://schemas/workspaceConfig"
       },
       {
         "fileMatch": "**/argv.json",
-        "url": "vscode://schemas/argv"
+        "url": "zycode://schemas/argv"
       },
       {
-        "fileMatch": "/.vscode/settings.json",
-        "url": "vscode://schemas/settings/folder"
+        "fileMatch": "/.zycode/settings.json",
+        "url": "zycode://schemas/settings/folder"
       },
       {
-        "fileMatch": "/.vscode/launch.json",
-        "url": "vscode://schemas/launch"
+        "fileMatch": "/.zycode/launch.json",
+        "url": "zycode://schemas/launch"
       },
       {
-        "fileMatch": "/.vscode/tasks.json",
-        "url": "vscode://schemas/tasks"
+        "fileMatch": "/.zycode/tasks.json",
+        "url": "zycode://schemas/tasks"
       },
       {
         "fileMatch": "%APP_SETTINGS_HOME%/tasks.json",
-        "url": "vscode://schemas/tasks"
+        "url": "zycode://schemas/tasks"
       },
       {
         "fileMatch": "%APP_SETTINGS_HOME%/snippets/*.json",
-        "url": "vscode://schemas/snippets"
+        "url": "zycode://schemas/snippets"
       },
       {
         "fileMatch": "%APP_SETTINGS_HOME%/profiles/*/snippets/.json",
-        "url": "vscode://schemas/snippets"
+        "url": "zycode://schemas/snippets"
       },
       {
         "fileMatch": "%APP_SETTINGS_HOME%/sync/snippets/preview/*.json",
-        "url": "vscode://schemas/snippets"
+        "url": "zycode://schemas/snippets"
       },
       {
         "fileMatch": "**/*.code-snippets",
-        "url": "vscode://schemas/global-snippets"
+        "url": "zycode://schemas/global-snippets"
       },
       {
-        "fileMatch": "/.vscode/extensions.json",
-        "url": "vscode://schemas/extensions"
+        "fileMatch": "/.zycode/extensions.json",
+        "url": "zycode://schemas/extensions"
       },
       {
         "fileMatch": "devcontainer.json",
@@ -147,16 +147,16 @@
         "url": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json"
       },
       {
-        "fileMatch": "%APP_SETTINGS_HOME%/globalStorage/ms-vscode-remote.remote-containers/nameConfigs/*.json",
+        "fileMatch": "%APP_SETTINGS_HOME%/globalStorage/ms-zycode-remote.remote-containers/nameConfigs/*.json",
         "url": "./schemas/attachContainer.schema.json"
       },
       {
-        "fileMatch": "%APP_SETTINGS_HOME%/globalStorage/ms-vscode-remote.remote-containers/imageConfigs/*.json",
+        "fileMatch": "%APP_SETTINGS_HOME%/globalStorage/ms-zycode-remote.remote-containers/imageConfigs/*.json",
         "url": "./schemas/attachContainer.schema.json"
       },
       {
         "fileMatch": "**/quality/*/product.json",
-        "url": "vscode://schemas/vscode-product"
+        "url": "zycode://schemas/zycode-product"
       }
     ]
   },
@@ -165,6 +165,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

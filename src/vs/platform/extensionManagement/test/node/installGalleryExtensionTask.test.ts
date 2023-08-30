@@ -38,7 +38,7 @@ import { IUriIdentityService } from 'vs/platform/uriIdentity/common/uriIdentity'
 import { UriIdentityService } from 'vs/platform/uriIdentity/common/uriIdentityService';
 import { IUserDataProfilesService, UserDataProfilesService } from 'vs/platform/userDataProfile/common/userDataProfile';
 
-const ROOT = URI.file('tests').with({ scheme: 'vscode-tests' });
+const ROOT = URI.file('tests').with({ scheme: 'zycode-tests' });
 
 class TestExtensionsScanner extends mock<ExtensionsScanner>() {
 	override async scanExtensions(): Promise<ILocalExtension[]> { return []; }
@@ -98,7 +98,7 @@ class TestInstallGalleryExtensionTask extends InstallGalleryExtensionTask {
 				name: extension.name,
 				publisher: extension.publisher,
 				version: extension.version,
-				engines: { vscode: '*' },
+				engines: { zycode: '*' },
 			},
 			extension,
 			{ profileLocation: userDataProfilesService.defaultProfile.extensionsResource },

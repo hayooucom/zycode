@@ -36,7 +36,7 @@ export interface IEmbedderTerminalOptions {
 }
 
 /**
- * See Pseudoterminal on the vscode API for usage.
+ * See Pseudoterminal on the zycode API for usage.
  */
 export interface IEmbedderTerminalPty {
 	onDidWrite: Event<string>;

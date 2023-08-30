@@ -2,11 +2,11 @@
 	"name": "builtin-notebook-renderers",
 	"displayName": "%displayName%",
 	"description": "%description%",
-	"publisher": "vscode",
+	"publisher": "zycode",
 	"version": "1.0.0",
 	"license": "MIT",
 	"engines": {
-		"vscode": "^1.57.0"
+		"zycode": "^1.57.0"
 	},
 	"capabilities": {
 		"virtualWorkspaces": true,
@@ -17,7 +17,7 @@
 	"contributes": {
 		"notebookRenderer": [
 			{
-				"id": "vscode.builtin-renderer",
+				"id": "zycode.builtin-renderer",
 				"entrypoint": "./renderer-out/index.js",
 				"displayName": "VS Code Builtin Notebook Output Renderer",
 				"requiresMessaging": "never",
@@ -48,11 +48,11 @@
 	"dependencies": {},
 	"devDependencies": {
 		"@types/jsdom": "^21.1.0",
-		"@types/vscode-notebook-renderer": "^1.60.0",
+		"@types/zycode-notebook-renderer": "^1.60.0",
 		"jsdom": "^21.1.1"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/microsoft/vscode.git"
+		"url": "https://github.com/microsoft/zycode.git"
 	}
 }

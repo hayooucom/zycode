@@ -34,7 +34,7 @@ interface ISerializedLocalHistoryResource {
  */
 export class LocalHistoryFileSystemProvider implements IFileSystemProvider, IFileSystemProviderWithFileReadWriteCapability {
 
-	static readonly SCHEMA = 'vscode-local-history';
+	static readonly SCHEMA = 'zycode-local-history';
 
 	static toLocalHistoryFileSystem(resource: ILocalHistoryResource): URI {
 		const serializedLocalHistoryResource: ISerializedLocalHistoryResource = {

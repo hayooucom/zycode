@@ -96,7 +96,7 @@
 	margin-left: 10px;
 	padding: 0px 4px;
 	border-radius: 4px;
-	background-color: var(--vscode-extensionIcon-preReleaseForeground);
+	background-color: var(--zycode-extensionIcon-preReleaseForeground);
 	color: #ffffff;
 	display: flex;
 	align-items: center;
@@ -305,18 +305,18 @@
 
 .extension-editor > .header > .details > .pre-release-text a,
 .extension-editor > .header > .details > .actions-status-container > .status a {
-	color: var(--vscode-textLink-foreground)
+	color: var(--zycode-textLink-foreground)
 }
 
 .extension-editor > .header > .details > .pre-release-text a:hover,
 .extension-editor > .header > .details > .actions-status-container > .status a:hover {
 	text-decoration: underline;
-	color: var(--vscode-textLink-activeForeground)
+	color: var(--zycode-textLink-activeForeground)
 }
 
 .extension-editor > .header > .details > .pre-release-text a:active,
 .extension-editor > .header > .details > .actions-status-container > .status a:active {
-	color: var(--vscode-textLink-activeForeground)
+	color: var(--zycode-textLink-activeForeground)
 }
 
 .extension-editor > .header > .details > .pre-release-text:not(:empty){
@@ -351,7 +351,7 @@
 	font-size: 14px;
 	line-height: 36px;
 	padding-left: 20px;
-	border-bottom: 1px solid var(--vscode-panelSection-border);
+	border-bottom: 1px solid var(--zycode-panelSection-border);
 }
 
 .extension-editor > .body > .navbar > .monaco-action-bar > .actions-container {
@@ -366,19 +366,19 @@
 	padding: 0 10px;
 	font-size: 11px;
 	font-weight: normal;
-	color: var(--vscode-panelTitle-inactiveForeground);
+	color: var(--zycode-panelTitle-inactiveForeground);
 	text-transform: uppercase;
 	background: none !important;
 	border-radius: 0px !important;
 }
 
 .extension-editor > .body > .navbar > .monaco-action-bar > .actions-container > .action-item > .action-label.checked {
-	border-bottom: 1px solid var(--vscode-panelTitle-activeBorder);
-	color: var(--vscode-panelTitle-activeForeground);
+	border-bottom: 1px solid var(--zycode-panelTitle-activeBorder);
+	color: var(--zycode-panelTitle-activeForeground);
 }
 
 .extension-editor > .body > .navbar > .monaco-action-bar > .actions-container > .action-item > .action-label:hover {
-	color: var(--vscode-panelTitle-activeForeground);
+	color: var(--zycode-panelTitle-activeForeground);
 }
 
 .extension-editor > .body > .content {
@@ -767,5 +767,5 @@
 }
 
 .monaco-workbench .extension-editor > .header > .details > .recommendation .codicon {
-	color: var(--vscode-extensionButton-prominentBackground);
+	color: var(--zycode-extensionButton-prominentBackground);
 }

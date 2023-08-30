@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { Utils } from 'vscode-uri';
+import * as zycode from 'zycode';
+import { Utils } from 'zycode-uri';
 import { BinarySizeStatusBarEntry } from './binarySizeStatusBarEntry';
 import { Disposable } from './util/dispose';
 
-export function reopenAsText(resource: vscode.Uri, viewColumn: vscode.ViewColumn | undefined) {
-	vscode.commands.executeCommand('vscode.openWith', resource, 'default', viewColumn);
+export function reopenAsText(resource: zycode.Uri, viewColumn: zycode.ViewColumn | undefined) {
+	zycode.commands.executeCommand('zycode.openWith', resource, 'default', viewColumn);
 }
 
 export const enum PreviewState {
@@ -24,9 +24,9 @@ export abstract class MediaPreview extends Disposable {
 	private _binarySize: number | undefined;
 
 	constructor(
-		extensionRoot: vscode.Uri,
-		protected readonly resource: vscode.Uri,
-		protected readonly webviewEditor: vscode.WebviewPanel,
+		extensionRoot: zycode.Uri,
+		protected readonly resource: zycode.Uri,
+		protected readonly webviewEditor: zycode.WebviewPanel,
 		private readonly binarySizeStatusBarEntry: BinarySizeStatusBarEntry,
 	) {
 		super();
@@ -49,7 +49,7 @@ export abstract class MediaPreview extends Disposable {
 			this.dispose();
 		}));
 
-		const watcher = this._register(vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(resource, '*')));
+		const watcher = this._register(zycode.workspace.createFileSystemWatcher(new zycode.RelativePattern(resource, '*')));
 		this._register(watcher.onDidChange(e => {
 			if (e.toString() === this.resource.toString()) {
 				this.updateBinarySize();
@@ -70,7 +70,7 @@ export abstract class MediaPreview extends Disposable {
 	}
 
 	protected updateBinarySize() {
-		vscode.workspace.fs.stat(this.resource).then(({ size }) => {
+		zycode.workspace.fs.stat(this.resource).then(({ size }) => {
 			this._binarySize = size;
 			this.updateState();
 		});

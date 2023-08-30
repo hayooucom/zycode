@@ -43,7 +43,7 @@ export class CredentialsWebMainService extends BaseCredentialsMainService {
 			await this._keytarCache.findCredentials('test-keytar-loads');
 		} catch (e) {
 			this.logService.warn(
-				`Using the in-memory credential store as the operating system's credential store could not be accessed. Please see https://aka.ms/vscode-server-keyring on how to set this up. Details: ${e.message ?? e}`);
+				`Using the in-memory credential store as the operating system's credential store could not be accessed. Please see https://aka.ms/zycode-server-keyring on how to set this up. Details: ${e.message ?? e}`);
 			this._keytarCache = new InMemoryCredentialsProvider();
 		}
 		return this._keytarCache;

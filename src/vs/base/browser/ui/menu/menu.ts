@@ -254,7 +254,7 @@ export class Menu extends ActionBar {
 		}));
 
 		this._register(addDisposableListener(scrollElement, EventType.MOUSE_UP, e => {
-			// Absorb clicks in menu dead space https://github.com/microsoft/vscode/issues/63575
+			// Absorb clicks in menu dead space https://github.com/microsoft/zycode/issues/63575
 			// We do this on the scroll element so the scroll bar doesn't dismiss the menu either
 			e.preventDefault();
 		}));
@@ -1066,7 +1066,7 @@ ${formatRule(Codicon.menuSubmenu)}
 
 .monaco-menu .monaco-action-bar .action-item.disabled .action-label,
 .monaco-menu .monaco-action-bar .action-item.disabled .action-label:hover {
-	color: var(--vscode-disabledForeground);
+	color: var(--zycode-disabledForeground);
 }
 
 /* Vertical actions */
@@ -1081,7 +1081,7 @@ ${formatRule(Codicon.menuSubmenu)}
 
 .monaco-menu .monaco-action-bar.vertical .action-label.separator {
 	display: block;
-	border-bottom: 1px solid var(--vscode-menu-separatorBackground);
+	border-bottom: 1px solid var(--zycode-menu-separatorBackground);
 	padding-top: 1px;
 	padding: 30px;
 }

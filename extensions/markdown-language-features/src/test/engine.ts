@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { MarkdownItEngine } from '../markdownEngine';
 import { MarkdownContributionProvider, MarkdownContributions } from '../markdownExtensions';
 import { githubSlugifier } from '../slugify';
 import { nulLogger } from './nulLogging';
 
 const emptyContributions = new class implements MarkdownContributionProvider {
-	readonly extensionUri = vscode.Uri.file('/');
+	readonly extensionUri = zycode.Uri.file('/');
 	readonly contributions = MarkdownContributions.Empty;
 
-	private readonly _onContributionsChanged = new vscode.EventEmitter<this>();
+	private readonly _onContributionsChanged = new zycode.EventEmitter<this>();
 	readonly onContributionsChanged = this._onContributionsChanged.event;
 
 	dispose() {

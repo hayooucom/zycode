@@ -1,5 +1,5 @@
 {
-	"$schema": "vscode://schemas/color-theme",
+	"$schema": "zycode://schemas/color-theme",
 	"name": "Default Dark Modern",
 	"include": "./dark_plus.json",
 	"colors": {

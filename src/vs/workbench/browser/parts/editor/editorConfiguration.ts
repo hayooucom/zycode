@@ -43,9 +43,9 @@ export class DynamicEditorConfigurations extends Disposable implements IWorkbenc
 		// List some editor types that the above `AUTO_LOCK_EXTRA_EDITORS`
 		// already covers to avoid duplicates.
 
-		'vscode-interactive-input',
+		'zycode-interactive-input',
 		'interactive',
-		'vscode.markdown.preview.editor'
+		'zycode.markdown.preview.editor'
 	]);
 
 	private readonly configurationRegistry = Registry.as<IConfigurationRegistry>(ConfigurationExtensions.Configuration);
@@ -137,7 +137,7 @@ export class DynamicEditorConfigurations extends Disposable implements IWorkbenc
 			properties: {
 				'workbench.editorAssociations': {
 					type: 'object',
-					markdownDescription: localize('editor.editorAssociations', "Configure [glob patterns](https://aka.ms/vscode-glob-patterns) to editors (for example `\"*.hex\": \"hexEditor.hexedit\"`). These have precedence over the default behavior."),
+					markdownDescription: localize('editor.editorAssociations', "Configure [glob patterns](https://aka.ms/zycode-glob-patterns) to editors (for example `\"*.hex\": \"hexEditor.hexedit\"`). These have precedence over the default behavior."),
 					patternProperties: {
 						'.*': {
 							type: 'string',

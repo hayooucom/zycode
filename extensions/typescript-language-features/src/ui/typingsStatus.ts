@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { ITypeScriptServiceClient } from '../typescriptService';
 import { Disposable } from '../utils/dispose';
 
@@ -80,9 +80,9 @@ export class AtaProgressReporter extends Disposable {
 			});
 		});
 
-		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Window,
-			title: vscode.l10n.t("Fetching data for better TypeScript IntelliSense")
+		zycode.window.withProgress({
+			location: zycode.ProgressLocation.Window,
+			title: zycode.l10n.t("Fetching data for better TypeScript IntelliSense")
 		}, () => promise);
 	}
 
@@ -95,14 +95,14 @@ export class AtaProgressReporter extends Disposable {
 	}
 
 	private async onTypesInstallerInitializationFailed() {
-		const config = vscode.workspace.getConfiguration('typescript');
+		const config = zycode.workspace.getConfiguration('typescript');
 
 		if (config.get<boolean>('check.npmIsInstalled', true)) {
-			const dontShowAgain: vscode.MessageItem = {
-				title: vscode.l10n.t("Don't Show Again"),
+			const dontShowAgain: zycode.MessageItem = {
+				title: zycode.l10n.t("Don't Show Again"),
 			};
-			const selected = await vscode.window.showWarningMessage(
-				vscode.l10n.t(
+			const selected = await zycode.window.showWarningMessage(
+				zycode.l10n.t(
 					"Could not install typings files for JavaScript language features. Please ensure that NPM is installed, or configure 'typescript.npm' in your user settings. Alternatively, check the [documentation]({0}) to learn more.",
 					'https://go.microsoft.com/fwlink/?linkid=847635'
 				),

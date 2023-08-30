@@ -3,30 +3,30 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import parse from '@emmetio/html-matcher';
 import parseStylesheet from '@emmetio/css-parser';
 import { Node as FlatNode, HtmlNode as HtmlFlatNode, Property as FlatProperty, Rule as FlatRule, CssToken as FlatCssToken, Stylesheet as FlatStylesheet } from 'EmmetFlatNode';
 import { DocumentStreamReader } from './bufferStream';
-import * as EmmetHelper from '@vscode/emmet-helper';
-import { TextDocument as LSTextDocument } from 'vscode-languageserver-textdocument';
+import * as EmmetHelper from '@zycode/emmet-helper';
+import { TextDocument as LSTextDocument } from 'zycode-languageserver-textdocument';
 import { getRootNode } from './parseDocument';
 
 let _emmetHelper: typeof EmmetHelper;
 let _currentExtensionsPath: string[] | undefined;
 
-let _homeDir: vscode.Uri | undefined;
+let _homeDir: zycode.Uri | undefined;
 
 
-export function setHomeDir(homeDir: vscode.Uri) {
+export function setHomeDir(homeDir: zycode.Uri) {
 	_homeDir = homeDir;
 }
 
 export function getEmmetHelper() {
-	// Lazy load vscode-emmet-helper instead of importing it
+	// Lazy load zycode-emmet-helper instead of importing it
 	// directly to reduce the start-up time of the extension
 	if (!_emmetHelper) {
-		_emmetHelper = require('@vscode/emmet-helper');
+		_emmetHelper = require('@zycode/emmet-helper');
 	}
 	return _emmetHelper;
 }
@@ -36,17 +36,17 @@ export function getEmmetHelper() {
  */
 export function updateEmmetExtensionsPath(forceRefresh: boolean = false) {
 	const helper = getEmmetHelper();
-	let extensionsPath = vscode.workspace.getConfiguration('emmet').get<string[]>('extensionsPath');
+	let extensionsPath = zycode.workspace.getConfiguration('emmet').get<string[]>('extensionsPath');
 	if (!extensionsPath) {
 		extensionsPath = [];
 	}
 	if (forceRefresh || _currentExtensionsPath !== extensionsPath) {
 		_currentExtensionsPath = extensionsPath;
-		const rootPaths = vscode.workspace.workspaceFolders?.length ? vscode.workspace.workspaceFolders.map(f => f.uri) : undefined;
-		const fileSystem = vscode.workspace.fs;
+		const rootPaths = zycode.workspace.workspaceFolders?.length ? zycode.workspace.workspaceFolders.map(f => f.uri) : undefined;
+		const fileSystem = zycode.workspace.fs;
 		helper.updateExtensionsPath(extensionsPath, fileSystem, rootPaths, _homeDir).catch(err => {
 			if (Array.isArray(extensionsPath) && extensionsPath.length) {
-				vscode.window.showErrorMessage(err.message);
+				zycode.window.showErrorMessage(err.message);
 			}
 		});
 	}
@@ -54,29 +54,29 @@ export function updateEmmetExtensionsPath(forceRefresh: boolean = false) {
 
 /**
  * Migrate old configuration(string) for extensionsPath to new type(string[])
- * https://github.com/microsoft/vscode/issues/117517
+ * https://github.com/microsoft/zycode/issues/117517
  */
 export function migrateEmmetExtensionsPath() {
 	// Get the detail info of emmet.extensionsPath setting
-	const config = vscode.workspace.getConfiguration().inspect('emmet.extensionsPath');
+	const config = zycode.workspace.getConfiguration().inspect('emmet.extensionsPath');
 
 	// Update Global setting if the value type is string or the value is null
 	if (typeof config?.globalValue === 'string') {
-		vscode.workspace.getConfiguration().update('emmet.extensionsPath', [config.globalValue], true);
+		zycode.workspace.getConfiguration().update('emmet.extensionsPath', [config.globalValue], true);
 	} else if (config?.globalValue === null) {
-		vscode.workspace.getConfiguration().update('emmet.extensionsPath', [], true);
+		zycode.workspace.getConfiguration().update('emmet.extensionsPath', [], true);
 	}
 	// Update Workspace setting if the value type is string or the value is null
 	if (typeof config?.workspaceValue === 'string') {
-		vscode.workspace.getConfiguration().update('emmet.extensionsPath', [config.workspaceValue], false);
+		zycode.workspace.getConfiguration().update('emmet.extensionsPath', [config.workspaceValue], false);
 	} else if (config?.workspaceValue === null) {
-		vscode.workspace.getConfiguration().update('emmet.extensionsPath', [], false);
+		zycode.workspace.getConfiguration().update('emmet.extensionsPath', [], false);
 	}
 	// Update WorkspaceFolder setting if the value type is string or the value is null
 	if (typeof config?.workspaceFolderValue === 'string') {
-		vscode.workspace.getConfiguration().update('emmet.extensionsPath', [config.workspaceFolderValue]);
+		zycode.workspace.getConfiguration().update('emmet.extensionsPath', [config.workspaceFolderValue]);
 	} else if (config?.workspaceFolderValue === null) {
-		vscode.workspace.getConfiguration().update('emmet.extensionsPath', []);
+		zycode.workspace.getConfiguration().update('emmet.extensionsPath', []);
 	}
 }
 
@@ -105,9 +105,9 @@ export function isStyleSheet(syntax: string): boolean {
 }
 
 export function validate(allowStylesheet: boolean = true): boolean {
-	const editor = vscode.window.activeTextEditor;
+	const editor = zycode.window.activeTextEditor;
 	if (!editor) {
-		vscode.window.showInformationMessage('No editor is active');
+		zycode.window.showInformationMessage('No editor is active');
 		return false;
 	}
 	if (!allowStylesheet && isStyleSheet(editor.document.languageId)) {
@@ -127,7 +127,7 @@ export function getMappingForIncludedLanguages(): Record<string, string> {
 	};
 
 	const finalMappedModes: Record<string, string> = {};
-	const includeLanguagesConfig = vscode.workspace.getConfiguration('emmet').get<Record<string, string>>('includeLanguages');
+	const includeLanguagesConfig = zycode.workspace.getConfiguration('emmet').get<Record<string, string>>('includeLanguages');
 	const includeLanguages = Object.assign({}, MAPPED_MODES, includeLanguagesConfig ?? {});
 	Object.keys(includeLanguages).forEach(syntax => {
 		if (typeof includeLanguages[syntax] === 'string' && LANGUAGE_MODES[includeLanguages[syntax]]) {
@@ -138,7 +138,7 @@ export function getMappingForIncludedLanguages(): Record<string, string> {
 }
 
 /**
-* Get the corresponding emmet mode for given vscode language mode
+* Get the corresponding emmet mode for given zycode language mode
 * E.g.: jsx for typescriptreact/javascriptreact or pug for jade
 * If the language is not supported by emmet or has been excluded via `excludeLanguages` setting,
 * then nothing is returned
@@ -183,10 +183,10 @@ const star = 42;
 /**
  * Traverse the given document backward & forward from given position
  * to find a complete ruleset, then parse just that to return a Stylesheet
- * @param document vscode.TextDocument
- * @param position vscode.Position
+ * @param document zycode.TextDocument
+ * @param position zycode.Position
  */
-export function parsePartialStylesheet(document: vscode.TextDocument, position: vscode.Position): FlatStylesheet | undefined {
+export function parsePartialStylesheet(document: zycode.TextDocument, position: zycode.Position): FlatStylesheet | undefined {
 	const isCSS = document.languageId === 'css';
 	const positionOffset = document.offsetAt(position);
 	let startOffset = 0;
@@ -220,7 +220,7 @@ export function parsePartialStylesheet(document: vscode.TextDocument, position: 
 			currentLine = posLineNumber;
 			const startLineComment = document.lineAt(currentLine).text.indexOf('//');
 			if (startLineComment > -1) {
-				stream.pos = document.offsetAt(new vscode.Position(currentLine, startLineComment));
+				stream.pos = document.offsetAt(new zycode.Position(currentLine, startLineComment));
 			}
 		}
 	}
@@ -239,7 +239,7 @@ export function parsePartialStylesheet(document: vscode.TextDocument, position: 
 		if (stream.eat(slash)) {
 			if (stream.eat(slash) && !isCSS) {
 				const posLineNumber = document.positionAt(stream.pos).line;
-				stream.pos = document.offsetAt(new vscode.Position(posLineNumber + 1, 0));
+				stream.pos = document.offsetAt(new zycode.Position(posLineNumber + 1, 0));
 			} else if (stream.eat(star)) {
 				stream.pos = findClosingCommentAfterPosition(stream.pos) ?? endOffset;
 			}
@@ -450,16 +450,16 @@ export function isOffsetInsideOpenOrCloseTag(node: FlatNode, offset: number): bo
 	return false;
 }
 
-export function offsetRangeToSelection(document: vscode.TextDocument, start: number, end: number): vscode.Selection {
+export function offsetRangeToSelection(document: zycode.TextDocument, start: number, end: number): zycode.Selection {
 	const startPos = document.positionAt(start);
 	const endPos = document.positionAt(end);
-	return new vscode.Selection(startPos, endPos);
+	return new zycode.Selection(startPos, endPos);
 }
 
-export function offsetRangeToVsRange(document: vscode.TextDocument, start: number, end: number): vscode.Range {
+export function offsetRangeToVsRange(document: zycode.TextDocument, start: number, end: number): zycode.Range {
 	const startPos = document.positionAt(start);
 	const endPos = document.positionAt(end);
-	return new vscode.Range(startPos, endPos);
+	return new zycode.Range(startPos, endPos);
 }
 
 /**
@@ -605,7 +605,7 @@ export function sameNodes(node1: FlatNode | undefined, node2: FlatNode | undefin
 }
 
 export function getEmmetConfiguration(syntax: string) {
-	const emmetConfig = vscode.workspace.getConfiguration('emmet');
+	const emmetConfig = zycode.workspace.getConfiguration('emmet');
 	const syntaxProfiles = Object.assign({}, emmetConfig['syntaxProfiles'] || {});
 	const preferences = Object.assign({}, emmetConfig['preferences'] || {});
 	// jsx, xml and xsl syntaxes need to have self closing tags unless otherwise configured by user
@@ -657,7 +657,7 @@ export function getCssPropertyFromRule(rule: FlatRule, name: string): FlatProper
  * Returns css property under caret in given editor or `null` if such node cannot
  * be found
  */
-export function getCssPropertyFromDocument(editor: vscode.TextEditor, position: vscode.Position): FlatProperty | null {
+export function getCssPropertyFromDocument(editor: zycode.TextEditor, position: zycode.Position): FlatProperty | null {
 	const document = editor.document;
 	const rootNode = getRootNode(document, true);
 	const offset = document.offsetAt(position);
@@ -684,7 +684,7 @@ export function getCssPropertyFromDocument(editor: vscode.TextEditor, position: 
 }
 
 
-export function getEmbeddedCssNodeIfAny(document: vscode.TextDocument, currentNode: FlatNode | undefined, position: vscode.Position): FlatNode | undefined {
+export function getEmbeddedCssNodeIfAny(document: zycode.TextDocument, currentNode: FlatNode | undefined, position: zycode.Position): FlatNode | undefined {
 	if (!currentNode) {
 		return;
 	}
@@ -718,7 +718,7 @@ export function isNumber(obj: any): obj is number {
 	return typeof obj === 'number';
 }
 
-export function toLSTextDocument(doc: vscode.TextDocument): LSTextDocument {
+export function toLSTextDocument(doc: zycode.TextDocument): LSTextDocument {
 	return LSTextDocument.create(doc.uri.toString(), doc.languageId, doc.version, doc.getText());
 }
 

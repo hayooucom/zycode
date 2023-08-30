@@ -1,4 +1,4 @@
-.vscode/
+.zycode/
 out/test/
 out/**/*.js.map
 src/
@@ -7,4 +7,4 @@ tsconfig.json
 .gitignore
 yarn.lock
 extension.webpack.config.js
-vscode-json-languageserver-*.tgz
+zycode-json-languageserver-*.tgz

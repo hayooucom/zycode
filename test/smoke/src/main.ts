@@ -11,7 +11,7 @@ import * as os from 'os';
 import * as minimist from 'minimist';
 import * as rimraf from 'rimraf';
 import * as mkdirp from 'mkdirp';
-import * as vscodetest from '@vscode/test-electron';
+import * as vscodetest from '@zycode/test-electron';
 import fetch from 'node-fetch';
 import { Quality, MultiLogger, Logger, ConsoleLogger, FileLogger, measureAndLog, getDevElectronPath, getBuildElectronPath, getBuildVersion } from '../../automation';
 import { retry, timeout } from './utils';
@@ -132,8 +132,8 @@ process.once('exit', () => {
 	}
 });
 
-const testRepoUrl = 'https://github.com/microsoft/vscode-smoketest-express';
-const workspacePath = path.join(testDataPath, 'vscode-smoketest-express');
+const testRepoUrl = 'https://github.com/microsoft/zycode-smoketest-express';
+const workspacePath = path.join(testDataPath, 'zycode-smoketest-express');
 const extensionsPath = path.join(testDataPath, 'extensions-dir');
 mkdirp.sync(extensionsPath);
 
@@ -317,7 +317,7 @@ async function ensureStableCode(): Promise<void> {
 		}));
 
 		if (process.platform === 'darwin') {
-			// Visual Studio Code.app/Contents/MacOS/Electron
+			// ZY Studio Code.app/Contents/MacOS/Electron
 			stableCodePath = path.dirname(path.dirname(path.dirname(stableCodeExecutable)));
 		} else {
 			// VSCode/Code.exe (Windows) | VSCode/code (Linux)
@@ -402,7 +402,7 @@ describe(`VSCode Smoke Tests (${opts.web ? 'Web' : 'Electron'})`, () => {
 	setupSearchTests(logger);
 	setupNotebookTests(logger);
 	setupLanguagesTests(logger);
-	if (opts.web) { setupTerminalTests(logger); } // Not stable on desktop/remote https://github.com/microsoft/vscode/issues/146811
+	if (opts.web) { setupTerminalTests(logger); } // Not stable on desktop/remote https://github.com/microsoft/zycode/issues/146811
 	setupTaskTests(logger);
 	setupStatusbarTests(logger);
 	if (quality !== Quality.Dev && quality !== Quality.OSS) { setupExtensionTests(logger); }

@@ -42,7 +42,7 @@ export class NativeIssueService implements IWorkbenchIssueService {
 		@IAuthenticationService private readonly authenticationService: IAuthenticationService,
 		@IIntegrityService private readonly integrityService: IIntegrityService,
 	) {
-		ipcRenderer.on('vscode:triggerIssueUriRequestHandler', async (event: unknown, request: { replyChannel: string; extensionId: string }) => {
+		ipcRenderer.on('zycode:triggerIssueUriRequestHandler', async (event: unknown, request: { replyChannel: string; extensionId: string }) => {
 			const result = await this.getIssueReporterUri(request.extensionId, CancellationToken.None);
 			ipcRenderer.send(request.replyChannel, result.toString());
 		});

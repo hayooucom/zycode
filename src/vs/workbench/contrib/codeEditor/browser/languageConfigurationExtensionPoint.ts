@@ -480,7 +480,7 @@ export class LanguageConfigurationFileHandler extends Disposable {
 	}
 }
 
-const schemaId = 'vscode://schemas/language-configuration';
+const schemaId = 'zycode://schemas/language-configuration';
 const schema: IJSONSchema = {
 	allowComments: true,
 	allowTrailingCommas: true,

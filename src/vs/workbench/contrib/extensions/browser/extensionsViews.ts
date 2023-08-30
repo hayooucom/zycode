@@ -57,7 +57,7 @@ import { isOfflineError } from 'vs/base/parts/request/common/request';
 import { defaultCountBadgeStyles } from 'vs/platform/theme/browser/defaultStyles';
 
 // Extensions that are automatically classified as Programming Language extensions, but should be Feature extensions
-const FORCE_FEATURE_EXTENSIONS = ['vscode.git', 'vscode.git-base', 'vscode.search-result'];
+const FORCE_FEATURE_EXTENSIONS = ['zycode.git', 'zycode.git-base', 'zycode.search-result'];
 
 class ExtensionsViewState extends Disposable implements IExtensionsViewState {
 

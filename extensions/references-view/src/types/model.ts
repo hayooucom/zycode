@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { SymbolItemDragAndDrop, SymbolItemEditorHighlights, SymbolItemNavigation, SymbolTreeInput } from '../references-view';
 import { asResourceUrl, del, getThemeIcon, tail } from '../utils';
 
@@ -13,17 +13,17 @@ export class TypesTreeInput implements SymbolTreeInput<TypeItem> {
 	readonly contextValue: string = 'typeHierarchy';
 
 	constructor(
-		readonly location: vscode.Location,
+		readonly location: zycode.Location,
 		readonly direction: TypeHierarchyDirection,
 	) {
 		this.title = direction === TypeHierarchyDirection.Supertypes
-			? vscode.l10n.t('Supertypes Of')
-			: vscode.l10n.t('Subtypes Of');
+			? zycode.l10n.t('Supertypes Of')
+			: zycode.l10n.t('Subtypes Of');
 	}
 
 	async resolve() {
 
-		const items = await Promise.resolve(vscode.commands.executeCommand<vscode.TypeHierarchyItem[]>('vscode.prepareTypeHierarchy', this.location.uri, this.location.range.start));
+		const items = await Promise.resolve(zycode.commands.executeCommand<zycode.TypeHierarchyItem[]>('zycode.prepareTypeHierarchy', this.location.uri, this.location.range.start));
 		const model = new TypesModel(this.direction, items ?? []);
 		const provider = new TypeItemDataProvider(model);
 
@@ -33,7 +33,7 @@ export class TypesTreeInput implements SymbolTreeInput<TypeItem> {
 
 		return {
 			provider,
-			get message() { return model.roots.length === 0 ? vscode.l10n.t('No results.') : undefined; },
+			get message() { return model.roots.length === 0 ? zycode.l10n.t('No results.') : undefined; },
 			navigation: model,
 			highlights: model,
 			dnd: model,
@@ -43,7 +43,7 @@ export class TypesTreeInput implements SymbolTreeInput<TypeItem> {
 		};
 	}
 
-	with(location: vscode.Location): TypesTreeInput {
+	with(location: zycode.Location): TypesTreeInput {
 		return new TypesTreeInput(location, this.direction);
 	}
 }
@@ -61,7 +61,7 @@ export class TypeItem {
 
 	constructor(
 		readonly model: TypesModel,
-		readonly item: vscode.TypeHierarchyItem,
+		readonly item: zycode.TypeHierarchyItem,
 		readonly parent: TypeItem | undefined,
 	) { }
 
@@ -74,19 +74,19 @@ class TypesModel implements SymbolItemNavigation<TypeItem>, SymbolItemEditorHigh
 
 	readonly roots: TypeItem[] = [];
 
-	private readonly _onDidChange = new vscode.EventEmitter<TypesModel>();
+	private readonly _onDidChange = new zycode.EventEmitter<TypesModel>();
 	readonly onDidChange = this._onDidChange.event;
 
-	constructor(readonly direction: TypeHierarchyDirection, items: vscode.TypeHierarchyItem[]) {
+	constructor(readonly direction: TypeHierarchyDirection, items: zycode.TypeHierarchyItem[]) {
 		this.roots = items.map(item => new TypeItem(this, item, undefined));
 	}
 
 	private async _resolveTypes(currentType: TypeItem): Promise<TypeItem[]> {
 		if (this.direction === TypeHierarchyDirection.Supertypes) {
-			const types = await vscode.commands.executeCommand<vscode.TypeHierarchyItem[]>('vscode.provideSupertypes', currentType.item);
+			const types = await zycode.commands.executeCommand<zycode.TypeHierarchyItem[]>('zycode.provideSupertypes', currentType.item);
 			return types ? types.map(item => new TypeItem(this, item, currentType)) : [];
 		} else {
-			const types = await vscode.commands.executeCommand<vscode.TypeHierarchyItem[]>('vscode.provideSubtypes', currentType.item);
+			const types = await zycode.commands.executeCommand<zycode.TypeHierarchyItem[]>('zycode.provideSubtypes', currentType.item);
 			return types ? types.map(item => new TypeItem(this, item, currentType)) : [];
 		}
 	}
@@ -100,17 +100,17 @@ class TypesModel implements SymbolItemNavigation<TypeItem>, SymbolItemEditorHigh
 
 	// -- dnd
 
-	getDragUri(item: TypeItem): vscode.Uri | undefined {
+	getDragUri(item: TypeItem): zycode.Uri | undefined {
 		return asResourceUrl(item.item.uri, item.item.range);
 	}
 
 	// -- navigation
 
 	location(currentType: TypeItem) {
-		return new vscode.Location(currentType.item.uri, currentType.item.range);
+		return new zycode.Location(currentType.item.uri, currentType.item.range);
 	}
 
-	nearest(uri: vscode.Uri, _position: vscode.Position): TypeItem | undefined {
+	nearest(uri: zycode.Uri, _position: zycode.Position): TypeItem | undefined {
 		return this.roots.find(item => item.item.uri.toString() === uri.toString()) ?? this.roots[0];
 	}
 
@@ -136,7 +136,7 @@ class TypesModel implements SymbolItemNavigation<TypeItem>, SymbolItemEditorHigh
 
 	// --- highlights
 
-	getEditorHighlights(currentType: TypeItem, uri: vscode.Uri): vscode.Range[] | undefined {
+	getEditorHighlights(currentType: TypeItem, uri: zycode.Uri): zycode.Range[] | undefined {
 		return currentType.item.uri.toString() === uri.toString() ? [currentType.item.selectionRange] : undefined;
 	}
 
@@ -150,12 +150,12 @@ class TypesModel implements SymbolItemNavigation<TypeItem>, SymbolItemEditorHigh
 	}
 }
 
-class TypeItemDataProvider implements vscode.TreeDataProvider<TypeItem> {
+class TypeItemDataProvider implements zycode.TreeDataProvider<TypeItem> {
 
-	private readonly _emitter = new vscode.EventEmitter<TypeItem | undefined>();
+	private readonly _emitter = new zycode.EventEmitter<TypeItem | undefined>();
 	readonly onDidChangeTreeData = this._emitter.event;
 
-	private readonly _modelListener: vscode.Disposable;
+	private readonly _modelListener: zycode.Disposable;
 
 	constructor(private _model: TypesModel) {
 		this._modelListener = _model.onDidChange(e => this._emitter.fire(e instanceof TypeItem ? e : undefined));
@@ -166,21 +166,21 @@ class TypeItemDataProvider implements vscode.TreeDataProvider<TypeItem> {
 		this._modelListener.dispose();
 	}
 
-	getTreeItem(element: TypeItem): vscode.TreeItem {
+	getTreeItem(element: TypeItem): zycode.TreeItem {
 
-		const item = new vscode.TreeItem(element.item.name);
+		const item = new zycode.TreeItem(element.item.name);
 		item.description = element.item.detail;
 		item.contextValue = 'type-item';
 		item.iconPath = getThemeIcon(element.item.kind);
 		item.command = {
-			command: 'vscode.open',
-			title: vscode.l10n.t('Open Type'),
+			command: 'zycode.open',
+			title: zycode.l10n.t('Open Type'),
 			arguments: [
 				element.item.uri,
-				<vscode.TextDocumentShowOptions>{ selection: element.item.selectionRange.with({ end: element.item.selectionRange.start }) }
+				<zycode.TextDocumentShowOptions>{ selection: element.item.selectionRange.with({ end: element.item.selectionRange.start }) }
 			]
 		};
-		item.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+		item.collapsibleState = zycode.TreeItemCollapsibleState.Collapsed;
 		return item;
 	}
 

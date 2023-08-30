@@ -18,7 +18,7 @@ import { SearchService } from 'vs/workbench/services/search/node/rawSearchServic
 import { RipgrepSearchProvider } from 'vs/workbench/services/search/node/ripgrepSearchProvider';
 import { OutputChannel } from 'vs/workbench/services/search/node/ripgrepSearchUtils';
 import { NativeTextSearchManager } from 'vs/workbench/services/search/node/textSearchManager';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 
 export class NativeExtHostSearch extends ExtHostSearch {
 
@@ -70,7 +70,7 @@ export class NativeExtHostSearch extends ExtHostSearch {
 		});
 	}
 
-	override $provideFileSearchResults(handle: number, session: number, rawQuery: IRawFileQuery, token: vscode.CancellationToken): Promise<ISearchCompleteStats> {
+	override $provideFileSearchResults(handle: number, session: number, rawQuery: IRawFileQuery, token: zycode.CancellationToken): Promise<ISearchCompleteStats> {
 		const query = reviveQuery(rawQuery);
 		if (handle === this._internalFileSearchHandle) {
 			return this.doInternalFileSearch(handle, session, query, token);
@@ -79,7 +79,7 @@ export class NativeExtHostSearch extends ExtHostSearch {
 		return super.$provideFileSearchResults(handle, session, rawQuery, token);
 	}
 
-	private doInternalFileSearch(handle: number, session: number, rawQuery: IFileQuery, token: vscode.CancellationToken): Promise<ISearchCompleteStats> {
+	private doInternalFileSearch(handle: number, session: number, rawQuery: IFileQuery, token: zycode.CancellationToken): Promise<ISearchCompleteStats> {
 		const onResult = (ev: ISerializedSearchProgressItem) => {
 			if (isSerializedFileMatch(ev)) {
 				ev = [ev];
@@ -108,7 +108,7 @@ export class NativeExtHostSearch extends ExtHostSearch {
 		return super.$clearCache(cacheKey);
 	}
 
-	protected override createTextSearchManager(query: ITextQuery, provider: vscode.TextSearchProvider): TextSearchManager {
+	protected override createTextSearchManager(query: ITextQuery, provider: zycode.TextSearchProvider): TextSearchManager {
 		return new NativeTextSearchManager(query, provider, undefined, 'textSearchProvider');
 	}
 }

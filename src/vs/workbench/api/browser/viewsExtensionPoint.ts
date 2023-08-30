@@ -47,16 +47,16 @@ const viewsContainerSchema: IJSONSchema = {
 	type: 'object',
 	properties: {
 		id: {
-			description: localize({ key: 'vscode.extension.contributes.views.containers.id', comment: ['Contribution refers to those that an extension contributes to VS Code through an extension/contribution point. '] }, "Unique id used to identify the container in which views can be contributed using 'views' contribution point"),
+			description: localize({ key: 'zycode.extension.contributes.views.containers.id', comment: ['Contribution refers to those that an extension contributes to VS Code through an extension/contribution point. '] }, "Unique id used to identify the container in which views can be contributed using 'views' contribution point"),
 			type: 'string',
 			pattern: '^[a-zA-Z0-9_-]+$'
 		},
 		title: {
-			description: localize('vscode.extension.contributes.views.containers.title', 'Human readable string used to render the container'),
+			description: localize('zycode.extension.contributes.views.containers.title', 'Human readable string used to render the container'),
 			type: 'string'
 		},
 		icon: {
-			description: localize('vscode.extension.contributes.views.containers.icon', "Path to the container icon. Icons are 24x24 centered on a 50x40 block and have a fill color of 'rgb(215, 218, 224)' or '#d7dae0'. It is recommended that icons be in SVG, though any image file type is accepted."),
+			description: localize('zycode.extension.contributes.views.containers.icon', "Path to the container icon. Icons are 24x24 centered on a 50x40 block and have a fill color of 'rgb(215, 218, 224)' or '#d7dae0'. It is recommended that icons be in SVG, though any image file type is accepted."),
 			type: 'string'
 		}
 	},
@@ -64,7 +64,7 @@ const viewsContainerSchema: IJSONSchema = {
 };
 
 export const viewsContainersContribution: IJSONSchema = {
-	description: localize('vscode.extension.contributes.viewsContainers', 'Contributes views containers to the editor'),
+	description: localize('zycode.extension.contributes.viewsContainers', 'Contributes views containers to the editor'),
 	type: 'object',
 	properties: {
 		'activitybar': {
@@ -117,39 +117,39 @@ const viewDescriptor: IJSONSchema = {
 	defaultSnippets: [{ body: { id: '${1:id}', name: '${2:name}' } }],
 	properties: {
 		type: {
-			markdownDescription: localize('vscode.extension.contributes.view.type', "Type of the view. This can either be `tree` for a tree view based view or `webview` for a webview based view. The default is `tree`."),
+			markdownDescription: localize('zycode.extension.contributes.view.type', "Type of the view. This can either be `tree` for a tree view based view or `webview` for a webview based view. The default is `tree`."),
 			type: 'string',
 			enum: [
 				'tree',
 				'webview',
 			],
 			markdownEnumDescriptions: [
-				localize('vscode.extension.contributes.view.tree', "The view is backed by a `TreeView` created by `createTreeView`."),
-				localize('vscode.extension.contributes.view.webview', "The view is backed by a `WebviewView` registered by `registerWebviewViewProvider`."),
+				localize('zycode.extension.contributes.view.tree', "The view is backed by a `TreeView` created by `createTreeView`."),
+				localize('zycode.extension.contributes.view.webview', "The view is backed by a `WebviewView` registered by `registerWebviewViewProvider`."),
 			]
 		},
 		id: {
-			markdownDescription: localize('vscode.extension.contributes.view.id', 'Identifier of the view. This should be unique across all views. It is recommended to include your extension id as part of the view id. Use this to register a data provider through `vscode.window.registerTreeDataProviderForView` API. Also to trigger activating your extension by registering `onView:${id}` event to `activationEvents`.'),
+			markdownDescription: localize('zycode.extension.contributes.view.id', 'Identifier of the view. This should be unique across all views. It is recommended to include your extension id as part of the view id. Use this to register a data provider through `zycode.window.registerTreeDataProviderForView` API. Also to trigger activating your extension by registering `onView:${id}` event to `activationEvents`.'),
 			type: 'string'
 		},
 		name: {
-			description: localize('vscode.extension.contributes.view.name', 'The human-readable name of the view. Will be shown'),
+			description: localize('zycode.extension.contributes.view.name', 'The human-readable name of the view. Will be shown'),
 			type: 'string'
 		},
 		when: {
-			description: localize('vscode.extension.contributes.view.when', 'Condition which must be true to show this view'),
+			description: localize('zycode.extension.contributes.view.when', 'Condition which must be true to show this view'),
 			type: 'string'
 		},
 		icon: {
-			description: localize('vscode.extension.contributes.view.icon', "Path to the view icon. View icons are displayed when the name of the view cannot be shown. It is recommended that icons be in SVG, though any image file type is accepted."),
+			description: localize('zycode.extension.contributes.view.icon', "Path to the view icon. View icons are displayed when the name of the view cannot be shown. It is recommended that icons be in SVG, though any image file type is accepted."),
 			type: 'string'
 		},
 		contextualTitle: {
-			description: localize('vscode.extension.contributes.view.contextualTitle', "Human-readable context for when the view is moved out of its original location. By default, the view's container name will be used."),
+			description: localize('zycode.extension.contributes.view.contextualTitle', "Human-readable context for when the view is moved out of its original location. By default, the view's container name will be used."),
 			type: 'string'
 		},
 		visibility: {
-			description: localize('vscode.extension.contributes.view.initialState', "Initial state of the view when the extension is first installed. Once the user has changed the view state by collapsing, moving, or hiding the view, the initial state will not be used again."),
+			description: localize('zycode.extension.contributes.view.initialState', "Initial state of the view when the extension is first installed. Once the user has changed the view state by collapsing, moving, or hiding the view, the initial state will not be used again."),
 			type: 'string',
 			enum: [
 				'visible',
@@ -158,14 +158,14 @@ const viewDescriptor: IJSONSchema = {
 			],
 			default: 'visible',
 			enumDescriptions: [
-				localize('vscode.extension.contributes.view.initialState.visible', "The default initial state for the view. In most containers the view will be expanded, however; some built-in containers (explorer, scm, and debug) show all contributed views collapsed regardless of the `visibility`."),
-				localize('vscode.extension.contributes.view.initialState.hidden', "The view will not be shown in the view container, but will be discoverable through the views menu and other view entry points and can be un-hidden by the user."),
-				localize('vscode.extension.contributes.view.initialState.collapsed', "The view will show in the view container, but will be collapsed.")
+				localize('zycode.extension.contributes.view.initialState.visible', "The default initial state for the view. In most containers the view will be expanded, however; some built-in containers (explorer, scm, and debug) show all contributed views collapsed regardless of the `visibility`."),
+				localize('zycode.extension.contributes.view.initialState.hidden', "The view will not be shown in the view container, but will be discoverable through the views menu and other view entry points and can be un-hidden by the user."),
+				localize('zycode.extension.contributes.view.initialState.collapsed', "The view will show in the view container, but will be collapsed.")
 			]
 		},
 		initialSize: {
 			type: 'number',
-			description: localize('vscode.extension.contributs.view.size', "The initial size of the view. The size will behave like the css 'flex' property, and will set the initial size when the view is first shown. In the side bar, this is the height of the view. This value is only respected when the same extension owns both the view and the view container."),
+			description: localize('zycode.extension.contributs.view.size', "The initial size of the view. The size will behave like the css 'flex' property, and will set the initial size when the view is first shown. In the side bar, this is the height of the view. This value is only respected when the same extension owns both the view and the view container."),
 		}
 	}
 };
@@ -175,23 +175,23 @@ const remoteViewDescriptor: IJSONSchema = {
 	required: ['id', 'name'],
 	properties: {
 		id: {
-			description: localize('vscode.extension.contributes.view.id', 'Identifier of the view. This should be unique across all views. It is recommended to include your extension id as part of the view id. Use this to register a data provider through `vscode.window.registerTreeDataProviderForView` API. Also to trigger activating your extension by registering `onView:${id}` event to `activationEvents`.'),
+			description: localize('zycode.extension.contributes.view.id', 'Identifier of the view. This should be unique across all views. It is recommended to include your extension id as part of the view id. Use this to register a data provider through `zycode.window.registerTreeDataProviderForView` API. Also to trigger activating your extension by registering `onView:${id}` event to `activationEvents`.'),
 			type: 'string'
 		},
 		name: {
-			description: localize('vscode.extension.contributes.view.name', 'The human-readable name of the view. Will be shown'),
+			description: localize('zycode.extension.contributes.view.name', 'The human-readable name of the view. Will be shown'),
 			type: 'string'
 		},
 		when: {
-			description: localize('vscode.extension.contributes.view.when', 'Condition which must be true to show this view'),
+			description: localize('zycode.extension.contributes.view.when', 'Condition which must be true to show this view'),
 			type: 'string'
 		},
 		group: {
-			description: localize('vscode.extension.contributes.view.group', 'Nested group in the viewlet'),
+			description: localize('zycode.extension.contributes.view.group', 'Nested group in the viewlet'),
 			type: 'string'
 		},
 		remoteName: {
-			description: localize('vscode.extension.contributes.view.remoteName', 'The name of the remote type associated with this view'),
+			description: localize('zycode.extension.contributes.view.remoteName', 'The name of the remote type associated with this view'),
 			type: ['string', 'array'],
 			items: {
 				type: 'string'
@@ -200,7 +200,7 @@ const remoteViewDescriptor: IJSONSchema = {
 	}
 };
 const viewsContribution: IJSONSchema = {
-	description: localize('vscode.extension.contributes.views', "Contributes views to the editor"),
+	description: localize('zycode.extension.contributes.views', "Contributes views to the editor"),
 	type: 'object',
 	properties: {
 		'explorer': {

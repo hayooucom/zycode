@@ -17,10 +17,10 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 
 		<!-- Workbench Configuration -->
-		<meta id="vscode-workbench-web-configuration" data-settings="{{WORKBENCH_WEB_CONFIGURATION}}">
+		<meta id="zycode-workbench-web-configuration" data-settings="{{WORKBENCH_WEB_CONFIGURATION}}">
 
 		<!-- Workbench Auth Session -->
-		<meta id="vscode-workbench-auth-session" data-settings="{{WORKBENCH_AUTH_SESSION}}">
+		<meta id="zycode-workbench-auth-session" data-settings="{{WORKBENCH_AUTH_SESSION}}">
 
 		<!-- Workbench Icon/Manifest/CSS -->
 		<link rel="icon" href="{{WORKBENCH_WEB_BASE_URL}}/resources/server/favicon.ico" type="image/x-icon" />
@@ -44,8 +44,8 @@
 		// Set up nls if the user is not using the default language (English)
 		const nlsConfig = {};
 		// Normalize locale to lowercase because translationServiceUrl is case-sensitive.
-		// ref: https://github.com/microsoft/vscode/issues/187795
-		const locale = window.localStorage.getItem('vscode.nls.locale') || navigator.language.toLowerCase();
+		// ref: https://github.com/microsoft/zycode/issues/187795
+		const locale = window.localStorage.getItem('zycode.nls.locale') || navigator.language.toLowerCase();
 		if (!locale.startsWith('en')) {
 			nlsConfig['vs/nls'] = {
 				availableLanguages: {

@@ -5,7 +5,7 @@
 
 import * as assert from 'assert';
 import 'mocha';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { CachedResponse } from '../../tsServer/cachedResponse';
 import type * as Proto from '../../tsServer/protocol/protocol';
 import { ServerResponse } from '../../typescriptService';
@@ -96,7 +96,7 @@ function respondWith(command: string) {
 }
 
 function createTextDocument() {
-	return vscode.workspace.openTextDocument({ language: 'javascript', content: '' });
+	return zycode.workspace.openTextDocument({ language: 'javascript', content: '' });
 }
 
 function assertResult(result: ServerResponse.Response<Proto.Response>, command: string) {

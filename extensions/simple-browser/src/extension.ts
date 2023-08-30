@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { SimpleBrowserManager } from './simpleBrowserManager';
 import { SimpleBrowserView } from './simpleBrowserView';
 
@@ -31,22 +31,22 @@ const enabledHosts = new Set<string>([
 
 const openerId = 'simpleBrowser.open';
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: zycode.ExtensionContext) {
 
 	const manager = new SimpleBrowserManager(context.extensionUri);
 	context.subscriptions.push(manager);
 
-	context.subscriptions.push(vscode.window.registerWebviewPanelSerializer(SimpleBrowserView.viewType, {
+	context.subscriptions.push(zycode.window.registerWebviewPanelSerializer(SimpleBrowserView.viewType, {
 		deserializeWebviewPanel: async (panel, state) => {
 			manager.restore(panel, state);
 		}
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand(showCommand, async (url?: string) => {
+	context.subscriptions.push(zycode.commands.registerCommand(showCommand, async (url?: string) => {
 		if (!url) {
-			url = await vscode.window.showInputBox({
-				placeHolder: vscode.l10n.t("https://example.com"),
-				prompt: vscode.l10n.t("Enter url to visit")
+			url = await zycode.window.showInputBox({
+				placeHolder: zycode.l10n.t("https://example.com"),
+				prompt: zycode.l10n.t("Enter url to visit")
 			});
 		}
 
@@ -55,37 +55,37 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand(openApiCommand, (url: vscode.Uri, showOptions?: {
+	context.subscriptions.push(zycode.commands.registerCommand(openApiCommand, (url: zycode.Uri, showOptions?: {
 		preserveFocus?: boolean;
-		viewColumn: vscode.ViewColumn;
+		viewColumn: zycode.ViewColumn;
 	}) => {
 		manager.show(url, showOptions);
 	}));
 
-	context.subscriptions.push(vscode.window.registerExternalUriOpener(openerId, {
-		canOpenExternalUri(uri: vscode.Uri) {
+	context.subscriptions.push(zycode.window.registerExternalUriOpener(openerId, {
+		canOpenExternalUri(uri: zycode.Uri) {
 			// We have to replace the IPv6 hosts with IPv4 because URL can't handle IPv6.
 			const originalUri = new URL(uri.toString(true));
 			if (enabledHosts.has(originalUri.hostname)) {
 				return isWeb()
-					? vscode.ExternalUriOpenerPriority.Default
-					: vscode.ExternalUriOpenerPriority.Option;
+					? zycode.ExternalUriOpenerPriority.Default
+					: zycode.ExternalUriOpenerPriority.Option;
 			}
 
-			return vscode.ExternalUriOpenerPriority.None;
+			return zycode.ExternalUriOpenerPriority.None;
 		},
-		openExternalUri(resolveUri: vscode.Uri) {
+		openExternalUri(resolveUri: zycode.Uri) {
 			return manager.show(resolveUri, {
-				viewColumn: vscode.window.activeTextEditor ? vscode.ViewColumn.Beside : vscode.ViewColumn.Active
+				viewColumn: zycode.window.activeTextEditor ? zycode.ViewColumn.Beside : zycode.ViewColumn.Active
 			});
 		}
 	}, {
 		schemes: ['http', 'https'],
-		label: vscode.l10n.t("Open in simple browser"),
+		label: zycode.l10n.t("Open in simple browser"),
 	}));
 }
 
 function isWeb(): boolean {
 	// @ts-expect-error
-	return typeof navigator !== 'undefined' && vscode.env.uiKind === vscode.UIKind.Web;
+	return typeof navigator !== 'undefined' && zycode.env.uiKind === zycode.UIKind.Web;
 }

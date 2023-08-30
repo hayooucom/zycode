@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { PackageDocument } from './packageDocumentHelper';
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: zycode.ExtensionContext) {
 	//package.json suggestions
 	context.subscriptions.push(registerPackageDocumentCompletions());
 
 }
 
-function registerPackageDocumentCompletions(): vscode.Disposable {
-	return vscode.languages.registerCompletionItemProvider({ language: 'json', pattern: '**/package.json' }, {
+function registerPackageDocumentCompletions(): zycode.Disposable {
+	return zycode.languages.registerCompletionItemProvider({ language: 'json', pattern: '**/package.json' }, {
 		provideCompletionItems(document, position, token) {
 			return new PackageDocument(document).provideCompletionItems(position, token);
 		}

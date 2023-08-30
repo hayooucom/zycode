@@ -6,8 +6,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as picomatch from 'picomatch';
-import { CancellationToken, Command, Disposable, Event, EventEmitter, Memento, ProgressLocation, ProgressOptions, scm, SourceControl, SourceControlInputBox, SourceControlInputBoxValidation, SourceControlInputBoxValidationType, SourceControlResourceDecorations, SourceControlResourceGroup, SourceControlResourceState, ThemeColor, Uri, window, workspace, WorkspaceEdit, FileDecoration, commands, Tab, TabInputTextDiff, TabInputNotebookDiff, RelativePattern, CancellationTokenSource, LogOutputChannel, LogLevel, CancellationError, l10n } from 'vscode';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { CancellationToken, Command, Disposable, Event, EventEmitter, Memento, ProgressLocation, ProgressOptions, scm, SourceControl, SourceControlInputBox, SourceControlInputBoxValidation, SourceControlInputBoxValidationType, SourceControlResourceDecorations, SourceControlResourceGroup, SourceControlResourceState, ThemeColor, Uri, window, workspace, WorkspaceEdit, FileDecoration, commands, Tab, TabInputTextDiff, TabInputNotebookDiff, RelativePattern, CancellationTokenSource, LogOutputChannel, LogLevel, CancellationError, l10n } from 'zycode';
+import TelemetryReporter from '@zycode/extension-telemetry';
 import { Branch, Change, ForcePushMode, GitErrorCodes, LogOptions, Ref, Remote, Status, CommitOptions, BranchQuery, FetchOptions, RefQuery, RefType } from './api/git';
 import { AutoFetcher } from './autofetch';
 import { debounce, memoize, throttle } from './decorators';
@@ -484,7 +484,7 @@ class ResourceCommandResolver {
 
 	resolveFileCommand(resource: Resource): Command {
 		return {
-			command: 'vscode.open',
+			command: 'zycode.open',
 			title: l10n.t('Open'),
 			arguments: [resource.resourceUri]
 		};
@@ -503,14 +503,14 @@ class ResourceCommandResolver {
 				};
 			} else {
 				return {
-					command: 'vscode.open',
+					command: 'zycode.open',
 					title: l10n.t('Open'),
 					arguments: [resource.rightUri, { override: bothModified ? false : undefined }, title]
 				};
 			}
 		} else {
 			return {
-				command: 'vscode.diff',
+				command: 'zycode.diff',
 				title: l10n.t('Open'),
 				arguments: [resource.leftUri, resource.rightUri, title]
 			};
@@ -889,7 +889,7 @@ export class Repository implements Disposable {
 			this.disposables.push(trustDisposable);
 		}
 
-		// https://github.com/microsoft/vscode/issues/39039
+		// https://github.com/microsoft/zycode/issues/39039
 		const onSuccessfulPush = filterEvent(this.onDidRunOperation, e => e.operation.kind === OperationKind.Push && !e.error);
 		onSuccessfulPush(() => {
 			const gitConfig = workspace.getConfiguration('git');

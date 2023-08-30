@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { getDeepestFlatNode, findNextWord, findPrevWord, getFlatNode, offsetRangeToSelection } from './util';
 import { Node, CssNode, Rule, Property } from 'EmmetFlatNode';
 
-export function nextItemStylesheet(document: vscode.TextDocument, startPosition: vscode.Position, endPosition: vscode.Position, rootNode: Node): vscode.Selection | undefined {
+export function nextItemStylesheet(document: zycode.TextDocument, startPosition: zycode.Position, endPosition: zycode.Position, rootNode: Node): zycode.Selection | undefined {
 	const startOffset = document.offsetAt(startPosition);
 	const endOffset = document.offsetAt(endPosition);
 	let currentNode: CssNode | undefined = <CssNode>getFlatNode(rootNode, endOffset, true);
@@ -55,7 +55,7 @@ export function nextItemStylesheet(document: vscode.TextDocument, startPosition:
 	return nextNode ? getSelectionFromNode(document, nextNode) : undefined;
 }
 
-export function prevItemStylesheet(document: vscode.TextDocument, startPosition: vscode.Position, endPosition: vscode.Position, rootNode: CssNode): vscode.Selection | undefined {
+export function prevItemStylesheet(document: zycode.TextDocument, startPosition: zycode.Position, endPosition: zycode.Position, rootNode: CssNode): zycode.Selection | undefined {
 	const startOffset = document.offsetAt(startPosition);
 	const endOffset = document.offsetAt(endPosition);
 	let currentNode = <CssNode>getFlatNode(rootNode, startOffset, false);
@@ -99,7 +99,7 @@ export function prevItemStylesheet(document: vscode.TextDocument, startPosition:
 }
 
 
-function getSelectionFromNode(document: vscode.TextDocument, node: Node | undefined): vscode.Selection | undefined {
+function getSelectionFromNode(document: zycode.TextDocument, node: Node | undefined): zycode.Selection | undefined {
 	if (!node) {
 		return;
 	}
@@ -109,7 +109,7 @@ function getSelectionFromNode(document: vscode.TextDocument, node: Node | undefi
 }
 
 
-function getSelectionFromProperty(document: vscode.TextDocument, node: Node | undefined, selectionStart: number, selectionEnd: number, selectFullValue: boolean, direction: string): vscode.Selection | undefined {
+function getSelectionFromProperty(document: zycode.TextDocument, node: Node | undefined, selectionStart: number, selectionEnd: number, selectFullValue: boolean, direction: string): zycode.Selection | undefined {
 	if (!node || node.type !== 'property') {
 		return;
 	}
@@ -153,7 +153,7 @@ function getSelectionFromProperty(document: vscode.TextDocument, node: Node | un
 	const newSelectionStart = tokenStart.translate(0, newSelectionStartOffset);
 	const newSelectionEnd = tokenStart.translate(0, newSelectionEndOffset);
 
-	return new vscode.Selection(newSelectionStart, newSelectionEnd);
+	return new zycode.Selection(newSelectionStart, newSelectionEnd);
 }
 
 

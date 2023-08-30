@@ -5,7 +5,7 @@
 
 import { deepStrictEqual } from 'assert';
 import 'mocha';
-import { Uri } from 'vscode';
+import { Uri } from 'zycode';
 import { urlToUri } from '../util/url';
 
 suite('urlToUri', () => {

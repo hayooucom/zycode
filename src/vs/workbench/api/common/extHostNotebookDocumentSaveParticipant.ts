@@ -13,7 +13,7 @@ import { ExtHostNotebookController } from 'vs/workbench/api/common/extHostNotebo
 import { TextDocumentSaveReason, WorkspaceEdit as WorksapceEditConverter } from 'vs/workbench/api/common/extHostTypeConverters';
 import { WorkspaceEdit } from 'vs/workbench/api/common/extHostTypes';
 import { SaveReason } from 'vs/workbench/common/editor';
-import { NotebookDocumentWillSaveEvent } from 'vscode';
+import { NotebookDocumentWillSaveEvent } from 'zycode';
 
 interface IExtensionListener<E> {
 	extension: IExtensionDescription;

@@ -42,7 +42,7 @@ class ExtensionsScannerService extends AbstractExtensionsScannerService implemen
 		super(
 			URI.file(nativeEnvironmentService.builtinExtensionsPath),
 			URI.file(nativeEnvironmentService.extensionsPath),
-			joinPath(nativeEnvironmentService.userHome, '.vscode-oss-dev', 'extensions', 'control.json'),
+			joinPath(nativeEnvironmentService.userHome, '.zycode-oss-dev', 'extensions', 'control.json'),
 			userDataProfilesService.defaultProfile,
 			userDataProfilesService, extensionsProfileScannerService, fileService, logService, nativeEnvironmentService, productService, uriIdentityService, instantiationService);
 	}
@@ -205,7 +205,7 @@ suite('NativeExtensionsScanerService Test', () => {
 
 	test('scan user extension with different versions and higher version is not compatible', async () => {
 		await aUserExtension(anExtensionManifest({ 'name': 'name', 'publisher': 'pub', version: '1.0.1' }));
-		await aUserExtension(anExtensionManifest({ 'name': 'name', 'publisher': 'pub', version: '1.0.2', engines: { vscode: '^1.67.0' } }));
+		await aUserExtension(anExtensionManifest({ 'name': 'name', 'publisher': 'pub', version: '1.0.2', engines: { zycode: '^1.67.0' } }));
 		const testObject: IExtensionsScannerService = instantiationService.createInstance(ExtensionsScannerService);
 
 		const actual = await testObject.scanUserExtensions({});
@@ -217,7 +217,7 @@ suite('NativeExtensionsScanerService Test', () => {
 
 	test('scan exclude invalid extensions', async () => {
 		await aUserExtension(anExtensionManifest({ 'name': 'name', 'publisher': 'pub' }));
-		await aUserExtension(anExtensionManifest({ 'name': 'name2', 'publisher': 'pub', engines: { vscode: '^1.67.0' } }));
+		await aUserExtension(anExtensionManifest({ 'name': 'name2', 'publisher': 'pub', engines: { zycode: '^1.67.0' } }));
 		const testObject: IExtensionsScannerService = instantiationService.createInstance(ExtensionsScannerService);
 
 		const actual = await testObject.scanUserExtensions({});
@@ -253,7 +253,7 @@ suite('NativeExtensionsScanerService Test', () => {
 
 	test('scan include invalid extensions', async () => {
 		await aUserExtension(anExtensionManifest({ 'name': 'name', 'publisher': 'pub' }));
-		await aUserExtension(anExtensionManifest({ 'name': 'name2', 'publisher': 'pub', engines: { vscode: '^1.67.0' } }));
+		await aUserExtension(anExtensionManifest({ 'name': 'name2', 'publisher': 'pub', engines: { zycode: '^1.67.0' } }));
 		const testObject: IExtensionsScannerService = instantiationService.createInstance(ExtensionsScannerService);
 
 		const actual = await testObject.scanUserExtensions({ includeInvalid: true });
@@ -274,7 +274,7 @@ suite('NativeExtensionsScanerService Test', () => {
 		await anExtension(anExtensionManifest({ 'name': 'name2', 'publisher': 'pub' }), joinPath(ROOT, 'additional'));
 		const extensionLocation = await anExtension(anExtensionManifest({ 'name': 'name', 'publisher': 'pub' }), joinPath(ROOT, 'additional'));
 		await aSystemExtension(anExtensionManifest({ 'name': 'name', 'publisher': 'pub', version: '1.0.1' }));
-		await instantiationService.get(IFileService).writeFile(joinPath(instantiationService.get(INativeEnvironmentService).userHome, '.vscode-oss-dev', 'extensions', 'control.json'), VSBuffer.fromString(JSON.stringify({ 'pub.name2': 'disabled', 'pub.name': extensionLocation.fsPath })));
+		await instantiationService.get(IFileService).writeFile(joinPath(instantiationService.get(INativeEnvironmentService).userHome, '.zycode-oss-dev', 'extensions', 'control.json'), VSBuffer.fromString(JSON.stringify({ 'pub.name2': 'disabled', 'pub.name': extensionLocation.fsPath })));
 		const testObject: IExtensionsScannerService = instantiationService.createInstance(ExtensionsScannerService);
 
 		const actual = await testObject.scanSystemExtensions({ checkControlFile: true });
@@ -344,7 +344,7 @@ suite('NativeExtensionsScanerService Test', () => {
 	}
 
 	function anExtensionManifest(manifest: Partial<IScannedExtensionManifest>): Partial<IExtensionManifest> {
-		return { engines: { vscode: '^1.66.0' }, version: '1.0.0', main: 'main.js', activationEvents: ['*'], ...manifest };
+		return { engines: { zycode: '^1.66.0' }, version: '1.0.0', main: 'main.js', activationEvents: ['*'], ...manifest };
 	}
 });
 

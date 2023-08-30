@@ -147,11 +147,11 @@ export interface IRemoteAuthorityResolverService {
 	resolveAuthority(authority: string): Promise<ResolverResult>;
 	getConnectionData(authority: string): IRemoteConnectionData | null;
 	/**
-	 * Get the canonical URI for a `vscode-remote://` URI.
+	 * Get the canonical URI for a `zycode-remote://` URI.
 	 *
 	 * **NOTE**: This can throw e.g. in cases where there is no resolver installed for the specific remote authority.
 	 *
-	 * @param uri The `vscode-remote://` URI
+	 * @param uri The `zycode-remote://` URI
 	 */
 	getCanonicalURI(uri: URI): Promise<URI>;
 

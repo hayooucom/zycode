@@ -40,13 +40,13 @@
 }
 
 .monaco-editor .folded-background {
-	background-color: var(--vscode-editor-foldBackground);
+	background-color: var(--zycode-editor-foldBackground);
 }
 
 .monaco-editor .cldr.codicon.codicon-folding-expanded,
 .monaco-editor .cldr.codicon.codicon-folding-collapsed,
 .monaco-editor .cldr.codicon.codicon-folding-manual-expanded,
 .monaco-editor .cldr.codicon.codicon-folding-manual-collapsed {
-	color: var(--vscode-editorGutter-foldingControlForeground) !important;
+	color: var(--zycode-editorGutter-foldingControlForeground) !important;
 }
 

@@ -1,4 +1,4 @@
-# Publish @types/vscode for each release
+# Publish @types/zycode for each release
 
 trigger:
   branches:
@@ -37,7 +37,7 @@ steps:
     displayName: Check version
 
   - bash: |
-      git config --global user.email "vscode@microsoft.com"
+      git config --global user.email "zycode@microsoft.com"
       git config --global user.name "VSCode"
 
       git clone https://$(GITHUB_TOKEN)@github.com/DefinitelyTyped/DefinitelyTyped.git --depth=1
@@ -50,9 +50,9 @@ steps:
       git diff --color | cat
       git add -A
       git status
-      git checkout -b "vscode-types-$TAG_VERSION"
+      git checkout -b "zycode-types-$TAG_VERSION"
       git commit -m "VS Code $TAG_VERSION Extension API"
-      git push origin "vscode-types-$TAG_VERSION"
+      git push origin "zycode-types-$TAG_VERSION"
 
     displayName: Push update to DefinitelyTyped
 
@@ -60,9 +60,9 @@ steps:
       TAG_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
       CHANNEL="C1C14HJ2F"
 
-      MESSAGE="DefinitelyTyped/DefinitelyTyped#vscode-types-$TAG_VERSION created. Endgame champion, please open this link, examine changes and create a PR:"
-      LINK="https://github.com/DefinitelyTyped/DefinitelyTyped/compare/vscode-types-$TAG_VERSION?quick_pull=1&body=Updating%20VS%20Code%20Extension%20API.%20See%20https%3A%2F%2Fgithub.com%2Fmicrosoft%2Fvscode%2Fissues%2F70175%20for%20details."
-      MESSAGE2="[@jrieken, @kmaetzel, @egamma]. Please review and merge PR to publish @types/vscode."
+      MESSAGE="DefinitelyTyped/DefinitelyTyped#zycode-types-$TAG_VERSION created. Endgame champion, please open this link, examine changes and create a PR:"
+      LINK="https://github.com/DefinitelyTyped/DefinitelyTyped/compare/zycode-types-$TAG_VERSION?quick_pull=1&body=Updating%20VS%20Code%20Extension%20API.%20See%20https%3A%2F%2Fgithub.com%2Fmicrosoft%2Fvscode%2Fissues%2F70175%20for%20details."
+      MESSAGE2="[@jrieken, @kmaetzel, @egamma]. Please review and merge PR to publish @types/zycode."
 
       curl -X POST -H "Authorization: Bearer $(SLACK_TOKEN)" \
       -H 'Content-type: application/json; charset=utf-8' \

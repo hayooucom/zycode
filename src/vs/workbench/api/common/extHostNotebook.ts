@@ -25,7 +25,7 @@ import * as typeConverters from 'vs/workbench/api/common/extHostTypeConverters';
 import * as extHostTypes from 'vs/workbench/api/common/extHostTypes';
 import { INotebookExclusiveDocumentFilter, INotebookContributionData } from 'vs/workbench/contrib/notebook/common/notebookCommon';
 import { SerializableObjectWithBuffers } from 'vs/workbench/services/extensions/common/proxyIdentifier';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ExtHostCell, ExtHostNotebookDocument } from './extHostNotebookDocument';
 import { ExtHostNotebookEditor } from './extHostNotebookEditor';
 import { onUnexpectedExternalError } from 'vs/base/common/errors';
@@ -42,29 +42,29 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 	private readonly _notebookDocumentsProxy: MainThreadNotebookDocumentsShape;
 	private readonly _notebookEditorsProxy: MainThreadNotebookEditorsShape;
 
-	private readonly _notebookStatusBarItemProviders = new Map<number, vscode.NotebookCellStatusBarItemProvider>();
+	private readonly _notebookStatusBarItemProviders = new Map<number, zycode.NotebookCellStatusBarItemProvider>();
 	private readonly _documents = new ResourceMap<ExtHostNotebookDocument>();
 	private readonly _editors = new Map<string, ExtHostNotebookEditor>();
 	private readonly _commandsConverter: CommandsConverter;
 
-	private readonly _onDidChangeActiveNotebookEditor = new Emitter<vscode.NotebookEditor | undefined>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidChangeActiveNotebookEditor = new Emitter<zycode.NotebookEditor | undefined>({ onListenerError: onUnexpectedExternalError });
 	readonly onDidChangeActiveNotebookEditor = this._onDidChangeActiveNotebookEditor.event;
 
 	private _activeNotebookEditor: ExtHostNotebookEditor | undefined;
-	get activeNotebookEditor(): vscode.NotebookEditor | undefined {
+	get activeNotebookEditor(): zycode.NotebookEditor | undefined {
 		return this._activeNotebookEditor?.apiEditor;
 	}
 	private _visibleNotebookEditors: ExtHostNotebookEditor[] = [];
-	get visibleNotebookEditors(): vscode.NotebookEditor[] {
+	get visibleNotebookEditors(): zycode.NotebookEditor[] {
 		return this._visibleNotebookEditors.map(editor => editor.apiEditor);
 	}
 
-	private _onDidOpenNotebookDocument = new Emitter<vscode.NotebookDocument>({ onListenerError: onUnexpectedExternalError });
-	onDidOpenNotebookDocument: Event<vscode.NotebookDocument> = this._onDidOpenNotebookDocument.event;
-	private _onDidCloseNotebookDocument = new Emitter<vscode.NotebookDocument>({ onListenerError: onUnexpectedExternalError });
-	onDidCloseNotebookDocument: Event<vscode.NotebookDocument> = this._onDidCloseNotebookDocument.event;
+	private _onDidOpenNotebookDocument = new Emitter<zycode.NotebookDocument>({ onListenerError: onUnexpectedExternalError });
+	onDidOpenNotebookDocument: Event<zycode.NotebookDocument> = this._onDidOpenNotebookDocument.event;
+	private _onDidCloseNotebookDocument = new Emitter<zycode.NotebookDocument>({ onListenerError: onUnexpectedExternalError });
+	onDidCloseNotebookDocument: Event<zycode.NotebookDocument> = this._onDidCloseNotebookDocument.event;
 
-	private _onDidChangeVisibleNotebookEditors = new Emitter<vscode.NotebookEditor[]>({ onListenerError: onUnexpectedExternalError });
+	private _onDidChangeVisibleNotebookEditors = new Emitter<zycode.NotebookEditor[]>({ onListenerError: onUnexpectedExternalError });
 	onDidChangeVisibleNotebookEditors = this._onDidChangeVisibleNotebookEditors.event;
 
 	private _statusBarCache = new Cache<IDisposable>('NotebookCellStatusBarCache');
@@ -116,7 +116,7 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 		return editor;
 	}
 
-	getIdByEditor(editor: vscode.NotebookEditor): string | undefined {
+	getIdByEditor(editor: zycode.NotebookEditor): string | undefined {
 		for (const [id, candidate] of this._editors) {
 			if (candidate.apiEditor === editor) {
 				return id;
@@ -141,7 +141,7 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 
 
 
-	private static _convertNotebookRegistrationData(extension: IExtensionDescription, registration: vscode.NotebookRegistrationData | undefined): INotebookContributionData | undefined {
+	private static _convertNotebookRegistrationData(extension: IExtensionDescription, registration: zycode.NotebookRegistrationData | undefined): INotebookContributionData | undefined {
 		if (!registration) {
 			return;
 		}
@@ -161,7 +161,7 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 		};
 	}
 
-	registerNotebookCellStatusBarItemProvider(extension: IExtensionDescription, notebookType: string, provider: vscode.NotebookCellStatusBarItemProvider) {
+	registerNotebookCellStatusBarItemProvider(extension: IExtensionDescription, notebookType: string, provider: zycode.NotebookCellStatusBarItemProvider) {
 
 		const handle = ExtHostNotebookController._notebookStatusBarItemProviderHandlePool++;
 		const eventHandle = typeof provider.onDidChangeCellStatusBarItems === 'function' ? ExtHostNotebookController._notebookStatusBarItemProviderHandlePool++ : undefined;
@@ -169,7 +169,7 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 		this._notebookStatusBarItemProviders.set(handle, provider);
 		this._notebookProxy.$registerNotebookCellStatusBarItemProvider(handle, eventHandle, notebookType);
 
-		let subscription: vscode.Disposable | undefined;
+		let subscription: zycode.Disposable | undefined;
 		if (eventHandle !== undefined) {
 			subscription = provider.onDidChangeCellStatusBarItems!(_ => this._notebookProxy.$emitCellStatusBarEvent(eventHandle));
 		}
@@ -181,7 +181,7 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 		});
 	}
 
-	async createNotebookDocument(options: { viewType: string; content?: vscode.NotebookData }): Promise<URI> {
+	async createNotebookDocument(options: { viewType: string; content?: zycode.NotebookData }): Promise<URI> {
 		const canonicalUri = await this._notebookDocumentsProxy.$tryCreateNotebook({
 			viewType: options.viewType,
 			content: options.content && typeConverters.NotebookData.from(options.content)
@@ -189,7 +189,7 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 		return URI.revive(canonicalUri);
 	}
 
-	async openNotebookDocument(uri: URI): Promise<vscode.NotebookDocument> {
+	async openNotebookDocument(uri: URI): Promise<zycode.NotebookDocument> {
 		const cached = this._documents.get(uri);
 		if (cached) {
 			return cached.apiNotebook;
@@ -200,7 +200,7 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 	}
 
 
-	async showNotebookDocument(notebookOrUri: vscode.NotebookDocument | URI, options?: vscode.NotebookDocumentShowOptions): Promise<vscode.NotebookEditor> {
+	async showNotebookDocument(notebookOrUri: zycode.NotebookDocument | URI, options?: zycode.NotebookDocumentShowOptions): Promise<zycode.NotebookEditor> {
 
 		if (URI.isUri(notebookOrUri)) {
 			notebookOrUri = await this.openNotebookDocument(notebookOrUri);
@@ -269,9 +269,9 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 	// --- serialize/deserialize
 
 	private _handlePool = 0;
-	private readonly _notebookSerializer = new Map<number, { viewType: string; serializer: vscode.NotebookSerializer; options: vscode.NotebookDocumentContentOptions | undefined }>();
+	private readonly _notebookSerializer = new Map<number, { viewType: string; serializer: zycode.NotebookSerializer; options: zycode.NotebookDocumentContentOptions | undefined }>();
 
-	registerNotebookSerializer(extension: IExtensionDescription, viewType: string, serializer: vscode.NotebookSerializer, options?: vscode.NotebookDocumentContentOptions, registration?: vscode.NotebookRegistrationData): vscode.Disposable {
+	registerNotebookSerializer(extension: IExtensionDescription, viewType: string, serializer: zycode.NotebookSerializer, options?: zycode.NotebookDocumentContentOptions, registration?: zycode.NotebookRegistrationData): zycode.Disposable {
 		if (isFalsyOrWhitespace(viewType)) {
 			throw new Error(`viewType cannot be empty or just whitespace`);
 		}
@@ -330,7 +330,7 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 		// validate write
 		await this._validateWriteFile(uri, options);
 
-		const data: vscode.NotebookData = {
+		const data: zycode.NotebookData = {
 			metadata: filter(document.apiNotebook.metadata, key => !(serializer.options?.transientDocumentMetadata ?? {})[key]),
 			cells: [],
 		};
@@ -452,7 +452,7 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 					modelData
 				);
 
-				// add cell document as vscode.TextDocument
+				// add cell document as zycode.TextDocument
 				addedCellDocuments.push(...modelData.cells.map(cell => ExtHostCell.asModelAddData(document.apiNotebook, cell)));
 
 				this._documents.get(uri)?.dispose();
@@ -530,14 +530,14 @@ export class ExtHostNotebookController implements ExtHostNotebookShape {
 		const notebookTypeArg = ApiCommandArgument.String.with('notebookType', 'A notebook type');
 
 		const commandDataToNotebook = new ApiCommand(
-			'vscode.executeDataToNotebook', '_executeDataToNotebook', 'Invoke notebook serializer',
+			'zycode.executeDataToNotebook', '_executeDataToNotebook', 'Invoke notebook serializer',
 			[notebookTypeArg, new ApiCommandArgument<Uint8Array, VSBuffer>('data', 'Bytes to convert to data', v => v instanceof Uint8Array, v => VSBuffer.wrap(v))],
-			new ApiCommandResult<SerializableObjectWithBuffers<NotebookDataDto>, vscode.NotebookData>('Notebook Data', data => typeConverters.NotebookData.to(data.value))
+			new ApiCommandResult<SerializableObjectWithBuffers<NotebookDataDto>, zycode.NotebookData>('Notebook Data', data => typeConverters.NotebookData.to(data.value))
 		);
 
 		const commandNotebookToData = new ApiCommand(
-			'vscode.executeNotebookToData', '_executeNotebookToData', 'Invoke notebook serializer',
-			[notebookTypeArg, new ApiCommandArgument<vscode.NotebookData, SerializableObjectWithBuffers<NotebookDataDto>>('NotebookData', 'Notebook data to convert to bytes', v => true, v => new SerializableObjectWithBuffers(typeConverters.NotebookData.from(v)))],
+			'zycode.executeNotebookToData', '_executeNotebookToData', 'Invoke notebook serializer',
+			[notebookTypeArg, new ApiCommandArgument<zycode.NotebookData, SerializableObjectWithBuffers<NotebookDataDto>>('NotebookData', 'Notebook data to convert to bytes', v => true, v => new SerializableObjectWithBuffers(typeConverters.NotebookData.from(v)))],
 			new ApiCommandResult<VSBuffer, Uint8Array>('Bytes', dto => dto.buffer)
 		);
 

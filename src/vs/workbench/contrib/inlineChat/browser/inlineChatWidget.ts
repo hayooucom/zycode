@@ -229,7 +229,7 @@ export class InlineChatWidget {
 			}
 		}));
 
-		const uri = URI.from({ scheme: 'vscode', authority: 'inline-chat', path: `/inline-chat/model${InlineChatWidget._modelPool++}.txt` });
+		const uri = URI.from({ scheme: 'zycode', authority: 'inline-chat', path: `/inline-chat/model${InlineChatWidget._modelPool++}.txt` });
 		this._inputModel = this._store.add(this._modelService.getModel(uri) ?? this._modelService.createModel('', null, uri));
 		this._inputEditor.setModel(this._inputModel);
 
@@ -436,8 +436,8 @@ export class InlineChatWidget {
 				const lineHeight = this.parentEditor.getOption(EditorOption.lineHeight);
 				const editorHeight = this.parentEditor.getLayoutInfo().height;
 				const editorHeightInLines = Math.floor(editorHeight / lineHeight);
-				this._elements.root.style.setProperty('--vscode-inline-chat-cropped', String(Math.floor(editorHeightInLines / 5)));
-				this._elements.root.style.setProperty('--vscode-inline-chat-expanded', String(Math.floor(editorHeightInLines / 3)));
+				this._elements.root.style.setProperty('--zycode-inline-chat-cropped', String(Math.floor(editorHeightInLines / 5)));
+				this._elements.root.style.setProperty('--zycode-inline-chat-expanded', String(Math.floor(editorHeightInLines / 3)));
 			}
 		} finally {
 			this._isLayouting = false;

@@ -205,7 +205,7 @@ export class WorkspaceTrustManagementService extends Disposable implements IWork
 		let canonicalUri = uri;
 		if (this.environmentService.remoteAuthority && uri.scheme === Schemas.vscodeRemote) {
 			canonicalUri = await this.remoteAuthorityResolverService.getCanonicalURI(uri);
-		} else if (uri.scheme === 'vscode-vfs') {
+		} else if (uri.scheme === 'zycode-vfs') {
 			const index = uri.authority.indexOf('+');
 			if (index !== -1) {
 				canonicalUri = uri.with({ authority: uri.authority.substr(0, index) });
@@ -443,7 +443,7 @@ export class WorkspaceTrustManagementService extends Disposable implements IWork
 	}
 
 	private isTrustedVirtualResource(uri: URI): boolean {
-		return isVirtualResource(uri) && uri.scheme !== 'vscode-vfs';
+		return isVirtualResource(uri) && uri.scheme !== 'zycode-vfs';
 	}
 
 	private isTrustedByRemote(uri: URI): boolean {
@@ -569,7 +569,7 @@ export class WorkspaceTrustManagementService extends Disposable implements IWork
 		}
 
 		// Can only be untrusted in certain schemes
-		if (workspaceIdentifier.uri.scheme !== Schemas.file && workspaceIdentifier.uri.scheme !== 'vscode-vfs') {
+		if (workspaceIdentifier.uri.scheme !== Schemas.file && workspaceIdentifier.uri.scheme !== 'zycode-vfs') {
 			return false;
 		}
 

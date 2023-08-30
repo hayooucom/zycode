@@ -44,10 +44,10 @@ flakySuite('Native Modules (all platforms)', () => {
 		assert.ok(typeof nodePty.spawn === 'function', testErrorMessage('node-pty'));
 	});
 
-	(process.type === 'renderer' ? test.skip /* TODO@electron module is not context aware yet and thus cannot load in Electron renderer used by tests */ : test)('@vscode/spdlog', async () => {
-		const spdlog = await import('@vscode/spdlog');
-		assert.ok(typeof spdlog.createRotatingLogger === 'function', testErrorMessage('@vscode/spdlog'));
-		assert.ok(typeof spdlog.version === 'number', testErrorMessage('@vscode/spdlog'));
+	(process.type === 'renderer' ? test.skip /* TODO@electron module is not context aware yet and thus cannot load in Electron renderer used by tests */ : test)('@zycode/spdlog', async () => {
+		const spdlog = await import('@zycode/spdlog');
+		assert.ok(typeof spdlog.createRotatingLogger === 'function', testErrorMessage('@zycode/spdlog'));
+		assert.ok(typeof spdlog.version === 'number', testErrorMessage('@zycode/spdlog'));
 	});
 
 	test('@parcel/watcher', async () => {
@@ -55,9 +55,9 @@ flakySuite('Native Modules (all platforms)', () => {
 		assert.ok(typeof parcelWatcher.subscribe === 'function', testErrorMessage('@parcel/watcher'));
 	});
 
-	test('@vscode/sqlite3', async () => {
-		const sqlite3 = await import('@vscode/sqlite3');
-		assert.ok(typeof sqlite3.Database === 'function', testErrorMessage('@vscode/sqlite3'));
+	test('@zycode/sqlite3', async () => {
+		const sqlite3 = await import('@zycode/sqlite3');
+		assert.ok(typeof sqlite3.Database === 'function', testErrorMessage('@zycode/sqlite3'));
 	});
 
 	test('vsda', async () => {
@@ -98,10 +98,10 @@ flakySuite('Native Modules (all platforms)', () => {
 
 (!isWindows ? suite.skip : suite)('Native Modules (Windows)', () => {
 
-	(process.type === 'renderer' ? test.skip /* TODO@electron module is not context aware yet and thus cannot load in Electron renderer used by tests */ : test)('@vscode/windows-mutex', async () => {
-		const mutex = await import('@vscode/windows-mutex');
-		assert.ok(mutex && typeof mutex.isActive === 'function', testErrorMessage('@vscode/windows-mutex'));
-		assert.ok(typeof mutex.isActive === 'function', testErrorMessage('@vscode/windows-mutex'));
+	(process.type === 'renderer' ? test.skip /* TODO@electron module is not context aware yet and thus cannot load in Electron renderer used by tests */ : test)('@zycode/windows-mutex', async () => {
+		const mutex = await import('@zycode/windows-mutex');
+		assert.ok(mutex && typeof mutex.isActive === 'function', testErrorMessage('@zycode/windows-mutex'));
+		assert.ok(typeof mutex.isActive === 'function', testErrorMessage('@zycode/windows-mutex'));
 	});
 
 	test('windows-foreground-love', async () => {
@@ -112,36 +112,36 @@ flakySuite('Native Modules (all platforms)', () => {
 		assert.ok(typeof result === 'boolean', testErrorMessage('windows-foreground-love'));
 	});
 
-	test('@vscode/windows-process-tree', async () => {
-		const processTree = await import('@vscode/windows-process-tree');
-		assert.ok(typeof processTree.getProcessTree === 'function', testErrorMessage('@vscode/windows-process-tree'));
+	test('@zycode/windows-process-tree', async () => {
+		const processTree = await import('@zycode/windows-process-tree');
+		assert.ok(typeof processTree.getProcessTree === 'function', testErrorMessage('@zycode/windows-process-tree'));
 
 		return new Promise((resolve, reject) => {
 			processTree.getProcessTree(process.pid, tree => {
 				if (tree) {
 					resolve();
 				} else {
-					reject(new Error(testErrorMessage('@vscode/windows-process-tree')));
+					reject(new Error(testErrorMessage('@zycode/windows-process-tree')));
 				}
 			});
 		});
 	});
 
-	test('@vscode/windows-registry', async () => {
-		const windowsRegistry = await import('@vscode/windows-registry');
-		assert.ok(typeof windowsRegistry.GetStringRegKey === 'function', testErrorMessage('@vscode/windows-registry'));
+	test('@zycode/windows-registry', async () => {
+		const windowsRegistry = await import('@zycode/windows-registry');
+		assert.ok(typeof windowsRegistry.GetStringRegKey === 'function', testErrorMessage('@zycode/windows-registry'));
 
 		const result = windowsRegistry.GetStringRegKey('HKEY_LOCAL_MACHINE', 'SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion', 'EditionID');
-		assert.ok(typeof result === 'string' || typeof result === 'undefined', testErrorMessage('@vscode/windows-registry'));
+		assert.ok(typeof result === 'string' || typeof result === 'undefined', testErrorMessage('@zycode/windows-registry'));
 	});
 
-	test('@vscode/windows-ca-certs', async () => {
+	test('@zycode/windows-ca-certs', async () => {
 		// @ts-ignore we do not directly depend on this module anymore
-		// but indirectly from our dependency to `@vscode/proxy-agent`
+		// but indirectly from our dependency to `@zycode/proxy-agent`
 		// we still want to ensure this module can work properly.
-		const windowsCerts = await import('@vscode/windows-ca-certs');
+		const windowsCerts = await import('@zycode/windows-ca-certs');
 		const store = new windowsCerts.Crypt32();
-		assert.ok(windowsCerts, testErrorMessage('@vscode/windows-ca-certs'));
+		assert.ok(windowsCerts, testErrorMessage('@zycode/windows-ca-certs'));
 		let certCount = 0;
 		try {
 			while (store.next()) {

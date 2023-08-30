@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as path from 'path';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 export class RelativeWorkspacePathResolver {
 	public static asAbsoluteWorkspacePath(relativePath: string): string | undefined {
-		for (const root of vscode.workspace.workspaceFolders || []) {
+		for (const root of zycode.workspace.workspaceFolders || []) {
 			const rootPrefixes = [`./${root.name}/`, `${root.name}/`, `.\\${root.name}\\`, `${root.name}\\`];
 			for (const rootPrefix of rootPrefixes) {
 				if (relativePath.startsWith(rootPrefix)) {

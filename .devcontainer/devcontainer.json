@@ -7,13 +7,13 @@
 	"privileged": true,
 	"mounts": [
 		{
-			"source": "vscode-dev",
-			"target": "/vscode-dev",
+			"source": "zycode-dev",
+			"target": "/zycode-dev",
 			"type": "volume"
 		}
 	],
 	"customizations": {
-		"vscode": {
+		"zycode": {
 			"extensions": [
 				"mutantdino.resourcemonitor"
 			]

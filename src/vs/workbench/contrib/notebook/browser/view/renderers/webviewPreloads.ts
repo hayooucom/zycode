@@ -7,7 +7,7 @@ import type { Event } from 'vs/base/common/event';
 import type { IDisposable } from 'vs/base/common/lifecycle';
 import type * as webviewMessages from 'vs/workbench/contrib/notebook/browser/view/renderers/webviewMessages';
 import type { NotebookCellMetadata } from 'vs/workbench/contrib/notebook/common/notebookCommon';
-import type * as rendererApi from 'vscode-notebook-renderer';
+import type * as rendererApi from 'zycode-notebook-renderer';
 
 // !! IMPORTANT !! ----------------------------------------------------------------------------------
 // import { RenderOutputType } from 'vs/workbench/contrib/notebook/browser/notebookBrowser';
@@ -96,7 +96,7 @@ async function webviewPreloads(ctx: PreloadContext) {
 	const settingChange: EmitterLike<RenderOptions> = createEmitter<RenderOptions>();
 
 	const acquireVsCodeApi = globalThis.acquireVsCodeApi;
-	const vscode = acquireVsCodeApi();
+	const zycode = acquireVsCodeApi();
 	delete (globalThis as any).acquireVsCodeApi;
 
 	const tokenizationStyle = new CSSStyleSheet();
@@ -1598,7 +1598,7 @@ async function webviewPreloads(ctx: PreloadContext) {
 		}
 	});
 
-	const renderFallbackErrorName = 'vscode.fallbackToNextRenderer';
+	const renderFallbackErrorName = 'zycode.fallbackToNextRenderer';
 
 	class Renderer {
 
@@ -1657,9 +1657,9 @@ async function webviewPreloads(ctx: PreloadContext) {
 		private createRendererContext(): RendererContext {
 			const { id, messaging } = this.data;
 			const context: RendererContext = {
-				setState: newState => vscode.setState({ ...vscode.getState(), [id]: newState }),
+				setState: newState => zycode.setState({ ...zycode.getState(), [id]: newState }),
 				getState: <T>() => {
-					const state = vscode.getState();
+					const state = zycode.getState();
 					return typeof state === 'object' && state ? state[id] as T : undefined;
 				},
 				getRenderer: async (id: string) => {
@@ -2199,8 +2199,8 @@ async function webviewPreloads(ctx: PreloadContext) {
 		public static requestHighlightCodeBlock(root: HTMLElement | ShadowRoot) {
 			const codeBlocks: Array<{ value: string; lang: string; id: string }> = [];
 			let i = 0;
-			for (const el of root.querySelectorAll('.vscode-code-block')) {
-				const lang = el.getAttribute('data-vscode-code-block-lang');
+			for (const el of root.querySelectorAll('.zycode-code-block')) {
+				const lang = el.getAttribute('data-zycode-code-block-lang');
 				if (el.textContent && lang) {
 					const id = `${Date.now()}-${i++}`;
 					codeBlocks.push({ value: el.textContent, lang: lang, id });
@@ -2562,7 +2562,7 @@ async function webviewPreloads(ctx: PreloadContext) {
 		) {
 			this.element = document.createElement('div');
 			this.element.classList.add('output_container');
-			this.element.setAttribute('data-vscode-context', JSON.stringify({ 'preventDefaultContextMenuItems': true }));
+			this.element.setAttribute('data-zycode-context', JSON.stringify({ 'preventDefaultContextMenuItems': true }));
 			this.element.style.position = 'absolute';
 			this.element.style.overflow = 'hidden';
 		}
@@ -2603,7 +2603,7 @@ async function webviewPreloads(ctx: PreloadContext) {
 		}
 	}
 
-	vscode.postMessage({
+	zycode.postMessage({
 		__vscode_notebook_message: true,
 		type: 'initialized'
 	});
@@ -2616,7 +2616,7 @@ async function webviewPreloads(ctx: PreloadContext) {
 		type: T['type'],
 		properties: Omit<T, '__vscode_notebook_message' | 'type'>
 	) {
-		vscode.postMessage({
+		zycode.postMessage({
 			__vscode_notebook_message: true,
 			type,
 			...properties

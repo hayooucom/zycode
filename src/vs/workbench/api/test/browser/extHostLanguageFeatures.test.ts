@@ -34,7 +34,7 @@ import { getDocumentFormattingEditsUntilResult, getDocumentRangeFormattingEditsU
 import { getLinks } from 'vs/editor/contrib/links/browser/getLinks';
 import { MainContext, ExtHostContext } from 'vs/workbench/api/common/extHost.protocol';
 import { ExtHostDiagnostics } from 'vs/workbench/api/common/extHostDiagnostics';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { IInstantiationService } from 'vs/platform/instantiation/common/instantiation';
 import { NullLogService } from 'vs/platform/log/common/log';
 import { ITextModel, EndOfLineSequence } from 'vs/editor/common/model';
@@ -62,7 +62,7 @@ suite('ExtHostLanguageFeatures', function () {
 	let model: ITextModel;
 	let extHost: ExtHostLanguageFeatures;
 	let mainThread: MainThreadLanguageFeatures;
-	let disposables: vscode.Disposable[] = [];
+	let disposables: zycode.Disposable[] = [];
 	let rpcProtocol: TestRPCProtocol;
 	let languageFeaturesService: ILanguageFeaturesService;
 	let originalErrorHandler: (e: any) => any;
@@ -152,9 +152,9 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('DocumentSymbols, register/deregister', async () => {
 		assert.strictEqual(languageFeaturesService.documentSymbolProvider.all(model).length, 0);
-		const d1 = extHost.registerDocumentSymbolProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentSymbolProvider {
+		const d1 = extHost.registerDocumentSymbolProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentSymbolProvider {
 			provideDocumentSymbols() {
-				return <vscode.SymbolInformation[]>[];
+				return <zycode.SymbolInformation[]>[];
 			}
 		});
 
@@ -166,12 +166,12 @@ suite('ExtHostLanguageFeatures', function () {
 	});
 
 	test('DocumentSymbols, evil provider', async () => {
-		disposables.push(extHost.registerDocumentSymbolProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentSymbolProvider {
+		disposables.push(extHost.registerDocumentSymbolProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentSymbolProvider {
 			provideDocumentSymbols(): any {
 				throw new Error('evil document symbol provider');
 			}
 		}));
-		disposables.push(extHost.registerDocumentSymbolProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentSymbolProvider {
+		disposables.push(extHost.registerDocumentSymbolProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentSymbolProvider {
 			provideDocumentSymbols(): any {
 				return [new types.SymbolInformation('test', types.SymbolKind.Field, new types.Range(0, 0, 0, 0))];
 			}
@@ -183,7 +183,7 @@ suite('ExtHostLanguageFeatures', function () {
 	});
 
 	test('DocumentSymbols, data conversion', async () => {
-		disposables.push(extHost.registerDocumentSymbolProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentSymbolProvider {
+		disposables.push(extHost.registerDocumentSymbolProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentSymbolProvider {
 			provideDocumentSymbols(): any {
 				return [new types.SymbolInformation('test', types.SymbolKind.Field, new types.Range(0, 0, 0, 0))];
 			}
@@ -231,12 +231,12 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('CodeLens, evil provider', async () => {
 
-		disposables.push(extHost.registerCodeLensProvider(defaultExtension, defaultSelector, new class implements vscode.CodeLensProvider {
+		disposables.push(extHost.registerCodeLensProvider(defaultExtension, defaultSelector, new class implements zycode.CodeLensProvider {
 			provideCodeLenses(): any {
 				throw new Error('evil');
 			}
 		}));
-		disposables.push(extHost.registerCodeLensProvider(defaultExtension, defaultSelector, new class implements vscode.CodeLensProvider {
+		disposables.push(extHost.registerCodeLensProvider(defaultExtension, defaultSelector, new class implements zycode.CodeLensProvider {
 			provideCodeLenses() {
 				return [new types.CodeLens(new types.Range(0, 0, 0, 0))];
 			}
@@ -249,7 +249,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('CodeLens, do not resolve a resolved lens', async () => {
 
-		disposables.push(extHost.registerCodeLensProvider(defaultExtension, defaultSelector, new class implements vscode.CodeLensProvider {
+		disposables.push(extHost.registerCodeLensProvider(defaultExtension, defaultSelector, new class implements zycode.CodeLensProvider {
 			provideCodeLenses(): any {
 				return [new types.CodeLens(
 					new types.Range(0, 0, 0, 0),
@@ -271,7 +271,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('CodeLens, missing command', async () => {
 
-		disposables.push(extHost.registerCodeLensProvider(defaultExtension, defaultSelector, new class implements vscode.CodeLensProvider {
+		disposables.push(extHost.registerCodeLensProvider(defaultExtension, defaultSelector, new class implements zycode.CodeLensProvider {
 			provideCodeLenses() {
 				return [new types.CodeLens(new types.Range(0, 0, 0, 0))];
 			}
@@ -290,7 +290,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Definition, data conversion', async () => {
 
-		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements vscode.DefinitionProvider {
+		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements zycode.DefinitionProvider {
 			provideDefinition(): any {
 				return [new types.Location(model.uri, new types.Range(1, 2, 3, 4))];
 			}
@@ -306,12 +306,12 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Definition, one or many', async () => {
 
-		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements vscode.DefinitionProvider {
+		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements zycode.DefinitionProvider {
 			provideDefinition(): any {
 				return [new types.Location(model.uri, new types.Range(1, 1, 1, 1))];
 			}
 		}));
-		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements vscode.DefinitionProvider {
+		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements zycode.DefinitionProvider {
 			provideDefinition(): any {
 				return new types.Location(model.uri, new types.Range(2, 1, 1, 1));
 			}
@@ -324,13 +324,13 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Definition, registration order', async () => {
 
-		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements vscode.DefinitionProvider {
+		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements zycode.DefinitionProvider {
 			provideDefinition(): any {
 				return [new types.Location(URI.parse('far://first'), new types.Range(2, 3, 4, 5))];
 			}
 		}));
 
-		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements vscode.DefinitionProvider {
+		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements zycode.DefinitionProvider {
 			provideDefinition(): any {
 				return new types.Location(URI.parse('far://second'), new types.Range(1, 2, 3, 4));
 			}
@@ -346,12 +346,12 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Definition, evil provider', async () => {
 
-		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements vscode.DefinitionProvider {
+		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements zycode.DefinitionProvider {
 			provideDefinition(): any {
 				throw new Error('evil provider');
 			}
 		}));
-		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements vscode.DefinitionProvider {
+		disposables.push(extHost.registerDefinitionProvider(defaultExtension, defaultSelector, new class implements zycode.DefinitionProvider {
 			provideDefinition(): any {
 				return new types.Location(model.uri, new types.Range(1, 1, 1, 1));
 			}
@@ -366,7 +366,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Declaration, data conversion', async () => {
 
-		disposables.push(extHost.registerDeclarationProvider(defaultExtension, defaultSelector, new class implements vscode.DeclarationProvider {
+		disposables.push(extHost.registerDeclarationProvider(defaultExtension, defaultSelector, new class implements zycode.DeclarationProvider {
 			provideDeclaration(): any {
 				return [new types.Location(model.uri, new types.Range(1, 2, 3, 4))];
 			}
@@ -384,7 +384,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Implementation, data conversion', async () => {
 
-		disposables.push(extHost.registerImplementationProvider(defaultExtension, defaultSelector, new class implements vscode.ImplementationProvider {
+		disposables.push(extHost.registerImplementationProvider(defaultExtension, defaultSelector, new class implements zycode.ImplementationProvider {
 			provideImplementation(): any {
 				return [new types.Location(model.uri, new types.Range(1, 2, 3, 4))];
 			}
@@ -402,7 +402,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Type Definition, data conversion', async () => {
 
-		disposables.push(extHost.registerTypeDefinitionProvider(defaultExtension, defaultSelector, new class implements vscode.TypeDefinitionProvider {
+		disposables.push(extHost.registerTypeDefinitionProvider(defaultExtension, defaultSelector, new class implements zycode.TypeDefinitionProvider {
 			provideTypeDefinition(): any {
 				return [new types.Location(model.uri, new types.Range(1, 2, 3, 4))];
 			}
@@ -420,7 +420,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('HoverProvider, word range at pos', async () => {
 
-		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements vscode.HoverProvider {
+		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements zycode.HoverProvider {
 			provideHover(): any {
 				return new types.Hover('Hello');
 			}
@@ -436,7 +436,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('HoverProvider, given range', async () => {
 
-		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements vscode.HoverProvider {
+		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements zycode.HoverProvider {
 			provideHover(): any {
 				return new types.Hover('Hello', new types.Range(3, 0, 8, 7));
 			}
@@ -451,14 +451,14 @@ suite('ExtHostLanguageFeatures', function () {
 
 
 	test('HoverProvider, registration order', async () => {
-		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements vscode.HoverProvider {
+		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements zycode.HoverProvider {
 			provideHover(): any {
 				return new types.Hover('registered first');
 			}
 		}));
 
 
-		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements vscode.HoverProvider {
+		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements zycode.HoverProvider {
 			provideHover(): any {
 				return new types.Hover('registered second');
 			}
@@ -475,12 +475,12 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('HoverProvider, evil provider', async () => {
 
-		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements vscode.HoverProvider {
+		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements zycode.HoverProvider {
 			provideHover(): any {
 				throw new Error('evil');
 			}
 		}));
-		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements vscode.HoverProvider {
+		disposables.push(extHost.registerHoverProvider(defaultExtension, defaultSelector, new class implements zycode.HoverProvider {
 			provideHover(): any {
 				return new types.Hover('Hello');
 			}
@@ -495,7 +495,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Occurrences, data conversion', async () => {
 
-		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentHighlightProvider {
+		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentHighlightProvider {
 			provideDocumentHighlights(): any {
 				return [new types.DocumentHighlight(new types.Range(0, 0, 0, 4))];
 			}
@@ -511,12 +511,12 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Occurrences, order 1/2', async () => {
 
-		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentHighlightProvider {
+		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentHighlightProvider {
 			provideDocumentHighlights(): any {
 				return [];
 			}
 		}));
-		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, '*', new class implements vscode.DocumentHighlightProvider {
+		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, '*', new class implements zycode.DocumentHighlightProvider {
 			provideDocumentHighlights(): any {
 				return [new types.DocumentHighlight(new types.Range(0, 0, 0, 4))];
 			}
@@ -532,12 +532,12 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Occurrences, order 2/2', async () => {
 
-		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentHighlightProvider {
+		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentHighlightProvider {
 			provideDocumentHighlights(): any {
 				return [new types.DocumentHighlight(new types.Range(0, 0, 0, 2))];
 			}
 		}));
-		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, '*', new class implements vscode.DocumentHighlightProvider {
+		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, '*', new class implements zycode.DocumentHighlightProvider {
 			provideDocumentHighlights(): any {
 				return [new types.DocumentHighlight(new types.Range(0, 0, 0, 4))];
 			}
@@ -553,13 +553,13 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Occurrences, evil provider', async () => {
 
-		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentHighlightProvider {
+		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentHighlightProvider {
 			provideDocumentHighlights(): any {
 				throw new Error('evil');
 			}
 		}));
 
-		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentHighlightProvider {
+		disposables.push(extHost.registerDocumentHighlightProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentHighlightProvider {
 			provideDocumentHighlights(): any {
 				return [new types.DocumentHighlight(new types.Range(0, 0, 0, 4))];
 			}
@@ -574,13 +574,13 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('References, registration order', async () => {
 
-		disposables.push(extHost.registerReferenceProvider(defaultExtension, defaultSelector, new class implements vscode.ReferenceProvider {
+		disposables.push(extHost.registerReferenceProvider(defaultExtension, defaultSelector, new class implements zycode.ReferenceProvider {
 			provideReferences(): any {
 				return [new types.Location(URI.parse('far://register/first'), new types.Range(0, 0, 0, 0))];
 			}
 		}));
 
-		disposables.push(extHost.registerReferenceProvider(defaultExtension, defaultSelector, new class implements vscode.ReferenceProvider {
+		disposables.push(extHost.registerReferenceProvider(defaultExtension, defaultSelector, new class implements zycode.ReferenceProvider {
 			provideReferences(): any {
 				return [new types.Location(URI.parse('far://register/second'), new types.Range(0, 0, 0, 0))];
 			}
@@ -596,7 +596,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('References, data conversion', async () => {
 
-		disposables.push(extHost.registerReferenceProvider(defaultExtension, defaultSelector, new class implements vscode.ReferenceProvider {
+		disposables.push(extHost.registerReferenceProvider(defaultExtension, defaultSelector, new class implements zycode.ReferenceProvider {
 			provideReferences(): any {
 				return [new types.Location(model.uri, new types.Position(0, 0))];
 			}
@@ -612,12 +612,12 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('References, evil provider', async () => {
 
-		disposables.push(extHost.registerReferenceProvider(defaultExtension, defaultSelector, new class implements vscode.ReferenceProvider {
+		disposables.push(extHost.registerReferenceProvider(defaultExtension, defaultSelector, new class implements zycode.ReferenceProvider {
 			provideReferences(): any {
 				throw new Error('evil');
 			}
 		}));
-		disposables.push(extHost.registerReferenceProvider(defaultExtension, defaultSelector, new class implements vscode.ReferenceProvider {
+		disposables.push(extHost.registerReferenceProvider(defaultExtension, defaultSelector, new class implements zycode.ReferenceProvider {
 			provideReferences(): any {
 				return [new types.Location(model.uri, new types.Range(0, 0, 0, 0))];
 			}
@@ -633,7 +633,7 @@ suite('ExtHostLanguageFeatures', function () {
 	test('Quick Fix, command data conversion', async () => {
 
 		disposables.push(extHost.registerCodeActionProvider(defaultExtension, defaultSelector, {
-			provideCodeActions(): vscode.Command[] {
+			provideCodeActions(): zycode.Command[] {
 				return [
 					{ command: 'test1', title: 'Testing1' },
 					{ command: 'test2', title: 'Testing2' }
@@ -654,7 +654,7 @@ suite('ExtHostLanguageFeatures', function () {
 	test('Quick Fix, code action data conversion', async () => {
 
 		disposables.push(extHost.registerCodeActionProvider(defaultExtension, defaultSelector, {
-			provideCodeActions(): vscode.CodeAction[] {
+			provideCodeActions(): zycode.CodeAction[] {
 				return [
 					{
 						title: 'Testing1',
@@ -678,7 +678,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Cannot read property \'id\' of undefined, #29469', async () => {
 
-		disposables.push(extHost.registerCodeActionProvider(defaultExtension, defaultSelector, new class implements vscode.CodeActionProvider {
+		disposables.push(extHost.registerCodeActionProvider(defaultExtension, defaultSelector, new class implements zycode.CodeActionProvider {
 			provideCodeActions(): any {
 				return [
 					undefined,
@@ -695,12 +695,12 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Quick Fix, evil provider', async () => {
 
-		disposables.push(extHost.registerCodeActionProvider(defaultExtension, defaultSelector, new class implements vscode.CodeActionProvider {
+		disposables.push(extHost.registerCodeActionProvider(defaultExtension, defaultSelector, new class implements zycode.CodeActionProvider {
 			provideCodeActions(): any {
 				throw new Error('evil');
 			}
 		}));
-		disposables.push(extHost.registerCodeActionProvider(defaultExtension, defaultSelector, new class implements vscode.CodeActionProvider {
+		disposables.push(extHost.registerCodeActionProvider(defaultExtension, defaultSelector, new class implements zycode.CodeActionProvider {
 			provideCodeActions(): any {
 				return [{ command: 'test', title: 'Testing' }];
 			}
@@ -715,13 +715,13 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Navigate types, evil provider', async () => {
 
-		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements vscode.WorkspaceSymbolProvider {
+		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements zycode.WorkspaceSymbolProvider {
 			provideWorkspaceSymbols(): any {
 				throw new Error('evil');
 			}
 		}));
 
-		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements vscode.WorkspaceSymbolProvider {
+		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements zycode.WorkspaceSymbolProvider {
 			provideWorkspaceSymbols(): any {
 				return [new types.SymbolInformation('testing', types.SymbolKind.Array, new types.Range(0, 0, 1, 1))];
 			}
@@ -736,28 +736,28 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Navigate types, de-duplicate results', async () => {
 		const uri = URI.from({ scheme: 'foo', path: '/some/path' });
-		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements vscode.WorkspaceSymbolProvider {
+		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements zycode.WorkspaceSymbolProvider {
 			provideWorkspaceSymbols(): any {
 				return [new types.SymbolInformation('ONE', types.SymbolKind.Array, undefined, new types.Location(uri, new types.Range(0, 0, 1, 1)))];
 			}
 		}));
 
-		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements vscode.WorkspaceSymbolProvider {
+		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements zycode.WorkspaceSymbolProvider {
 			provideWorkspaceSymbols(): any {
 				return [new types.SymbolInformation('ONE', types.SymbolKind.Array, undefined, new types.Location(uri, new types.Range(0, 0, 1, 1)))]; // get de-duped
 			}
 		}));
 
-		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements vscode.WorkspaceSymbolProvider {
+		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements zycode.WorkspaceSymbolProvider {
 			provideWorkspaceSymbols(): any {
 				return [new types.SymbolInformation('ONE', types.SymbolKind.Array, undefined, new types.Location(uri, undefined!))]; // NO dedupe because of resolve
 			}
-			resolveWorkspaceSymbol(a: vscode.SymbolInformation) {
+			resolveWorkspaceSymbol(a: zycode.SymbolInformation) {
 				return a;
 			}
 		}));
 
-		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements vscode.WorkspaceSymbolProvider {
+		disposables.push(extHost.registerWorkspaceSymbolProvider(defaultExtension, new class implements zycode.WorkspaceSymbolProvider {
 			provideWorkspaceSymbols(): any {
 				return [new types.SymbolInformation('ONE', types.SymbolKind.Struct, undefined, new types.Location(uri, new types.Range(0, 0, 1, 1)))]; // NO dedupe because of kind
 			}
@@ -772,7 +772,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Rename, evil provider 0/2', async () => {
 
-		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements vscode.RenameProvider {
+		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements zycode.RenameProvider {
 			provideRenameEdits(): any {
 				throw new class Foo { };
 			}
@@ -790,7 +790,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Rename, evil provider 1/2', async () => {
 
-		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements vscode.RenameProvider {
+		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements zycode.RenameProvider {
 			provideRenameEdits(): any {
 				throw Error('evil');
 			}
@@ -803,13 +803,13 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Rename, evil provider 2/2', async () => {
 
-		disposables.push(extHost.registerRenameProvider(defaultExtension, '*', new class implements vscode.RenameProvider {
+		disposables.push(extHost.registerRenameProvider(defaultExtension, '*', new class implements zycode.RenameProvider {
 			provideRenameEdits(): any {
 				throw Error('evil');
 			}
 		}));
 
-		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements vscode.RenameProvider {
+		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements zycode.RenameProvider {
 			provideRenameEdits(): any {
 				const edit = new types.WorkspaceEdit();
 				edit.replace(model.uri, new types.Range(0, 0, 0, 0), 'testing');
@@ -824,7 +824,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Rename, ordering', async () => {
 
-		disposables.push(extHost.registerRenameProvider(defaultExtension, '*', new class implements vscode.RenameProvider {
+		disposables.push(extHost.registerRenameProvider(defaultExtension, '*', new class implements zycode.RenameProvider {
 			provideRenameEdits(): any {
 				const edit = new types.WorkspaceEdit();
 				edit.replace(model.uri, new types.Range(0, 0, 0, 0), 'testing');
@@ -833,7 +833,7 @@ suite('ExtHostLanguageFeatures', function () {
 			}
 		}));
 
-		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements vscode.RenameProvider {
+		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements zycode.RenameProvider {
 			provideRenameEdits(): any {
 				return;
 			}
@@ -849,25 +849,25 @@ suite('ExtHostLanguageFeatures', function () {
 
 		const called = [false, false, false, false];
 
-		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements vscode.RenameProvider {
-			prepareRename(document: vscode.TextDocument, position: vscode.Position,): vscode.ProviderResult<vscode.Range> {
+		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements zycode.RenameProvider {
+			prepareRename(document: zycode.TextDocument, position: zycode.Position,): zycode.ProviderResult<zycode.Range> {
 				called[0] = true;
 				const range = document.getWordRangeAtPosition(position);
 				return range;
 			}
 
-			provideRenameEdits(): vscode.ProviderResult<vscode.WorkspaceEdit> {
+			provideRenameEdits(): zycode.ProviderResult<zycode.WorkspaceEdit> {
 				called[1] = true;
 				return undefined;
 			}
 		}));
 
-		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements vscode.RenameProvider {
-			prepareRename(document: vscode.TextDocument, position: vscode.Position,): vscode.ProviderResult<vscode.Range> {
+		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements zycode.RenameProvider {
+			prepareRename(document: zycode.TextDocument, position: zycode.Position,): zycode.ProviderResult<zycode.Range> {
 				called[2] = true;
 				return Promise.reject('Cannot rename this symbol2.');
 			}
-			provideRenameEdits(): vscode.ProviderResult<vscode.WorkspaceEdit> {
+			provideRenameEdits(): zycode.ProviderResult<zycode.WorkspaceEdit> {
 				called[3] = true;
 				return undefined;
 			}
@@ -883,22 +883,22 @@ suite('ExtHostLanguageFeatures', function () {
 
 		const called = [false, false, false];
 
-		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements vscode.RenameProvider {
-			prepareRename(document: vscode.TextDocument, position: vscode.Position,): vscode.ProviderResult<vscode.Range> {
+		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements zycode.RenameProvider {
+			prepareRename(document: zycode.TextDocument, position: zycode.Position,): zycode.ProviderResult<zycode.Range> {
 				called[0] = true;
 				const range = document.getWordRangeAtPosition(position);
 				return range;
 			}
 
-			provideRenameEdits(): vscode.ProviderResult<vscode.WorkspaceEdit> {
+			provideRenameEdits(): zycode.ProviderResult<zycode.WorkspaceEdit> {
 				called[1] = true;
 				return undefined;
 			}
 		}));
 
-		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements vscode.RenameProvider {
+		disposables.push(extHost.registerRenameProvider(defaultExtension, defaultSelector, new class implements zycode.RenameProvider {
 
-			provideRenameEdits(document: vscode.TextDocument, position: vscode.Position, newName: string,): vscode.ProviderResult<vscode.WorkspaceEdit> {
+			provideRenameEdits(document: zycode.TextDocument, position: zycode.Position, newName: string,): zycode.ProviderResult<zycode.WorkspaceEdit> {
 				called[2] = true;
 				return new types.WorkspaceEdit();
 			}
@@ -915,14 +915,14 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Parameter Hints, order', async () => {
 
-		disposables.push(extHost.registerSignatureHelpProvider(defaultExtension, defaultSelector, new class implements vscode.SignatureHelpProvider {
+		disposables.push(extHost.registerSignatureHelpProvider(defaultExtension, defaultSelector, new class implements zycode.SignatureHelpProvider {
 			provideSignatureHelp(): any {
 				return undefined;
 			}
 		}, []));
 
-		disposables.push(extHost.registerSignatureHelpProvider(defaultExtension, defaultSelector, new class implements vscode.SignatureHelpProvider {
-			provideSignatureHelp(): vscode.SignatureHelp {
+		disposables.push(extHost.registerSignatureHelpProvider(defaultExtension, defaultSelector, new class implements zycode.SignatureHelpProvider {
+			provideSignatureHelp(): zycode.SignatureHelp {
 				return {
 					signatures: [],
 					activeParameter: 0,
@@ -938,7 +938,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Parameter Hints, evil provider', async () => {
 
-		disposables.push(extHost.registerSignatureHelpProvider(defaultExtension, defaultSelector, new class implements vscode.SignatureHelpProvider {
+		disposables.push(extHost.registerSignatureHelpProvider(defaultExtension, defaultSelector, new class implements zycode.SignatureHelpProvider {
 			provideSignatureHelp(): any {
 				throw new Error('evil');
 			}
@@ -953,13 +953,13 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Suggest, order 1/3', async () => {
 
-		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, '*', new class implements vscode.CompletionItemProvider {
+		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, '*', new class implements zycode.CompletionItemProvider {
 			provideCompletionItems(): any {
 				return [new types.CompletionItem('testing1')];
 			}
 		}, []));
 
-		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements vscode.CompletionItemProvider {
+		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements zycode.CompletionItemProvider {
 			provideCompletionItems(): any {
 				return [new types.CompletionItem('testing2')];
 			}
@@ -973,13 +973,13 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Suggest, order 2/3', async () => {
 
-		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, '*', new class implements vscode.CompletionItemProvider {
+		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, '*', new class implements zycode.CompletionItemProvider {
 			provideCompletionItems(): any {
 				return [new types.CompletionItem('weak-selector')]; // weaker selector but result
 			}
 		}, []));
 
-		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements vscode.CompletionItemProvider {
+		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements zycode.CompletionItemProvider {
 			provideCompletionItems(): any {
 				return []; // stronger selector but not a good result;
 			}
@@ -993,13 +993,13 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Suggest, order 3/3', async () => {
 
-		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements vscode.CompletionItemProvider {
+		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements zycode.CompletionItemProvider {
 			provideCompletionItems(): any {
 				return [new types.CompletionItem('strong-1')];
 			}
 		}, []));
 
-		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements vscode.CompletionItemProvider {
+		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements zycode.CompletionItemProvider {
 			provideCompletionItems(): any {
 				return [new types.CompletionItem('strong-2')];
 			}
@@ -1014,13 +1014,13 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Suggest, evil provider', async () => {
 
-		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements vscode.CompletionItemProvider {
+		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements zycode.CompletionItemProvider {
 			provideCompletionItems(): any {
 				throw new Error('evil');
 			}
 		}, []));
 
-		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements vscode.CompletionItemProvider {
+		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements zycode.CompletionItemProvider {
 			provideCompletionItems(): any {
 				return [new types.CompletionItem('testing')];
 			}
@@ -1034,7 +1034,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Suggest, CompletionList', async () => {
 
-		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements vscode.CompletionItemProvider {
+		disposables.push(extHost.registerCompletionItemProvider(defaultExtension, defaultSelector, new class implements zycode.CompletionItemProvider {
 			provideCompletionItems(): any {
 				return new types.CompletionList([<any>new types.CompletionItem('hello')], true);
 			}
@@ -1055,7 +1055,7 @@ suite('ExtHostLanguageFeatures', function () {
 	};
 
 	test('Format Doc, data conversion', async () => {
-		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentFormattingEditProvider {
+		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentFormattingEditProvider {
 			provideDocumentFormattingEdits(): any {
 				return [new types.TextEdit(new types.Range(0, 0, 0, 0), 'testing'), types.TextEdit.setEndOfLine(types.EndOfLine.LF)];
 			}
@@ -1073,7 +1073,7 @@ suite('ExtHostLanguageFeatures', function () {
 	});
 
 	test('Format Doc, evil provider', async () => {
-		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentFormattingEditProvider {
+		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentFormattingEditProvider {
 			provideDocumentFormattingEdits(): any {
 				throw new Error('evil');
 			}
@@ -1085,19 +1085,19 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Format Doc, order', async () => {
 
-		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentFormattingEditProvider {
+		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentFormattingEditProvider {
 			provideDocumentFormattingEdits(): any {
 				return undefined;
 			}
 		}));
 
-		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentFormattingEditProvider {
+		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentFormattingEditProvider {
 			provideDocumentFormattingEdits(): any {
 				return [new types.TextEdit(new types.Range(0, 0, 0, 0), 'testing')];
 			}
 		}));
 
-		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentFormattingEditProvider {
+		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentFormattingEditProvider {
 			provideDocumentFormattingEdits(): any {
 				return undefined;
 			}
@@ -1112,7 +1112,7 @@ suite('ExtHostLanguageFeatures', function () {
 	});
 
 	test('Format Range, data conversion', async () => {
-		disposables.push(extHost.registerDocumentRangeFormattingEditProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentRangeFormattingEditProvider {
+		disposables.push(extHost.registerDocumentRangeFormattingEditProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentRangeFormattingEditProvider {
 			provideDocumentRangeFormattingEdits(): any {
 				return [new types.TextEdit(new types.Range(0, 0, 0, 0), 'testing')];
 			}
@@ -1127,17 +1127,17 @@ suite('ExtHostLanguageFeatures', function () {
 	});
 
 	test('Format Range, + format_doc', async () => {
-		disposables.push(extHost.registerDocumentRangeFormattingEditProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentRangeFormattingEditProvider {
+		disposables.push(extHost.registerDocumentRangeFormattingEditProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentRangeFormattingEditProvider {
 			provideDocumentRangeFormattingEdits(): any {
 				return [new types.TextEdit(new types.Range(0, 0, 0, 0), 'range')];
 			}
 		}));
-		disposables.push(extHost.registerDocumentRangeFormattingEditProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentRangeFormattingEditProvider {
+		disposables.push(extHost.registerDocumentRangeFormattingEditProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentRangeFormattingEditProvider {
 			provideDocumentRangeFormattingEdits(): any {
 				return [new types.TextEdit(new types.Range(2, 3, 4, 5), 'range2')];
 			}
 		}));
-		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentFormattingEditProvider {
+		disposables.push(extHost.registerDocumentFormattingEditProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentFormattingEditProvider {
 			provideDocumentFormattingEdits(): any {
 				return [new types.TextEdit(new types.Range(0, 0, 1, 1), 'doc')];
 			}
@@ -1154,7 +1154,7 @@ suite('ExtHostLanguageFeatures', function () {
 	});
 
 	test('Format Range, evil provider', async () => {
-		disposables.push(extHost.registerDocumentRangeFormattingEditProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentRangeFormattingEditProvider {
+		disposables.push(extHost.registerDocumentRangeFormattingEditProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentRangeFormattingEditProvider {
 			provideDocumentRangeFormattingEdits(): any {
 				throw new Error('evil');
 			}
@@ -1166,7 +1166,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Format on Type, data conversion', async () => {
 
-		disposables.push(extHost.registerOnTypeFormattingEditProvider(defaultExtension, defaultSelector, new class implements vscode.OnTypeFormattingEditProvider {
+		disposables.push(extHost.registerOnTypeFormattingEditProvider(defaultExtension, defaultSelector, new class implements zycode.OnTypeFormattingEditProvider {
 			provideOnTypeFormattingEdits(): any {
 				return [new types.TextEdit(new types.Range(0, 0, 0, 0), arguments[2])];
 			}
@@ -1182,7 +1182,7 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Links, data conversion', async () => {
 
-		disposables.push(extHost.registerDocumentLinkProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentLinkProvider {
+		disposables.push(extHost.registerDocumentLinkProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentLinkProvider {
 			provideDocumentLinks() {
 				const link = new types.DocumentLink(new types.Range(0, 0, 1, 1), URI.parse('foo:bar#3'));
 				link.tooltip = 'tooltip';
@@ -1201,13 +1201,13 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Links, evil provider', async () => {
 
-		disposables.push(extHost.registerDocumentLinkProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentLinkProvider {
+		disposables.push(extHost.registerDocumentLinkProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentLinkProvider {
 			provideDocumentLinks() {
 				return [new types.DocumentLink(new types.Range(0, 0, 1, 1), URI.parse('foo:bar#3'))];
 			}
 		}));
 
-		disposables.push(extHost.registerDocumentLinkProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentLinkProvider {
+		disposables.push(extHost.registerDocumentLinkProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentLinkProvider {
 			provideDocumentLinks(): any {
 				throw new Error();
 			}
@@ -1223,11 +1223,11 @@ suite('ExtHostLanguageFeatures', function () {
 
 	test('Document colors, data conversion', async () => {
 
-		disposables.push(extHost.registerColorProvider(defaultExtension, defaultSelector, new class implements vscode.DocumentColorProvider {
-			provideDocumentColors(): vscode.ColorInformation[] {
+		disposables.push(extHost.registerColorProvider(defaultExtension, defaultSelector, new class implements zycode.DocumentColorProvider {
+			provideDocumentColors(): zycode.ColorInformation[] {
 				return [new types.ColorInformation(new types.Range(0, 0, 0, 20), new types.Color(0.1, 0.2, 0.3, 0.4))];
 			}
-			provideColorPresentations(color: vscode.Color, context: { range: vscode.Range; document: vscode.TextDocument }): vscode.ColorPresentation[] {
+			provideColorPresentations(color: zycode.Color, context: { range: zycode.Range; document: zycode.TextDocument }): zycode.ColorPresentation[] {
 				return [];
 			}
 		}));
@@ -1243,7 +1243,7 @@ suite('ExtHostLanguageFeatures', function () {
 	// -- selection ranges
 
 	test('Selection Ranges, data conversion', async () => {
-		disposables.push(extHost.registerSelectionRangeProvider(defaultExtension, defaultSelector, new class implements vscode.SelectionRangeProvider {
+		disposables.push(extHost.registerSelectionRangeProvider(defaultExtension, defaultSelector, new class implements zycode.SelectionRangeProvider {
 			provideSelectionRanges() {
 				return [
 					new types.SelectionRange(new types.Range(0, 10, 0, 18), new types.SelectionRange(new types.Range(0, 2, 0, 20))),

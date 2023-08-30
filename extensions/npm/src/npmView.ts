@@ -10,7 +10,7 @@ import {
 	Selection, Task,
 	TaskGroup, tasks, TextDocument, TextDocumentShowOptions, ThemeIcon, TreeDataProvider, TreeItem, TreeItemLabel, TreeItemCollapsibleState, Uri,
 	window, workspace, WorkspaceFolder, Position, Location, l10n
-} from 'vscode';
+} from 'zycode';
 import { readScripts } from './readScripts';
 import {
 	createTask, getPackageManager, getTaskName, isAutoDetectionEnabled, isWorkspaceFolder, INpmTaskDefinition,
@@ -87,7 +87,7 @@ class NpmScript extends TreeItem {
 		const commandList = {
 			'open': {
 				title: 'Edit Script',
-				command: 'vscode.open',
+				command: 'zycode.open',
 				arguments: [
 					this.taskLocation?.uri,
 					this.taskLocation ? <TextDocumentShowOptions>{

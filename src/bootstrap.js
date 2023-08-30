@@ -35,7 +35,7 @@
 		// (https://github.com/electron/electron/issues/13254)
 		let didLogAboutSIGPIPE = false;
 		process.on('SIGPIPE', () => {
-			// See https://github.com/microsoft/vscode-remote-release/issues/6543
+			// See https://github.com/microsoft/zycode-remote-release/issues/6543
 			// We would normally install a SIGPIPE listener in bootstrap.js
 			// But in certain situations, the console itself can be in a broken pipe state
 			// so logging SIGPIPE to the console will cause an infinite async loop
@@ -182,7 +182,7 @@
 		const globals = (typeof self === 'object' ? self : typeof global === 'object' ? global : {});
 
 		// @ts-ignore
-		return globals.vscode;
+		return globals.zycode;
 	}
 
 	/**
@@ -220,7 +220,7 @@
 	async function safeReadNlsFile(...pathSegments) {
 		const ipcRenderer = safeIpcRenderer();
 		if (ipcRenderer) {
-			return ipcRenderer.invoke('vscode:readNlsFile', ...pathSegments);
+			return ipcRenderer.invoke('zycode:readNlsFile', ...pathSegments);
 		}
 
 		if (fs && path && util) {
@@ -238,7 +238,7 @@
 	function safeWriteNlsFile(path, content) {
 		const ipcRenderer = safeIpcRenderer();
 		if (ipcRenderer) {
-			return ipcRenderer.invoke('vscode:writeNlsFile', path, content);
+			return ipcRenderer.invoke('zycode:writeNlsFile', path, content);
 		}
 
 		if (fs && util) {

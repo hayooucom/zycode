@@ -49,14 +49,14 @@ export class DiagnosticsMainService implements IDiagnosticsMainService {
 				return undefined;
 			}
 
-			const replyChannel = `vscode:getDiagnosticInfoResponse${window.id}`;
+			const replyChannel = `zycode:getDiagnosticInfoResponse${window.id}`;
 			const args: IDiagnosticInfoOptions = {
 				includeProcesses: options.includeProcesses,
 				folders: options.includeWorkspaceMetadata ? await this.getFolderURIs(window) : undefined
 			};
 
 			return new Promise<IDiagnosticInfo | IRemoteDiagnosticError>(resolve => {
-				window.sendWhenReady('vscode:getDiagnosticInfo', CancellationToken.None, { replyChannel, args });
+				window.sendWhenReady('zycode:getDiagnosticInfo', CancellationToken.None, { replyChannel, args });
 
 				validatedIpcMain.once(replyChannel, (_: IpcEvent, data: IRemoteDiagnosticInfo) => {
 					// No data is returned if getting the connection fails.

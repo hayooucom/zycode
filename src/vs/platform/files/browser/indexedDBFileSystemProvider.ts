@@ -192,7 +192,7 @@ export class IndexedDBFileSystemProvider extends Disposable implements IFileSyst
 		this.writeManyThrottler = new Throttler();
 
 		if (watchCrossWindowChanges) {
-			this.changesBroadcastChannel = this._register(new BroadcastDataChannel<UriDto<IFileChange>[]>(`vscode.indexedDB.${scheme}.changes`));
+			this.changesBroadcastChannel = this._register(new BroadcastDataChannel<UriDto<IFileChange>[]>(`zycode.indexedDB.${scheme}.changes`));
 			this._register(this.changesBroadcastChannel.onDidReceiveData(changes => {
 				this._onDidChangeFile.fire(changes.map(c => ({ type: c.type, resource: URI.revive(c.resource) })));
 			}));

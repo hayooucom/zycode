@@ -13,7 +13,7 @@
 	cursor: pointer;
 	justify-content: center;
 	align-items: center;
-	border: 1px solid var(--vscode-button-border, transparent);
+	border: 1px solid var(--zycode-button-border, transparent);
 	line-height: 18px;
 }
 
@@ -98,7 +98,7 @@
 }
 
 .monaco-button-dropdown > .monaco-button.monaco-dropdown-button {
-	border: 1px solid var(--vscode-button-border, transparent);
+	border: 1px solid var(--zycode-button-border, transparent);
 	border-left-width: 0 !important;
 	border-radius: 0 2px 2px 0;
 }
@@ -137,36 +137,36 @@
 
 .monaco-button.default-colors,
 .monaco-button-dropdown.default-colors > .monaco-button{
-	color: var(--vscode-button-foreground);
-	background-color: var(--vscode-button-background);
+	color: var(--zycode-button-foreground);
+	background-color: var(--zycode-button-background);
 }
 
 .monaco-button.default-colors:hover,
 .monaco-button-dropdown.default-colors > .monaco-button:hover {
-	background-color: var(--vscode-button-hoverBackground);
+	background-color: var(--zycode-button-hoverBackground);
 }
 
 .monaco-button.default-colors.secondary,
 .monaco-button-dropdown.default-colors > .monaco-button.secondary {
-	color: var(--vscode-button-secondaryForeground);
-	background-color: var(--vscode-button-secondaryBackground);
+	color: var(--zycode-button-secondaryForeground);
+	background-color: var(--zycode-button-secondaryBackground);
 }
 
 .monaco-button.default-colors.secondary:hover,
 .monaco-button-dropdown.default-colors > .monaco-button.secondary:hover {
-	background-color: var(--vscode-button-secondaryHoverBackground);
+	background-color: var(--zycode-button-secondaryHoverBackground);
 }
 
 .monaco-button-dropdown.default-colors .monaco-button-dropdown-separator {
-	background-color: var(--vscode-button-background);
-	border-top: 1px solid var(--vscode-button-border);
-	border-bottom: 1px solid var(--vscode-button-border);
+	background-color: var(--zycode-button-background);
+	border-top: 1px solid var(--zycode-button-border);
+	border-bottom: 1px solid var(--zycode-button-border);
 }
 
 .monaco-button-dropdown.default-colors .monaco-button.secondary + .monaco-button-dropdown-separator {
-	background-color: var(--vscode-button-secondaryBackground);
+	background-color: var(--zycode-button-secondaryBackground);
 }
 
 .monaco-button-dropdown.default-colors .monaco-button-dropdown-separator > div {
-	background-color: var(--vscode-button-separator);
+	background-color: var(--zycode-button-separator);
 }

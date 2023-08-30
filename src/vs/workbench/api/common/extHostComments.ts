@@ -16,7 +16,7 @@ import { ExtensionIdentifierMap, IExtensionDescription } from 'vs/platform/exten
 import { ExtHostDocuments } from 'vs/workbench/api/common/extHostDocuments';
 import * as extHostTypeConverter from 'vs/workbench/api/common/extHostTypeConverters';
 import * as types from 'vs/workbench/api/common/extHostTypes';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ExtHostCommentsShape, IMainContext, MainContext, CommentThreadChanges, CommentChanges } from './extHost.protocol';
 import { ExtHostCommands } from './extHostCommands';
 import { checkProposedApiEnabled } from 'vs/workbench/services/extensions/common/extensions';
@@ -24,7 +24,7 @@ import { checkProposedApiEnabled } from 'vs/workbench/services/extensions/common
 type ProviderHandle = number;
 
 interface ExtHostComments {
-	createCommentController(extension: IExtensionDescription, id: string, label: string): vscode.CommentController;
+	createCommentController(extension: IExtensionDescription, id: string, label: string): zycode.CommentController;
 }
 
 export function createExtHostComments(mainContext: IMainContext, commands: ExtHostCommands, documents: ExtHostDocuments): ExtHostCommentsShape & ExtHostComments {
@@ -146,7 +146,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 			});
 		}
 
-		createCommentController(extension: IExtensionDescription, id: string, label: string): vscode.CommentController {
+		createCommentController(extension: IExtensionDescription, id: string, label: string): zycode.CommentController {
 			const handle = ExtHostCommentsImpl.handlePool++;
 			const commentController = new ExtHostCommentController(extension, handle, id, label);
 			this._commentControllers.set(commentController.handle, commentController);
@@ -193,8 +193,8 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 
 			const document = documents.getDocument(URI.revive(uriComponents));
 			return asPromise(async () => {
-				const rangesResult = await (commentController.commentingRangeProvider as vscode.CommentingRangeProvider2).provideCommentingRanges(document, token);
-				let ranges: { ranges: vscode.Range[]; fileComments: boolean } | undefined;
+				const rangesResult = await (commentController.commentingRangeProvider as zycode.CommentingRangeProvider2).provideCommentingRanges(document, token);
+				let ranges: { ranges: zycode.Range[]; fileComments: boolean } | undefined;
 				if (Array.isArray(rangesResult)) {
 					ranges = {
 						ranges: rangesResult,
@@ -245,17 +245,17 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 		}
 	}
 	type CommentThreadModification = Partial<{
-		range: vscode.Range;
+		range: zycode.Range;
 		label: string | undefined;
 		contextValue: string | undefined;
-		comments: vscode.Comment[];
-		collapsibleState: vscode.CommentThreadCollapsibleState;
+		comments: zycode.Comment[];
+		collapsibleState: zycode.CommentThreadCollapsibleState;
 		canReply: boolean;
-		state: vscode.CommentThreadState;
+		state: zycode.CommentThreadState;
 		isTemplate: boolean;
 	}>;
 
-	class ExtHostCommentThread implements vscode.CommentThread2 {
+	class ExtHostCommentThread implements zycode.CommentThread2 {
 		private static _handlePool: number = 0;
 		readonly handle = ExtHostCommentThread._handlePool++;
 		public commentHandle: number = 0;
@@ -274,18 +274,18 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 			return this._id!;
 		}
 
-		get resource(): vscode.Uri {
+		get resource(): zycode.Uri {
 			return this._uri;
 		}
 
-		get uri(): vscode.Uri {
+		get uri(): zycode.Uri {
 			return this._uri;
 		}
 
 		private readonly _onDidUpdateCommentThread = new Emitter<void>();
 		readonly onDidUpdateCommentThread = this._onDidUpdateCommentThread.event;
 
-		set range(range: vscode.Range | undefined) {
+		set range(range: zycode.Range | undefined) {
 			if (((range === undefined) !== (this._range === undefined)) || (!range || !this._range || !range.isEqual(this._range))) {
 				this._range = range;
 				this.modifications.range = range;
@@ -293,7 +293,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 			}
 		}
 
-		get range(): vscode.Range | undefined {
+		get range(): zycode.Range | undefined {
 			return this._range;
 		}
 
@@ -334,35 +334,35 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 			this._onDidUpdateCommentThread.fire();
 		}
 
-		get comments(): vscode.Comment[] {
+		get comments(): zycode.Comment[] {
 			return this._comments;
 		}
 
-		set comments(newComments: vscode.Comment[]) {
+		set comments(newComments: zycode.Comment[]) {
 			this._comments = newComments;
 			this.modifications.comments = newComments;
 			this._onDidUpdateCommentThread.fire();
 		}
 
-		private _collapseState?: vscode.CommentThreadCollapsibleState;
+		private _collapseState?: zycode.CommentThreadCollapsibleState;
 
-		get collapsibleState(): vscode.CommentThreadCollapsibleState {
+		get collapsibleState(): zycode.CommentThreadCollapsibleState {
 			return this._collapseState!;
 		}
 
-		set collapsibleState(newState: vscode.CommentThreadCollapsibleState) {
+		set collapsibleState(newState: zycode.CommentThreadCollapsibleState) {
 			this._collapseState = newState;
 			this.modifications.collapsibleState = newState;
 			this._onDidUpdateCommentThread.fire();
 		}
 
-		private _state?: vscode.CommentThreadState;
+		private _state?: zycode.CommentThreadState;
 
-		get state(): vscode.CommentThreadState {
+		get state(): zycode.CommentThreadState {
 			return this._state!;
 		}
 
-		set state(newState: vscode.CommentThreadState) {
+		set state(newState: zycode.CommentThreadState) {
 			this._state = newState;
 			this.modifications.state = newState;
 			this._onDidUpdateCommentThread.fire();
@@ -376,19 +376,19 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 			return this._isDiposed;
 		}
 
-		private _commentsMap: Map<vscode.Comment, number> = new Map<vscode.Comment, number>();
+		private _commentsMap: Map<zycode.Comment, number> = new Map<zycode.Comment, number>();
 
 		private _acceptInputDisposables = new MutableDisposable<DisposableStore>();
 
-		readonly value: vscode.CommentThread2;
+		readonly value: zycode.CommentThread2;
 
 		constructor(
 			commentControllerId: string,
 			private _commentControllerHandle: number,
 			private _id: string | undefined,
-			private _uri: vscode.Uri,
-			private _range: vscode.Range | undefined,
-			private _comments: vscode.Comment[],
+			private _uri: zycode.Uri,
+			private _range: zycode.Range | undefined,
+			private _comments: zycode.Comment[],
 			public readonly extensionDescription: IExtensionDescription,
 			private _isTemplate: boolean
 		) {
@@ -431,11 +431,11 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 			this.value = {
 				get uri() { return that.uri; },
 				get range() { return that.range; },
-				set range(value: vscode.Range | undefined) { that.range = value; },
+				set range(value: zycode.Range | undefined) { that.range = value; },
 				get comments() { return that.comments; },
-				set comments(value: vscode.Comment[]) { that.comments = value; },
+				set comments(value: zycode.Comment[]) { that.comments = value; },
 				get collapsibleState() { return that.collapsibleState; },
-				set collapsibleState(value: vscode.CommentThreadCollapsibleState) { that.collapsibleState = value; },
+				set collapsibleState(value: zycode.CommentThreadCollapsibleState) { that.collapsibleState = value; },
 				get canReply() { return that.canReply; },
 				set canReply(state: boolean) { that.canReply = state; },
 				get contextValue() { return that.contextValue; },
@@ -443,7 +443,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 				get label() { return that.label; },
 				set label(value: string | undefined) { that.label = value; },
 				get state() { return that.state; },
-				set state(value: vscode.CommentThreadState) { that.state = value; },
+				set state(value: zycode.CommentThreadState) { that.state = value; },
 				dispose: () => {
 					that.dispose();
 				}
@@ -512,7 +512,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 			);
 		}
 
-		getCommentByUniqueId(uniqueId: number): vscode.Comment | undefined {
+		getCommentByUniqueId(uniqueId: number): zycode.Comment | undefined {
 			for (const key of this._commentsMap) {
 				const comment = key[0];
 				const id = key[1];
@@ -531,7 +531,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 		}
 	}
 
-	type ReactionHandler = (comment: vscode.Comment, reaction: vscode.CommentReaction) => Promise<void>;
+	type ReactionHandler = (comment: zycode.Comment, reaction: zycode.CommentReaction) => Promise<void>;
 
 	class ExtHostCommentController {
 		get id(): string {
@@ -548,12 +548,12 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 
 		private _threads: Map<number, ExtHostCommentThread> = new Map<number, ExtHostCommentThread>();
 
-		private _commentingRangeProvider?: vscode.CommentingRangeProvider;
-		get commentingRangeProvider(): vscode.CommentingRangeProvider | undefined {
+		private _commentingRangeProvider?: zycode.CommentingRangeProvider;
+		get commentingRangeProvider(): zycode.CommentingRangeProvider | undefined {
 			return this._commentingRangeProvider;
 		}
 
-		set commentingRangeProvider(provider: vscode.CommentingRangeProvider | undefined) {
+		set commentingRangeProvider(provider: zycode.CommentingRangeProvider | undefined) {
 			this._commentingRangeProvider = provider;
 			proxy.$updateCommentingRanges(this.handle);
 		}
@@ -584,7 +584,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 
 
 		private _localDisposables: types.Disposable[];
-		readonly value: vscode.CommentController;
+		readonly value: zycode.CommentController;
 
 		constructor(
 			private _extension: IExtensionDescription,
@@ -599,12 +599,12 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 				id: that.id,
 				label: that.label,
 				get options() { return that.options; },
-				set options(options: vscode.CommentOptions | undefined) { that.options = options; },
-				get commentingRangeProvider(): vscode.CommentingRangeProvider | undefined { return that.commentingRangeProvider; },
-				set commentingRangeProvider(commentingRangeProvider: vscode.CommentingRangeProvider | undefined) { that.commentingRangeProvider = commentingRangeProvider; },
+				set options(options: zycode.CommentOptions | undefined) { that.options = options; },
+				get commentingRangeProvider(): zycode.CommentingRangeProvider | undefined { return that.commentingRangeProvider; },
+				set commentingRangeProvider(commentingRangeProvider: zycode.CommentingRangeProvider | undefined) { that.commentingRangeProvider = commentingRangeProvider; },
 				get reactionHandler(): ReactionHandler | undefined { return that.reactionHandler; },
 				set reactionHandler(handler: ReactionHandler | undefined) { that.reactionHandler = handler; },
-				createCommentThread(uri: vscode.Uri, range: vscode.Range | undefined, comments: vscode.Comment[]): vscode.CommentThread | vscode.CommentThread2 {
+				createCommentThread(uri: zycode.Uri, range: zycode.Range | undefined, comments: zycode.Comment[]): zycode.CommentThread | zycode.CommentThread2 {
 					return that.createCommentThread(uri, range, comments).value;
 				},
 				dispose: () => { that.dispose(); },
@@ -618,7 +618,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 			});
 		}
 
-		createCommentThread(resource: vscode.Uri, range: vscode.Range | undefined, comments: vscode.Comment[]): ExtHostCommentThread {
+		createCommentThread(resource: zycode.Uri, range: zycode.Range | undefined, comments: zycode.Comment[]): ExtHostCommentThread {
 			if (range === undefined) {
 				checkProposedApiEnabled(this._extension, 'fileComments');
 			}
@@ -662,7 +662,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 		}
 	}
 
-	function convertToDTOComment(thread: ExtHostCommentThread, vscodeComment: vscode.Comment, commentsMap: Map<vscode.Comment, number>, extension: IExtensionDescription): CommentChanges {
+	function convertToDTOComment(thread: ExtHostCommentThread, vscodeComment: zycode.Comment, commentsMap: Map<zycode.Comment, number>, extension: IExtensionDescription): CommentChanges {
 		let commentUniqueId = commentsMap.get(vscodeComment)!;
 		if (!commentUniqueId) {
 			commentUniqueId = ++thread.commentHandle;
@@ -687,7 +687,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 		};
 	}
 
-	function convertToReaction(reaction: vscode.CommentReaction): languages.CommentReaction {
+	function convertToReaction(reaction: zycode.CommentReaction): languages.CommentReaction {
 		return {
 			label: reaction.label,
 			iconPath: reaction.iconPath ? extHostTypeConverter.pathOrURIToURI(reaction.iconPath) : undefined,
@@ -696,7 +696,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 		};
 	}
 
-	function convertFromReaction(reaction: languages.CommentReaction): vscode.CommentReaction {
+	function convertFromReaction(reaction: languages.CommentReaction): zycode.CommentReaction {
 		return {
 			label: reaction.label || '',
 			count: reaction.count || 0,
@@ -705,7 +705,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 		};
 	}
 
-	function convertToCollapsibleState(kind: vscode.CommentThreadCollapsibleState | undefined): languages.CommentThreadCollapsibleState {
+	function convertToCollapsibleState(kind: zycode.CommentThreadCollapsibleState | undefined): languages.CommentThreadCollapsibleState {
 		if (kind !== undefined) {
 			switch (kind) {
 				case types.CommentThreadCollapsibleState.Expanded:
@@ -717,7 +717,7 @@ export function createExtHostComments(mainContext: IMainContext, commands: ExtHo
 		return languages.CommentThreadCollapsibleState.Collapsed;
 	}
 
-	function convertToState(kind: vscode.CommentThreadState | undefined): languages.CommentThreadState {
+	function convertToState(kind: zycode.CommentThreadState | undefined): languages.CommentThreadState {
 		if (kind !== undefined) {
 			switch (kind) {
 				case types.CommentThreadState.Unresolved:

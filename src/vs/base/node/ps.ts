@@ -127,7 +127,7 @@ export function listProcesses(rootPid: number): Promise<ProcessItem> {
 				}
 			};
 
-			(import('@vscode/windows-process-tree')).then(windowsProcessTree => {
+			(import('@zycode/windows-process-tree')).then(windowsProcessTree => {
 				windowsProcessTree.getProcessList(rootPid, (processList) => {
 					if (!processList) {
 						reject(new Error(`Root process ${rootPid} not found`));
@@ -233,7 +233,7 @@ export function listProcesses(rootPid: number): Promise<ProcessItem> {
 
 					// Set numeric locale to ensure '.' is used as the decimal separator
 					exec(`${ps} ${args}`, { maxBuffer: 1000 * 1024, env: { LC_NUMERIC: 'en_US.UTF-8' } }, (err, stdout, stderr) => {
-						// Silently ignoring the screen size is bogus error. See https://github.com/microsoft/vscode/issues/98590
+						// Silently ignoring the screen size is bogus error. See https://github.com/microsoft/zycode/issues/98590
 						if (err || (stderr && !stderr.includes('screen size is bogus'))) {
 							reject(err || new Error(stderr.toString()));
 						} else {

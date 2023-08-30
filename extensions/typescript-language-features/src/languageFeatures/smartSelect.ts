@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { API } from '../tsServer/api';
 import type * as Proto from '../tsServer/protocol/protocol';
@@ -11,7 +11,7 @@ import * as typeConverters from '../typeConverters';
 import { ITypeScriptServiceClient } from '../typescriptService';
 import { conditionalRegistration, requireMinVersion } from './util/dependentRegistration';
 
-class SmartSelection implements vscode.SelectionRangeProvider {
+class SmartSelection implements zycode.SelectionRangeProvider {
 	public static readonly minVersion = API.v350;
 
 	public constructor(
@@ -19,10 +19,10 @@ class SmartSelection implements vscode.SelectionRangeProvider {
 	) { }
 
 	public async provideSelectionRanges(
-		document: vscode.TextDocument,
-		positions: vscode.Position[],
-		token: vscode.CancellationToken,
-	): Promise<vscode.SelectionRange[] | undefined> {
+		document: zycode.TextDocument,
+		positions: zycode.Position[],
+		token: zycode.CancellationToken,
+	): Promise<zycode.SelectionRange[] | undefined> {
 		const file = this.client.toOpenTsFilePath(document);
 		if (!file) {
 			return undefined;
@@ -41,8 +41,8 @@ class SmartSelection implements vscode.SelectionRangeProvider {
 
 	private static convertSelectionRange(
 		selectionRange: Proto.SelectionRange
-	): vscode.SelectionRange {
-		return new vscode.SelectionRange(
+	): zycode.SelectionRange {
+		return new zycode.SelectionRange(
 			typeConverters.Range.fromTextSpan(selectionRange.textSpan),
 			selectionRange.parent ? SmartSelection.convertSelectionRange(selectionRange.parent) : undefined,
 		);
@@ -56,6 +56,6 @@ export function register(
 	return conditionalRegistration([
 		requireMinVersion(client, SmartSelection.minVersion),
 	], () => {
-		return vscode.languages.registerSelectionRangeProvider(selector.syntax, new SmartSelection(client));
+		return zycode.languages.registerSelectionRangeProvider(selector.syntax, new SmartSelection(client));
 	});
 }

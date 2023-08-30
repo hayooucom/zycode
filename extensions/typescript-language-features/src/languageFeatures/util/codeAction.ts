@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import type * as Proto from '../../tsServer/protocol/protocol';
 import * as typeConverters from '../../typeConverters';
 import { ITypeScriptServiceClient } from '../../typescriptService';
@@ -11,7 +11,7 @@ import { ITypeScriptServiceClient } from '../../typescriptService';
 export function getEditForCodeAction(
 	client: ITypeScriptServiceClient,
 	action: Proto.CodeAction
-): vscode.WorkspaceEdit | undefined {
+): zycode.WorkspaceEdit | undefined {
 	return action.changes?.length
 		? typeConverters.WorkspaceEdit.fromFileCodeEdits(client, action.changes)
 		: undefined;
@@ -20,11 +20,11 @@ export function getEditForCodeAction(
 export async function applyCodeAction(
 	client: ITypeScriptServiceClient,
 	action: Proto.CodeAction,
-	token: vscode.CancellationToken
+	token: zycode.CancellationToken
 ): Promise<boolean> {
 	const workspaceEdit = getEditForCodeAction(client, action);
 	if (workspaceEdit) {
-		if (!(await vscode.workspace.applyEdit(workspaceEdit))) {
+		if (!(await zycode.workspace.applyEdit(workspaceEdit))) {
 			return false;
 		}
 	}
@@ -34,7 +34,7 @@ export async function applyCodeAction(
 export async function applyCodeActionCommands(
 	client: ITypeScriptServiceClient,
 	commands: ReadonlyArray<{}> | undefined,
-	token: vscode.CancellationToken,
+	token: zycode.CancellationToken,
 ): Promise<boolean> {
 	if (commands?.length) {
 		for (const command of commands) {

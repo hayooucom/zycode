@@ -2,8 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { default as VSCodeTelemetryReporter } from '@vscode/extension-telemetry';
-import * as vscode from 'vscode';
+import { default as VSCodeTelemetryReporter } from '@zycode/extension-telemetry';
+import * as zycode from 'zycode';
 
 interface IPackageInfo {
 	name: string;
@@ -48,7 +48,7 @@ export function loadDefaultTelemetryReporter(): TelemetryReporter {
 }
 
 function getPackageInfo(): IPackageInfo | null {
-	const extension = vscode.extensions.getExtension('Microsoft.vscode-markdown');
+	const extension = zycode.extensions.getExtension('Microsoft.zycode-markdown');
 	if (extension && extension.packageJSON) {
 		return {
 			name: extension.packageJSON.name,

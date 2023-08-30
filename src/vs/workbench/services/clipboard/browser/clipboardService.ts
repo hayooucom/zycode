@@ -36,12 +36,12 @@ export class BrowserClipboardService extends BaseBrowserClipboardService {
 			return await navigator.clipboard.readText();
 		} catch (error) {
 			if (!!this.environmentService.extensionTestsLocationURI) {
-				return ''; // do not ask for input in tests (https://github.com/microsoft/vscode/issues/112264)
+				return ''; // do not ask for input in tests (https://github.com/microsoft/zycode/issues/112264)
 			}
 
 			return new Promise<string>(resolve => {
 
-				// Inform user about permissions problem (https://github.com/microsoft/vscode/issues/112089)
+				// Inform user about permissions problem (https://github.com/microsoft/zycode/issues/112089)
 				const listener = new DisposableStore();
 				const handle = this.notificationService.prompt(
 					Severity.Error,

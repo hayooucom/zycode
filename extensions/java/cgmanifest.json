@@ -4,8 +4,8 @@
 			"component": {
 				"type": "git",
 				"git": {
-					"name": "redhat-developer/vscode-java",
-					"repositoryUrl": "https://github.com/redhat-developer/vscode-java",
+					"name": "redhat-developer/zycode-java",
+					"repositoryUrl": "https://github.com/redhat-developer/zycode-java",
 					"commitHash": "5fb57e8e1c5d776b21be13cd7227b25b87edf4a6"
 				}
 			},

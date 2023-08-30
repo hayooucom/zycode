@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { ILogger } from '../logging';
 import { MarkdownContributionProvider } from '../markdownExtensions';
 import { Disposable, disposeAll } from '../util/dispose';
@@ -17,8 +17,8 @@ import { TopmostLineMonitor } from './topmostLineMonitor';
 
 
 export interface DynamicPreviewSettings {
-	readonly resourceColumn: vscode.ViewColumn;
-	readonly previewColumn: vscode.ViewColumn;
+	readonly resourceColumn: zycode.ViewColumn;
+	readonly previewColumn: zycode.ViewColumn;
 	readonly locked: boolean;
 }
 
@@ -38,7 +38,7 @@ class PreviewStore<T extends IManagedMarkdownPreview> extends Disposable {
 		return this._previews[Symbol.iterator]();
 	}
 
-	public get(resource: vscode.Uri, previewSettings: DynamicPreviewSettings): T | undefined {
+	public get(resource: zycode.Uri, previewSettings: DynamicPreviewSettings): T | undefined {
 		const previewColumn = this._resolvePreviewColumn(previewSettings);
 		for (const preview of this._previews) {
 			if (preview.matchesResource(resource, previewColumn, previewSettings.locked)) {
@@ -56,20 +56,20 @@ class PreviewStore<T extends IManagedMarkdownPreview> extends Disposable {
 		this._previews.delete(preview);
 	}
 
-	private _resolvePreviewColumn(previewSettings: DynamicPreviewSettings): vscode.ViewColumn | undefined {
-		if (previewSettings.previewColumn === vscode.ViewColumn.Active) {
-			return vscode.window.tabGroups.activeTabGroup.viewColumn;
+	private _resolvePreviewColumn(previewSettings: DynamicPreviewSettings): zycode.ViewColumn | undefined {
+		if (previewSettings.previewColumn === zycode.ViewColumn.Active) {
+			return zycode.window.tabGroups.activeTabGroup.viewColumn;
 		}
 
-		if (previewSettings.previewColumn === vscode.ViewColumn.Beside) {
-			return vscode.window.tabGroups.activeTabGroup.viewColumn + 1;
+		if (previewSettings.previewColumn === zycode.ViewColumn.Beside) {
+			return zycode.window.tabGroups.activeTabGroup.viewColumn + 1;
 		}
 
 		return previewSettings.previewColumn;
 	}
 }
 
-export class MarkdownPreviewManager extends Disposable implements vscode.WebviewPanelSerializer, vscode.CustomTextEditorProvider {
+export class MarkdownPreviewManager extends Disposable implements zycode.WebviewPanelSerializer, zycode.CustomTextEditorProvider {
 
 	private readonly _topmostLineMonitor = new TopmostLineMonitor();
 	private readonly _previewConfigurations = new MarkdownPreviewConfigurationManager();
@@ -87,13 +87,13 @@ export class MarkdownPreviewManager extends Disposable implements vscode.Webview
 	) {
 		super();
 
-		this._register(vscode.window.registerWebviewPanelSerializer(DynamicMarkdownPreview.viewType, this));
+		this._register(zycode.window.registerWebviewPanelSerializer(DynamicMarkdownPreview.viewType, this));
 
-		this._register(vscode.window.registerCustomEditorProvider(StaticMarkdownPreview.customEditorViewType, this, {
+		this._register(zycode.window.registerCustomEditorProvider(StaticMarkdownPreview.customEditorViewType, this, {
 			webviewOptions: { enableFindWidget: true }
 		}));
 
-		this._register(vscode.window.onDidChangeActiveTextEditor(textEditor => {
+		this._register(zycode.window.onDidChangeActiveTextEditor(textEditor => {
 			// When at a markdown file, apply existing scroll settings
 			if (textEditor?.document && isMarkdownFile(textEditor.document)) {
 				const line = this._topmostLineMonitor.getPreviousStaticEditorLineByUri(textEditor.document.uri);
@@ -123,7 +123,7 @@ export class MarkdownPreviewManager extends Disposable implements vscode.Webview
 	}
 
 	public openDynamicPreview(
-		resource: vscode.Uri,
+		resource: zycode.Uri,
 		settings: DynamicPreviewSettings
 	): void {
 		let preview = this._dynamicPreviews.get(resource, settings);
@@ -147,7 +147,7 @@ export class MarkdownPreviewManager extends Disposable implements vscode.Webview
 		return this._activePreview?.resourceColumn;
 	}
 
-	public findPreview(resource: vscode.Uri): IManagedMarkdownPreview | undefined {
+	public findPreview(resource: zycode.Uri): IManagedMarkdownPreview | undefined {
 		for (const preview of [...this._dynamicPreviews, ...this._staticPreviews]) {
 			if (preview.resource.fsPath === resource.fsPath) {
 				return preview;
@@ -171,11 +171,11 @@ export class MarkdownPreviewManager extends Disposable implements vscode.Webview
 	}
 
 	public async deserializeWebviewPanel(
-		webview: vscode.WebviewPanel,
+		webview: zycode.WebviewPanel,
 		state: any
 	): Promise<void> {
 		try {
-			const resource = vscode.Uri.parse(state.resource);
+			const resource = zycode.Uri.parse(state.resource);
 			const locked = state.locked;
 			const line = state.line;
 			const resourceColumn = state.resourceColumn;
@@ -222,15 +222,15 @@ export class MarkdownPreviewManager extends Disposable implements vscode.Webview
 				<meta http-equiv="Content-Security-Policy" content="default-src 'none';">
 			</head>
 			<body class="error-container">
-				<p>${vscode.l10n.t("An unexpected error occurred while restoring the Markdown preview.")}</p>
+				<p>${zycode.l10n.t("An unexpected error occurred while restoring the Markdown preview.")}</p>
 			</body>
 			</html>`;
 		}
 	}
 
 	public async resolveCustomTextEditor(
-		document: vscode.TextDocument,
-		webview: vscode.WebviewPanel
+		document: zycode.TextDocument,
+		webview: zycode.WebviewPanel
 	): Promise<void> {
 		const lineNumber = this._topmostLineMonitor.getPreviousStaticTextEditorLineByUri(document.uri);
 		const preview = StaticMarkdownPreview.revive(
@@ -249,11 +249,11 @@ export class MarkdownPreviewManager extends Disposable implements vscode.Webview
 	}
 
 	private _createNewDynamicPreview(
-		resource: vscode.Uri,
+		resource: zycode.Uri,
 		previewSettings: DynamicPreviewSettings
 	): DynamicMarkdownPreview {
-		const activeTextEditorURI = vscode.window.activeTextEditor?.document.uri;
-		const scrollLine = (activeTextEditorURI?.toString() === resource.toString()) ? vscode.window.activeTextEditor?.visibleRanges[0].start.line : undefined;
+		const activeTextEditorURI = zycode.window.activeTextEditor?.document.uri;
+		const scrollLine = (activeTextEditorURI?.toString() === resource.toString()) ? zycode.window.activeTextEditor?.visibleRanges[0].start.line : undefined;
 		const preview = DynamicMarkdownPreview.create(
 			{
 				resource,

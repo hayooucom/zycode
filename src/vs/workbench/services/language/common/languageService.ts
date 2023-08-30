@@ -33,25 +33,25 @@ export interface IRawLanguageExtensionPoint {
 export const languagesExtPoint: IExtensionPoint<IRawLanguageExtensionPoint[]> = ExtensionsRegistry.registerExtensionPoint<IRawLanguageExtensionPoint[]>({
 	extensionPoint: 'languages',
 	jsonSchema: {
-		description: localize('vscode.extension.contributes.languages', 'Contributes language declarations.'),
+		description: localize('zycode.extension.contributes.languages', 'Contributes language declarations.'),
 		type: 'array',
 		items: {
 			type: 'object',
 			defaultSnippets: [{ body: { id: '${1:languageId}', aliases: ['${2:label}'], extensions: ['${3:extension}'], configuration: './language-configuration.json' } }],
 			properties: {
 				id: {
-					description: localize('vscode.extension.contributes.languages.id', 'ID of the language.'),
+					description: localize('zycode.extension.contributes.languages.id', 'ID of the language.'),
 					type: 'string'
 				},
 				aliases: {
-					description: localize('vscode.extension.contributes.languages.aliases', 'Name aliases for the language.'),
+					description: localize('zycode.extension.contributes.languages.aliases', 'Name aliases for the language.'),
 					type: 'array',
 					items: {
 						type: 'string'
 					}
 				},
 				extensions: {
-					description: localize('vscode.extension.contributes.languages.extensions', 'File extensions associated to the language.'),
+					description: localize('zycode.extension.contributes.languages.extensions', 'File extensions associated to the language.'),
 					default: ['.foo'],
 					type: 'array',
 					items: {
@@ -59,45 +59,45 @@ export const languagesExtPoint: IExtensionPoint<IRawLanguageExtensionPoint[]> = 
 					}
 				},
 				filenames: {
-					description: localize('vscode.extension.contributes.languages.filenames', 'File names associated to the language.'),
+					description: localize('zycode.extension.contributes.languages.filenames', 'File names associated to the language.'),
 					type: 'array',
 					items: {
 						type: 'string'
 					}
 				},
 				filenamePatterns: {
-					description: localize('vscode.extension.contributes.languages.filenamePatterns', 'File name glob patterns associated to the language.'),
+					description: localize('zycode.extension.contributes.languages.filenamePatterns', 'File name glob patterns associated to the language.'),
 					type: 'array',
 					items: {
 						type: 'string'
 					}
 				},
 				mimetypes: {
-					description: localize('vscode.extension.contributes.languages.mimetypes', 'Mime types associated to the language.'),
+					description: localize('zycode.extension.contributes.languages.mimetypes', 'Mime types associated to the language.'),
 					type: 'array',
 					items: {
 						type: 'string'
 					}
 				},
 				firstLine: {
-					description: localize('vscode.extension.contributes.languages.firstLine', 'A regular expression matching the first line of a file of the language.'),
+					description: localize('zycode.extension.contributes.languages.firstLine', 'A regular expression matching the first line of a file of the language.'),
 					type: 'string'
 				},
 				configuration: {
-					description: localize('vscode.extension.contributes.languages.configuration', 'A relative path to a file containing configuration options for the language.'),
+					description: localize('zycode.extension.contributes.languages.configuration', 'A relative path to a file containing configuration options for the language.'),
 					type: 'string',
 					default: './language-configuration.json'
 				},
 				icon: {
 					type: 'object',
-					description: localize('vscode.extension.contributes.languages.icon', 'A icon to use as file icon, if no icon theme provides one for the language.'),
+					description: localize('zycode.extension.contributes.languages.icon', 'A icon to use as file icon, if no icon theme provides one for the language.'),
 					properties: {
 						light: {
-							description: localize('vscode.extension.contributes.languages.icon.light', 'Icon path when a light theme is used'),
+							description: localize('zycode.extension.contributes.languages.icon.light', 'Icon path when a light theme is used'),
 							type: 'string'
 						},
 						dark: {
-							description: localize('vscode.extension.contributes.languages.icon.dark', 'Icon path when a dark theme is used'),
+							description: localize('zycode.extension.contributes.languages.icon.dark', 'Icon path when a dark theme is used'),
 							type: 'string'
 						}
 					}
@@ -198,7 +198,7 @@ export class WorkbenchLanguageService extends LanguageService {
 				if (typeof langId !== 'string') {
 					this.logService.warn(`Ignoring configured 'files.associations' for '${pattern}' because its type is not a string but '${typeof langId}'`);
 
-					return; // https://github.com/microsoft/vscode/issues/147284
+					return; // https://github.com/microsoft/zycode/issues/147284
 				}
 
 				const mimeType = this.getMimeType(langId) || `text/x-${langId}`;

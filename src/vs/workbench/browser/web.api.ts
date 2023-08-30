@@ -375,7 +375,7 @@ export interface IResourceUriProvider {
 }
 
 /**
- * The identifier of an extension in the format: `PUBLISHER.NAME`. For example: `vscode.csharp`
+ * The identifier of an extension in the format: `PUBLISHER.NAME`. For example: `zycode.csharp`
  */
 export type ExtensionId = string;
 
@@ -484,7 +484,7 @@ export interface ICommand {
 
 	/**
 	 * An identifier for the command. Commands can be executed from extensions
-	 * using the `vscode.commands.executeCommand` API using that command ID.
+	 * using the `zycode.commands.executeCommand` API using that command ID.
 	 */
 	id: string;
 

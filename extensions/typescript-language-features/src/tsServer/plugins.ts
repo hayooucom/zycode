@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import * as arrays from '../utils/arrays';
 import { Disposable } from '../utils/dispose';
 
 export interface TypeScriptServerPlugin {
-	readonly extension: vscode.Extension<unknown>;
-	readonly uri: vscode.Uri;
+	readonly extension: zycode.Extension<unknown>;
+	readonly uri: zycode.Uri;
 	readonly name: string;
 	readonly enableForWorkspaceTypeScriptVersions: boolean;
 	readonly languages: ReadonlyArray<string>;
@@ -33,7 +33,7 @@ export class PluginManager extends Disposable {
 	constructor() {
 		super();
 
-		vscode.extensions.onDidChange(() => {
+		zycode.extensions.onDidChange(() => {
 			if (!this._plugins) {
 				return;
 			}
@@ -51,10 +51,10 @@ export class PluginManager extends Disposable {
 		return Array.from(this._plugins.values()).flat();
 	}
 
-	private readonly _onDidUpdatePlugins = this._register(new vscode.EventEmitter<this>());
+	private readonly _onDidUpdatePlugins = this._register(new zycode.EventEmitter<this>());
 	public readonly onDidChangePlugins = this._onDidUpdatePlugins.event;
 
-	private readonly _onDidUpdateConfig = this._register(new vscode.EventEmitter<{ pluginId: string; config: {} }>());
+	private readonly _onDidUpdateConfig = this._register(new zycode.EventEmitter<{ pluginId: string; config: {} }>());
 	public readonly onDidUpdateConfig = this._onDidUpdateConfig.event;
 
 	public setConfiguration(pluginId: string, config: {}) {
@@ -68,7 +68,7 @@ export class PluginManager extends Disposable {
 
 	private readPlugins() {
 		const pluginMap = new Map<string, ReadonlyArray<TypeScriptServerPlugin>>();
-		for (const extension of vscode.extensions.all) {
+		for (const extension of zycode.extensions.all) {
 			const pack = extension.packageJSON;
 			if (pack.contributes && Array.isArray(pack.contributes.typescriptServerPlugins)) {
 				const plugins: TypeScriptServerPlugin[] = [];

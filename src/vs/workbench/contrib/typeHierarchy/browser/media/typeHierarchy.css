@@ -26,13 +26,13 @@
 }
 
 .monaco-editor .type-hierarchy .tree {
-	background-color: var(--vscode-peekViewResult-background);
-	color: var(--vscode-peekViewResult-fileForeground);
+	background-color: var(--zycode-peekViewResult-background);
+	color: var(--zycode-peekViewResult-fileForeground);
 }
 
 .monaco-editor .type-hierarchy .tree .monaco-list:focus .monaco-list-rows > .monaco-list-row.selected:not(.highlighted) {
-	background-color: var(--vscode-peekViewResult-selectionBackground);
-	color: var(--vscode-peekViewResult-selectionForeground) !important;
+	background-color: var(--zycode-peekViewResult-selectionBackground);
+	color: var(--zycode-peekViewResult-selectionForeground) !important;
 }
 
 .monaco-workbench .type-hierarchy .tree .typehierarchy-element {
@@ -47,16 +47,16 @@
 }
 
 .monaco-editor .type-hierarchy .type-decoration {
-	background-color: var(--vscode-peekViewEditor-matchHighlightBackground);
-	border: 2px solid var(--vscode-peekViewEditor-matchHighlightBorder);
+	background-color: var(--zycode-peekViewEditor-matchHighlightBackground);
+	border: 2px solid var(--zycode-peekViewEditor-matchHighlightBorder);
 	box-sizing: border-box;
 }
 
 .monaco-editor .type-hierarchy .editor .monaco-editor .monaco-editor-background,
 .monaco-editor .type-hierarchy .editor .monaco-editor .inputarea.ime-input {
-	background-color: var(--vscode-peekViewEditor-background);
+	background-color: var(--zycode-peekViewEditor-background);
 }
 
 .monaco-editor .type-hierarchy .editor .monaco-editor .margin {
-	background-color: var(--vscode-peekViewEditorGutter-background);
+	background-color: var(--zycode-peekViewEditorGutter-background);
 }

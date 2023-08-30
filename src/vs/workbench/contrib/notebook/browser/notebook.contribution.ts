@@ -548,7 +548,7 @@ class RegisterSchemasContribution extends Disposable implements IWorkbenchContri
 			allowComments: true
 		};
 
-		jsonRegistry.registerSchema('vscode://schemas/notebook/cellmetadata', metadataSchema);
+		jsonRegistry.registerSchema('zycode://schemas/notebook/cellmetadata', metadataSchema);
 	}
 }
 

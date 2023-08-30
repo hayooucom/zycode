@@ -242,8 +242,8 @@ suite('ExtensionsWorkbenchServiceTest', () => {
 		assert.strictEqual('1.1.0', actual.version);
 		assert.strictEqual('1.1.0', actual.latestVersion);
 		assert.strictEqual('localDescription1', actual.description);
-		assert.ok(actual.iconUrl === 'file:///localPath1/localIcon1' || actual.iconUrl === 'vscode-file://vscode-app/localPath1/localIcon1');
-		assert.ok(actual.iconUrlFallback === 'file:///localPath1/localIcon1' || actual.iconUrlFallback === 'vscode-file://vscode-app/localPath1/localIcon1');
+		assert.ok(actual.iconUrl === 'file:///localPath1/localIcon1' || actual.iconUrl === 'zycode-file://zycode-app/localPath1/localIcon1');
+		assert.ok(actual.iconUrlFallback === 'file:///localPath1/localIcon1' || actual.iconUrlFallback === 'zycode-file://zycode-app/localPath1/localIcon1');
 		assert.strictEqual(undefined, actual.licenseUrl);
 		assert.strictEqual(ExtensionState.Installed, actual.state);
 		assert.strictEqual(undefined, actual.installCount);
@@ -1471,12 +1471,12 @@ suite('ExtensionsWorkbenchServiceTest', () => {
 
 	function aMultiExtensionManagementServerService(instantiationService: TestInstantiationService, localExtensionManagementService?: IProfileAwareExtensionManagementService, remoteExtensionManagementService?: IProfileAwareExtensionManagementService): IExtensionManagementServerService {
 		const localExtensionManagementServer: IExtensionManagementServer = {
-			id: 'vscode-local',
+			id: 'zycode-local',
 			label: 'local',
 			extensionManagementService: localExtensionManagementService || createExtensionManagementService(),
 		};
 		const remoteExtensionManagementServer: IExtensionManagementServer = {
-			id: 'vscode-remote',
+			id: 'zycode-remote',
 			label: 'remote',
 			extensionManagementService: remoteExtensionManagementService || createExtensionManagementService(),
 		};

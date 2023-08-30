@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { commands, Disposable, ExtensionContext, extensions, l10n, LogLevel, LogOutputChannel, window } from 'vscode';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { commands, Disposable, ExtensionContext, extensions, l10n, LogLevel, LogOutputChannel, window } from 'zycode';
+import TelemetryReporter from '@zycode/extension-telemetry';
 import { GithubRemoteSourceProvider } from './remoteSourceProvider';
 import { API, GitExtension } from './typings/git';
 import { registerCommands } from './commands';
@@ -61,7 +61,7 @@ function initializeGitBaseExtension(): Disposable {
 		}
 	};
 
-	const gitBaseExtension = extensions.getExtension<GitBaseExtension>('vscode.git-base')!.exports;
+	const gitBaseExtension = extensions.getExtension<GitBaseExtension>('zycode.git-base')!.exports;
 	disposables.add(gitBaseExtension.onDidChangeEnablement(onDidChangeGitBaseExtensionEnablement));
 	onDidChangeGitBaseExtensionEnablement(gitBaseExtension.enabled);
 
@@ -86,7 +86,7 @@ function setGitHubContext(gitAPI: API, disposables: DisposableStore) {
 function initializeGitExtension(context: ExtensionContext, telemetryReporter: TelemetryReporter, logger: LogOutputChannel): Disposable {
 	const disposables = new DisposableStore();
 
-	let gitExtension = extensions.getExtension<GitExtension>('vscode.git');
+	let gitExtension = extensions.getExtension<GitExtension>('zycode.git');
 
 	const initialize = () => {
 		gitExtension!.activate()
@@ -119,8 +119,8 @@ function initializeGitExtension(context: ExtensionContext, telemetryReporter: Te
 		initialize();
 	} else {
 		const listener = extensions.onDidChange(() => {
-			if (!gitExtension && extensions.getExtension<GitExtension>('vscode.git')) {
-				gitExtension = extensions.getExtension<GitExtension>('vscode.git');
+			if (!gitExtension && extensions.getExtension<GitExtension>('zycode.git')) {
+				gitExtension = extensions.getExtension<GitExtension>('zycode.git');
 				initialize();
 				listener.dispose();
 			}

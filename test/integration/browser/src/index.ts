@@ -9,7 +9,7 @@ import * as playwright from '@playwright/test';
 import * as url from 'url';
 import * as tmp from 'tmp';
 import * as rimraf from 'rimraf';
-import { URI } from 'vscode-uri';
+import { URI } from 'zycode-uri';
 import * as kill from 'tree-kill';
 import * as optimistLib from 'optimist';
 import { promisify } from 'util';
@@ -95,7 +95,7 @@ async function runTestsInBrowser(browserType: BrowserType, endpoint: url.UrlWith
 	});
 
 	const host = endpoint.host;
-	const protocol = 'vscode-remote';
+	const protocol = 'zycode-remote';
 
 	const testWorkspacePath = URI.file(path.resolve(optimist.argv.workspacePath)).path;
 	const testExtensionUri = url.format({ pathname: URI.file(path.resolve(optimist.argv.extensionDevelopmentPath)).path, protocol, host, slashes: true });

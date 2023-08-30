@@ -87,7 +87,7 @@ perf.mark('code/didStartCrashReporter');
 // Set logs path before app 'ready' event if running portable
 // to ensure that no 'logs' folder is created on disk at a
 // location outside of the portable directory
-// (https://github.com/microsoft/vscode/issues/56651)
+// (https://github.com/microsoft/zycode/issues/56651)
 if (portable && portable.isPortable) {
 	app.setAppLogsPath(path.join(userDataPath, 'logs'));
 }
@@ -95,11 +95,11 @@ if (portable && portable.isPortable) {
 // Register custom schemes with privileges
 protocol.registerSchemesAsPrivileged([
 	{
-		scheme: 'vscode-webview',
+		scheme: 'zycode-webview',
 		privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, allowServiceWorkers: true, }
 	},
 	{
-		scheme: 'vscode-file',
+		scheme: 'zycode-file',
 		privileges: { secure: true, standard: true, supportFetchAPI: true, corsEnabled: true }
 	}
 ]);
@@ -134,7 +134,7 @@ if (locale) {
 // Pass in the locale to Electron so that the
 // Windows Control Overlay is rendered correctly on Windows.
 // For now, don't pass in the locale on macOS due to
-// https://github.com/microsoft/vscode/issues/167543.
+// https://github.com/microsoft/zycode/issues/167543.
 // If the locale is `qps-ploc`, the Microsoft
 // Pseudo Language Language Pack is being used.
 // In that case, use `en` as the Electron locale.
@@ -215,7 +215,7 @@ function configureCommandlineSwitchesSync(cliArgs) {
 
 	const SUPPORTED_MAIN_PROCESS_SWITCHES = [
 
-		// Persistently enable proposed api via argv.json: https://github.com/microsoft/vscode/issues/99775
+		// Persistently enable proposed api via argv.json: https://github.com/microsoft/zycode/issues/99775
 		'enable-proposed-api',
 
 		// Log level to use. Default is 'info'. Allowed values are 'error', 'warn', 'info', 'debug', 'trace', 'off'.
@@ -429,7 +429,7 @@ function configureCrashReporter() {
 				}
 				submitURL = submitURL.concat('&uid=', crashReporterId, '&iid=', crashReporterId, '&sid=', crashReporterId);
 				// Send the id for child node process that are explicitly starting crash reporter.
-				// For vscode this is ExtensionHost process currently.
+				// For zycode this is ExtensionHost process currently.
 				const argv = process.argv;
 				const endOfArgsMarkerIndex = argv.indexOf('--');
 				if (endOfArgsMarkerIndex === -1) {

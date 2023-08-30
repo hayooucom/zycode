@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { getDeepestFlatNode, findNextWord, findPrevWord, getHtmlFlatNode, offsetRangeToSelection } from './util';
 import { HtmlNode } from 'EmmetFlatNode';
 
-export function nextItemHTML(document: vscode.TextDocument, selectionStart: vscode.Position, selectionEnd: vscode.Position, rootNode: HtmlNode): vscode.Selection | undefined {
+export function nextItemHTML(document: zycode.TextDocument, selectionStart: zycode.Position, selectionEnd: zycode.Position, rootNode: HtmlNode): zycode.Selection | undefined {
 	const selectionEndOffset = document.offsetAt(selectionEnd);
 	let currentNode = getHtmlFlatNode(document.getText(), rootNode, selectionEndOffset, false);
 	let nextNode: HtmlNode | undefined = undefined;
@@ -56,7 +56,7 @@ export function nextItemHTML(document: vscode.TextDocument, selectionStart: vsco
 	return nextNode && getSelectionFromNode(document, nextNode);
 }
 
-export function prevItemHTML(document: vscode.TextDocument, selectionStart: vscode.Position, selectionEnd: vscode.Position, rootNode: HtmlNode): vscode.Selection | undefined {
+export function prevItemHTML(document: zycode.TextDocument, selectionStart: zycode.Position, selectionEnd: zycode.Position, rootNode: HtmlNode): zycode.Selection | undefined {
 	const selectionStartOffset = document.offsetAt(selectionStart);
 	let currentNode = getHtmlFlatNode(document.getText(), rootNode, selectionStartOffset, false);
 	let prevNode: HtmlNode | undefined = undefined;
@@ -108,7 +108,7 @@ export function prevItemHTML(document: vscode.TextDocument, selectionStart: vsco
 	return attrSelection ? attrSelection : getSelectionFromNode(document, prevNode);
 }
 
-function getSelectionFromNode(document: vscode.TextDocument, node: HtmlNode): vscode.Selection | undefined {
+function getSelectionFromNode(document: zycode.TextDocument, node: HtmlNode): zycode.Selection | undefined {
 	if (node && node.open) {
 		const selectionStart = node.open.start + 1;
 		const selectionEnd = selectionStart + node.name.length;
@@ -117,7 +117,7 @@ function getSelectionFromNode(document: vscode.TextDocument, node: HtmlNode): vs
 	return undefined;
 }
 
-function getNextAttribute(document: vscode.TextDocument, selectionStart: number, selectionEnd: number, node: HtmlNode): vscode.Selection | undefined {
+function getNextAttribute(document: zycode.TextDocument, selectionStart: number, selectionEnd: number, node: HtmlNode): zycode.Selection | undefined {
 	if (!node.attributes || node.attributes.length === 0 || node.type === 'comment') {
 		return;
 	}
@@ -172,7 +172,7 @@ function getNextAttribute(document: vscode.TextDocument, selectionStart: number,
 	return;
 }
 
-function getPrevAttribute(document: vscode.TextDocument, selectionStart: number, selectionEnd: number, node: HtmlNode): vscode.Selection | undefined {
+function getPrevAttribute(document: zycode.TextDocument, selectionStart: number, selectionEnd: number, node: HtmlNode): zycode.Selection | undefined {
 	if (!node.attributes || node.attributes.length === 0 || node.type === 'comment') {
 		return;
 	}

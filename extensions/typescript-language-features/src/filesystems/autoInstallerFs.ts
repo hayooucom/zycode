@@ -3,27 +3,27 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { MemFs } from './memFs';
-import { URI } from 'vscode-uri';
-import { PackageManager, FileSystem, packagePath } from '@vscode/ts-package-manager';
+import { URI } from 'zycode-uri';
+import { PackageManager, FileSystem, packagePath } from '@zycode/ts-package-manager';
 import { join, basename, dirname } from 'path';
 
 const TEXT_DECODER = new TextDecoder('utf-8');
 const TEXT_ENCODER = new TextEncoder();
 
-export class AutoInstallerFs implements vscode.FileSystemProvider {
+export class AutoInstallerFs implements zycode.FileSystemProvider {
 
 	private readonly memfs = new MemFs();
 	private readonly fs: FileSystem;
 	private readonly projectCache = new Map<string, Set<string>>();
-	private readonly watcher: vscode.FileSystemWatcher;
-	private readonly _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+	private readonly watcher: zycode.FileSystemWatcher;
+	private readonly _emitter = new zycode.EventEmitter<zycode.FileChangeEvent[]>();
 
-	readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> = this._emitter.event;
+	readonly onDidChangeFile: zycode.Event<zycode.FileChangeEvent[]> = this._emitter.event;
 
 	constructor() {
-		this.watcher = vscode.workspace.createFileSystemWatcher('**/{package.json,package-lock.json,package-lock.kdl}');
+		this.watcher = zycode.workspace.createFileSystemWatcher('**/{package.json,package-lock.json,package-lock.kdl}');
 		const handler = (uri: URI) => {
 			const root = dirname(uri.path);
 			if (this.projectCache.delete(root)) {
@@ -32,12 +32,12 @@ export class AutoInstallerFs implements vscode.FileSystemProvider {
 					const opts = await this.getInstallOpts(uri, root);
 					const proj = await pm.resolveProject(root, opts);
 					proj.pruneExtraneous();
-					// TODO: should this fire on vscode-node-modules instead?
+					// TODO: should this fire on zycode-node-modules instead?
 					// NB(kmarchan): This should tell TSServer that there's
 					// been changes inside node_modules and it needs to
 					// re-evaluate things.
 					this._emitter.fire([{
-						type: vscode.FileChangeType.Changed,
+						type: zycode.FileChangeType.Changed,
 						uri: uri.with({ path: join(root, 'node_modules') })
 					}]);
 				})();
@@ -74,7 +74,7 @@ export class AutoInstallerFs implements vscode.FileSystemProvider {
 			directoryExists(path: string): boolean {
 				try {
 					const stat = memfs.stat(URI.file(path));
-					return stat.type === vscode.FileType.Directory;
+					return stat.type === zycode.FileType.Directory;
 				} catch (e) {
 					return false;
 				}
@@ -90,13 +90,13 @@ export class AutoInstallerFs implements vscode.FileSystemProvider {
 		};
 	}
 
-	watch(resource: vscode.Uri): vscode.Disposable {
+	watch(resource: zycode.Uri): zycode.Disposable {
 		const mapped = URI.file(new MappedUri(resource).path);
 		console.log('watching', mapped);
 		return this.memfs.watch(mapped);
 	}
 
-	async stat(uri: vscode.Uri): Promise<vscode.FileStat> {
+	async stat(uri: zycode.Uri): Promise<zycode.FileStat> {
 		// console.log('stat', uri.toString());
 		const mapped = new MappedUri(uri);
 
@@ -108,7 +108,7 @@ export class AutoInstallerFs implements vscode.FileSystemProvider {
 			return {
 				mtime: 0,
 				ctime: 0,
-				type: vscode.FileType.Directory,
+				type: zycode.FileType.Directory,
 				size: 0
 			};
 		}
@@ -118,7 +118,7 @@ export class AutoInstallerFs implements vscode.FileSystemProvider {
 		return this.memfs.stat(URI.file(mapped.path));
 	}
 
-	async readDirectory(uri: vscode.Uri): Promise<[string, vscode.FileType][]> {
+	async readDirectory(uri: zycode.Uri): Promise<[string, zycode.FileType][]> {
 		// console.log('readDirectory', uri.toString());
 		const mapped = new MappedUri(uri);
 		await this.ensurePackageContents(mapped);
@@ -126,7 +126,7 @@ export class AutoInstallerFs implements vscode.FileSystemProvider {
 		return this.memfs.readDirectory(URI.file(mapped.path));
 	}
 
-	async readFile(uri: vscode.Uri): Promise<Uint8Array> {
+	async readFile(uri: zycode.Uri): Promise<Uint8Array> {
 		// console.log('readFile', uri.toString());
 		const mapped = new MappedUri(uri);
 		await this.ensurePackageContents(mapped);
@@ -134,19 +134,19 @@ export class AutoInstallerFs implements vscode.FileSystemProvider {
 		return this.memfs.readFile(URI.file(mapped.path));
 	}
 
-	writeFile(_uri: vscode.Uri, _content: Uint8Array, _options: { create: boolean; overwrite: boolean }): void {
+	writeFile(_uri: zycode.Uri, _content: Uint8Array, _options: { create: boolean; overwrite: boolean }): void {
 		throw new Error('not implemented');
 	}
 
-	rename(_oldUri: vscode.Uri, _newUri: vscode.Uri, _options: { overwrite: boolean }): void {
+	rename(_oldUri: zycode.Uri, _newUri: zycode.Uri, _options: { overwrite: boolean }): void {
 		throw new Error('not implemented');
 	}
 
-	delete(_uri: vscode.Uri): void {
+	delete(_uri: zycode.Uri): void {
 		throw new Error('not implemented');
 	}
 
-	createDirectory(_uri: vscode.Uri): void {
+	createDirectory(_uri: zycode.Uri): void {
 		throw new Error('not implemented');
 	}
 
@@ -155,12 +155,12 @@ export class AutoInstallerFs implements vscode.FileSystemProvider {
 
 		// If we're not looking for something inside node_modules, bail early.
 		if (!incomingUri.path.includes('node_modules')) {
-			throw vscode.FileSystemError.FileNotFound();
+			throw zycode.FileSystemError.FileNotFound();
 		}
 
 		// standard lib files aren't handled through here
 		if (incomingUri.path.includes('node_modules/@typescript') || incomingUri.path.includes('node_modules/@types/typescript__')) {
-			throw vscode.FileSystemError.FileNotFound();
+			throw zycode.FileSystemError.FileNotFound();
 		}
 
 		const root = this.getProjectRoot(incomingUri.path);
@@ -186,7 +186,7 @@ export class AutoInstallerFs implements vscode.FileSystemProvider {
 	}
 
 	private async getInstallOpts(originalUri: URI, root: string) {
-		const vsfs = vscode.workspace.fs;
+		const vsfs = zycode.workspace.fs;
 		let pkgJson;
 		try {
 			pkgJson = TEXT_DECODER.decode(await vsfs.readFile(originalUri.with({ path: join(root, 'package.json') })));
@@ -219,10 +219,10 @@ export class AutoInstallerFs implements vscode.FileSystemProvider {
 }
 
 class MappedUri {
-	readonly raw: vscode.Uri;
-	readonly original: vscode.Uri;
-	readonly mapped: vscode.Uri;
-	constructor(uri: vscode.Uri) {
+	readonly raw: zycode.Uri;
+	readonly original: zycode.Uri;
+	readonly mapped: zycode.Uri;
+	constructor(uri: zycode.Uri) {
 		this.raw = uri;
 
 		const parts = uri.path.match(/^\/([^\/]+)\/([^\/]*)(?:\/(.+))?$/);

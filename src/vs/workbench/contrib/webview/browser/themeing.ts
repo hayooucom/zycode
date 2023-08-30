@@ -60,18 +60,18 @@ export class WebviewThemeDataProvider extends Disposable {
 			const exportedColors = colorRegistry.getColorRegistry().getColors().reduce((colors, entry) => {
 				const color = theme.getColor(entry.id);
 				if (color) {
-					colors['vscode-' + entry.id.replace('.', '-')] = color.toString();
+					colors['zycode-' + entry.id.replace('.', '-')] = color.toString();
 				}
 				return colors;
 			}, {} as { [key: string]: string });
 
 			const styles = {
-				'vscode-font-family': DEFAULT_FONT_FAMILY,
-				'vscode-font-weight': 'normal',
-				'vscode-font-size': '13px',
-				'vscode-editor-font-family': editorFontFamily,
-				'vscode-editor-font-weight': editorFontWeight,
-				'vscode-editor-font-size': editorFontSize + 'px',
+				'zycode-font-family': DEFAULT_FONT_FAMILY,
+				'zycode-font-weight': 'normal',
+				'zycode-font-size': '13px',
+				'zycode-editor-font-family': editorFontFamily,
+				'zycode-editor-font-weight': editorFontWeight,
+				'zycode-editor-font-size': editorFontSize + 'px',
 				...exportedColors
 			};
 
@@ -89,10 +89,10 @@ export class WebviewThemeDataProvider extends Disposable {
 }
 
 enum ApiThemeClassName {
-	light = 'vscode-light',
-	dark = 'vscode-dark',
-	highContrast = 'vscode-high-contrast',
-	highContrastLight = 'vscode-high-contrast-light',
+	light = 'zycode-light',
+	dark = 'zycode-dark',
+	highContrast = 'zycode-high-contrast',
+	highContrastLight = 'zycode-high-contrast-light',
 }
 
 namespace ApiThemeClassName {

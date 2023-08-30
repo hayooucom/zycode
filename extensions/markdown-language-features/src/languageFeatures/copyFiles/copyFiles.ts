@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as picomatch from 'picomatch';
-import * as vscode from 'vscode';
-import { Utils } from 'vscode-uri';
+import * as zycode from 'zycode';
+import { Utils } from 'zycode-uri';
 import { getParentDocumentUri } from '../../util/document';
 
 type OverwriteBehavior = 'overwrite' | 'nameIncrementally';
@@ -14,15 +14,15 @@ interface CopyFileConfiguration {
 	readonly overwriteBehavior: OverwriteBehavior;
 }
 
-function getCopyFileConfiguration(document: vscode.TextDocument): CopyFileConfiguration {
-	const config = vscode.workspace.getConfiguration('markdown', document);
+function getCopyFileConfiguration(document: zycode.TextDocument): CopyFileConfiguration {
+	const config = zycode.workspace.getConfiguration('markdown', document);
 	return {
 		destination: config.get<Record<string, string>>('copyFiles.destination') ?? {},
 		overwriteBehavior: readOverwriteBehavior(config),
 	};
 }
 
-function readOverwriteBehavior(config: vscode.WorkspaceConfiguration): OverwriteBehavior {
+function readOverwriteBehavior(config: zycode.WorkspaceConfiguration): OverwriteBehavior {
 	switch (config.get('copyFiles.overwriteBehavior')) {
 		case 'overwrite': return 'overwrite';
 		default: return 'nameIncrementally';
@@ -34,10 +34,10 @@ export class NewFilePathGenerator {
 	private readonly _usedPaths = new Set<string>();
 
 	async getNewFilePath(
-		document: vscode.TextDocument,
-		file: vscode.DataTransferFile,
-		token: vscode.CancellationToken,
-	): Promise<{ readonly uri: vscode.Uri; readonly overwrite: boolean } | undefined> {
+		document: zycode.TextDocument,
+		file: zycode.DataTransferFile,
+		token: zycode.CancellationToken,
+	): Promise<{ readonly uri: zycode.Uri; readonly overwrite: boolean } | undefined> {
 		const config = getCopyFileConfiguration(document);
 		const desiredPath = getDesiredNewFilePath(config, document, file);
 
@@ -51,7 +51,7 @@ export class NewFilePathGenerator {
 			}
 
 			const name = i === 0 ? baseName : `${baseName}-${i}`;
-			const uri = vscode.Uri.joinPath(root, name + ext);
+			const uri = zycode.Uri.joinPath(root, name + ext);
 			if (this._wasPathAlreadyUsed(uri)) {
 				continue;
 			}
@@ -64,7 +64,7 @@ export class NewFilePathGenerator {
 
 			// Otherwise we need to check the fs to see if it exists
 			try {
-				await vscode.workspace.fs.stat(uri);
+				await zycode.workspace.fs.stat(uri);
 			} catch {
 				if (!this._wasPathAlreadyUsed(uri)) {
 					// Does not exist
@@ -75,29 +75,29 @@ export class NewFilePathGenerator {
 		}
 	}
 
-	private _wasPathAlreadyUsed(uri: vscode.Uri) {
+	private _wasPathAlreadyUsed(uri: zycode.Uri) {
 		return this._usedPaths.has(uri.toString());
 	}
 }
 
-function getDesiredNewFilePath(config: CopyFileConfiguration, document: vscode.TextDocument, file: vscode.DataTransferFile): vscode.Uri {
+function getDesiredNewFilePath(config: CopyFileConfiguration, document: zycode.TextDocument, file: zycode.DataTransferFile): zycode.Uri {
 	const docUri = getParentDocumentUri(document.uri);
 	for (const [rawGlob, rawDest] of Object.entries(config.destination)) {
 		for (const glob of parseGlob(rawGlob)) {
 			if (picomatch.isMatch(docUri.path, glob, { dot: true })) {
-				return resolveCopyDestination(docUri, file.name, rawDest, uri => vscode.workspace.getWorkspaceFolder(uri)?.uri);
+				return resolveCopyDestination(docUri, file.name, rawDest, uri => zycode.workspace.getWorkspaceFolder(uri)?.uri);
 			}
 		}
 	}
 
 	// Default to next to current file
-	return vscode.Uri.joinPath(Utils.dirname(docUri), file.name);
+	return zycode.Uri.joinPath(Utils.dirname(docUri), file.name);
 }
 
 function parseGlob(rawGlob: string): Iterable<string> {
 	if (rawGlob.startsWith('/')) {
 		// Anchor to workspace folders
-		return (vscode.workspace.workspaceFolders ?? []).map(folder => vscode.Uri.joinPath(folder.uri, rawGlob).path);
+		return (zycode.workspace.workspaceFolders ?? []).map(folder => zycode.Uri.joinPath(folder.uri, rawGlob).path);
 	}
 
 	// Relative path, so implicitly track on ** to match everything
@@ -108,9 +108,9 @@ function parseGlob(rawGlob: string): Iterable<string> {
 	return [rawGlob];
 }
 
-type GetWorkspaceFolder = (documentUri: vscode.Uri) => vscode.Uri | undefined;
+type GetWorkspaceFolder = (documentUri: zycode.Uri) => zycode.Uri | undefined;
 
-export function resolveCopyDestination(documentUri: vscode.Uri, fileName: string, dest: string, getWorkspaceFolder: GetWorkspaceFolder): vscode.Uri {
+export function resolveCopyDestination(documentUri: zycode.Uri, fileName: string, dest: string, getWorkspaceFolder: GetWorkspaceFolder): zycode.Uri {
 	const resolvedDest = resolveCopyDestinationSetting(documentUri, fileName, dest, getWorkspaceFolder);
 
 	if (resolvedDest.startsWith('/')) {
@@ -124,7 +124,7 @@ export function resolveCopyDestination(documentUri: vscode.Uri, fileName: string
 }
 
 
-function resolveCopyDestinationSetting(documentUri: vscode.Uri, fileName: string, dest: string, getWorkspaceFolder: GetWorkspaceFolder): string {
+function resolveCopyDestinationSetting(documentUri: zycode.Uri, fileName: string, dest: string, getWorkspaceFolder: GetWorkspaceFolder): string {
 	let outDest = dest.trim();
 	if (!outDest) {
 		outDest = '${fileName}';

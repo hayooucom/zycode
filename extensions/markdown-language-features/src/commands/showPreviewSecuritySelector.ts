@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Command } from '../commandManager';
 import { MarkdownPreviewManager } from '../preview/previewManager';
 import { PreviewSecuritySelector } from '../preview/security';
@@ -21,10 +21,10 @@ export class ShowPreviewSecuritySelectorCommand implements Command {
 		if (this._previewManager.activePreviewResource) {
 			this._previewSecuritySelector.showSecuritySelectorForResource(this._previewManager.activePreviewResource);
 		} else if (resource) {
-			const source = vscode.Uri.parse(resource);
-			this._previewSecuritySelector.showSecuritySelectorForResource(source.query ? vscode.Uri.parse(source.query) : source);
-		} else if (vscode.window.activeTextEditor && isMarkdownFile(vscode.window.activeTextEditor.document)) {
-			this._previewSecuritySelector.showSecuritySelectorForResource(vscode.window.activeTextEditor.document.uri);
+			const source = zycode.Uri.parse(resource);
+			this._previewSecuritySelector.showSecuritySelectorForResource(source.query ? zycode.Uri.parse(source.query) : source);
+		} else if (zycode.window.activeTextEditor && isMarkdownFile(zycode.window.activeTextEditor.document)) {
+			this._previewSecuritySelector.showSecuritySelectorForResource(zycode.window.activeTextEditor.document.uri);
 		}
 	}
 }

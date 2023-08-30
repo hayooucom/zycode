@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { Utils } from 'vscode-uri';
+import * as zycode from 'zycode';
+import { Utils } from 'zycode-uri';
 import { Command } from '../commandManager';
 import { createUriListSnippet, mediaFileExtensions } from '../languageFeatures/copyFiles/shared';
 import { coalesce } from '../util/arrays';
@@ -15,18 +15,18 @@ import { Schemes } from '../util/schemes';
 export class InsertLinkFromWorkspace implements Command {
 	public readonly id = 'markdown.editor.insertLinkFromWorkspace';
 
-	public async execute(resources?: vscode.Uri[]) {
-		const activeEditor = vscode.window.activeTextEditor;
+	public async execute(resources?: zycode.Uri[]) {
+		const activeEditor = zycode.window.activeTextEditor;
 		if (!activeEditor) {
 			return;
 		}
 
-		resources ??= await vscode.window.showOpenDialog({
+		resources ??= await zycode.window.showOpenDialog({
 			canSelectFiles: true,
 			canSelectFolders: false,
 			canSelectMany: true,
-			openLabel: vscode.l10n.t("Insert link"),
-			title: vscode.l10n.t("Insert link"),
+			openLabel: zycode.l10n.t("Insert link"),
+			title: zycode.l10n.t("Insert link"),
 			defaultUri: getDefaultUri(activeEditor.document),
 		});
 
@@ -37,21 +37,21 @@ export class InsertLinkFromWorkspace implements Command {
 export class InsertImageFromWorkspace implements Command {
 	public readonly id = 'markdown.editor.insertImageFromWorkspace';
 
-	public async execute(resources?: vscode.Uri[]) {
-		const activeEditor = vscode.window.activeTextEditor;
+	public async execute(resources?: zycode.Uri[]) {
+		const activeEditor = zycode.window.activeTextEditor;
 		if (!activeEditor) {
 			return;
 		}
 
-		resources ??= await vscode.window.showOpenDialog({
+		resources ??= await zycode.window.showOpenDialog({
 			canSelectFiles: true,
 			canSelectFolders: false,
 			canSelectMany: true,
 			filters: {
-				[vscode.l10n.t("Media")]: Array.from(mediaFileExtensions.keys())
+				[zycode.l10n.t("Media")]: Array.from(mediaFileExtensions.keys())
 			},
-			openLabel: vscode.l10n.t("Insert image"),
-			title: vscode.l10n.t("Insert image"),
+			openLabel: zycode.l10n.t("Insert image"),
+			title: zycode.l10n.t("Insert image"),
 			defaultUri: getDefaultUri(activeEditor.document),
 		});
 
@@ -59,25 +59,25 @@ export class InsertImageFromWorkspace implements Command {
 	}
 }
 
-function getDefaultUri(document: vscode.TextDocument) {
+function getDefaultUri(document: zycode.TextDocument) {
 	const docUri = getParentDocumentUri(document.uri);
 	if (docUri.scheme === Schemes.untitled) {
-		return vscode.workspace.workspaceFolders?.[0]?.uri;
+		return zycode.workspace.workspaceFolders?.[0]?.uri;
 	}
 	return Utils.dirname(docUri);
 }
 
-async function insertLink(activeEditor: vscode.TextEditor, selectedFiles: vscode.Uri[], insertAsImage: boolean): Promise<void> {
+async function insertLink(activeEditor: zycode.TextEditor, selectedFiles: zycode.Uri[], insertAsImage: boolean): Promise<void> {
 	if (!selectedFiles.length) {
 		return;
 	}
 
 	const edit = createInsertLinkEdit(activeEditor, selectedFiles, insertAsImage);
-	await vscode.workspace.applyEdit(edit);
+	await zycode.workspace.applyEdit(edit);
 }
 
-function createInsertLinkEdit(activeEditor: vscode.TextEditor, selectedFiles: vscode.Uri[], insertAsMedia: boolean, title = '', placeholderValue = 0, pasteAsMarkdownLink = true, isExternalLink = false) {
-	const snippetEdits = coalesce(activeEditor.selections.map((selection, i): vscode.SnippetTextEdit | undefined => {
+function createInsertLinkEdit(activeEditor: zycode.TextEditor, selectedFiles: zycode.Uri[], insertAsMedia: boolean, title = '', placeholderValue = 0, pasteAsMarkdownLink = true, isExternalLink = false) {
+	const snippetEdits = coalesce(activeEditor.selections.map((selection, i): zycode.SnippetTextEdit | undefined => {
 		const selectionText = activeEditor.document.getText(selection);
 		const snippet = createUriListSnippet(activeEditor.document, selectedFiles, [], title, placeholderValue, pasteAsMarkdownLink, isExternalLink, {
 			insertAsMedia,
@@ -86,10 +86,10 @@ function createInsertLinkEdit(activeEditor: vscode.TextEditor, selectedFiles: vs
 			separator: insertAsMedia ? '\n' : ' ',
 		});
 
-		return snippet ? new vscode.SnippetTextEdit(selection, snippet.snippet) : undefined;
+		return snippet ? new zycode.SnippetTextEdit(selection, snippet.snippet) : undefined;
 	}));
 
-	const edit = new vscode.WorkspaceEdit();
+	const edit = new zycode.WorkspaceEdit();
 	edit.set(activeEditor.document.uri, snippetEdits);
 	return edit;
 }

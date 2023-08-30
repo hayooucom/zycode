@@ -20,7 +20,7 @@
 	visibility: hidden;
 }
 .monaco-workbench .part.panel .pane-body.integrated-terminal .terminal-outer-container {
-	background-color: var(--vscode-terminal-background, var(--vscode-panel-background));
+	background-color: var(--zycode-terminal-background, var(--zycode-panel-background));
 }
 .monaco-workbench .pane-body.integrated-terminal .terminal-outer-container,
 .monaco-workbench .pane-body.integrated-terminal .terminal-groups-container,
@@ -32,20 +32,20 @@
 }
 .monaco-workbench .part.sidebar .pane-body.integrated-terminal .terminal-outer-container,
 .monaco-workbench .part.auxiliarybar .pane-body.integrated-terminal .terminal-outer-container {
-	background-color: var(--vscode-terminal-background, var(--vscode-sideBar-background));
+	background-color: var(--zycode-terminal-background, var(--zycode-sideBar-background));
 }
 
 .monaco-workbench .pane-body.integrated-terminal .split-view-view:not(:first-child),
 .monaco-workbench .pane-body.integrated-terminal .tabs-container {
-	border-color: var(--vscode-terminal-border);
+	border-color: var(--zycode-terminal-border);
 }
 
 .monaco-workbench .pane-body.integrated-terminal .terminal-drop-overlay {
-	background-color: var(--vscode-terminal-dropBackground, var(--vscode-editorGroup-dropBackground));
+	background-color: var(--zycode-terminal-dropBackground, var(--zycode-editorGroup-dropBackground));
 }
 
 .monaco-workbench .pane-body.integrated-terminal .terminal-tabs-entry.is-active::before {
-	background-color: var(--vscode-terminal-tab-activeBorder);
+	background-color: var(--zycode-terminal-tab-activeBorder);
 }
 /* Override monaco's styles for terminal editors */
 .monaco-workbench .terminal-editor .xterm textarea:focus {
@@ -64,7 +64,7 @@
 }
 
 .monaco-workbench .xterm .xterm-helper-textarea:focus {
-	/* Override the general vscode style applies `opacity:1!important` to textareas */
+	/* Override the general zycode style applies `opacity:1!important` to textareas */
 	opacity: 0 !important;
 }
 
@@ -78,7 +78,7 @@
 }
 
 .monaco-workbench .terminal-editor .terminal-wrapper {
-	background-color: var(--vscode-terminal-background, var(--vscode-editorPane-background));
+	background-color: var(--zycode-terminal-background, var(--zycode-editorPane-background));
 }
 .monaco-workbench .terminal-editor .terminal-wrapper,
 .monaco-workbench .pane-body.integrated-terminal .terminal-wrapper {
@@ -472,26 +472,26 @@
 }
 .monaco-workbench .terminal .terminal-command-decoration:not(.default):hover::before {
 	border-radius: 5px;
-	background-color: var(--vscode-toolbar-hoverBackground);
+	background-color: var(--zycode-toolbar-hoverBackground);
 }
 .monaco-workbench .terminal .terminal-command-decoration {
-	color: var(--vscode-terminalCommandDecoration-successBackground);
+	color: var(--zycode-terminalCommandDecoration-successBackground);
 }
 .monaco-workbench .terminal .terminal-command-decoration.error {
-	color: var(--vscode-terminalCommandDecoration-errorBackground);
+	color: var(--zycode-terminalCommandDecoration-errorBackground);
 }
 .monaco-workbench .terminal .terminal-command-decoration.default {
 	pointer-events: none;
-	color: var(--vscode-terminalCommandDecoration-defaultBackground);
+	color: var(--zycode-terminalCommandDecoration-defaultBackground);
 }
 .monaco-workbench .terminal .terminal-command-decoration.quick-fix {
-	color: var(--vscode-editorLightBulb-foreground) !important;
-	background-color: var(--vscode-terminal-background, var(--vscode-panel-background));
+	color: var(--zycode-editorLightBulb-foreground) !important;
+	background-color: var(--zycode-terminal-background, var(--zycode-panel-background));
 }
 .monaco-workbench .terminal .terminal-command-decoration.quick-fix.explainOnly {
 	/* Use success background to blend in with the terminal better as it's lower priority. We will
 	 * probably want to add an explicit color for this eventually. */
-	color: var(--vscode-terminalCommandDecoration-successBackground) !important;
+	color: var(--zycode-terminalCommandDecoration-successBackground) !important;
 }
 
 .terminal-scroll-highlight {
@@ -508,7 +508,7 @@
 }
 
 .terminal-scroll-highlight {
-	border-color: var(--vscode-focusBorder);
+	border-color: var(--zycode-focusBorder);
 }
 .hc-black .xterm-find-result-decoration,
 .hc-light .xterm-find-result-decoration {
@@ -535,34 +535,34 @@
 .monaco-workbench.hc-light .pane-body.integrated-terminal .xterm.focus::before,
 .monaco-workbench.hc-light .editor-instance .xterm:focus::before,
 .monaco-workbench.hc-light .pane-body.integrated-terminal .xterm:focus::before {
-	border-color: var(--vscode-contrastActiveBorder);
+	border-color: var(--zycode-contrastActiveBorder);
 }
 
 .monaco-workbench .integrated-terminal .hoverHighlight {
-	background-color: var(--vscode-terminal-hoverHighlightBackground);
+	background-color: var(--zycode-terminal-hoverHighlightBackground);
 }
 
 .force-scrollbar .xterm .xterm-viewport,
 .monaco-workbench .xterm.focus .xterm-viewport,
 .monaco-workbench .xterm:focus .xterm-viewport,
 .monaco-workbench .xterm:hover .xterm-viewport {
-	background-color: var(--vscode-scrollbarSlider-background) !important;
+	background-color: var(--zycode-scrollbarSlider-background) !important;
 }
 
 .monaco-workbench .xterm-viewport {
-	scrollbar-color: var(--vscode-scrollbarSlider-background) transparent;
+	scrollbar-color: var(--zycode-scrollbarSlider-background) transparent;
 }
 
 .monaco-workbench .xterm .xterm-viewport::-webkit-scrollbar-thumb:hover {
-	background-color: var(--vscode-scrollbarSlider-hoverBackground);
+	background-color: var(--zycode-scrollbarSlider-hoverBackground);
 }
 
 .monaco-workbench .xterm-viewport:hover {
-	scrollbar-color: var(--vscode-scrollbarSlider-hoverBackground) transparent;
+	scrollbar-color: var(--zycode-scrollbarSlider-hoverBackground) transparent;
 }
 
 .monaco-workbench .xterm .xterm-viewport::-webkit-scrollbar-thumb:active {
-	background-color: var(--vscode-scrollbarSlider-activeBackground);
+	background-color: var(--zycode-scrollbarSlider-activeBackground);
 }
 
 .monaco-workbench .terminal-accessible-widget {
@@ -590,7 +590,7 @@
 	pointer-events: all;
 	opacity: 1;
 	z-index: 33;
-	background-color: var(--vscode-terminal-background, var(--vscode-panel-background));
+	background-color: var(--zycode-terminal-background, var(--zycode-panel-background));
 }
 
 .monaco-workbench .xterm.terminal.hide {

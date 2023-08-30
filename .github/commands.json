@@ -35,7 +35,7 @@
 		"name": "*dev-question",
 		"action": "close",
 		"reason": "not_planned",
-		"comment": "We have a great extension developer community over on [GitHub discussions](https://github.com/microsoft/vscode-discussions/discussions) and [Slack](https://aka.ms/vscode-dev-community) where extension authors help each other. This is a great place for you to ask questions and find support.\n\nHappy Coding!"
+		"comment": "We have a great extension developer community over on [GitHub discussions](https://github.com/microsoft/zycode-discussions/discussions) and [Slack](https://aka.ms/zycode-dev-community) where extension authors help each other. This is a great place for you to ask questions and find support.\n\nHappy Coding!"
 	},
 	{
 		"type": "label",
@@ -56,7 +56,7 @@
 		"name": "*out-of-scope",
 		"action": "close",
 		"reason": "not_planned",
-		"comment": "We closed this issue because we [don't plan to address it](https://aka.ms/vscode-out-of-scope) in the foreseeable future. If you disagree and feel that this issue is crucial: we are happy to listen and to reconsider.\n\nIf you wonder what we are up to, please see our [roadmap](https://aka.ms/vscoderoadmap) and [issue reporting guidelines](https://aka.ms/vscodeissuereporting).\n\nThanks for your understanding, and happy coding!"
+		"comment": "We closed this issue because we [don't plan to address it](https://aka.ms/zycode-out-of-scope) in the foreseeable future. If you disagree and feel that this issue is crucial: we are happy to listen and to reconsider.\n\nIf you wonder what we are up to, please see our [roadmap](https://aka.ms/vscoderoadmap) and [issue reporting guidelines](https://aka.ms/vscodeissuereporting).\n\nThanks for your understanding, and happy coding!"
 	},
 	{
 		"type": "comment",
@@ -171,14 +171,14 @@
 			"IllusionMH"
 		],
 		"addLabel": "info-needed",
-		"comment": "Thanks for creating this issue regarding performance! Please follow this guide to help us diagnose performance issues: https://github.com/microsoft/vscode/wiki/Performance-Issues \n\nHappy Coding!"
+		"comment": "Thanks for creating this issue regarding performance! Please follow this guide to help us diagnose performance issues: https://github.com/microsoft/zycode/wiki/Performance-Issues \n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
 		"name": "jsDebugLogs",
 		"action": "updateLabels",
 		"addLabel": "info-needed",
-		"comment": "Please collect trace logs using the following instructions:\n\n> If you're able to, add `\"trace\": true` to your `launch.json` and reproduce the issue. The location of the log file on your disk will be written to the Debug Console. Share that with us.\n>\n> ⚠️ This log file will not contain source code, but will contain file paths. You can drop it into https://microsoft.github.io/vscode-pwa-analyzer/index.html to see what it contains. If you'd rather not share the log publicly, you can email it to connor@xbox.com"
+		"comment": "Please collect trace logs using the following instructions:\n\n> If you're able to, add `\"trace\": true` to your `launch.json` and reproduce the issue. The location of the log file on your disk will be written to the Debug Console. Share that with us.\n>\n> ⚠️ This log file will not contain source code, but will contain file paths. You can drop it into https://microsoft.github.io/zycode-pwa-analyzer/index.html to see what it contains. If you'd rather not share the log publicly, you can email it to connor@xbox.com"
 	},
 	{
 		"type": "comment",
@@ -251,7 +251,7 @@
 		"action": "close",
 		"reason": "not_planned",
 		"addLabel": "*caused-by-extension",
-		"comment": "It looks like this is caused by the Python extension. Please file the issue to the [Python extension repository](https://github.com/microsoft/vscode-python). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
+		"comment": "It looks like this is caused by the Python extension. Please file the issue to the [Python extension repository](https://github.com/microsoft/zycode-python). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
@@ -265,7 +265,7 @@
 		"action": "close",
 		"reason": "not_planned",
 		"addLabel": "*caused-by-extension",
-		"comment": "It looks like this is caused by the Jupyter extension. Please file the issue to the [Jupyter extension repository](https://github.com/microsoft/vscode-jupyter). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
+		"comment": "It looks like this is caused by the Jupyter extension. Please file the issue to the [Jupyter extension repository](https://github.com/microsoft/zycode-jupyter). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
@@ -279,7 +279,7 @@
 		"action": "close",
 		"reason": "not_planned",
 		"addLabel": "*caused-by-extension",
-		"comment": "It looks like this is caused by the C extension. Please file the issue to the [C extension repository](https://github.com/microsoft/vscode-cpptools). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
+		"comment": "It looks like this is caused by the C extension. Please file the issue to the [C extension repository](https://github.com/microsoft/zycode-cpptools). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
@@ -293,7 +293,7 @@
 		"action": "close",
 		"reason": "not_planned",
 		"addLabel": "*caused-by-extension",
-		"comment": "It looks like this is caused by the C++ extension. Please file the issue to the [C++ extension repository](https://github.com/microsoft/vscode-cpptools). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
+		"comment": "It looks like this is caused by the C++ extension. Please file the issue to the [C++ extension repository](https://github.com/microsoft/zycode-cpptools). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
@@ -307,7 +307,7 @@
 		"action": "close",
 		"reason": "not_planned",
 		"addLabel": "*caused-by-extension",
-		"comment": "It looks like this is caused by the C++ extension. Please file the issue to the [C++ extension repository](https://github.com/microsoft/vscode-cpptools). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
+		"comment": "It looks like this is caused by the C++ extension. Please file the issue to the [C++ extension repository](https://github.com/microsoft/zycode-cpptools). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
@@ -349,7 +349,7 @@
 		"action": "close",
 		"reason": "not_planned",
 		"addLabel": "*caused-by-extension",
-		"comment": "It looks like this is caused by the C# extension. Please file the issue to the [C# extension repository](https://github.com/OmniSharp/omnisharp-vscode.git). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
+		"comment": "It looks like this is caused by the C# extension. Please file the issue to the [C# extension repository](https://github.com/OmniSharp/omnisharp-zycode.git). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
@@ -362,7 +362,7 @@
 		],
 		"action": "close",
 		"addLabel": "*caused-by-extension",
-		"comment": "It looks like this is caused by the Go extension. Please file the issue to the [Go extension repository](https://github.com/golang/vscode-go). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
+		"comment": "It looks like this is caused by the Go extension. Please file the issue to the [Go extension repository](https://github.com/golang/zycode-go). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
@@ -376,7 +376,7 @@
 		"action": "close",
 		"reason": "not_planned",
 		"addLabel": "*caused-by-extension",
-		"comment": "It looks like this is caused by the PowerShell extension. Please file the issue to the [PowerShell extension repository](https://github.com/PowerShell/vscode-powershell). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
+		"comment": "It looks like this is caused by the PowerShell extension. Please file the issue to the [PowerShell extension repository](https://github.com/PowerShell/zycode-powershell). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
@@ -404,7 +404,7 @@
 		"action": "close",
 		"reason": "not_planned",
 		"addLabel": "*caused-by-extension",
-		"comment": "It looks like this is caused by the Docker extension. Please file the issue to the [Docker extension repository](https://github.com/microsoft/vscode-docker). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
+		"comment": "It looks like this is caused by the Docker extension. Please file the issue to the [Docker extension repository](https://github.com/microsoft/zycode-docker). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
@@ -418,7 +418,7 @@
 		"action": "close",
 		"reason": "not_planned",
 		"addLabel": "*caused-by-extension",
-		"comment": "It looks like this is caused by the Java extension. Please file the issue to the [Java extension repository](https://github.com/redhat-developer/vscode-java). Make sure to check their [troubleshooting instructions](https://github.com/redhat-developer/vscode-java/wiki/Troubleshooting) and provide relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
+		"comment": "It looks like this is caused by the Java extension. Please file the issue to the [Java extension repository](https://github.com/redhat-developer/zycode-java). Make sure to check their [troubleshooting instructions](https://github.com/redhat-developer/zycode-java/wiki/Troubleshooting) and provide relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
@@ -432,7 +432,7 @@
 		"action": "close",
 		"reason": "not_planned",
 		"addLabel": "*caused-by-extension",
-		"comment": "It looks like this is caused by the Java Debugger extension. Please file the issue to the [Java Debugger repository](https://github.com/microsoft/vscode-java-debug). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
+		"comment": "It looks like this is caused by the Java Debugger extension. Please file the issue to the [Java Debugger repository](https://github.com/microsoft/zycode-java-debug). Make sure to check their issue reporting template and provide them relevant information such as the extension version you're using. See also our [issue reporting guidelines](https://aka.ms/vscodeissuereporting) for more information.\n\nHappy Coding!"
 	},
 	{
 		"type": "comment",
@@ -509,7 +509,7 @@
 		"name": "*workspace-trust-docs",
 		"action": "close",
 		"reason": "not_planned",
-		"comment": "This issue appears to be the result of the new workspace trust feature shipped in June 2021. This security-focused feature has major impact on the functionality of VS Code. Due to the volume of issues, we ask that you take some time to review our [comprehensive documentation](https://aka.ms/vscode-workspace-trust) on the feature. If your issue is still not resolved, please let us know."
+		"comment": "This issue appears to be the result of the new workspace trust feature shipped in June 2021. This security-focused feature has major impact on the functionality of VS Code. Due to the volume of issues, we ask that you take some time to review our [comprehensive documentation](https://aka.ms/zycode-workspace-trust) on the feature. If your issue is still not resolved, please let us know."
 	},
 	{
 		"type": "label",

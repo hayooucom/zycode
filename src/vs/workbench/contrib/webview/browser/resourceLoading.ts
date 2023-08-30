@@ -120,7 +120,7 @@ function normalizeResourcePath(resource: URI): URI {
 		return URI.from({
 			scheme: Schemas.vscodeRemote,
 			authority: resource.authority,
-			path: '/vscode-resource',
+			path: '/zycode-resource',
 			query: JSON.stringify({
 				requestResourcePath: resource.path
 			})

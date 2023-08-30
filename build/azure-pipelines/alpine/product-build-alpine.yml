@@ -8,8 +8,8 @@ steps:
   - task: AzureKeyVault@1
     displayName: "Azure Key Vault: Get Secrets"
     inputs:
-      azureSubscription: "vscode-builds-subscription"
-      KeyVaultName: vscode-build-secrets
+      azureSubscription: "zycode-builds-subscription"
+      KeyVaultName: zycode-build-secrets
       SecretsFilter: "github-distro-mixin-password"
 
   - task: DownloadPipelineArtifact@2
@@ -58,10 +58,10 @@ steps:
 
   - task: Docker@1
     inputs:
-      azureSubscriptionEndpoint: "vscode-builds-subscription"
+      azureSubscriptionEndpoint: "zycode-builds-subscription"
       azureContainerRegistry: vscodehub.azurecr.io
       command: "Run an image"
-      imageName: "vscode-linux-build-agent:alpine-$(VSCODE_ARCH)"
+      imageName: "zycode-linux-build-agent:alpine-$(VSCODE_ARCH)"
       containerCommand: uname
     displayName: "Pull image"
     condition: and(succeeded(), ne(variables.NODE_MODULES_RESTORED, 'true'))
@@ -85,7 +85,7 @@ steps:
       ELECTRON_SKIP_BINARY_DOWNLOAD: 1
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       GITHUB_TOKEN: "$(github-distro-mixin-password)"
-      VSCODE_REMOTE_DEPENDENCIES_CONTAINER_NAME: vscodehub.azurecr.io/vscode-linux-build-agent:alpine-$(VSCODE_ARCH)
+      VSCODE_REMOTE_DEPENDENCIES_CONTAINER_NAME: vscodehub.azurecr.io/zycode-linux-build-agent:alpine-$(VSCODE_ARCH)
       VSCODE_HOST_MOUNT: "/mnt/vss/_work/1/s"
     displayName: Install build dependencies
     condition: and(succeeded(), ne(variables.NODE_MODULES_RESTORED, 'true'))
@@ -110,11 +110,11 @@ steps:
   - script: |
       set -e
       TARGET=$([ "$VSCODE_ARCH" == "x64" ] && echo "linux-alpine" || echo "alpine-arm64") # TODO@joaomoreno
-      yarn gulp vscode-reh-$TARGET-min-ci
-      (cd .. && mv vscode-reh-$TARGET vscode-server-$TARGET) # TODO@joaomoreno
-      ARCHIVE_PATH=".build/linux/server/vscode-server-$TARGET.tar.gz"
+      yarn gulp zycode-reh-$TARGET-min-ci
+      (cd .. && mv zycode-reh-$TARGET zycode-server-$TARGET) # TODO@joaomoreno
+      ARCHIVE_PATH=".build/linux/server/zycode-server-$TARGET.tar.gz"
       mkdir -p $(dirname $ARCHIVE_PATH)
-      tar --owner=0 --group=0 -czf $ARCHIVE_PATH -C .. vscode-server-$TARGET
+      tar --owner=0 --group=0 -czf $ARCHIVE_PATH -C .. zycode-server-$TARGET
       echo "##vso[task.setvariable variable=SERVER_PATH]$ARCHIVE_PATH"
     env:
       GITHUB_TOKEN: "$(github-distro-mixin-password)"
@@ -123,11 +123,11 @@ steps:
   - script: |
       set -e
       TARGET=$([ "$VSCODE_ARCH" == "x64" ] && echo "linux-alpine" || echo "alpine-arm64")
-      yarn gulp vscode-reh-web-$TARGET-min-ci
-      (cd .. && mv vscode-reh-web-$TARGET vscode-server-$TARGET-web) # TODO@joaomoreno
-      ARCHIVE_PATH=".build/linux/web/vscode-server-$TARGET-web.tar.gz"
+      yarn gulp zycode-reh-web-$TARGET-min-ci
+      (cd .. && mv zycode-reh-web-$TARGET zycode-server-$TARGET-web) # TODO@joaomoreno
+      ARCHIVE_PATH=".build/linux/web/zycode-server-$TARGET-web.tar.gz"
       mkdir -p $(dirname $ARCHIVE_PATH)
-      tar --owner=0 --group=0 -czf $ARCHIVE_PATH -C .. vscode-server-$TARGET-web
+      tar --owner=0 --group=0 -czf $ARCHIVE_PATH -C .. zycode-server-$TARGET-web
       echo "##vso[task.setvariable variable=WEB_PATH]$ARCHIVE_PATH"
     env:
       GITHUB_TOKEN: "$(github-distro-mixin-password)"

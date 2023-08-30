@@ -5,7 +5,7 @@
 
 import type MarkdownIt = require('markdown-it');
 import type Token = require('markdown-it/lib/token');
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { ILogger } from './logging';
 import { MarkdownContributionProvider } from './markdownExtensions';
 import { Slugifier } from './slugify';
@@ -45,7 +45,7 @@ type MarkdownItConfig = Readonly<Required<Pick<MarkdownIt.Options, 'breaks' | 'l
 
 class TokenCache {
 	private _cachedDocument?: {
-		readonly uri: vscode.Uri;
+		readonly uri: zycode.Uri;
 		readonly version: number;
 		readonly config: MarkdownItConfig;
 	};
@@ -85,7 +85,7 @@ export interface RenderOutput {
 
 interface RenderEnv {
 	containingImages: Set<string>;
-	currentDocument: vscode.Uri | undefined;
+	currentDocument: zycode.Uri | undefined;
 	resourceProvider: WebviewResourceProvider | undefined;
 }
 
@@ -230,8 +230,8 @@ export class MarkdownItEngine implements IMdParser {
 		this._tokenCache.clean();
 	}
 
-	private _getConfig(resource?: vscode.Uri): MarkdownItConfig {
-		const config = vscode.workspace.getConfiguration('markdown', resource ?? null);
+	private _getConfig(resource?: zycode.Uri): MarkdownItConfig {
+		const config = zycode.workspace.getConfiguration('markdown', resource ?? null);
 		return {
 			breaks: config.get<boolean>('preview.breaks', false),
 			linkify: config.get<boolean>('preview.linkify', true),
@@ -282,8 +282,8 @@ export class MarkdownItEngine implements IMdParser {
 		md.normalizeLink = (link: string) => {
 			try {
 				// Normalize VS Code schemes to target the current version
-				if (isOfScheme(Schemes.vscode, link) || isOfScheme(Schemes['vscode-insiders'], link)) {
-					return normalizeLink(vscode.Uri.parse(link).with({ scheme: vscode.env.uriScheme }).toString());
+				if (isOfScheme(Schemes.zycode, link) || isOfScheme(Schemes['zycode-insiders'], link)) {
+					return normalizeLink(zycode.Uri.parse(link).with({ scheme: zycode.env.uriScheme }).toString());
 				}
 
 			} catch (e) {
@@ -297,8 +297,8 @@ export class MarkdownItEngine implements IMdParser {
 		const validateLink = md.validateLink;
 		md.validateLink = (link: string) => {
 			return validateLink(link)
-				|| isOfScheme(Schemes.vscode, link)
-				|| isOfScheme(Schemes['vscode-insiders'], link)
+				|| isOfScheme(Schemes.zycode, link)
+				|| isOfScheme(Schemes['zycode-insiders'], link)
 				|| /^data:image\/.*?;/.test(link);
 		};
 	}
@@ -345,11 +345,11 @@ export class MarkdownItEngine implements IMdParser {
 		};
 	}
 
-	private _toResourceUri(href: string, currentDocument: vscode.Uri | undefined, resourceProvider: WebviewResourceProvider | undefined): string {
+	private _toResourceUri(href: string, currentDocument: zycode.Uri | undefined, resourceProvider: WebviewResourceProvider | undefined): string {
 		try {
 			// Support file:// links
 			if (isOfScheme(Schemes.file, href)) {
-				const uri = vscode.Uri.parse(href);
+				const uri = zycode.Uri.parse(href);
 				if (resourceProvider) {
 					return resourceProvider.asWebviewUri(uri).toString(true);
 				}
@@ -360,14 +360,14 @@ export class MarkdownItEngine implements IMdParser {
 			// If original link doesn't look like a url with a scheme, assume it must be a link to a file in workspace
 			if (!/^[a-z\-]+:/i.test(href)) {
 				// Use a fake scheme for parsing
-				let uri = vscode.Uri.parse('markdown-link:' + href);
+				let uri = zycode.Uri.parse('markdown-link:' + href);
 
 				// Relative paths should be resolved correctly inside the preview but we need to
 				// handle absolute paths specially to resolve them relative to the workspace root
 				if (uri.path[0] === '/' && currentDocument) {
-					const root = vscode.workspace.getWorkspaceFolder(currentDocument);
+					const root = zycode.workspace.getWorkspaceFolder(currentDocument);
 					if (root) {
-						uri = vscode.Uri.joinPath(root.uri, uri.fsPath).with({
+						uri = zycode.Uri.joinPath(root.uri, uri.fsPath).with({
 							fragment: uri.fragment,
 							query: uri.query,
 						});

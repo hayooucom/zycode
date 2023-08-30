@@ -102,19 +102,19 @@
 }
 
 .settings-tabs-widget > .monaco-action-bar .action-item .action-label {
-	color: var(--vscode-panelTitle-inactiveForeground);
+	color: var(--zycode-panelTitle-inactiveForeground);
 }
 
 .settings-tabs-widget > .monaco-action-bar .action-item .action-label.checked,
 .settings-tabs-widget > .monaco-action-bar .action-item .action-label:hover {
-	color: var(--vscode-panelTitle-activeForeground);
-	border-bottom: 1px solid var(--vscode-panelTitle-activeBorder);
-	outline: 1px solid var(--vscode-contrastActiveBorder, transparent);
+	color: var(--zycode-panelTitle-activeForeground);
+	border-bottom: 1px solid var(--zycode-panelTitle-activeBorder);
+	outline: 1px solid var(--zycode-contrastActiveBorder, transparent);
 	outline-offset: -1px;
 }
 
 .settings-tabs-widget > .monaco-action-bar .action-item .action-label:focus {
-	border-bottom: 1px solid var(--vscode-focusBorder);
+	border-bottom: 1px solid var(--zycode-focusBorder);
 	outline: 1px solid transparent;
 	outline-offset: -1px;
 }

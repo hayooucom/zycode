@@ -9,7 +9,7 @@ import { Emitter } from 'vs/base/common/event';
 import { ExtHostTreeViews } from 'vs/workbench/api/common/extHostTreeViews';
 import { ExtHostCommands } from 'vs/workbench/api/common/extHostCommands';
 import { MainThreadTreeViewsShape, MainContext } from 'vs/workbench/api/common/extHost.protocol';
-import { TreeDataProvider, TreeItem } from 'vscode';
+import { TreeDataProvider, TreeItem } from 'zycode';
 import { TestRPCProtocol } from 'vs/workbench/api/test/common/testRPCProtocol';
 import { TestInstantiationService } from 'vs/platform/instantiation/test/common/instantiationServiceMock';
 import { MainThreadCommands } from 'vs/workbench/api/browser/mainThreadCommands';

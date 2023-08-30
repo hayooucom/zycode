@@ -3,21 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ExtensionContext, OutputChannel, window, workspace, l10n, env } from 'vscode';
+import { ExtensionContext, OutputChannel, window, workspace, l10n, env } from 'zycode';
 import { startClient, LanguageClientConstructor, SchemaRequestService, languageServerDescription } from '../jsonClient';
-import { ServerOptions, TransportKind, LanguageClientOptions, LanguageClient, BaseLanguageClient } from 'vscode-languageclient/node';
+import { ServerOptions, TransportKind, LanguageClientOptions, LanguageClient, BaseLanguageClient } from 'zycode-languageclient/node';
 
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { xhr, XHRResponse, getErrorStatusDescription, Headers } from 'request-light';
 
-import TelemetryReporter from '@vscode/extension-telemetry';
+import TelemetryReporter from '@zycode/extension-telemetry';
 import { JSONSchemaCache } from './schemaCache';
 
 let telemetry: TelemetryReporter | undefined;
 let client: BaseLanguageClient | undefined;
 
-// this method is called when vs code is activated
+// this method is called when zy code is activated
 export async function activate(context: ExtensionContext) {
 	const clientPackageJSON = await getPackageInfo(context);
 	telemetry = new TelemetryReporter(clientPackageJSON.aiKey);

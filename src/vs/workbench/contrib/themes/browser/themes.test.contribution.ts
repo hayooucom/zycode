@@ -11,7 +11,7 @@ import { IWorkbenchThemeService, IWorkbenchColorTheme } from 'vs/workbench/servi
 import { IEditorService } from 'vs/workbench/services/editor/common/editorService';
 import { EditorResourceAccessor } from 'vs/workbench/common/editor';
 import { ITextMateTokenizationService } from 'vs/workbench/services/textMate/browser/textMateTokenizationFeature';
-import type { IGrammar, StateStack } from 'vscode-textmate';
+import type { IGrammar, StateStack } from 'zycode-textmate';
 import { TokenizationRegistry } from 'vs/editor/common/languages';
 import { TokenMetadata } from 'vs/editor/common/encodedTokenAttributes';
 import { ThemeRule, findMatchingThemeRule } from 'vs/workbench/services/textMate/common/TMHelper';
@@ -168,7 +168,7 @@ class Snapper {
 		const currentTheme = this.themeService.getColorTheme();
 
 		const getThemeName = (id: string) => {
-			const part = 'vscode-theme-defaults-themes-';
+			const part = 'zycode-theme-defaults-themes-';
 			const startIdx = id.indexOf(part);
 			if (startIdx !== -1) {
 				return id.substring(startIdx + part.length, id.length - 5);

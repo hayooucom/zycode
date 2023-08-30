@@ -90,8 +90,8 @@ export class PreferencesService extends Disposable implements IPreferencesServic
 		}));
 	}
 
-	readonly defaultKeybindingsResource = URI.from({ scheme: network.Schemas.vscode, authority: 'defaultsettings', path: '/keybindings.json' });
-	private readonly defaultSettingsRawResource = URI.from({ scheme: network.Schemas.vscode, authority: 'defaultsettings', path: '/defaultSettings.json' });
+	readonly defaultKeybindingsResource = URI.from({ scheme: network.Schemas.zycode, authority: 'defaultsettings', path: '/keybindings.json' });
+	private readonly defaultSettingsRawResource = URI.from({ scheme: network.Schemas.zycode, authority: 'defaultsettings', path: '/defaultSettings.json' });
 
 	get userSettingsResource(): URI {
 		return this.userDataProfileService.currentProfile.settingsResource;
@@ -395,25 +395,25 @@ export class PreferencesService extends Disposable implements IPreferencesServic
 	}
 
 	private isDefaultUserSettingsResource(uri: URI): boolean {
-		return uri.authority === 'defaultsettings' && uri.scheme === network.Schemas.vscode && !!uri.path.match(/\/(\d+\/)?settings\.json$/);
+		return uri.authority === 'defaultsettings' && uri.scheme === network.Schemas.zycode && !!uri.path.match(/\/(\d+\/)?settings\.json$/);
 	}
 
 	private isDefaultWorkspaceSettingsResource(uri: URI): boolean {
-		return uri.authority === 'defaultsettings' && uri.scheme === network.Schemas.vscode && !!uri.path.match(/\/(\d+\/)?workspaceSettings\.json$/);
+		return uri.authority === 'defaultsettings' && uri.scheme === network.Schemas.zycode && !!uri.path.match(/\/(\d+\/)?workspaceSettings\.json$/);
 	}
 
 	private isDefaultFolderSettingsResource(uri: URI): boolean {
-		return uri.authority === 'defaultsettings' && uri.scheme === network.Schemas.vscode && !!uri.path.match(/\/(\d+\/)?resourceSettings\.json$/);
+		return uri.authority === 'defaultsettings' && uri.scheme === network.Schemas.zycode && !!uri.path.match(/\/(\d+\/)?resourceSettings\.json$/);
 	}
 
 	private getDefaultSettingsResource(configurationTarget: ConfigurationTarget): URI {
 		switch (configurationTarget) {
 			case ConfigurationTarget.WORKSPACE:
-				return URI.from({ scheme: network.Schemas.vscode, authority: 'defaultsettings', path: `/workspaceSettings.json` });
+				return URI.from({ scheme: network.Schemas.zycode, authority: 'defaultsettings', path: `/workspaceSettings.json` });
 			case ConfigurationTarget.WORKSPACE_FOLDER:
-				return URI.from({ scheme: network.Schemas.vscode, authority: 'defaultsettings', path: `/resourceSettings.json` });
+				return URI.from({ scheme: network.Schemas.zycode, authority: 'defaultsettings', path: `/resourceSettings.json` });
 		}
-		return URI.from({ scheme: network.Schemas.vscode, authority: 'defaultsettings', path: `/settings.json` });
+		return URI.from({ scheme: network.Schemas.zycode, authority: 'defaultsettings', path: `/settings.json` });
 	}
 
 	private async getOrCreateEditableSettingsEditorInput(target: ConfigurationTarget, resource: URI): Promise<EditorInput> {

@@ -592,8 +592,8 @@ without specific, written prior permission. Title to copyright in this document 
 
 ---------------------------------------------------------
 
-Ikuyadeu/vscode-R 2.3.8 - MIT
-https://github.com/Ikuyadeu/vscode-R
+Ikuyadeu/zycode-R 2.3.8 - MIT
+https://github.com/Ikuyadeu/zycode-R
 
 MIT License
 
@@ -1563,10 +1563,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-jlelong/vscode-latex-basics 1.5.3 - MIT
-https://github.com/jlelong/vscode-latex-basics
+jlelong/zycode-latex-basics 1.5.3 - MIT
+https://github.com/jlelong/zycode-latex-basics
 
-Copyright (c) vscode-latex-basics authors
+Copyright (c) zycode-latex-basics authors
 
 If not otherwise specified (see below), files in this repository fall under the MIT License
 
@@ -2061,8 +2061,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------
 
-microsoft/vscode-css 0.0.0 - MIT License
-https://github.com/microsoft/vscode-css
+microsoft/zycode-css 0.0.0 - MIT License
+https://github.com/microsoft/zycode-css
 
 MIT License
 
@@ -2101,10 +2101,10 @@ suitability for any purpose.
 
 ---------------------------------------------------------
 
-microsoft/vscode-JSON.tmLanguage 0.0.0 - MIT
-https://github.com/microsoft/vscode-JSON.tmLanguage
+microsoft/zycode-JSON.tmLanguage 0.0.0 - MIT
+https://github.com/microsoft/zycode-JSON.tmLanguage
 
-vscode-JSON.tmLanguage
+zycode-JSON.tmLanguage
 
 Copyright (c) Microsoft Corporation
 
@@ -2127,8 +2127,8 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 
 ---------------------------------------------------------
 
-microsoft/vscode-markdown-tm-grammar 1.0.0 - MIT
-https://github.com/microsoft/vscode-markdown-tm-grammar
+microsoft/zycode-markdown-tm-grammar 1.0.0 - MIT
+https://github.com/microsoft/zycode-markdown-tm-grammar
 
 The MIT License (MIT)
 
@@ -2155,11 +2155,11 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-microsoft/vscode-mssql 1.20.0 - MIT
-https://github.com/microsoft/vscode-mssql
+microsoft/zycode-mssql 1.20.0 - MIT
+https://github.com/microsoft/zycode-mssql
 
 ------------------------------------------ START OF LICENSE -----------------------------------------
-vscode-mssql
+zycode-mssql
 Copyright (c) Microsoft Corporation
 All rights reserved.
 MIT License
@@ -2246,8 +2246,8 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-redhat-developer/vscode-java 1.21.0 - MIT
-https://github.com/redhat-developer/vscode-java
+redhat-developer/zycode-java 1.21.0 - MIT
+https://github.com/redhat-developer/zycode-java
 
 The MIT License (MIT)
 
@@ -2665,8 +2665,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 ---------------------------------------------------------
 
-trond-snekvik/vscode-rst 1.5.2 - MIT
-https://github.com/trond-snekvik/vscode-rst
+trond-snekvik/zycode-rst 1.5.2 - MIT
+https://github.com/trond-snekvik/zycode-rst
 
 The MIT License (MIT)
 
@@ -2773,8 +2773,8 @@ written authorization of the copyright holder.
 
 ---------------------------------------------------------
 
-vscode-codicons 0.0.14 - MIT and Creative Commons Attribution 4.0
-https://github.com/microsoft/vscode-codicons
+zycode-codicons 0.0.14 - MIT and Creative Commons Attribution 4.0
+https://github.com/microsoft/zycode-codicons
 
 Attribution 4.0 International
 
@@ -3175,8 +3175,8 @@ Creative Commons may be contacted at creativecommons.org.
 
 ---------------------------------------------------------
 
-vscode-logfile-highlighter 2.15.0 - MIT
-https://github.com/emilast/vscode-logfile-highlighter
+zycode-logfile-highlighter 2.15.0 - MIT
+https://github.com/emilast/zycode-logfile-highlighter
 
 The MIT License (MIT)
 
@@ -3203,8 +3203,8 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-vscode-swift 0.0.1 - MIT
-https://github.com/owensd/vscode-swift
+zycode-swift 0.0.1 - MIT
+https://github.com/owensd/zycode-swift
 
 The MIT License (MIT)
 
@@ -3230,8 +3230,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 ---------------------------------------------------------
 
-vscode-win32-app-container-tokens
-https://github.com/microsoft/vscode-win32-app-container-tokens
+zycode-win32-app-container-tokens
+https://github.com/microsoft/zycode-win32-app-container-tokens
 
 MIT License
 

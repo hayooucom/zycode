@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { JUPYTER_NOTEBOOK_MARKDOWN_SELECTOR } from './constants';
 import { basename, extname } from 'path';
 
@@ -42,21 +42,21 @@ const imageExtToMime: ReadonlyMap<string, string> = new Map<string, string>([
 	['.webp', MimeType.webp],
 ]);
 
-function getImageMimeType(uri: vscode.Uri): string | undefined {
+function getImageMimeType(uri: zycode.Uri): string | undefined {
 	return imageExtToMime.get(extname(uri.fsPath).toLowerCase());
 }
 
-class DropOrPasteEditProvider implements vscode.DocumentPasteEditProvider, vscode.DocumentDropEditProvider {
+class DropOrPasteEditProvider implements zycode.DocumentPasteEditProvider, zycode.DocumentDropEditProvider {
 
 	public readonly id = 'insertAttachment';
 
 	async provideDocumentPasteEdits(
-		document: vscode.TextDocument,
-		_ranges: readonly vscode.Range[],
-		dataTransfer: vscode.DataTransfer,
-		token: vscode.CancellationToken,
-	): Promise<vscode.DocumentPasteEdit | undefined> {
-		const enabled = vscode.workspace.getConfiguration('ipynb', document).get('pasteImagesAsAttachments.enabled', true);
+		document: zycode.TextDocument,
+		_ranges: readonly zycode.Range[],
+		dataTransfer: zycode.DataTransfer,
+		token: zycode.CancellationToken,
+	): Promise<zycode.DocumentPasteEdit | undefined> {
+		const enabled = zycode.workspace.getConfiguration('ipynb', document).get('pasteImagesAsAttachments.enabled', true);
 		if (!enabled) {
 			return;
 		}
@@ -66,35 +66,35 @@ class DropOrPasteEditProvider implements vscode.DocumentPasteEditProvider, vscod
 			return;
 		}
 
-		const pasteEdit = new vscode.DocumentPasteEdit(insert.insertText, vscode.l10n.t('Insert Image as Attachment'));
+		const pasteEdit = new zycode.DocumentPasteEdit(insert.insertText, zycode.l10n.t('Insert Image as Attachment'));
 		pasteEdit.yieldTo = [{ mimeType: MimeType.plain }];
 		pasteEdit.additionalEdit = insert.additionalEdit;
 		return pasteEdit;
 	}
 
 	async provideDocumentDropEdits(
-		document: vscode.TextDocument,
-		_position: vscode.Position,
-		dataTransfer: vscode.DataTransfer,
-		token: vscode.CancellationToken,
-	): Promise<vscode.DocumentDropEdit | undefined> {
+		document: zycode.TextDocument,
+		_position: zycode.Position,
+		dataTransfer: zycode.DataTransfer,
+		token: zycode.CancellationToken,
+	): Promise<zycode.DocumentDropEdit | undefined> {
 		const insert = await this.createInsertImageAttachmentEdit(document, dataTransfer, token);
 		if (!insert) {
 			return;
 		}
 
-		const dropEdit = new vscode.DocumentDropEdit(insert.insertText);
+		const dropEdit = new zycode.DocumentDropEdit(insert.insertText);
 		dropEdit.yieldTo = [{ mimeType: MimeType.plain }];
 		dropEdit.additionalEdit = insert.additionalEdit;
-		dropEdit.label = vscode.l10n.t('Insert Image as Attachment');
+		dropEdit.label = zycode.l10n.t('Insert Image as Attachment');
 		return dropEdit;
 	}
 
 	private async createInsertImageAttachmentEdit(
-		document: vscode.TextDocument,
-		dataTransfer: vscode.DataTransfer,
-		token: vscode.CancellationToken,
-	): Promise<{ insertText: vscode.SnippetString; additionalEdit: vscode.WorkspaceEdit } | undefined> {
+		document: zycode.TextDocument,
+		dataTransfer: zycode.DataTransfer,
+		token: zycode.CancellationToken,
+	): Promise<{ insertText: zycode.SnippetString; additionalEdit: zycode.WorkspaceEdit } | undefined> {
 		const imageData = await getDroppedImageData(dataTransfer, token);
 		if (!imageData.length || token.isCancellationRequested) {
 			return;
@@ -112,13 +112,13 @@ class DropOrPasteEditProvider implements vscode.DocumentPasteEditProvider, vscod
 		}
 
 		// build edits
-		const additionalEdit = new vscode.WorkspaceEdit();
-		const nbEdit = vscode.NotebookEdit.updateCellMetadata(currentCell.index, newAttachment.metadata);
+		const additionalEdit = new zycode.WorkspaceEdit();
+		const nbEdit = zycode.NotebookEdit.updateCellMetadata(currentCell.index, newAttachment.metadata);
 		const notebookUri = currentCell.notebook.uri;
 		additionalEdit.set(notebookUri, [nbEdit]);
 
 		// create a snippet for paste
-		const insertText = new vscode.SnippetString();
+		const insertText = new zycode.SnippetString();
 		newAttachment.filenames.forEach((filename, i) => {
 			insertText.appendText('![');
 			insertText.appendPlaceholder(`${filename}`);
@@ -133,8 +133,8 @@ class DropOrPasteEditProvider implements vscode.DocumentPasteEditProvider, vscod
 }
 
 async function getDroppedImageData(
-	dataTransfer: vscode.DataTransfer,
-	token: vscode.CancellationToken,
+	dataTransfer: zycode.DataTransfer,
+	token: zycode.CancellationToken,
 ): Promise<readonly ImageAttachmentData[]> {
 
 	// Prefer using image data in the clipboard
@@ -162,10 +162,10 @@ async function getDroppedImageData(
 	}
 
 	if (urlList) {
-		const uris: vscode.Uri[] = [];
+		const uris: zycode.Uri[] = [];
 		for (const resource of urlList.split(/\r?\n/g)) {
 			try {
-				uris.push(vscode.Uri.parse(resource));
+				uris.push(zycode.Uri.parse(resource));
 			} catch {
 				// noop
 			}
@@ -177,7 +177,7 @@ async function getDroppedImageData(
 				return;
 			}
 
-			const data = await vscode.workspace.fs.readFile(uri);
+			const data = await zycode.workspace.fs.readFile(uri);
 			return { fileName: basename(uri.fsPath), mimeType, data };
 		}));
 
@@ -191,8 +191,8 @@ function coalesce<T>(array: ReadonlyArray<T | undefined | null>): T[] {
 	return <T[]>array.filter(e => !!e);
 }
 
-function getCellFromCellDocument(cellDocument: vscode.TextDocument): vscode.NotebookCell | undefined {
-	for (const notebook of vscode.workspace.notebookDocuments) {
+function getCellFromCellDocument(cellDocument: zycode.TextDocument): zycode.NotebookCell | undefined {
+	for (const notebook of zycode.workspace.notebookDocuments) {
 		if (notebook.uri.path === cellDocument.uri.path) {
 			for (const cell of notebook.getCells()) {
 				if (cell.document === cellDocument) {
@@ -205,7 +205,7 @@ function getCellFromCellDocument(cellDocument: vscode.TextDocument): vscode.Note
 }
 
 /**
- *  Taken from https://github.com/microsoft/vscode/blob/743b016722db90df977feecde0a4b3b4f58c2a4c/src/vs/base/common/buffer.ts#L350-L387
+ *  Taken from https://github.com/microsoft/zycode/blob/743b016722db90df977feecde0a4b3b4f58c2a4c/src/vs/base/common/buffer.ts#L350-L387
  */
 function encodeBase64(buffer: Uint8Array, padded = true, urlSafe = false) {
 	const base64Alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -253,7 +253,7 @@ interface ImageAttachmentData {
 }
 
 function buildAttachment(
-	cell: vscode.NotebookCell,
+	cell: zycode.NotebookCell,
 	attachments: readonly ImageAttachmentData[],
 ): { metadata: { [key: string]: any }; filenames: string[] } | undefined {
 	const cellMetadata = { ...cell.metadata };
@@ -295,17 +295,17 @@ function buildAttachment(
 	};
 }
 
-export function notebookImagePasteSetup(): vscode.Disposable {
+export function notebookImagePasteSetup(): zycode.Disposable {
 	const provider = new DropOrPasteEditProvider();
-	return vscode.Disposable.from(
-		vscode.languages.registerDocumentPasteEditProvider(JUPYTER_NOTEBOOK_MARKDOWN_SELECTOR, provider, {
+	return zycode.Disposable.from(
+		zycode.languages.registerDocumentPasteEditProvider(JUPYTER_NOTEBOOK_MARKDOWN_SELECTOR, provider, {
 			id: provider.id,
 			pasteMimeTypes: [
 				MimeType.png,
 				MimeType.uriList,
 			],
 		}),
-		vscode.languages.registerDocumentDropEditProvider(JUPYTER_NOTEBOOK_MARKDOWN_SELECTOR, provider, {
+		zycode.languages.registerDocumentDropEditProvider(JUPYTER_NOTEBOOK_MARKDOWN_SELECTOR, provider, {
 			id: provider.id,
 			dropMimeTypes: [
 				...Object.values(imageExtToMime),

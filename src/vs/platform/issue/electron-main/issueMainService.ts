@@ -73,7 +73,7 @@ export class IssueMainService implements IIssueMainService {
 	//#region Register Listeners
 
 	private registerListeners(): void {
-		validatedIpcMain.on('vscode:listProcesses', async event => {
+		validatedIpcMain.on('zycode:listProcesses', async event => {
 			const processes = [];
 
 			try {
@@ -99,10 +99,10 @@ export class IssueMainService implements IIssueMainService {
 				this.logService.error(`Listing processes failed: ${e}`);
 			}
 
-			this.safeSend(event, 'vscode:listProcessesResponse', processes);
+			this.safeSend(event, 'zycode:listProcessesResponse', processes);
 		});
 
-		validatedIpcMain.on('vscode:workbenchCommand', (_: unknown, commandInfo: { id: any; from: any; args: any }) => {
+		validatedIpcMain.on('zycode:workbenchCommand', (_: unknown, commandInfo: { id: any; from: any; args: any }) => {
 			const { id, from, args } = commandInfo;
 
 			let parentWindow: BrowserWindow | null;
@@ -115,14 +115,14 @@ export class IssueMainService implements IIssueMainService {
 					throw new Error(`Unexpected command source: ${from}`);
 			}
 
-			parentWindow?.webContents.send('vscode:runAction', { id, from, args });
+			parentWindow?.webContents.send('zycode:runAction', { id, from, args });
 		});
 
-		validatedIpcMain.on('vscode:closeProcessExplorer', event => {
+		validatedIpcMain.on('zycode:closeProcessExplorer', event => {
 			this.processExplorerWindow?.close();
 		});
 
-		validatedIpcMain.on('vscode:pidToNameRequest', async event => {
+		validatedIpcMain.on('zycode:pidToNameRequest', async event => {
 			const mainProcessInfo = await this.diagnosticsMainService.getMainDiagnostics();
 
 			const pidToNames: [number, string][] = [];
@@ -134,7 +134,7 @@ export class IssueMainService implements IIssueMainService {
 				pidToNames.push([pid, name]);
 			}
 
-			this.safeSend(event, 'vscode:pidToNameResponse', pidToNames);
+			this.safeSend(event, 'zycode:pidToNameResponse', pidToNames);
 		});
 	}
 
@@ -373,11 +373,11 @@ export class IssueMainService implements IIssueMainService {
 		if (!window) {
 			throw new Error('Window not found');
 		}
-		const replyChannel = `vscode:triggerIssueUriRequestHandlerResponse${window.id}`;
+		const replyChannel = `zycode:triggerIssueUriRequestHandlerResponse${window.id}`;
 		return Promises.withAsyncBody<URI>(async (resolve, reject) => {
 
 			const cts = new CancellationTokenSource();
-			window.sendWhenReady('vscode:triggerIssueUriRequestHandler', cts.token, { replyChannel, extensionId });
+			window.sendWhenReady('zycode:triggerIssueUriRequestHandler', cts.token, { replyChannel, extensionId });
 
 			validatedIpcMain.once(replyChannel, (_: unknown, data: string) => {
 				resolve(URI.parse(data));
@@ -432,7 +432,7 @@ export class IssueMainService implements IIssueMainService {
 			backgroundColor: options.backgroundColor || IssueMainService.DEFAULT_BACKGROUND_COLOR,
 			webPreferences: {
 				preload: FileAccess.asFileUri('vs/base/parts/sandbox/electron-sandbox/preload.js').fsPath,
-				additionalArguments: [`--vscode-window-config=${ipcObjectUrl.resource.toString()}`],
+				additionalArguments: [`--zycode-window-config=${ipcObjectUrl.resource.toString()}`],
 				v8CacheOptions: this.environmentMainService.useCodeCache ? 'bypassHeatCheck' : 'none',
 				enableWebSQL: false,
 				spellcheck: false,

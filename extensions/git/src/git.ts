@@ -10,16 +10,16 @@ import * as cp from 'child_process';
 import { fileURLToPath } from 'url';
 import * as which from 'which';
 import { EventEmitter } from 'events';
-import * as iconv from '@vscode/iconv-lite-umd';
+import * as iconv from '@zycode/iconv-lite-umd';
 import * as filetype from 'file-type';
 import { assign, groupBy, IDisposable, toDisposable, dispose, mkdirp, readBytes, detectUnicodeEncoding, Encoding, onceEvent, splitInChunks, Limiter, Versions, isWindows, pathEquals, isMacintosh, isDescendant } from './util';
-import { CancellationError, CancellationToken, ConfigurationChangeEvent, LogOutputChannel, Progress, Uri, workspace } from 'vscode';
+import { CancellationError, CancellationToken, ConfigurationChangeEvent, LogOutputChannel, Progress, Uri, workspace } from 'zycode';
 import { detectEncoding } from './encoding';
 import { Ref, RefType, Branch, Remote, ForcePushMode, GitErrorCodes, LogOptions, Change, Status, CommitOptions, RefQuery, InitOptions } from './api/git';
 import * as byline from 'byline';
 import { StringDecoder } from 'string_decoder';
 
-// https://github.com/microsoft/vscode/issues/65693
+// https://github.com/microsoft/zycode/issues/65693
 const MAX_CLI_LENGTH = 30000;
 
 export interface IGit {
@@ -348,7 +348,7 @@ function getGitErrorCode(stderr: string): string | undefined {
 	return undefined;
 }
 
-// https://github.com/microsoft/vscode/issues/89373
+// https://github.com/microsoft/zycode/issues/89373
 // https://github.com/git-for-windows/git/issues/2478
 function sanitizePath(path: string): string {
 	return path.replace(/^([a-z]):\\/i, (_, letter) => `${letter.toUpperCase()}:\\`);
@@ -2309,7 +2309,7 @@ export class Repository {
 		}
 
 		for (const remote of remotes) {
-			// https://github.com/microsoft/vscode/issues/45271
+			// https://github.com/microsoft/zycode/issues/45271
 			remote.isReadOnly = remote.pushUrl === undefined || remote.pushUrl === 'no_push';
 		}
 

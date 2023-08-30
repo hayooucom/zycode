@@ -424,7 +424,7 @@ suite('SnippetsService', function () {
 		assert.strictEqual(result.suggestions.length, 1);
 	});
 
-	test('issue #61296: VS code freezes when editing CSS file with emoji', async function () {
+	test('issue #61296: ZY code freezes when editing CSS file with emoji', async function () {
 		const languageConfigurationService = new TestLanguageConfigurationService();
 		disposables.add(languageConfigurationService.register('fooLang', {
 			wordPattern: /(#?-?\d*\.\d\w*%?)|(::?[\w-]*(?=[^,{;]*[,{]))|(([@#.!])?[\w-?]+%?|[@#!.])/g

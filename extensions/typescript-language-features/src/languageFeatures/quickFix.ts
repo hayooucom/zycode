@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Command, CommandManager } from '../commands/commandManager';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { TelemetryReporter } from '../logging/telemetry';
@@ -20,8 +20,8 @@ import { applyCodeActionCommands, getEditForCodeAction } from './util/codeAction
 import { conditionalRegistration, requireSomeCapability } from './util/dependentRegistration';
 
 type ApplyCodeActionCommand_args = {
-	readonly document: vscode.TextDocument;
-	readonly diagnostic: vscode.Diagnostic;
+	readonly document: zycode.TextDocument;
+	readonly diagnostic: zycode.Diagnostic;
 	readonly action: Proto.CodeFixAction;
 	readonly followupAction?: Command;
 };
@@ -30,11 +30,11 @@ class EditorChatFollowUp implements Command {
 
 	id: string = '_typescript.quickFix.editorChatFollowUp';
 
-	constructor(private readonly prompt: string, private readonly document: vscode.TextDocument, private readonly range: vscode.Range, private readonly client: ITypeScriptServiceClient) {
+	constructor(private readonly prompt: string, private readonly document: zycode.TextDocument, private readonly range: zycode.Range, private readonly client: ITypeScriptServiceClient) {
 	}
 
 	async execute() {
-		const findScopeEndLineFromNavTree = (startLine: number, navigationTree: Proto.NavigationTree[]): vscode.Range | undefined => {
+		const findScopeEndLineFromNavTree = (startLine: number, navigationTree: Proto.NavigationTree[]): zycode.Range | undefined => {
 			for (const node of navigationTree) {
 				const range = typeConverters.Range.fromTextSpan(node.spans[0]);
 				if (startLine === range.start.line) {
@@ -58,7 +58,7 @@ class EditorChatFollowUp implements Command {
 		if (!enclosingRange) {
 			return;
 		}
-		await vscode.commands.executeCommand('vscode.editorChat.start', { initialRange: enclosingRange, message: this.prompt, autoSend: true });
+		await zycode.commands.executeCommand('zycode.editorChat.start', { initialRange: enclosingRange, message: this.prompt, autoSend: true });
 	}
 }
 
@@ -130,24 +130,24 @@ class ApplyFixAllCodeAction implements Command {
  * Unique set of diagnostics keyed on diagnostic range and error code.
  */
 class DiagnosticsSet {
-	public static from(diagnostics: vscode.Diagnostic[]) {
-		const values = new Map<string, vscode.Diagnostic>();
+	public static from(diagnostics: zycode.Diagnostic[]) {
+		const values = new Map<string, zycode.Diagnostic>();
 		for (const diagnostic of diagnostics) {
 			values.set(DiagnosticsSet.key(diagnostic), diagnostic);
 		}
 		return new DiagnosticsSet(values);
 	}
 
-	private static key(diagnostic: vscode.Diagnostic) {
+	private static key(diagnostic: zycode.Diagnostic) {
 		const { start, end } = diagnostic.range;
 		return `${diagnostic.code}-${start.line},${start.character}-${end.line},${end.character}`;
 	}
 
 	private constructor(
-		private readonly _values: Map<string, vscode.Diagnostic>
+		private readonly _values: Map<string, zycode.Diagnostic>
 	) { }
 
-	public get values(): Iterable<vscode.Diagnostic> {
+	public get values(): Iterable<zycode.Diagnostic> {
 		return this._values.values();
 	}
 
@@ -156,11 +156,11 @@ class DiagnosticsSet {
 	}
 }
 
-class VsCodeCodeAction extends vscode.CodeAction {
+class VsCodeCodeAction extends zycode.CodeAction {
 	constructor(
 		public readonly tsAction: Proto.CodeFixAction,
 		title: string,
-		kind: vscode.CodeActionKind
+		kind: zycode.CodeActionKind
 	) {
 		super(title, kind);
 	}
@@ -171,7 +171,7 @@ class VsCodeFixAllCodeAction extends VsCodeCodeAction {
 		tsAction: Proto.CodeFixAction,
 		public readonly file: string,
 		title: string,
-		kind: vscode.CodeActionKind
+		kind: zycode.CodeActionKind
 	) {
 		super(tsAction, title, kind);
 	}
@@ -226,7 +226,7 @@ class SupportedCodeActionProvider {
 		private readonly client: ITypeScriptServiceClient
 	) { }
 
-	public async getFixableDiagnosticsForContext(context: vscode.CodeActionContext): Promise<DiagnosticsSet> {
+	public async getFixableDiagnosticsForContext(context: zycode.CodeActionContext): Promise<DiagnosticsSet> {
 		const fixableCodes = await this.fixableDiagnosticCodes;
 		return DiagnosticsSet.from(
 			context.diagnostics.filter(diagnostic => typeof diagnostic.code !== 'undefined' && fixableCodes.has(diagnostic.code + '')));
@@ -240,10 +240,10 @@ class SupportedCodeActionProvider {
 	}
 }
 
-class TypeScriptQuickFixProvider implements vscode.CodeActionProvider<VsCodeCodeAction> {
+class TypeScriptQuickFixProvider implements zycode.CodeActionProvider<VsCodeCodeAction> {
 
-	public static readonly metadata: vscode.CodeActionProviderMetadata = {
-		providedCodeActionKinds: [vscode.CodeActionKind.QuickFix]
+	public static readonly metadata: zycode.CodeActionProviderMetadata = {
+		providedCodeActionKinds: [zycode.CodeActionKind.QuickFix]
 	};
 
 	private readonly supportedCodeActionProvider: SupportedCodeActionProvider;
@@ -262,10 +262,10 @@ class TypeScriptQuickFixProvider implements vscode.CodeActionProvider<VsCodeCode
 	}
 
 	public async provideCodeActions(
-		document: vscode.TextDocument,
-		_range: vscode.Range,
-		context: vscode.CodeActionContext,
-		token: vscode.CancellationToken
+		document: zycode.TextDocument,
+		_range: zycode.Range,
+		context: zycode.CodeActionContext,
+		token: zycode.CancellationToken
 	): Promise<VsCodeCodeAction[] | undefined> {
 		const file = this.client.toOpenTsFilePath(document);
 		if (!file) {
@@ -301,7 +301,7 @@ class TypeScriptQuickFixProvider implements vscode.CodeActionProvider<VsCodeCode
 		return allActions;
 	}
 
-	public async resolveCodeAction(codeAction: VsCodeCodeAction, token: vscode.CancellationToken): Promise<VsCodeCodeAction> {
+	public async resolveCodeAction(codeAction: VsCodeCodeAction, token: zycode.CancellationToken): Promise<VsCodeCodeAction> {
 		if (!(codeAction instanceof VsCodeFixAllCodeAction) || !codeAction.tsAction.fixId) {
 			return codeAction;
 		}
@@ -324,11 +324,11 @@ class TypeScriptQuickFixProvider implements vscode.CodeActionProvider<VsCodeCode
 	}
 
 	private async getFixesForDiagnostic(
-		document: vscode.TextDocument,
+		document: zycode.TextDocument,
 		file: string,
-		diagnostic: vscode.Diagnostic,
+		diagnostic: zycode.Diagnostic,
 		results: CodeActionSet,
-		token: vscode.CancellationToken,
+		token: zycode.CancellationToken,
 	): Promise<CodeActionSet> {
 		const args: Proto.CodeFixRequestArgs = {
 			...typeConverters.Range.toFileRangeRequestArgs(file, diagnostic.range),
@@ -347,9 +347,9 @@ class TypeScriptQuickFixProvider implements vscode.CodeActionProvider<VsCodeCode
 
 	private addAllFixesForTsCodeAction(
 		results: CodeActionSet,
-		document: vscode.TextDocument,
+		document: zycode.TextDocument,
 		file: string,
-		diagnostic: vscode.Diagnostic,
+		diagnostic: zycode.Diagnostic,
 		tsAction: Proto.CodeFixAction
 	): CodeActionSet {
 		results.addAction(this.getSingleFixForTsCodeAction(document, diagnostic, tsAction));
@@ -358,16 +358,16 @@ class TypeScriptQuickFixProvider implements vscode.CodeActionProvider<VsCodeCode
 	}
 
 	private getSingleFixForTsCodeAction(
-		document: vscode.TextDocument,
-		diagnostic: vscode.Diagnostic,
+		document: zycode.TextDocument,
+		diagnostic: zycode.Diagnostic,
 		tsAction: Proto.CodeFixAction
 	): VsCodeCodeAction {
-		const aiQuickFixEnabled = vscode.workspace.getConfiguration('typescript').get('experimental.aiQuickFix');
+		const aiQuickFixEnabled = zycode.workspace.getConfiguration('typescript').get('experimental.aiQuickFix');
 		let followupAction: Command | undefined;
 		if (aiQuickFixEnabled && tsAction.fixName === fixNames.classIncorrectlyImplementsInterface) {
 			followupAction = new EditorChatFollowUp('Implement the class using the interface', document, diagnostic.range, this.client);
 		}
-		const codeAction = new VsCodeCodeAction(tsAction, tsAction.description, vscode.CodeActionKind.QuickFix);
+		const codeAction = new VsCodeCodeAction(tsAction, tsAction.description, zycode.CodeActionKind.QuickFix);
 		codeAction.edit = getEditForCodeAction(this.client, tsAction);
 		codeAction.diagnostics = [diagnostic];
 		codeAction.command = {
@@ -380,9 +380,9 @@ class TypeScriptQuickFixProvider implements vscode.CodeActionProvider<VsCodeCode
 
 	private addFixAllForTsCodeAction(
 		results: CodeActionSet,
-		resource: vscode.Uri,
+		resource: zycode.Uri,
 		file: string,
-		diagnostic: vscode.Diagnostic,
+		diagnostic: zycode.Diagnostic,
 		tsAction: Proto.CodeFixAction,
 	): CodeActionSet {
 		if (!tsAction.fixId || results.hasFixAllAction(tsAction.fixId)) {
@@ -403,8 +403,8 @@ class TypeScriptQuickFixProvider implements vscode.CodeActionProvider<VsCodeCode
 		const action = new VsCodeFixAllCodeAction(
 			tsAction,
 			file,
-			tsAction.fixAllDescription || vscode.l10n.t("{0} (Fix all in file)", tsAction.description),
-			vscode.CodeActionKind.QuickFix);
+			tsAction.fixAllDescription || zycode.l10n.t("{0} (Fix all in file)", tsAction.description),
+			zycode.CodeActionKind.QuickFix);
 
 		action.diagnostics = [diagnostic];
 		action.command = {
@@ -491,7 +491,7 @@ export function register(
 	return conditionalRegistration([
 		requireSomeCapability(client, ClientCapability.Semantic),
 	], () => {
-		return vscode.languages.registerCodeActionsProvider(selector.semantic,
+		return zycode.languages.registerCodeActionsProvider(selector.semantic,
 			new TypeScriptQuickFixProvider(client, fileConfigurationManager, commandManager, diagnosticsManager, telemetryReporter),
 			TypeScriptQuickFixProvider.metadata);
 	});

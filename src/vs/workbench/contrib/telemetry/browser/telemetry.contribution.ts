@@ -145,7 +145,7 @@ export class TelemetryContribution extends Disposable implements IWorkbenchContr
 				comment: 'Track when a settings file was read, for example from an editor.';
 			};
 
-			this.telemetryService.publicLog2<{ settingsType: string }, SettingsReadClassification>('settingsRead', { settingsType }); // Do not log read to user settings.json and .vscode folder as a fileGet event as it ruins our JSON usage data
+			this.telemetryService.publicLog2<{ settingsType: string }, SettingsReadClassification>('settingsRead', { settingsType }); // Do not log read to user settings.json and .zycode folder as a fileGet event as it ruins our JSON usage data
 		} else {
 			type FileGetClassification = {
 				owner: 'bpasero';
@@ -164,7 +164,7 @@ export class TelemetryContribution extends Disposable implements IWorkbenchContr
 				settingsType: { classification: 'SystemMetaData'; purpose: 'FeatureInsight'; comment: 'The type of the settings file that was written to.' };
 				comment: 'Track when a settings file was written to, for example from an editor.';
 			};
-			this.telemetryService.publicLog2<{ settingsType: string }, SettingsWrittenClassification>('settingsWritten', { settingsType }); // Do not log write to user settings.json and .vscode folder as a filePUT event as it ruins our JSON usage data
+			this.telemetryService.publicLog2<{ settingsType: string }, SettingsWrittenClassification>('settingsWritten', { settingsType }); // Do not log write to user settings.json and .zycode folder as a filePUT event as it ruins our JSON usage data
 		} else {
 			type FilePutClassfication = {
 				owner: 'bpasero';
@@ -197,10 +197,10 @@ export class TelemetryContribution extends Disposable implements IWorkbenchContr
 		// Check for workspace settings file
 		const folders = this.contextService.getWorkspace().folders;
 		for (const folder of folders) {
-			if (isEqualOrParent(resource, folder.toResource('.vscode'))) {
+			if (isEqualOrParent(resource, folder.toResource('.zycode'))) {
 				const filename = basename(resource);
 				if (TelemetryContribution.ALLOWLIST_WORKSPACE_JSON.indexOf(filename) > -1) {
-					return `.vscode/${filename}`;
+					return `.zycode/${filename}`;
 				}
 			}
 		}

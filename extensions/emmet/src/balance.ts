@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { getHtmlFlatNode, offsetRangeToSelection, validate } from './util';
 import { getRootNode } from './parseDocument';
 import { HtmlNode as HtmlFlatNode } from 'EmmetFlatNode';
 
-let balanceOutStack: Array<readonly vscode.Selection[]> = [];
-let lastBalancedSelections: readonly vscode.Selection[] = [];
+let balanceOutStack: Array<readonly zycode.Selection[]> = [];
+let lastBalancedSelections: readonly zycode.Selection[] = [];
 
 export function balanceOut() {
 	balance(true);
@@ -20,10 +20,10 @@ export function balanceIn() {
 }
 
 function balance(out: boolean) {
-	if (!validate(false) || !vscode.window.activeTextEditor) {
+	if (!validate(false) || !zycode.window.activeTextEditor) {
 		return;
 	}
-	const editor = vscode.window.activeTextEditor;
+	const editor = zycode.window.activeTextEditor;
 	const document = editor.document;
 	const rootNode = <HtmlFlatNode>getRootNode(document, true);
 	if (!rootNode) {
@@ -31,7 +31,7 @@ function balance(out: boolean) {
 	}
 
 	const rangeFn = out ? getRangeToBalanceOut : getRangeToBalanceIn;
-	let newSelections: readonly vscode.Selection[] = editor.selections.map(selection => {
+	let newSelections: readonly zycode.Selection[] = editor.selections.map(selection => {
 		return rangeFn(document, rootNode, selection);
 	});
 
@@ -55,7 +55,7 @@ function balance(out: boolean) {
 	lastBalancedSelections = editor.selections;
 }
 
-function getRangeToBalanceOut(document: vscode.TextDocument, rootNode: HtmlFlatNode, selection: vscode.Selection): vscode.Selection {
+function getRangeToBalanceOut(document: zycode.TextDocument, rootNode: HtmlFlatNode, selection: zycode.Selection): zycode.Selection {
 	const offset = document.offsetAt(selection.start);
 	const nodeToBalance = getHtmlFlatNode(document.getText(), rootNode, offset, false);
 	if (!nodeToBalance) {
@@ -66,8 +66,8 @@ function getRangeToBalanceOut(document: vscode.TextDocument, rootNode: HtmlFlatN
 	}
 
 	// Set reverse direction if we were in the end tag
-	let innerSelection: vscode.Selection;
-	let outerSelection: vscode.Selection;
+	let innerSelection: zycode.Selection;
+	let outerSelection: zycode.Selection;
 	if (nodeToBalance.close.start <= offset && nodeToBalance.close.end > offset) {
 		innerSelection = offsetRangeToSelection(document, nodeToBalance.close.start, nodeToBalance.open.end);
 		outerSelection = offsetRangeToSelection(document, nodeToBalance.close.end, nodeToBalance.open.start);
@@ -86,7 +86,7 @@ function getRangeToBalanceOut(document: vscode.TextDocument, rootNode: HtmlFlatN
 	return selection;
 }
 
-function getRangeToBalanceIn(document: vscode.TextDocument, rootNode: HtmlFlatNode, selection: vscode.Selection): vscode.Selection {
+function getRangeToBalanceIn(document: zycode.TextDocument, rootNode: HtmlFlatNode, selection: zycode.Selection): zycode.Selection {
 	const offset = document.offsetAt(selection.start);
 	const nodeToBalance = getHtmlFlatNode(document.getText(), rootNode, offset, true);
 	if (!nodeToBalance) {
@@ -120,7 +120,7 @@ function getRangeToBalanceIn(document: vscode.TextDocument, rootNode: HtmlFlatNo
 	return offsetRangeToSelection(document, firstChild.start, firstChild.end);
 }
 
-function areSameSelections(a: readonly vscode.Selection[], b: readonly vscode.Selection[]): boolean {
+function areSameSelections(a: readonly zycode.Selection[], b: readonly zycode.Selection[]): boolean {
 	if (a.length !== b.length) {
 		return false;
 	}

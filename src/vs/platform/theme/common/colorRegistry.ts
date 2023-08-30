@@ -27,12 +27,12 @@ export interface ColorContribution {
 
 /**
  * Returns the css variable name for the given color identifier. Dots (`.`) are replaced with hyphens (`-`) and
- * everything is prefixed with `--vscode-`.
+ * everything is prefixed with `--zycode-`.
  *
- * @sample `editorSuggestWidget.background` is `--vscode-editorSuggestWidget-background`.
+ * @sample `editorSuggestWidget.background` is `--zycode-editorSuggestWidget-background`.
  */
 export function asCssVariableName(colorIdent: ColorIdentifier): string {
-	return `--vscode-${colorIdent.replace(/\./g, '-')}`;
+	return `--zycode-${colorIdent.replace(/\./g, '-')}`;
 }
 
 export function asCssVariable(color: ColorIdentifier): string {
@@ -674,7 +674,7 @@ export function resolveColorValue(colorValue: ColorValue | null, theme: IColorTh
 	return undefined;
 }
 
-export const workbenchColorsSchemaId = 'vscode://schemas/workbench-colors';
+export const workbenchColorsSchemaId = 'zycode://schemas/workbench-colors';
 
 const schemaRegistry = platform.Registry.as<IJSONContributionRegistry>(JSONExtensions.JSONContribution);
 schemaRegistry.registerSchema(workbenchColorsSchemaId, colorRegistry.getColorSchema());

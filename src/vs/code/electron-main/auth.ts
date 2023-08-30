@@ -179,7 +179,7 @@ export class ProxyAuthHandler extends Disposable {
 		// Compute a hash over the authentication info to be used
 		// with the credentials store to return the right credentials
 		// given the properties of the auth request
-		// (see https://github.com/microsoft/vscode/issues/109497)
+		// (see https://github.com/microsoft/zycode/issues/109497)
 		const authInfoHash = String(hash({ scheme: authInfo.scheme, host: authInfo.host, port: authInfo.port }));
 		const { storedUsername, storedPassword } = await this.getAndMigrateProxyCredentials(authInfoHash);
 
@@ -210,9 +210,9 @@ export class ProxyAuthHandler extends Disposable {
 			authInfo,
 			username: this.sessionCredentials?.username ?? storedUsername, // prefer to show already used username (if any) over stored
 			password: this.sessionCredentials?.password ?? storedPassword, // prefer to show already used password (if any) over stored
-			replyChannel: `vscode:proxyAuthResponse:${generateUuid()}`
+			replyChannel: `zycode:proxyAuthResponse:${generateUuid()}`
 		};
-		window.sendWhenReady('vscode:openProxyAuthenticationDialog', CancellationToken.None, payload);
+		window.sendWhenReady('zycode:openProxyAuthenticationDialog', CancellationToken.None, payload);
 		this.state = ProxyAuthState.LoginDialogShown;
 
 		// Handle reply

@@ -22,16 +22,16 @@
 }
 
 .monaco-editor-pane-placeholder .editor-placeholder-icon-container .codicon.codicon-error {
-	color: var(--vscode-editorError-foreground);
+	color: var(--zycode-editorError-foreground);
 }
 
 .monaco-editor-pane-placeholder .editor-placeholder-icon-container .codicon.codicon-warning {
-	color: var(--vscode-editorWarning-foreground);
+	color: var(--zycode-editorWarning-foreground);
 }
 
 .monaco-editor-pane-placeholder .editor-placeholder-icon-container .codicon.codicon-info,
 .monaco-editor-pane-placeholder .editor-placeholder-icon-container .codicon.codicon-workspace-untrusted {
-	color: var(--vscode-editorInfo-foreground);
+	color: var(--zycode-editorInfo-foreground);
 }
 
 .monaco-editor-pane-placeholder.max-height-200px .editor-placeholder-icon-container {

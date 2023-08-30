@@ -5,7 +5,7 @@
 
 import * as assert from 'assert';
 import 'mocha';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { snippetForFunctionCall } from '../../languageFeatures/util/snippetForFunctionCall';
 
 suite('typescript function call snippets', () => {
@@ -30,7 +30,7 @@ suite('typescript function call snippets', () => {
 	test('Should return insertText as-is if it is already a snippet', async () => {
 		assert.strictEqual(
 			snippetForFunctionCall(
-				{ label: 'abc', insertText: new vscode.SnippetString('bla()$0') },
+				{ label: 'abc', insertText: new zycode.SnippetString('bla()$0') },
 				[]
 			).snippet.value,
 			'bla()$0');
@@ -39,7 +39,7 @@ suite('typescript function call snippets', () => {
 	test('Should return insertText as-is if it is already a snippet', async () => {
 		assert.strictEqual(
 			snippetForFunctionCall(
-				{ label: 'abc', insertText: new vscode.SnippetString('bla()$0') },
+				{ label: 'abc', insertText: new zycode.SnippetString('bla()$0') },
 				[]
 			).snippet.value,
 			'bla()$0');
@@ -49,7 +49,7 @@ suite('typescript function call snippets', () => {
 		assert.strictEqual(
 			snippetForFunctionCall(
 				{ label: 'activate' },
-				[{ 'text': 'function', 'kind': 'keyword' }, { 'text': ' ', 'kind': 'space' }, { 'text': 'activate', 'kind': 'text' }, { 'text': '(', 'kind': 'punctuation' }, { 'text': 'context', 'kind': 'parameterName' }, { 'text': ':', 'kind': 'punctuation' }, { 'text': ' ', 'kind': 'space' }, { 'text': 'vscode', 'kind': 'aliasName' }, { 'text': '.', 'kind': 'punctuation' }, { 'text': 'ExtensionContext', 'kind': 'interfaceName' }, { 'text': ')', 'kind': 'punctuation' }, { 'text': ':', 'kind': 'punctuation' }, { 'text': ' ', 'kind': 'space' }, { 'text': 'void', 'kind': 'keyword' }]
+				[{ 'text': 'function', 'kind': 'keyword' }, { 'text': ' ', 'kind': 'space' }, { 'text': 'activate', 'kind': 'text' }, { 'text': '(', 'kind': 'punctuation' }, { 'text': 'context', 'kind': 'parameterName' }, { 'text': ':', 'kind': 'punctuation' }, { 'text': ' ', 'kind': 'space' }, { 'text': 'zycode', 'kind': 'aliasName' }, { 'text': '.', 'kind': 'punctuation' }, { 'text': 'ExtensionContext', 'kind': 'interfaceName' }, { 'text': ')', 'kind': 'punctuation' }, { 'text': ':', 'kind': 'punctuation' }, { 'text': ' ', 'kind': 'space' }, { 'text': 'void', 'kind': 'keyword' }]
 			).snippet.value,
 			'activate(${1:context})$0');
 	});

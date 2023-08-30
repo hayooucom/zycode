@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AuthenticationSession, authentication, window } from 'vscode';
+import { AuthenticationSession, authentication, window } from 'zycode';
 import { Agent, globalAgent } from 'https';
 import { graphql } from '@octokit/graphql/dist-types/types';
 import { Octokit } from '@octokit/rest';

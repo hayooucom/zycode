@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import * as vscode from 'vscode';
-import * as URI from 'vscode-uri';
+import * as zycode from 'zycode';
+import * as URI from 'zycode-uri';
 import { coalesce } from '../../util/arrays';
 import { getDocumentDir } from '../../util/document';
 import { mediaMimes } from '../../util/mimes';
@@ -60,9 +60,9 @@ const smartPasteRegexes = [
 ];
 
 export interface SkinnyTextDocument {
-	offsetAt(position: vscode.Position): number;
-	getText(range?: vscode.Range): string;
-	readonly uri: vscode.Uri;
+	offsetAt(position: zycode.Position): number;
+	getText(range?: zycode.Range): string;
+	readonly uri: zycode.Uri;
 }
 
 export enum PasteUrlAsFormattedLink {
@@ -71,32 +71,32 @@ export enum PasteUrlAsFormattedLink {
 	Never = 'never'
 }
 
-export function getPasteUrlAsFormattedLinkSetting(document: vscode.TextDocument): PasteUrlAsFormattedLink {
-	return vscode.workspace.getConfiguration('markdown', document).get<PasteUrlAsFormattedLink>('editor.pasteUrlAsFormattedLink.enabled', PasteUrlAsFormattedLink.Smart);
+export function getPasteUrlAsFormattedLinkSetting(document: zycode.TextDocument): PasteUrlAsFormattedLink {
+	return zycode.workspace.getConfiguration('markdown', document).get<PasteUrlAsFormattedLink>('editor.pasteUrlAsFormattedLink.enabled', PasteUrlAsFormattedLink.Smart);
 }
 
 export async function createEditAddingLinksForUriList(
 	document: SkinnyTextDocument,
-	ranges: readonly vscode.Range[],
+	ranges: readonly zycode.Range[],
 	urlList: string,
 	isExternalLink: boolean,
 	useSmartPaste: boolean,
-	token: vscode.CancellationToken,
-): Promise<{ additionalEdits: vscode.WorkspaceEdit; label: string; markdownLink: boolean } | undefined> {
+	token: zycode.CancellationToken,
+): Promise<{ additionalEdits: zycode.WorkspaceEdit; label: string; markdownLink: boolean } | undefined> {
 
 	if (ranges.length === 0) {
 		return;
 	}
-	const edits: vscode.SnippetTextEdit[] = [];
+	const edits: zycode.SnippetTextEdit[] = [];
 	let placeHolderValue: number = ranges.length;
 	let label: string = '';
 	let pasteAsMarkdownLink: boolean = true;
 	let markdownLink: boolean = true;
 
 	for (const range of ranges) {
-		const selectedRange: vscode.Range = new vscode.Range(
-			new vscode.Position(range.start.line, document.offsetAt(range.start)),
-			new vscode.Position(range.end.line, document.offsetAt(range.end))
+		const selectedRange: zycode.Range = new zycode.Range(
+			new zycode.Position(range.start.line, document.offsetAt(range.start)),
+			new zycode.Position(range.end.line, document.offsetAt(range.end))
 		);
 
 		if (useSmartPaste) {
@@ -111,17 +111,17 @@ export async function createEditAddingLinksForUriList(
 
 		pasteAsMarkdownLink = true;
 		placeHolderValue--;
-		edits.push(new vscode.SnippetTextEdit(range, snippet.snippet));
+		edits.push(new zycode.SnippetTextEdit(range, snippet.snippet));
 		label = snippet.label;
 	}
 
-	const additionalEdits = new vscode.WorkspaceEdit();
+	const additionalEdits = new zycode.WorkspaceEdit();
 	additionalEdits.set(document.uri, edits);
 
 	return { additionalEdits, label, markdownLink };
 }
 
-export function checkSmartPaste(document: SkinnyTextDocument, selectedRange: vscode.Range, range: vscode.Range): boolean {
+export function checkSmartPaste(document: SkinnyTextDocument, selectedRange: zycode.Range, range: zycode.Range): boolean {
 	if (selectedRange.isEmpty || /^[\s\n]*$/.test(document.getText(range)) || validateLink(document.getText(range)).isValid) {
 		return false;
 	}
@@ -147,26 +147,26 @@ export function validateLink(urlList: string): { isValid: boolean; cleanedUrlLis
 	let uri = undefined;
 	const trimmedUrlList = urlList?.trim(); //remove leading and trailing whitespace and new lines
 	try {
-		uri = vscode.Uri.parse(trimmedUrlList);
+		uri = zycode.Uri.parse(trimmedUrlList);
 	} catch (error) {
 		return { isValid: false, cleanedUrlList: urlList };
 	}
 	const splitUrlList = trimmedUrlList.split(' ').filter(item => item !== ''); //split on spaces and remove empty strings
 	if (uri) {
-		isValid = splitUrlList.length === 1 && !splitUrlList[0].includes('\n') && externalUriSchemes.includes(vscode.Uri.parse(splitUrlList[0]).scheme) && !!vscode.Uri.parse(splitUrlList[0]).authority;
+		isValid = splitUrlList.length === 1 && !splitUrlList[0].includes('\n') && externalUriSchemes.includes(zycode.Uri.parse(splitUrlList[0]).scheme) && !!zycode.Uri.parse(splitUrlList[0]).authority;
 	}
 	return { isValid, cleanedUrlList: splitUrlList[0] };
 }
 
-export async function tryGetUriListSnippet(document: SkinnyTextDocument, urlList: String, token: vscode.CancellationToken, title = '', placeHolderValue = 0, pasteAsMarkdownLink = true, isExternalLink = false): Promise<{ snippet: vscode.SnippetString; label: string } | undefined> {
+export async function tryGetUriListSnippet(document: SkinnyTextDocument, urlList: String, token: zycode.CancellationToken, title = '', placeHolderValue = 0, pasteAsMarkdownLink = true, isExternalLink = false): Promise<{ snippet: zycode.SnippetString; label: string } | undefined> {
 	if (token.isCancellationRequested) {
 		return undefined;
 	}
 	const uriStrings: string[] = [];
-	const uris: vscode.Uri[] = [];
+	const uris: zycode.Uri[] = [];
 	for (const resource of urlList.split(/\r?\n/g)) {
 		try {
-			uris.push(vscode.Uri.parse(resource));
+			uris.push(zycode.Uri.parse(resource));
 			uriStrings.push(resource);
 		} catch {
 			// noop
@@ -191,12 +191,12 @@ interface UriListSnippetOptions {
 }
 
 export function appendToLinkSnippet(
-	snippet: vscode.SnippetString,
+	snippet: zycode.SnippetString,
 	title: string,
 	uriString: string,
 	placeholderValue: number,
 	isExternalLink: boolean,
-): vscode.SnippetString {
+): zycode.SnippetString {
 	snippet.appendText('[');
 	snippet.appendPlaceholder(escapeBrackets(title) || 'Title', placeholderValue);
 	snippet.appendText(`](${escapeMarkdownLinkPath(uriString, isExternalLink)})`);
@@ -205,21 +205,21 @@ export function appendToLinkSnippet(
 
 export function createUriListSnippet(
 	document: SkinnyTextDocument,
-	uris: readonly vscode.Uri[],
+	uris: readonly zycode.Uri[],
 	uriStrings?: readonly string[],
 	title = '',
 	placeholderValue = 0,
 	pasteAsMarkdownLink = true,
 	isExternalLink = false,
 	options?: UriListSnippetOptions,
-): { snippet: vscode.SnippetString; label: string } | undefined {
+): { snippet: zycode.SnippetString; label: string } | undefined {
 	if (!uris.length) {
 		return;
 	}
 
 	const documentDir = getDocumentDir(document.uri);
 
-	let snippet = new vscode.SnippetString();
+	let snippet = new zycode.SnippetString();
 	let insertedLinkCount = 0;
 	let insertedImageCount = 0;
 	let insertedAudioVideoCount = 0;
@@ -272,20 +272,20 @@ export function createUriListSnippet(
 	let label: string;
 	if (insertedAudioVideoCount > 0) {
 		if (insertedLinkCount > 0) {
-			label = vscode.l10n.t('Insert Markdown Media and Links');
+			label = zycode.l10n.t('Insert Markdown Media and Links');
 		} else {
-			label = vscode.l10n.t('Insert Markdown Media');
+			label = zycode.l10n.t('Insert Markdown Media');
 		}
 	} else if (insertedImageCount > 0 && insertedLinkCount > 0) {
-		label = vscode.l10n.t('Insert Markdown Images and Links');
+		label = zycode.l10n.t('Insert Markdown Images and Links');
 	} else if (insertedImageCount > 0) {
 		label = insertedImageCount > 1
-			? vscode.l10n.t('Insert Markdown Images')
-			: vscode.l10n.t('Insert Markdown Image');
+			? zycode.l10n.t('Insert Markdown Images')
+			: zycode.l10n.t('Insert Markdown Image');
 	} else {
 		label = insertedLinkCount > 1
-			? vscode.l10n.t('Insert Markdown Links')
-			: vscode.l10n.t('Insert Markdown Link');
+			? zycode.l10n.t('Insert Markdown Links')
+			: zycode.l10n.t('Insert Markdown Link');
 	}
 
 	return { snippet, label };
@@ -297,17 +297,17 @@ export function createUriListSnippet(
  * This tries copying files outside of the workspace into the workspace.
  */
 export async function createEditForMediaFiles(
-	document: vscode.TextDocument,
-	dataTransfer: vscode.DataTransfer,
-	token: vscode.CancellationToken
-): Promise<{ snippet: vscode.SnippetString; label: string; additionalEdits: vscode.WorkspaceEdit } | undefined> {
+	document: zycode.TextDocument,
+	dataTransfer: zycode.DataTransfer,
+	token: zycode.CancellationToken
+): Promise<{ snippet: zycode.SnippetString; label: string; additionalEdits: zycode.WorkspaceEdit } | undefined> {
 	if (document.uri.scheme === Schemes.untitled) {
 		return;
 	}
 
 	interface FileEntry {
-		readonly uri: vscode.Uri;
-		readonly newFile?: { readonly contents: vscode.DataTransferFile; readonly overwrite: boolean };
+		readonly uri: zycode.Uri;
+		readonly newFile?: { readonly contents: zycode.DataTransferFile; readonly overwrite: boolean };
 	}
 
 	const pathGenerator = new NewFilePathGenerator();
@@ -323,7 +323,7 @@ export async function createEditForMediaFiles(
 
 		if (file.uri) {
 			// If the file is already in a workspace, we don't want to create a copy of it
-			const workspaceFolder = vscode.workspace.getWorkspaceFolder(file.uri);
+			const workspaceFolder = zycode.workspace.getWorkspaceFolder(file.uri);
 			if (workspaceFolder) {
 				return { uri: file.uri };
 			}
@@ -339,7 +339,7 @@ export async function createEditForMediaFiles(
 		return;
 	}
 
-	const workspaceEdit = new vscode.WorkspaceEdit();
+	const workspaceEdit = new zycode.WorkspaceEdit();
 	for (const entry of fileEntries) {
 		if (entry.newFile) {
 			workspaceEdit.createFile(entry.uri, {
@@ -361,7 +361,7 @@ export async function createEditForMediaFiles(
 	};
 }
 
-function getMdPath(dir: vscode.Uri | undefined, file: vscode.Uri) {
+function getMdPath(dir: zycode.Uri | undefined, file: zycode.Uri) {
 	if (dir && dir.scheme === file.scheme && dir.authority === file.authority) {
 		if (file.scheme === Schemes.file) {
 			// On windows, we must use the native `path.relative` to generate the relative path

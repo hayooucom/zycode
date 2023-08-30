@@ -14,8 +14,8 @@ import { ISandboxConfiguration } from 'vs/base/parts/sandbox/common/sandboxTypes
 let product: IProductConfiguration;
 
 // Native sandbox environment
-if (typeof globals.vscode !== 'undefined' && typeof globals.vscode.context !== 'undefined') {
-	const configuration: ISandboxConfiguration | undefined = globals.vscode.context.configuration();
+if (typeof globals.zycode !== 'undefined' && typeof globals.zycode.context !== 'undefined') {
+	const configuration: ISandboxConfiguration | undefined = globals.zycode.context.configuration();
 	if (configuration) {
 		product = configuration.product;
 	} else {
@@ -62,12 +62,12 @@ else {
 			nameShort: 'Code - OSS Dev',
 			nameLong: 'Code - OSS Dev',
 			applicationName: 'code-oss',
-			dataFolderName: '.vscode-oss',
+			dataFolderName: '.zycode-oss',
 			urlProtocol: 'code-oss',
-			reportIssueUrl: 'https://github.com/microsoft/vscode/issues/new',
+			reportIssueUrl: 'https://github.com/microsoft/zycode/issues/new',
 			licenseName: 'MIT',
-			licenseUrl: 'https://github.com/microsoft/vscode/blob/main/LICENSE.txt',
-			serverLicenseUrl: 'https://github.com/microsoft/vscode/blob/main/LICENSE.txt'
+			licenseUrl: 'https://github.com/microsoft/zycode/blob/main/LICENSE.txt',
+			serverLicenseUrl: 'https://github.com/microsoft/zycode/blob/main/LICENSE.txt'
 		});
 	}
 }

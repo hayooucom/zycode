@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import * as tas from 'vscode-tas-client';
+import * as zycode from 'zycode';
+import * as tas from 'zycode-tas-client';
 
 import { IExperimentationTelemetryReporter } from './experimentTelemetryReporter';
 
@@ -16,7 +16,7 @@ export class ExperimentationService {
 	private readonly _experimentationServicePromise: Promise<tas.IExperimentationService>;
 	private readonly _telemetryReporter: IExperimentationTelemetryReporter;
 
-	constructor(telemetryReporter: IExperimentationTelemetryReporter, id: string, version: string, globalState: vscode.Memento) {
+	constructor(telemetryReporter: IExperimentationTelemetryReporter, id: string, version: string, globalState: zycode.Memento) {
 		this._telemetryReporter = telemetryReporter;
 		this._experimentationServicePromise = createTasExperimentationService(this._telemetryReporter, id, version, globalState);
 	}
@@ -24,7 +24,7 @@ export class ExperimentationService {
 	public async getTreatmentVariable<K extends keyof ExperimentTypes>(name: K, defaultValue: ExperimentTypes[K]): Promise<ExperimentTypes[K]> {
 		const experimentationService = await this._experimentationServicePromise;
 		try {
-			const treatmentVariable = experimentationService.getTreatmentVariableAsync('vscode', name, /*checkCache*/ true) as Promise<ExperimentTypes[K]>;
+			const treatmentVariable = experimentationService.getTreatmentVariableAsync('zycode', name, /*checkCache*/ true) as Promise<ExperimentTypes[K]>;
 			return treatmentVariable;
 		} catch {
 			return defaultValue;
@@ -36,16 +36,16 @@ export async function createTasExperimentationService(
 	reporter: IExperimentationTelemetryReporter,
 	id: string,
 	version: string,
-	globalState: vscode.Memento): Promise<tas.IExperimentationService> {
+	globalState: zycode.Memento): Promise<tas.IExperimentationService> {
 	let targetPopulation: tas.TargetPopulation;
-	switch (vscode.env.uriScheme) {
-		case 'vscode':
+	switch (zycode.env.uriScheme) {
+		case 'zycode':
 			targetPopulation = tas.TargetPopulation.Public;
 			break;
-		case 'vscode-insiders':
+		case 'zycode-insiders':
 			targetPopulation = tas.TargetPopulation.Insiders;
 			break;
-		case 'vscode-exploration':
+		case 'zycode-exploration':
 			targetPopulation = tas.TargetPopulation.Internal;
 			break;
 		case 'code-oss':

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { IssueUriRequestHandler } from 'vscode';
+import type { IssueUriRequestHandler } from 'zycode';
 import { CancellationToken } from 'vs/base/common/cancellation';
 import { UriComponents } from 'vs/base/common/uri';
 import { ExtHostIssueReporterShape, IMainContext, MainContext, MainThreadIssueReporterShape } from 'vs/workbench/api/common/extHost.protocol';

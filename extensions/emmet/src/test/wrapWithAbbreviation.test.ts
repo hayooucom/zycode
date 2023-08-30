@@ -5,7 +5,7 @@
 
 import 'mocha';
 import * as assert from 'assert';
-import { Selection, workspace, ConfigurationTarget } from 'vscode';
+import { Selection, workspace, ConfigurationTarget } from 'zycode';
 import { withRandomFileEditor, closeAllEditors } from './testUtils';
 import { wrapWithAbbreviation } from '../abbreviationActions';
 
@@ -82,7 +82,7 @@ const wrapMultiLineAbbrExpected = `
 `;
 
 // technically a bug, but also a feature (requested behaviour)
-// https://github.com/microsoft/vscode/issues/78015
+// https://github.com/microsoft/zycode/issues/78015
 const wrapInlineElementExpectedFormatFalse = `
 	<ul class="nav main">
 		<h1>

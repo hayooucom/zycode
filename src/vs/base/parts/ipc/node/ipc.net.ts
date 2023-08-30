@@ -745,7 +745,7 @@ function unmask(buffer: VSBuffer, mask: number): void {
 }
 
 // Read this before there's any chance it is overwritten
-// Related to https://github.com/microsoft/vscode/issues/30624
+// Related to https://github.com/microsoft/zycode/issues/30624
 export const XDG_RUNTIME_DIR = <string | undefined>process.env['XDG_RUNTIME_DIR'];
 
 const safeIpcPathLengths: { [platform: number]: number } = {
@@ -758,13 +758,13 @@ export function createRandomIPCHandle(): string {
 
 	// Windows: use named pipe
 	if (process.platform === 'win32') {
-		return `\\\\.\\pipe\\vscode-ipc-${randomSuffix}-sock`;
+		return `\\\\.\\pipe\\zycode-ipc-${randomSuffix}-sock`;
 	}
 
 	// Mac & Unix: Use socket file
 	// Unix: Prefer XDG_RUNTIME_DIR over user data path
 	const basePath = process.platform !== 'darwin' && XDG_RUNTIME_DIR ? XDG_RUNTIME_DIR : tmpdir();
-	const result = join(basePath, `vscode-ipc-${randomSuffix}.sock`);
+	const result = join(basePath, `zycode-ipc-${randomSuffix}.sock`);
 
 	// Validate length
 	validateIPCHandleLength(result);
@@ -791,7 +791,7 @@ export function createStaticIPCHandle(directoryPath: string, type: string, versi
 
 	let result: string;
 	if (process.platform !== 'darwin' && XDG_RUNTIME_DIR && !process.env['VSCODE_PORTABLE']) {
-		result = join(XDG_RUNTIME_DIR, `vscode-${scopeForSocket}-${versionForSocket}-${typeForSocket}.sock`);
+		result = join(XDG_RUNTIME_DIR, `zycode-${scopeForSocket}-${versionForSocket}-${typeForSocket}.sock`);
 	} else {
 		result = join(directoryPath, `${versionForSocket}-${typeForSocket}.sock`);
 	}

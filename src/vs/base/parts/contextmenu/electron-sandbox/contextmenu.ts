@@ -12,7 +12,7 @@ export function popup(items: IContextMenuItem[], options?: IPopupOptions, onHide
 	const processedItems: IContextMenuItem[] = [];
 
 	const contextMenuId = contextMenuIdPool++;
-	const onClickChannel = `vscode:onContextMenu${contextMenuId}`;
+	const onClickChannel = `zycode:onContextMenu${contextMenuId}`;
 	const onClickChannelHandler = (event: unknown, itemId: number, context: IContextMenuEvent) => {
 		const item = processedItems[itemId];
 		item.click?.(context);

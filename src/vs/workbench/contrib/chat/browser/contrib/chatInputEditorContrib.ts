@@ -278,7 +278,7 @@ interface SlashCommandYieldTo {
 	command: string;
 }
 
-// Adapted from https://github.com/microsoft/vscode/blob/ca2c1636f87ea4705f32345c2e348e815996e129/src/vs/editor/contrib/dropOrPasteInto/browser/edit.ts#L31-L99
+// Adapted from https://github.com/microsoft/zycode/blob/ca2c1636f87ea4705f32345c2e348e815996e129/src/vs/editor/contrib/dropOrPasteInto/browser/edit.ts#L31-L99
 function sortSlashCommandsByYieldTo<T extends {
 	readonly command: string;
 	readonly yieldsTo?: ReadonlyArray<SlashCommandYieldTo>;

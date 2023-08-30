@@ -257,7 +257,7 @@ export interface IRelaxedExtensionManifest {
 	displayName?: string;
 	publisher: string;
 	version: string;
-	engines: { readonly vscode: string };
+	engines: { readonly zycode: string };
 	description?: string;
 	main?: string;
 	browser?: string;

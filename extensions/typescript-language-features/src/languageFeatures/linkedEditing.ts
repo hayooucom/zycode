@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { API } from '../tsServer/api';
 import * as typeConverters from '../typeConverters';
 import { ClientCapability, ITypeScriptServiceClient } from '../typescriptService';
 import { conditionalRegistration, requireMinVersion, requireSomeCapability } from './util/dependentRegistration';
 
-class LinkedEditingSupport implements vscode.LinkedEditingRangeProvider {
+class LinkedEditingSupport implements zycode.LinkedEditingRangeProvider {
 
 	public static readonly minVersion = API.v510;
 
@@ -18,7 +18,7 @@ class LinkedEditingSupport implements vscode.LinkedEditingRangeProvider {
 		private readonly client: ITypeScriptServiceClient
 	) { }
 
-	async provideLinkedEditingRanges(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Promise<vscode.LinkedEditingRanges | undefined> {
+	async provideLinkedEditingRanges(document: zycode.TextDocument, position: zycode.Position, token: zycode.CancellationToken): Promise<zycode.LinkedEditingRanges | undefined> {
 		const filepath = this.client.toOpenTsFilePath(document);
 		if (!filepath) {
 			return undefined;
@@ -31,7 +31,7 @@ class LinkedEditingSupport implements vscode.LinkedEditingRangeProvider {
 		}
 
 		const wordPattern = response.body.wordPattern ? new RegExp(response.body.wordPattern) : undefined;
-		return new vscode.LinkedEditingRanges(response.body.ranges.map(range => typeConverters.Range.fromTextSpan(range)), wordPattern);
+		return new zycode.LinkedEditingRanges(response.body.ranges.map(range => typeConverters.Range.fromTextSpan(range)), wordPattern);
 	}
 }
 
@@ -43,7 +43,7 @@ export function register(
 		requireMinVersion(client, LinkedEditingSupport.minVersion),
 		requireSomeCapability(client, ClientCapability.Syntax),
 	], () => {
-		return vscode.languages.registerLinkedEditingRangeProvider(selector.syntax,
+		return zycode.languages.registerLinkedEditingRangeProvider(selector.syntax,
 			new LinkedEditingSupport(client));
 	});
 }

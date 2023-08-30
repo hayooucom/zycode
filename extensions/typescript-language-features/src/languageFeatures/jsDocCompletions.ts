@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { LanguageDescription } from '../configuration/languageDescription';
 import * as typeConverters from '../typeConverters';
@@ -12,27 +12,27 @@ import FileConfigurationManager from './fileConfigurationManager';
 
 
 
-const defaultJsDoc = new vscode.SnippetString(`/**\n * $0\n */`);
+const defaultJsDoc = new zycode.SnippetString(`/**\n * $0\n */`);
 
-class JsDocCompletionItem extends vscode.CompletionItem {
+class JsDocCompletionItem extends zycode.CompletionItem {
 	constructor(
-		public readonly document: vscode.TextDocument,
-		public readonly position: vscode.Position
+		public readonly document: zycode.TextDocument,
+		public readonly position: zycode.Position
 	) {
-		super('/** */', vscode.CompletionItemKind.Text);
-		this.detail = vscode.l10n.t("JSDoc comment");
+		super('/** */', zycode.CompletionItemKind.Text);
+		this.detail = zycode.l10n.t("JSDoc comment");
 		this.sortText = '\0';
 
 		const line = document.lineAt(position.line).text;
 		const prefix = line.slice(0, position.character).match(/\/\**\s*$/);
 		const suffix = line.slice(position.character).match(/^\s*\**\//);
 		const start = position.translate(0, prefix ? -prefix[0].length : 0);
-		const range = new vscode.Range(start, position.translate(0, suffix ? suffix[0].length : 0));
+		const range = new zycode.Range(start, position.translate(0, suffix ? suffix[0].length : 0));
 		this.range = { inserting: range, replacing: range };
 	}
 }
 
-class JsDocCompletionProvider implements vscode.CompletionItemProvider {
+class JsDocCompletionProvider implements zycode.CompletionItemProvider {
 
 	constructor(
 		private readonly client: ITypeScriptServiceClient,
@@ -41,11 +41,11 @@ class JsDocCompletionProvider implements vscode.CompletionItemProvider {
 	) { }
 
 	public async provideCompletionItems(
-		document: vscode.TextDocument,
-		position: vscode.Position,
-		token: vscode.CancellationToken
-	): Promise<vscode.CompletionItem[] | undefined> {
-		if (!vscode.workspace.getConfiguration(this.language.id, document).get('suggest.completeJSDocs')) {
+		document: zycode.TextDocument,
+		position: zycode.Position,
+		token: zycode.CancellationToken
+	): Promise<zycode.CompletionItem[] | undefined> {
+		if (!zycode.workspace.getConfiguration(this.language.id, document).get('suggest.completeJSDocs')) {
 			return undefined;
 		}
 
@@ -83,8 +83,8 @@ class JsDocCompletionProvider implements vscode.CompletionItemProvider {
 	}
 
 	private isPotentiallyValidDocCompletionPosition(
-		document: vscode.TextDocument,
-		position: vscode.Position
+		document: zycode.TextDocument,
+		position: zycode.Position
 	): boolean {
 		// Only show the JSdoc completion when the everything before the cursor is whitespace
 		// or could be the opening of a comment
@@ -100,7 +100,7 @@ class JsDocCompletionProvider implements vscode.CompletionItemProvider {
 	}
 }
 
-export function templateToSnippet(template: string): vscode.SnippetString {
+export function templateToSnippet(template: string): zycode.SnippetString {
 	// TODO: use append placeholder
 	let snippetIndex = 1;
 	template = template.replace(/\$/g, '\\$'); // CodeQL [SM02383] This is only used for text which is put into the editor. It is not for rendered html
@@ -119,7 +119,7 @@ export function templateToSnippet(template: string): vscode.SnippetString {
 
 	template = template.replace(/\* @returns[ \t]*$/gm, `* @returns \${${snippetIndex++}}`);
 
-	return new vscode.SnippetString(template);
+	return new zycode.SnippetString(template);
 }
 
 export function register(
@@ -128,8 +128,8 @@ export function register(
 	client: ITypeScriptServiceClient,
 	fileConfigurationManager: FileConfigurationManager,
 
-): vscode.Disposable {
-	return vscode.languages.registerCompletionItemProvider(selector.syntax,
+): zycode.Disposable {
+	return zycode.languages.registerCompletionItemProvider(selector.syntax,
 		new JsDocCompletionProvider(client, language, fileConfigurationManager),
 		'*');
 }

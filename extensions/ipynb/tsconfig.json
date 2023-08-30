@@ -6,9 +6,9 @@
 	},
 	"include": [
 		"src/**/*",
-		"../../src/vscode-dts/vscode.d.ts",
-		"../../src/vscode-dts/vscode.proposed.documentPaste.d.ts",
-		"../../src/vscode-dts/vscode.proposed.dropMetadata.d.ts"
+		"../../src/zycode-dts/zycode.d.ts",
+		"../../src/zycode-dts/zycode.proposed.documentPaste.d.ts",
+		"../../src/zycode-dts/zycode.proposed.dropMetadata.d.ts"
 
 	]
 }

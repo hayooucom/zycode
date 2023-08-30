@@ -316,11 +316,11 @@ export class BackLayerWebView<T extends ICommonCellInfo> extends Themable {
 				">` : ''}
 				<style nonce="${this.nonce}">
 					::highlight(find-highlight) {
-						background-color: var(--vscode-editor-findMatchBackground, ${findMatchHighlight});
+						background-color: var(--zycode-editor-findMatchBackground, ${findMatchHighlight});
 					}
 
 					::highlight(current-find-highlight) {
-						background-color: var(--vscode-editor-findMatchHighlightBackground, ${currentHighlight});
+						background-color: var(--zycode-editor-findMatchHighlightBackground, ${currentHighlight});
 					}
 
 					#container .cell_container {
@@ -399,7 +399,7 @@ export class BackLayerWebView<T extends ICommonCellInfo> extends Themable {
 					}
 
 					#container .no-renderer-error {
-						color: var(--vscode-editorError-foreground);
+						color: var(--zycode-editorError-foreground);
 					}
 
 					body {
@@ -438,16 +438,16 @@ export class BackLayerWebView<T extends ICommonCellInfo> extends Themable {
 					}
 
 					.find-match {
-						background-color: var(--vscode-editor-findMatchHighlightBackground);
+						background-color: var(--zycode-editor-findMatchHighlightBackground);
 					}
 
 					.current-find-match {
-						background-color: var(--vscode-editor-findMatchBackground);
+						background-color: var(--zycode-editor-findMatchBackground);
 					}
 
 					#_defaultColorPalatte {
-						color: var(--vscode-editor-findMatchHighlightBackground);
-						background-color: var(--vscode-editor-findMatchBackground);
+						color: var(--zycode-editor-findMatchHighlightBackground);
+						background-color: var(--zycode-editor-findMatchBackground);
 					}
 				</style>
 			</head>

@@ -4,18 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { RefType } from './api/git';
 import { Model } from './model';
 
-export class GitEditSessionIdentityProvider implements vscode.EditSessionIdentityProvider, vscode.Disposable {
+export class GitEditSessionIdentityProvider implements zycode.EditSessionIdentityProvider, zycode.Disposable {
 
-	private providerRegistration: vscode.Disposable;
+	private providerRegistration: zycode.Disposable;
 
 	constructor(private model: Model) {
-		this.providerRegistration = vscode.workspace.registerEditSessionIdentityProvider('file', this);
+		this.providerRegistration = zycode.workspace.registerEditSessionIdentityProvider('file', this);
 
-		vscode.workspace.onWillCreateEditSessionIdentity((e) => {
+		zycode.workspace.onWillCreateEditSessionIdentity((e) => {
 			e.waitUntil(this._onWillCreateEditSessionIdentity(e.workspaceFolder));
 		});
 	}
@@ -24,7 +24,7 @@ export class GitEditSessionIdentityProvider implements vscode.EditSessionIdentit
 		this.providerRegistration.dispose();
 	}
 
-	async provideEditSessionIdentity(workspaceFolder: vscode.WorkspaceFolder, token: vscode.CancellationToken): Promise<string | undefined> {
+	async provideEditSessionIdentity(workspaceFolder: zycode.WorkspaceFolder, token: zycode.CancellationToken): Promise<string | undefined> {
 		await this.model.openRepository(path.dirname(workspaceFolder.uri.fsPath));
 
 		const repository = this.model.getRepository(workspaceFolder.uri);
@@ -35,7 +35,7 @@ export class GitEditSessionIdentityProvider implements vscode.EditSessionIdentit
 		}
 
 		const remoteUrl = repository.remotes.find((remote) => remote.name === repository.HEAD?.upstream?.remote)?.pushUrl?.replace(/^(git@[^\/:]+)(:)/i, 'ssh://$1/');
-		const remote = remoteUrl ? await vscode.workspace.getCanonicalUri(vscode.Uri.parse(remoteUrl), { targetScheme: 'https' }, token) : null;
+		const remote = remoteUrl ? await zycode.workspace.getCanonicalUri(zycode.Uri.parse(remoteUrl), { targetScheme: 'https' }, token) : null;
 
 		return JSON.stringify({
 			remote: remote?.toString() ?? remoteUrl,
@@ -44,7 +44,7 @@ export class GitEditSessionIdentityProvider implements vscode.EditSessionIdentit
 		});
 	}
 
-	provideEditSessionIdentityMatch(identity1: string, identity2: string): vscode.EditSessionIdentityMatch {
+	provideEditSessionIdentityMatch(identity1: string, identity2: string): zycode.EditSessionIdentityMatch {
 		try {
 			const normalizedIdentity1 = normalizeEditSessionIdentity(identity1);
 			const normalizedIdentity2 = normalizeEditSessionIdentity(identity2);
@@ -53,25 +53,25 @@ export class GitEditSessionIdentityProvider implements vscode.EditSessionIdentit
 				normalizedIdentity1.ref === normalizedIdentity2.ref &&
 				normalizedIdentity1.sha === normalizedIdentity2.sha) {
 				// This is a perfect match
-				return vscode.EditSessionIdentityMatch.Complete;
+				return zycode.EditSessionIdentityMatch.Complete;
 			} else if (normalizedIdentity1.remote === normalizedIdentity2.remote &&
 				normalizedIdentity1.ref === normalizedIdentity2.ref &&
 				normalizedIdentity1.sha !== normalizedIdentity2.sha) {
 				// Same branch and remote but different SHA
-				return vscode.EditSessionIdentityMatch.Partial;
+				return zycode.EditSessionIdentityMatch.Partial;
 			} else {
-				return vscode.EditSessionIdentityMatch.None;
+				return zycode.EditSessionIdentityMatch.None;
 			}
 		} catch (ex) {
-			return vscode.EditSessionIdentityMatch.Partial;
+			return zycode.EditSessionIdentityMatch.Partial;
 		}
 	}
 
-	private async _onWillCreateEditSessionIdentity(workspaceFolder: vscode.WorkspaceFolder): Promise<void> {
+	private async _onWillCreateEditSessionIdentity(workspaceFolder: zycode.WorkspaceFolder): Promise<void> {
 		await this._doPublish(workspaceFolder);
 	}
 
-	private async _doPublish(workspaceFolder: vscode.WorkspaceFolder) {
+	private async _doPublish(workspaceFolder: zycode.WorkspaceFolder) {
 		await this.model.openRepository(path.dirname(workspaceFolder.uri.fsPath));
 
 		const repository = this.model.getRepository(workspaceFolder.uri);
@@ -85,17 +85,17 @@ export class GitEditSessionIdentityProvider implements vscode.EditSessionIdentit
 		// ensure that it is published before Continue On is invoked
 		if (!repository.HEAD?.upstream && repository.HEAD?.type === RefType.Head) {
 
-			const publishBranch = vscode.l10n.t('Publish Branch');
-			const selection = await vscode.window.showInformationMessage(
-				vscode.l10n.t('The current branch is not published to the remote. Would you like to publish it to access your changes elsewhere?'),
+			const publishBranch = zycode.l10n.t('Publish Branch');
+			const selection = await zycode.window.showInformationMessage(
+				zycode.l10n.t('The current branch is not published to the remote. Would you like to publish it to access your changes elsewhere?'),
 				{ modal: true },
 				publishBranch
 			);
 			if (selection !== publishBranch) {
-				throw new vscode.CancellationError();
+				throw new zycode.CancellationError();
 			}
 
-			await vscode.commands.executeCommand('git.publish');
+			await zycode.commands.executeCommand('git.publish');
 		}
 	}
 }

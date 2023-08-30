@@ -11,7 +11,7 @@ import { ExtHostChatSlashCommandsShape, IMainContext, MainContext, MainThreadCha
 import { ExtHostChatProvider } from 'vs/workbench/api/common/extHostChatProvider';
 import { ChatMessageRole } from 'vs/workbench/api/common/extHostTypes';
 import * as typeConvert from 'vs/workbench/api/common/extHostTypeConverters';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { Progress } from 'vs/platform/progress/common/progress';
 import { IChatMessage } from 'vs/workbench/contrib/chat/common/chatProvider';
 import { DeferredPromise, raceCancellation } from 'vs/base/common/async';
@@ -20,7 +20,7 @@ export class ExtHostChatSlashCommands implements ExtHostChatSlashCommandsShape {
 
 	private static _idPool = 0;
 
-	private readonly _commands = new Map<number, { extension: ExtensionIdentifier; command: vscode.SlashCommand }>();
+	private readonly _commands = new Map<number, { extension: ExtensionIdentifier; command: zycode.SlashCommand }>();
 	private readonly _proxy: MainThreadChatSlashCommandsShape;
 
 	constructor(
@@ -31,7 +31,7 @@ export class ExtHostChatSlashCommands implements ExtHostChatSlashCommandsShape {
 		this._proxy = mainContext.getProxy(MainContext.MainThreadChatSlashCommands);
 	}
 
-	registerCommand(extension: ExtensionIdentifier, name: string, command: vscode.SlashCommand, metadata: vscode.SlashCommandMetadata): IDisposable {
+	registerCommand(extension: ExtensionIdentifier, name: string, command: zycode.SlashCommand, metadata: zycode.SlashCommandMetadata): IDisposable {
 
 		const handle = ExtHostChatSlashCommands._idPool++;
 		this._commands.set(handle, { extension, command });
@@ -65,7 +65,7 @@ export class ExtHostChatSlashCommands implements ExtHostChatSlashCommandsShape {
 		const task = data.command(
 			{ role: ChatMessageRole.User, content: prompt },
 			{ history: context.history.map(typeConvert.ChatMessage.to) },
-			new Progress<vscode.SlashResponse>(p => {
+			new Progress<zycode.SlashResponse>(p => {
 				throwIfDone();
 				this._proxy.$handleProgressChunk(requestId, { content: p.message.value });
 			}),

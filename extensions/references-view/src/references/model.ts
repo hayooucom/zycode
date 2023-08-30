@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { SymbolItemDragAndDrop, SymbolItemEditorHighlights, SymbolItemNavigation, SymbolTreeInput, SymbolTreeModel } from '../references-view';
 import { asResourceUrl, del, getPreviewChunks, tail } from '../utils';
 
@@ -13,9 +13,9 @@ export class ReferencesTreeInput implements SymbolTreeInput<FileItem | Reference
 
 	constructor(
 		readonly title: string,
-		readonly location: vscode.Location,
+		readonly location: zycode.Location,
 		private readonly _command: string,
-		private readonly _result?: vscode.Location[] | vscode.LocationLink[]
+		private readonly _result?: zycode.Location[] | zycode.LocationLink[]
 	) {
 		this.contextValue = _command;
 	}
@@ -26,7 +26,7 @@ export class ReferencesTreeInput implements SymbolTreeInput<FileItem | Reference
 		if (this._result) {
 			model = new ReferencesModel(this._result);
 		} else {
-			const resut = await Promise.resolve(vscode.commands.executeCommand<vscode.Location[] | vscode.LocationLink[]>(this._command, this.location.uri, this.location.range.start));
+			const resut = await Promise.resolve(zycode.commands.executeCommand<zycode.Location[] | zycode.LocationLink[]>(this._command, this.location.uri, this.location.range.start));
 			model = new ReferencesModel(resut ?? []);
 		}
 
@@ -48,24 +48,24 @@ export class ReferencesTreeInput implements SymbolTreeInput<FileItem | Reference
 		};
 	}
 
-	with(location: vscode.Location): ReferencesTreeInput {
+	with(location: zycode.Location): ReferencesTreeInput {
 		return new ReferencesTreeInput(this.title, location, this._command);
 	}
 }
 
 export class ReferencesModel implements SymbolItemNavigation<FileItem | ReferenceItem>, SymbolItemEditorHighlights<FileItem | ReferenceItem>, SymbolItemDragAndDrop<FileItem | ReferenceItem> {
 
-	private _onDidChange = new vscode.EventEmitter<FileItem | ReferenceItem | undefined>();
+	private _onDidChange = new zycode.EventEmitter<FileItem | ReferenceItem | undefined>();
 	readonly onDidChangeTreeData = this._onDidChange.event;
 
 	readonly items: FileItem[] = [];
 
-	constructor(locations: vscode.Location[] | vscode.LocationLink[]) {
+	constructor(locations: zycode.Location[] | zycode.LocationLink[]) {
 		let last: FileItem | undefined;
 		for (const item of locations.sort(ReferencesModel._compareLocations)) {
-			const loc = item instanceof vscode.Location
+			const loc = item instanceof zycode.Location
 				? item
-				: new vscode.Location(item.targetUri, item.targetRange);
+				: new zycode.Location(item.targetUri, item.targetRange);
 
 			if (!last || ReferencesModel._compareUriIgnoreFragment(last.uri, loc.uri) !== 0) {
 				last = new FileItem(loc.uri.with({ fragment: '' }), [], this);
@@ -75,7 +75,7 @@ export class ReferencesModel implements SymbolItemNavigation<FileItem | Referenc
 		}
 	}
 
-	private static _compareUriIgnoreFragment(a: vscode.Uri, b: vscode.Uri): number {
+	private static _compareUriIgnoreFragment(a: zycode.Uri, b: zycode.Uri): number {
 		const aStr = a.with({ fragment: '' }).toString();
 		const bStr = b.with({ fragment: '' }).toString();
 		if (aStr < bStr) {
@@ -86,17 +86,17 @@ export class ReferencesModel implements SymbolItemNavigation<FileItem | Referenc
 		return 0;
 	}
 
-	private static _compareLocations(a: vscode.Location | vscode.LocationLink, b: vscode.Location | vscode.LocationLink): number {
-		const aUri = a instanceof vscode.Location ? a.uri : a.targetUri;
-		const bUri = b instanceof vscode.Location ? b.uri : b.targetUri;
+	private static _compareLocations(a: zycode.Location | zycode.LocationLink, b: zycode.Location | zycode.LocationLink): number {
+		const aUri = a instanceof zycode.Location ? a.uri : a.targetUri;
+		const bUri = b instanceof zycode.Location ? b.uri : b.targetUri;
 		if (aUri.toString() < bUri.toString()) {
 			return -1;
 		} else if (aUri.toString() > bUri.toString()) {
 			return 1;
 		}
 
-		const aRange = a instanceof vscode.Location ? a.range : a.targetRange;
-		const bRange = b instanceof vscode.Location ? b.range : b.targetRange;
+		const aRange = a instanceof zycode.Location ? a.range : a.targetRange;
+		const bRange = b instanceof zycode.Location ? b.range : b.targetRange;
 		if (aRange.start.isBefore(bRange.start)) {
 			return -1;
 		} else if (aRange.start.isAfter(bRange.start)) {
@@ -110,28 +110,28 @@ export class ReferencesModel implements SymbolItemNavigation<FileItem | Referenc
 
 	get message() {
 		if (this.items.length === 0) {
-			return vscode.l10n.t('No results.');
+			return zycode.l10n.t('No results.');
 		}
 		const total = this.items.reduce((prev, cur) => prev + cur.references.length, 0);
 		const files = this.items.length;
 		if (total === 1 && files === 1) {
-			return vscode.l10n.t('{0} result in {1} file', total, files);
+			return zycode.l10n.t('{0} result in {1} file', total, files);
 		} else if (total === 1) {
-			return vscode.l10n.t('{0} result in {1} files', total, files);
+			return zycode.l10n.t('{0} result in {1} files', total, files);
 		} else if (files === 1) {
-			return vscode.l10n.t('{0} results in {1} file', total, files);
+			return zycode.l10n.t('{0} results in {1} file', total, files);
 		} else {
-			return vscode.l10n.t('{0} results in {1} files', total, files);
+			return zycode.l10n.t('{0} results in {1} files', total, files);
 		}
 	}
 
 	location(item: FileItem | ReferenceItem) {
 		return item instanceof ReferenceItem
 			? item.location
-			: new vscode.Location(item.uri, item.references[0]?.location.range ?? new vscode.Position(0, 0));
+			: new zycode.Location(item.uri, item.references[0]?.location.range ?? new zycode.Position(0, 0));
 	}
 
-	nearest(uri: vscode.Uri, position: vscode.Position): FileItem | ReferenceItem | undefined {
+	nearest(uri: zycode.Uri, position: zycode.Position): FileItem | ReferenceItem | undefined {
 
 		if (this.items.length === 0) {
 			return;
@@ -220,7 +220,7 @@ export class ReferencesModel implements SymbolItemNavigation<FileItem | Referenc
 		}
 	}
 
-	getEditorHighlights(_item: FileItem | ReferenceItem, uri: vscode.Uri): vscode.Range[] | undefined {
+	getEditorHighlights(_item: FileItem | ReferenceItem, uri: zycode.Uri): zycode.Range[] | undefined {
 		const file = this.items.find(file => file.uri.toString() === uri.toString());
 		return file?.references.map(ref => ref.location.range);
 	}
@@ -248,7 +248,7 @@ export class ReferencesModel implements SymbolItemNavigation<FileItem | Referenc
 		return result;
 	}
 
-	getDragUri(item: FileItem | ReferenceItem): vscode.Uri | undefined {
+	getDragUri(item: FileItem | ReferenceItem): zycode.Uri | undefined {
 		if (item instanceof FileItem) {
 			return item.uri;
 		} else {
@@ -257,10 +257,10 @@ export class ReferencesModel implements SymbolItemNavigation<FileItem | Referenc
 	}
 }
 
-class ReferencesTreeDataProvider implements vscode.TreeDataProvider<FileItem | ReferenceItem>{
+class ReferencesTreeDataProvider implements zycode.TreeDataProvider<FileItem | ReferenceItem>{
 
-	private readonly _listener: vscode.Disposable;
-	private readonly _onDidChange = new vscode.EventEmitter<FileItem | ReferenceItem | undefined>();
+	private readonly _listener: zycode.Disposable;
+	private readonly _onDidChange = new zycode.EventEmitter<FileItem | ReferenceItem | undefined>();
 
 	readonly onDidChangeTreeData = this._onDidChange.event;
 
@@ -276,11 +276,11 @@ class ReferencesTreeDataProvider implements vscode.TreeDataProvider<FileItem | R
 	async getTreeItem(element: FileItem | ReferenceItem) {
 		if (element instanceof FileItem) {
 			// files
-			const result = new vscode.TreeItem(element.uri);
+			const result = new zycode.TreeItem(element.uri);
 			result.contextValue = 'file-item';
 			result.description = true;
-			result.iconPath = vscode.ThemeIcon.File;
-			result.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+			result.iconPath = zycode.ThemeIcon.File;
+			result.collapsibleState = zycode.TreeItemCollapsibleState.Collapsed;
 			return result;
 
 		} else {
@@ -289,20 +289,20 @@ class ReferencesTreeDataProvider implements vscode.TreeDataProvider<FileItem | R
 			const doc = await element.getDocument(true);
 			const { before, inside, after } = getPreviewChunks(doc, range);
 
-			const label: vscode.TreeItemLabel = {
+			const label: zycode.TreeItemLabel = {
 				label: before + inside + after,
 				highlights: [[before.length, before.length + inside.length]]
 			};
 
-			const result = new vscode.TreeItem(label);
-			result.collapsibleState = vscode.TreeItemCollapsibleState.None;
+			const result = new zycode.TreeItem(label);
+			result.collapsibleState = zycode.TreeItemCollapsibleState.None;
 			result.contextValue = 'reference-item';
 			result.command = {
-				command: 'vscode.open',
-				title: vscode.l10n.t('Open Reference'),
+				command: 'zycode.open',
+				title: zycode.l10n.t('Open Reference'),
 				arguments: [
 					element.location.uri,
-					<vscode.TextDocumentShowOptions>{ selection: range.with({ end: range.start }) }
+					<zycode.TextDocumentShowOptions>{ selection: range.with({ end: range.start }) }
 				]
 			};
 			return result;
@@ -327,7 +327,7 @@ class ReferencesTreeDataProvider implements vscode.TreeDataProvider<FileItem | R
 export class FileItem {
 
 	constructor(
-		readonly uri: vscode.Uri,
+		readonly uri: zycode.Uri,
 		readonly references: Array<ReferenceItem>,
 		readonly model: ReferencesModel
 	) { }
@@ -339,7 +339,7 @@ export class FileItem {
 	}
 
 	async asCopyText() {
-		let result = `${vscode.workspace.asRelativePath(this.uri)}\n`;
+		let result = `${zycode.workspace.asRelativePath(this.uri)}\n`;
 		for (const ref of this.references) {
 			result += `  ${await ref.asCopyText()}\n`;
 		}
@@ -349,24 +349,24 @@ export class FileItem {
 
 export class ReferenceItem {
 
-	private _document: Thenable<vscode.TextDocument> | undefined;
+	private _document: Thenable<zycode.TextDocument> | undefined;
 
 	constructor(
-		readonly location: vscode.Location,
+		readonly location: zycode.Location,
 		readonly file: FileItem,
 	) { }
 
 	async getDocument(warmUpNext?: boolean) {
 		if (!this._document) {
-			this._document = vscode.workspace.openTextDocument(this.location.uri);
+			this._document = zycode.workspace.openTextDocument(this.location.uri);
 		}
 		if (warmUpNext) {
 			// load next document once this document has been loaded
 			const next = this.file.model.next(this.file);
 			if (next instanceof FileItem && next !== this.file) {
-				vscode.workspace.openTextDocument(next.uri);
+				zycode.workspace.openTextDocument(next.uri);
 			} else if (next instanceof ReferenceItem) {
-				vscode.workspace.openTextDocument(next.location.uri);
+				zycode.workspace.openTextDocument(next.location.uri);
 			}
 		}
 		return this._document;

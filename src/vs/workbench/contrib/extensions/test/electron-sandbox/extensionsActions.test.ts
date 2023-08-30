@@ -110,7 +110,7 @@ function setupTest() {
 
 	instantiationService.stub(IRemoteAgentService, RemoteAgentService);
 
-	const localExtensionManagementServer = { extensionManagementService: instantiationService.get(IExtensionManagementService) as IProfileAwareExtensionManagementService, label: 'local', id: 'vscode-local' };
+	const localExtensionManagementServer = { extensionManagementService: instantiationService.get(IExtensionManagementService) as IProfileAwareExtensionManagementService, label: 'local', id: 'zycode-local' };
 	instantiationService.stub(IExtensionManagementServerService, <Partial<IExtensionManagementServerService>>{
 		get localExtensionManagementServer(): IExtensionManagementServer {
 			return localExtensionManagementServer;
@@ -1010,7 +1010,7 @@ suite('ReloadAction', () => {
 		didInstallEvent.fire([{ identifier: gallery.identifier, source: gallery, operation: InstallOperation.Install, local: aLocalExtension('a', gallery, gallery) }]);
 		await promise;
 		assert.ok(testObject.enabled);
-		assert.strictEqual(testObject.tooltip, 'Please reload Visual Studio Code to enable this extension.');
+		assert.strictEqual(testObject.tooltip, 'Please reload ZY Studio Code to enable this extension.');
 	});
 
 	test('Test ReloadAction when extension is newly installed and reload is not required', async () => {
@@ -1078,7 +1078,7 @@ suite('ReloadAction', () => {
 		uninstallEvent.fire({ identifier: local.identifier });
 		didUninstallEvent.fire({ identifier: local.identifier });
 		assert.ok(testObject.enabled);
-		assert.strictEqual(testObject.tooltip, 'Please reload Visual Studio Code to complete the uninstallation of this extension.');
+		assert.strictEqual(testObject.tooltip, 'Please reload ZY Studio Code to complete the uninstallation of this extension.');
 	});
 
 	test('Test ReloadAction when extension is uninstalled and can be removed', async () => {
@@ -1146,7 +1146,7 @@ suite('ReloadAction', () => {
 
 		return new Promise<void>(c => {
 			testObject.onDidChange(() => {
-				if (testObject.enabled && testObject.tooltip === 'Please reload Visual Studio Code to enable the updated extension.') {
+				if (testObject.enabled && testObject.tooltip === 'Please reload ZY Studio Code to enable the updated extension.') {
 					c();
 				}
 			});
@@ -1200,7 +1200,7 @@ suite('ReloadAction', () => {
 		await testObject.update();
 
 		assert.ok(testObject.enabled);
-		assert.strictEqual('Please reload Visual Studio Code to disable this extension.', testObject.tooltip);
+		assert.strictEqual('Please reload ZY Studio Code to disable this extension.', testObject.tooltip);
 	});
 
 	test('Test ReloadAction when extension enablement is toggled when running', async () => {
@@ -1243,7 +1243,7 @@ suite('ReloadAction', () => {
 		await workbenchService.setEnablement(extensions[0], EnablementState.EnabledGlobally);
 		await testObject.update();
 		assert.ok(testObject.enabled);
-		assert.strictEqual('Please reload Visual Studio Code to enable this extension.', testObject.tooltip);
+		assert.strictEqual('Please reload ZY Studio Code to enable this extension.', testObject.tooltip);
 	});
 
 	test('Test ReloadAction when extension enablement is toggled when not running', async () => {
@@ -1290,7 +1290,7 @@ suite('ReloadAction', () => {
 		await workbenchService.setEnablement(extensions[0], EnablementState.EnabledGlobally);
 		await testObject.update();
 		assert.ok(testObject.enabled);
-		assert.strictEqual('Please reload Visual Studio Code to enable this extension.', testObject.tooltip);
+		assert.strictEqual('Please reload ZY Studio Code to enable this extension.', testObject.tooltip);
 	});
 
 	test('Test ReloadAction when a localization extension is newly installed', async () => {
@@ -1441,7 +1441,7 @@ suite('ReloadAction', () => {
 
 		await promise;
 		assert.ok(testObject.enabled);
-		assert.strictEqual(testObject.tooltip, 'Please reload Visual Studio Code to enable this extension.');
+		assert.strictEqual(testObject.tooltip, 'Please reload ZY Studio Code to enable this extension.');
 	});
 
 	test('Test ReloadAction when ui extension is disabled on remote server and installed in local server', async () => {
@@ -1480,7 +1480,7 @@ suite('ReloadAction', () => {
 
 		await promise;
 		assert.ok(testObject.enabled);
-		assert.strictEqual(testObject.tooltip, 'Please reload Visual Studio Code to enable this extension.');
+		assert.strictEqual(testObject.tooltip, 'Please reload ZY Studio Code to enable this extension.');
 	});
 
 	test('Test ReloadAction for remote ui extension is disabled when it is installed and enabled in local server', async () => {
@@ -2549,7 +2549,7 @@ function aPage<T>(...objects: T[]): IPager<T> {
 
 function aSingleRemoteExtensionManagementServerService(instantiationService: TestInstantiationService, remoteExtensionManagementService?: IProfileAwareExtensionManagementService): IExtensionManagementServerService {
 	const remoteExtensionManagementServer: IExtensionManagementServer = {
-		id: 'vscode-remote',
+		id: 'zycode-remote',
 		label: 'remote',
 		extensionManagementService: remoteExtensionManagementService || createExtensionManagementService(),
 	};
@@ -2573,17 +2573,17 @@ function aSingleRemoteExtensionManagementServerService(instantiationService: Tes
 
 function aMultiExtensionManagementServerService(instantiationService: TestInstantiationService, localExtensionManagementService?: IProfileAwareExtensionManagementService | null, remoteExtensionManagementService?: IProfileAwareExtensionManagementService | null, webExtensionManagementService?: IProfileAwareExtensionManagementService): IExtensionManagementServerService {
 	const localExtensionManagementServer: IExtensionManagementServer | null = localExtensionManagementService === null ? null : {
-		id: 'vscode-local',
+		id: 'zycode-local',
 		label: 'local',
 		extensionManagementService: localExtensionManagementService || createExtensionManagementService(),
 	};
 	const remoteExtensionManagementServer: IExtensionManagementServer | null = remoteExtensionManagementService === null ? null : {
-		id: 'vscode-remote',
+		id: 'zycode-remote',
 		label: 'remote',
 		extensionManagementService: remoteExtensionManagementService || createExtensionManagementService(),
 	};
 	const webExtensionManagementServer: IExtensionManagementServer | null = webExtensionManagementService ? {
-		id: 'vscode-web',
+		id: 'zycode-web',
 		label: 'web',
 		extensionManagementService: webExtensionManagementService,
 	} : null;

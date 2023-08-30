@@ -62,9 +62,9 @@
 	const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
 	// @ts-ignore
-	const vscode = acquireVsCodeApi();
+	const zycode = acquireVsCodeApi();
 
-	const initialState = vscode.getState() || { scale: 'fit', offsetX: 0, offsetY: 0 };
+	const initialState = zycode.getState() || { scale: 'fit', offsetX: 0, offsetY: 0 };
 
 	// State
 	let scale = initialState.scale;
@@ -89,7 +89,7 @@
 			image.classList.remove('pixelated');
 			// @ts-ignore Non-standard CSS property
 			image.style.zoom = 'normal';
-			vscode.setState(undefined);
+			zycode.setState(undefined);
 		} else {
 			scale = clamp(newScale, MIN_SCALE, MAX_SCALE);
 			if (scale >= PIXELATION_THRESHOLD) {
@@ -110,10 +110,10 @@
 
 			window.scrollTo(newScrollX, newScrollY);
 
-			vscode.setState({ scale: scale, offsetX: newScrollX, offsetY: newScrollY });
+			zycode.setState({ scale: scale, offsetX: newScrollX, offsetY: newScrollY });
 		}
 
-		vscode.postMessage({
+		zycode.postMessage({
 			type: 'zoom',
 			value: scale
 		});
@@ -269,9 +269,9 @@
 			return;
 		}
 
-		const entry = vscode.getState();
+		const entry = zycode.getState();
 		if (entry) {
-			vscode.setState({ scale: entry.scale, offsetX: window.scrollX, offsetY: window.scrollY });
+			zycode.setState({ scale: entry.scale, offsetX: window.scrollX, offsetY: window.scrollY });
 		}
 	}, { passive: true });
 
@@ -285,7 +285,7 @@
 		}
 		hasLoadedImage = true;
 
-		vscode.postMessage({
+		zycode.postMessage({
 			type: 'size',
 			value: `${image.naturalWidth}x${image.naturalHeight}`,
 		});
@@ -315,7 +315,7 @@
 
 	document.querySelector('.open-file-link')?.addEventListener('click', (e) => {
 		e.preventDefault();
-		vscode.postMessage({
+		zycode.postMessage({
 			type: 'reopen-as-text',
 		});
 	});

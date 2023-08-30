@@ -3,24 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 export interface TSConfig {
-	readonly uri: vscode.Uri;
+	readonly uri: zycode.Uri;
 	readonly fsPath: string;
 	readonly posixPath: string;
-	readonly workspaceFolder?: vscode.WorkspaceFolder;
+	readonly workspaceFolder?: zycode.WorkspaceFolder;
 }
 
 export class TsConfigProvider {
-	public async getConfigsForWorkspace(token: vscode.CancellationToken): Promise<Iterable<TSConfig>> {
-		if (!vscode.workspace.workspaceFolders) {
+	public async getConfigsForWorkspace(token: zycode.CancellationToken): Promise<Iterable<TSConfig>> {
+		if (!zycode.workspace.workspaceFolders) {
 			return [];
 		}
 
 		const configs = new Map<string, TSConfig>();
 		for (const config of await this.findConfigFiles(token)) {
-			const root = vscode.workspace.getWorkspaceFolder(config);
+			const root = zycode.workspace.getWorkspaceFolder(config);
 			if (root) {
 				configs.set(config.fsPath, {
 					uri: config,
@@ -33,7 +33,7 @@ export class TsConfigProvider {
 		return configs.values();
 	}
 
-	private async findConfigFiles(token: vscode.CancellationToken): Promise<vscode.Uri[]> {
-		return await vscode.workspace.findFiles('**/tsconfig*.json', '**/{node_modules,.*}/**', undefined, token);
+	private async findConfigFiles(token: zycode.CancellationToken): Promise<zycode.Uri[]> {
+		return await zycode.workspace.findFiles('**/tsconfig*.json', '**/{node_modules,.*}/**', undefined, token);
 	}
 }

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { URI } from 'vscode-uri';
+import { URI } from 'zycode-uri';
 
 
 type ResourceToKey = (uri: URI) => string;

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { TsServerLogLevel } from '../configuration/configuration';
 import { Disposable } from '../utils/dispose';
 
@@ -14,17 +14,17 @@ export class LogLevelMonitor extends Disposable {
 	private static readonly logLevelChangedStorageKey = 'typescript.tsserver.logLevelChanged';
 	private static readonly doNotPromptLogLevelStorageKey = 'typescript.tsserver.doNotPromptLogLevel';
 
-	constructor(private readonly context: vscode.ExtensionContext) {
+	constructor(private readonly context: zycode.ExtensionContext) {
 		super();
 
-		this._register(vscode.workspace.onDidChangeConfiguration(this.onConfigurationChange, this, this._disposables));
+		this._register(zycode.workspace.onDidChangeConfiguration(this.onConfigurationChange, this, this._disposables));
 
 		if (this.shouldNotifyExtendedLogging()) {
 			this.notifyExtendedLogging();
 		}
 	}
 
-	private onConfigurationChange(event: vscode.ConfigurationChangeEvent) {
+	private onConfigurationChange(event: zycode.ConfigurationChangeEvent) {
 		const logLevelChanged = event.affectsConfiguration(LogLevelMonitor.logLevelConfigKey);
 		if (!logLevelChanged) {
 			return;
@@ -33,7 +33,7 @@ export class LogLevelMonitor extends Disposable {
 	}
 
 	private get logLevel(): TsServerLogLevel {
-		return TsServerLogLevel.fromString(vscode.workspace.getConfiguration().get<string>(LogLevelMonitor.logLevelConfigKey, 'off'));
+		return TsServerLogLevel.fromString(zycode.workspace.getConfiguration().get<string>(LogLevelMonitor.logLevelConfigKey, 'off'));
 	}
 
 	/**
@@ -71,18 +71,18 @@ export class LogLevelMonitor extends Disposable {
 			DisableLogging = 0,
 			DoNotShowAgain = 1
 		}
-		interface Item extends vscode.MessageItem {
+		interface Item extends zycode.MessageItem {
 			readonly choice: Choice;
 		}
 
-		vscode.window.showInformationMessage<Item>(
-			vscode.l10n.t("TS Server logging is currently enabled which may impact performance."),
+		zycode.window.showInformationMessage<Item>(
+			zycode.l10n.t("TS Server logging is currently enabled which may impact performance."),
 			{
-				title: vscode.l10n.t("Disable logging"),
+				title: zycode.l10n.t("Disable logging"),
 				choice: Choice.DisableLogging
 			},
 			{
-				title: vscode.l10n.t("Don't show again"),
+				title: zycode.l10n.t("Don't show again"),
 				choice: Choice.DoNotShowAgain
 			})
 			.then(selection => {
@@ -90,7 +90,7 @@ export class LogLevelMonitor extends Disposable {
 					return;
 				}
 				if (selection.choice === Choice.DisableLogging) {
-					return vscode.workspace.getConfiguration().update(LogLevelMonitor.logLevelConfigKey, 'off', true);
+					return zycode.workspace.getConfiguration().update(LogLevelMonitor.logLevelConfigKey, 'off', true);
 				} else if (selection.choice === Choice.DoNotShowAgain) {
 					return this.context.globalState.update(LogLevelMonitor.doNotPromptLogLevelStorageKey, true);
 				}

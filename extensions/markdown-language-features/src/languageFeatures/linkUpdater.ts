@@ -5,8 +5,8 @@
 
 import * as path from 'path';
 import * as picomatch from 'picomatch';
-import * as vscode from 'vscode';
-import { TextDocumentEdit } from 'vscode-languageclient';
+import * as zycode from 'zycode';
+import { TextDocumentEdit } from 'zycode-languageclient';
 import { MdLanguageClient } from '../client/client';
 import { Delayer } from '../util/async';
 import { noopToken } from '../util/cancellation';
@@ -27,8 +27,8 @@ const enum UpdateLinksOnFileMoveSetting {
 }
 
 interface RenameAction {
-	readonly oldUri: vscode.Uri;
-	readonly newUri: vscode.Uri;
+	readonly oldUri: zycode.Uri;
+	readonly newUri: zycode.Uri;
 }
 
 class UpdateLinksOnFileRenameHandler extends Disposable {
@@ -41,7 +41,7 @@ class UpdateLinksOnFileRenameHandler extends Disposable {
 	) {
 		super();
 
-		this._register(vscode.workspace.onDidRenameFiles(async (e) => {
+		this._register(zycode.workspace.onDidRenameFiles(async (e) => {
 			await Promise.all(e.files.map(async (rename) => {
 				if (await this._shouldParticipateInLinkUpdate(rename.newUri)) {
 					this._pendingRenames.add(rename);
@@ -50,9 +50,9 @@ class UpdateLinksOnFileRenameHandler extends Disposable {
 
 			if (this._pendingRenames.size) {
 				this._delayer.trigger(() => {
-					vscode.window.withProgress({
-						location: vscode.ProgressLocation.Window,
-						title: vscode.l10n.t("Checking for Markdown links to update")
+					zycode.window.withProgress({
+						location: zycode.ProgressLocation.Window,
+						title: zycode.l10n.t("Checking for Markdown links to update")
 					}, () => this._flushRenames());
 				});
 			}
@@ -67,17 +67,17 @@ class UpdateLinksOnFileRenameHandler extends Disposable {
 
 		if (result && result.edit.size) {
 			if (await this._confirmActionWithUser(result.resourcesBeingRenamed)) {
-				await vscode.workspace.applyEdit(result.edit);
+				await zycode.workspace.applyEdit(result.edit);
 			}
 		}
 	}
 
-	private async _confirmActionWithUser(newResources: readonly vscode.Uri[]): Promise<boolean> {
+	private async _confirmActionWithUser(newResources: readonly zycode.Uri[]): Promise<boolean> {
 		if (!newResources.length) {
 			return false;
 		}
 
-		const config = vscode.workspace.getConfiguration('markdown', newResources[0]);
+		const config = zycode.workspace.getConfiguration('markdown', newResources[0]);
 		const setting = config.get<UpdateLinksOnFileMoveSetting>(settingNames.enabled);
 		switch (setting) {
 			case UpdateLinksOnFileMoveSetting.Prompt:
@@ -89,8 +89,8 @@ class UpdateLinksOnFileRenameHandler extends Disposable {
 				return false;
 		}
 	}
-	private async _shouldParticipateInLinkUpdate(newUri: vscode.Uri): Promise<boolean> {
-		const config = vscode.workspace.getConfiguration('markdown', newUri);
+	private async _shouldParticipateInLinkUpdate(newUri: zycode.Uri): Promise<boolean> {
+		const config = zycode.workspace.getConfiguration('markdown', newUri);
 		const setting = config.get<UpdateLinksOnFileMoveSetting>(settingNames.enabled);
 		if (setting === UpdateLinksOnFileMoveSetting.Never) {
 			return false;
@@ -105,40 +105,40 @@ class UpdateLinksOnFileRenameHandler extends Disposable {
 			}
 		}
 
-		const stat = await vscode.workspace.fs.stat(newUri);
-		if (stat.type === vscode.FileType.Directory) {
+		const stat = await zycode.workspace.fs.stat(newUri);
+		if (stat.type === zycode.FileType.Directory) {
 			return config.get<boolean>(settingNames.enableForDirectories, true);
 		}
 
 		return false;
 	}
 
-	private async _promptUser(newResources: readonly vscode.Uri[]): Promise<boolean> {
+	private async _promptUser(newResources: readonly zycode.Uri[]): Promise<boolean> {
 		if (!newResources.length) {
 			return false;
 		}
 
-		const rejectItem: vscode.MessageItem = {
-			title: vscode.l10n.t("No"),
+		const rejectItem: zycode.MessageItem = {
+			title: zycode.l10n.t("No"),
 			isCloseAffordance: true,
 		};
 
-		const acceptItem: vscode.MessageItem = {
-			title: vscode.l10n.t("Yes"),
+		const acceptItem: zycode.MessageItem = {
+			title: zycode.l10n.t("Yes"),
 		};
 
-		const alwaysItem: vscode.MessageItem = {
-			title: vscode.l10n.t("Always"),
+		const alwaysItem: zycode.MessageItem = {
+			title: zycode.l10n.t("Always"),
 		};
 
-		const neverItem: vscode.MessageItem = {
-			title: vscode.l10n.t("Never"),
+		const neverItem: zycode.MessageItem = {
+			title: zycode.l10n.t("Never"),
 		};
 
-		const choice = await vscode.window.showInformationMessage(
+		const choice = await zycode.window.showInformationMessage(
 			newResources.length === 1
-				? vscode.l10n.t("Update Markdown links for '{0}'?", path.basename(newResources[0].fsPath))
-				: this._getConfirmMessage(vscode.l10n.t("Update Markdown links for the following {0} files?", newResources.length), newResources), {
+				? zycode.l10n.t("Update Markdown links for '{0}'?", path.basename(newResources[0].fsPath))
+				: this._getConfirmMessage(zycode.l10n.t("Update Markdown links for the following {0} files?", newResources.length), newResources), {
 			modal: true,
 		}, rejectItem, acceptItem, alwaysItem, neverItem);
 
@@ -150,7 +150,7 @@ class UpdateLinksOnFileRenameHandler extends Disposable {
 				return false;
 			}
 			case alwaysItem: {
-				const config = vscode.workspace.getConfiguration('markdown', newResources[0]);
+				const config = zycode.workspace.getConfiguration('markdown', newResources[0]);
 				config.update(
 					settingNames.enabled,
 					UpdateLinksOnFileMoveSetting.Always,
@@ -158,7 +158,7 @@ class UpdateLinksOnFileRenameHandler extends Disposable {
 				return true;
 			}
 			case neverItem: {
-				const config = vscode.workspace.getConfiguration('markdown', newResources[0]);
+				const config = zycode.workspace.getConfiguration('markdown', newResources[0]);
 				config.update(
 					settingNames.enabled,
 					UpdateLinksOnFileMoveSetting.Never,
@@ -171,16 +171,16 @@ class UpdateLinksOnFileRenameHandler extends Disposable {
 		}
 	}
 
-	private async _getEditsForFileRename(renames: readonly RenameAction[], token: vscode.CancellationToken): Promise<{ edit: vscode.WorkspaceEdit; resourcesBeingRenamed: vscode.Uri[] } | undefined> {
+	private async _getEditsForFileRename(renames: readonly RenameAction[], token: zycode.CancellationToken): Promise<{ edit: zycode.WorkspaceEdit; resourcesBeingRenamed: zycode.Uri[] } | undefined> {
 		const result = await this._client.getEditForFileRenames(renames.map(rename => ({ oldUri: rename.oldUri.toString(), newUri: rename.newUri.toString() })), token);
 		if (!result?.edit.documentChanges?.length) {
 			return undefined;
 		}
 
-		const workspaceEdit = new vscode.WorkspaceEdit();
+		const workspaceEdit = new zycode.WorkspaceEdit();
 
 		for (const change of result.edit.documentChanges as TextDocumentEdit[]) {
-			const uri = vscode.Uri.parse(change.textDocument.uri);
+			const uri = zycode.Uri.parse(change.textDocument.uri);
 			for (const edit of change.edits) {
 				workspaceEdit.replace(uri, convertRange(edit.range), edit.newText);
 			}
@@ -188,11 +188,11 @@ class UpdateLinksOnFileRenameHandler extends Disposable {
 
 		return {
 			edit: workspaceEdit,
-			resourcesBeingRenamed: result.participatingRenames.map(x => vscode.Uri.parse(x.newUri)),
+			resourcesBeingRenamed: result.participatingRenames.map(x => zycode.Uri.parse(x.newUri)),
 		};
 	}
 
-	private _getConfirmMessage(start: string, resourcesToConfirm: readonly vscode.Uri[]): string {
+	private _getConfirmMessage(start: string, resourcesToConfirm: readonly zycode.Uri[]): string {
 		const MAX_CONFIRM_FILES = 10;
 
 		const paths = [start];
@@ -201,9 +201,9 @@ class UpdateLinksOnFileRenameHandler extends Disposable {
 
 		if (resourcesToConfirm.length > MAX_CONFIRM_FILES) {
 			if (resourcesToConfirm.length - MAX_CONFIRM_FILES === 1) {
-				paths.push(vscode.l10n.t("...1 additional file not shown"));
+				paths.push(zycode.l10n.t("...1 additional file not shown"));
 			} else {
-				paths.push(vscode.l10n.t("...{0} additional files not shown", resourcesToConfirm.length - MAX_CONFIRM_FILES));
+				paths.push(zycode.l10n.t("...{0} additional files not shown", resourcesToConfirm.length - MAX_CONFIRM_FILES));
 			}
 		}
 
@@ -211,20 +211,20 @@ class UpdateLinksOnFileRenameHandler extends Disposable {
 		return paths.join('\n');
 	}
 
-	private _getConfigTargetScope(config: vscode.WorkspaceConfiguration, settingsName: string): vscode.ConfigurationTarget {
+	private _getConfigTargetScope(config: zycode.WorkspaceConfiguration, settingsName: string): zycode.ConfigurationTarget {
 		const inspected = config.inspect(settingsName);
 		if (inspected?.workspaceFolderValue) {
-			return vscode.ConfigurationTarget.WorkspaceFolder;
+			return zycode.ConfigurationTarget.WorkspaceFolder;
 		}
 
 		if (inspected?.workspaceValue) {
-			return vscode.ConfigurationTarget.Workspace;
+			return zycode.ConfigurationTarget.Workspace;
 		}
 
-		return vscode.ConfigurationTarget.Global;
+		return zycode.ConfigurationTarget.Global;
 	}
 }
 
-export function registerUpdateLinksOnRename(client: MdLanguageClient): vscode.Disposable {
+export function registerUpdateLinksOnRename(client: MdLanguageClient): zycode.Disposable {
 	return new UpdateLinksOnFileRenameHandler(client);
 }

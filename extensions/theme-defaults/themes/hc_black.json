@@ -1,5 +1,5 @@
 {
-	"$schema": "vscode://schemas/color-theme",
+	"$schema": "zycode://schemas/color-theme",
 	"name": "Dark High Contrast",
 	"colors": {
 		"editor.background": "#000000",

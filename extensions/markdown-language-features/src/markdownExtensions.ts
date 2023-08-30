@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import * as arrays from './util/arrays';
 import { Disposable } from './util/dispose';
 
-function resolveExtensionResource(extension: vscode.Extension<any>, resourcePath: string): vscode.Uri {
-	return vscode.Uri.joinPath(extension.extensionUri, resourcePath);
+function resolveExtensionResource(extension: zycode.Extension<any>, resourcePath: string): zycode.Uri {
+	return zycode.Uri.joinPath(extension.extensionUri, resourcePath);
 }
 
-function* resolveExtensionResources(extension: vscode.Extension<any>, resourcePaths: unknown): Iterable<vscode.Uri> {
+function* resolveExtensionResources(extension: zycode.Extension<any>, resourcePaths: unknown): Iterable<zycode.Uri> {
 	if (Array.isArray(resourcePaths)) {
 		for (const resource of resourcePaths) {
 			try {
@@ -24,9 +24,9 @@ function* resolveExtensionResources(extension: vscode.Extension<any>, resourcePa
 }
 
 export interface MarkdownContributions {
-	readonly previewScripts: readonly vscode.Uri[];
-	readonly previewStyles: readonly vscode.Uri[];
-	readonly previewResourceRoots: readonly vscode.Uri[];
+	readonly previewScripts: readonly zycode.Uri[];
+	readonly previewStyles: readonly zycode.Uri[];
+	readonly previewResourceRoots: readonly zycode.Uri[];
 	readonly markdownItPlugins: ReadonlyMap<string, Thenable<(md: any) => any>>;
 }
 
@@ -47,7 +47,7 @@ export namespace MarkdownContributions {
 		};
 	}
 
-	function uriEqual(a: vscode.Uri, b: vscode.Uri): boolean {
+	function uriEqual(a: zycode.Uri, b: zycode.Uri): boolean {
 		return a.toString() === b.toString();
 	}
 
@@ -58,7 +58,7 @@ export namespace MarkdownContributions {
 			&& arrays.equals(Array.from(a.markdownItPlugins.keys()), Array.from(b.markdownItPlugins.keys()));
 	}
 
-	export function fromExtension(extension: vscode.Extension<any>): MarkdownContributions {
+	export function fromExtension(extension: zycode.Extension<any>): MarkdownContributions {
 		const contributions = extension.packageJSON?.contributes;
 		if (!contributions) {
 			return MarkdownContributions.Empty;
@@ -79,7 +79,7 @@ export namespace MarkdownContributions {
 
 	function getContributedMarkdownItPlugins(
 		contributes: any,
-		extension: vscode.Extension<any>
+		extension: zycode.Extension<any>
 	): Map<string, Thenable<(md: any) => any>> {
 		const map = new Map<string, Thenable<(md: any) => any>>();
 		if (contributes['markdown.markdownItPlugins']) {
@@ -95,24 +95,24 @@ export namespace MarkdownContributions {
 
 	function getContributedScripts(
 		contributes: any,
-		extension: vscode.Extension<any>
+		extension: zycode.Extension<any>
 	) {
 		return resolveExtensionResources(extension, contributes['markdown.previewScripts']);
 	}
 
 	function getContributedStyles(
 		contributes: any,
-		extension: vscode.Extension<any>
+		extension: zycode.Extension<any>
 	) {
 		return resolveExtensionResources(extension, contributes['markdown.previewStyles']);
 	}
 }
 
 export interface MarkdownContributionProvider {
-	readonly extensionUri: vscode.Uri;
+	readonly extensionUri: zycode.Uri;
 
 	readonly contributions: MarkdownContributions;
-	readonly onContributionsChanged: vscode.Event<this>;
+	readonly onContributionsChanged: zycode.Event<this>;
 
 	dispose(): void;
 }
@@ -122,11 +122,11 @@ class VSCodeExtensionMarkdownContributionProvider extends Disposable implements 
 	private _contributions?: MarkdownContributions;
 
 	public constructor(
-		private readonly _extensionContext: vscode.ExtensionContext,
+		private readonly _extensionContext: zycode.ExtensionContext,
 	) {
 		super();
 
-		this._register(vscode.extensions.onDidChange(() => {
+		this._register(zycode.extensions.onDidChange(() => {
 			const currentContributions = this._getCurrentContributions();
 			const existingContributions = this._contributions || MarkdownContributions.Empty;
 			if (!MarkdownContributions.equal(existingContributions, currentContributions)) {
@@ -140,7 +140,7 @@ class VSCodeExtensionMarkdownContributionProvider extends Disposable implements 
 		return this._extensionContext.extensionUri;
 	}
 
-	private readonly _onContributionsChanged = this._register(new vscode.EventEmitter<this>());
+	private readonly _onContributionsChanged = this._register(new zycode.EventEmitter<this>());
 	public readonly onContributionsChanged = this._onContributionsChanged.event;
 
 	public get contributions(): MarkdownContributions {
@@ -149,12 +149,12 @@ class VSCodeExtensionMarkdownContributionProvider extends Disposable implements 
 	}
 
 	private _getCurrentContributions(): MarkdownContributions {
-		return vscode.extensions.all
+		return zycode.extensions.all
 			.map(MarkdownContributions.fromExtension)
 			.reduce(MarkdownContributions.merge, MarkdownContributions.Empty);
 	}
 }
 
-export function getMarkdownExtensionContributions(context: vscode.ExtensionContext): MarkdownContributionProvider {
+export function getMarkdownExtensionContributions(context: zycode.ExtensionContext): MarkdownContributionProvider {
 	return new VSCodeExtensionMarkdownContributionProvider(context);
 }

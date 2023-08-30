@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ExtensionContext, NotebookDocument, NotebookDocumentChangeEvent, NotebookEdit, workspace, WorkspaceEdit } from 'vscode';
+import { ExtensionContext, NotebookDocument, NotebookDocumentChangeEvent, NotebookEdit, workspace, WorkspaceEdit } from 'zycode';
 import { v4 as uuid } from 'uuid';
 import { getCellMetadata } from './serializers';
 import { CellMetadata } from './common';

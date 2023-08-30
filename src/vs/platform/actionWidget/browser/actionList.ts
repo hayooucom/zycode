@@ -108,7 +108,7 @@ class ActionItemRenderer<T> implements IListRenderer<IActionListItem<T>, IAction
 			}
 		} else {
 			data.icon.className = ThemeIcon.asClassName(Codicon.lightBulb);
-			data.icon.style.color = 'var(--vscode-editorLightBulb-foreground)';
+			data.icon.style.color = 'var(--zycode-editorLightBulb-foreground)';
 		}
 
 		if (!element.item || !element.label) {

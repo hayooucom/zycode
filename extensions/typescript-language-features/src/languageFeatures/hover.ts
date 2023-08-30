@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import type * as Proto from '../tsServer/protocol/protocol';
 import { ClientCapability, ITypeScriptServiceClient, ServerType } from '../typescriptService';
 import { conditionalRegistration, requireSomeCapability } from './util/dependentRegistration';
@@ -14,7 +14,7 @@ import FileConfigurationManager from './fileConfigurationManager';
 
 
 
-class TypeScriptHoverProvider implements vscode.HoverProvider {
+class TypeScriptHoverProvider implements zycode.HoverProvider {
 
 	public constructor(
 		private readonly client: ITypeScriptServiceClient,
@@ -22,10 +22,10 @@ class TypeScriptHoverProvider implements vscode.HoverProvider {
 	) { }
 
 	public async provideHover(
-		document: vscode.TextDocument,
-		position: vscode.Position,
-		token: vscode.CancellationToken
-	): Promise<vscode.Hover | undefined> {
+		document: zycode.TextDocument,
+		position: zycode.Position,
+		token: zycode.CancellationToken
+	): Promise<zycode.Hover | undefined> {
 		const filepath = this.client.toOpenTsFilePath(document);
 		if (!filepath) {
 			return undefined;
@@ -42,31 +42,31 @@ class TypeScriptHoverProvider implements vscode.HoverProvider {
 			return undefined;
 		}
 
-		return new vscode.Hover(
+		return new zycode.Hover(
 			this.getContents(document.uri, response.body, response._serverType),
 			typeConverters.Range.fromTextSpan(response.body));
 	}
 
 	private getContents(
-		resource: vscode.Uri,
+		resource: zycode.Uri,
 		data: Proto.QuickInfoResponseBody,
 		source: ServerType | undefined,
 	) {
-		const parts: vscode.MarkdownString[] = [];
+		const parts: zycode.MarkdownString[] = [];
 
 		if (data.displayString) {
 			const displayParts: string[] = [];
 
 			if (source === ServerType.Syntax && this.client.hasCapabilityForResource(resource, ClientCapability.Semantic)) {
 				displayParts.push(
-					vscode.l10n.t({
+					zycode.l10n.t({
 						message: "(loading...)",
 						comment: ['Prefix displayed for hover entries while the server is still loading']
 					}));
 			}
 
 			displayParts.push(data.displayString);
-			parts.push(new vscode.MarkdownString().appendCodeblock(displayParts.join(' '), 'typescript'));
+			parts.push(new zycode.MarkdownString().appendCodeblock(displayParts.join(' '), 'typescript'));
 		}
 		const md = documentationToMarkdown(data.documentation, data.tags, this.client, resource);
 		parts.push(md);
@@ -78,11 +78,11 @@ export function register(
 	selector: DocumentSelector,
 	client: ITypeScriptServiceClient,
 	fileConfigurationManager: FileConfigurationManager,
-): vscode.Disposable {
+): zycode.Disposable {
 	return conditionalRegistration([
 		requireSomeCapability(client, ClientCapability.EnhancedSyntax, ClientCapability.Semantic),
 	], () => {
-		return vscode.languages.registerHoverProvider(selector.syntax,
+		return zycode.languages.registerHoverProvider(selector.syntax,
 			new TypeScriptHoverProvider(client, fileConfigurationManager));
 	});
 }

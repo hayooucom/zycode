@@ -15,7 +15,7 @@ export const debuggersExtPoint = extensionsRegistry.ExtensionsRegistry.registerE
 	extensionPoint: 'debuggers',
 	defaultExtensionKind: ['workspace'],
 	jsonSchema: {
-		description: nls.localize('vscode.extension.contributes.debuggers', 'Contributes debug adapters.'),
+		description: nls.localize('zycode.extension.contributes.debuggers', 'Contributes debug adapters.'),
 		type: 'array',
 		defaultSnippets: [{ body: [{ type: '' }] }],
 		items: {
@@ -24,95 +24,95 @@ export const debuggersExtPoint = extensionsRegistry.ExtensionsRegistry.registerE
 			defaultSnippets: [{ body: { type: '', program: '', runtime: '' } }],
 			properties: {
 				type: {
-					description: nls.localize('vscode.extension.contributes.debuggers.type', "Unique identifier for this debug adapter."),
+					description: nls.localize('zycode.extension.contributes.debuggers.type', "Unique identifier for this debug adapter."),
 					type: 'string'
 				},
 				label: {
-					description: nls.localize('vscode.extension.contributes.debuggers.label', "Display name for this debug adapter."),
+					description: nls.localize('zycode.extension.contributes.debuggers.label', "Display name for this debug adapter."),
 					type: 'string'
 				},
 				program: {
-					description: nls.localize('vscode.extension.contributes.debuggers.program', "Path to the debug adapter program. Path is either absolute or relative to the extension folder."),
+					description: nls.localize('zycode.extension.contributes.debuggers.program', "Path to the debug adapter program. Path is either absolute or relative to the extension folder."),
 					type: 'string'
 				},
 				args: {
-					description: nls.localize('vscode.extension.contributes.debuggers.args', "Optional arguments to pass to the adapter."),
+					description: nls.localize('zycode.extension.contributes.debuggers.args', "Optional arguments to pass to the adapter."),
 					type: 'array'
 				},
 				runtime: {
-					description: nls.localize('vscode.extension.contributes.debuggers.runtime', "Optional runtime in case the program attribute is not an executable but requires a runtime."),
+					description: nls.localize('zycode.extension.contributes.debuggers.runtime', "Optional runtime in case the program attribute is not an executable but requires a runtime."),
 					type: 'string'
 				},
 				runtimeArgs: {
-					description: nls.localize('vscode.extension.contributes.debuggers.runtimeArgs', "Optional runtime arguments."),
+					description: nls.localize('zycode.extension.contributes.debuggers.runtimeArgs', "Optional runtime arguments."),
 					type: 'array'
 				},
 				variables: {
-					description: nls.localize('vscode.extension.contributes.debuggers.variables', "Mapping from interactive variables (e.g. ${action.pickProcess}) in `launch.json` to a command."),
+					description: nls.localize('zycode.extension.contributes.debuggers.variables', "Mapping from interactive variables (e.g. ${action.pickProcess}) in `launch.json` to a command."),
 					type: 'object'
 				},
 				initialConfigurations: {
-					description: nls.localize('vscode.extension.contributes.debuggers.initialConfigurations', "Configurations for generating the initial \'launch.json\'."),
+					description: nls.localize('zycode.extension.contributes.debuggers.initialConfigurations', "Configurations for generating the initial \'launch.json\'."),
 					type: ['array', 'string'],
 				},
 				languages: {
-					description: nls.localize('vscode.extension.contributes.debuggers.languages', "List of languages for which the debug extension could be considered the \"default debugger\"."),
+					description: nls.localize('zycode.extension.contributes.debuggers.languages', "List of languages for which the debug extension could be considered the \"default debugger\"."),
 					type: 'array'
 				},
 				configurationSnippets: {
-					description: nls.localize('vscode.extension.contributes.debuggers.configurationSnippets', "Snippets for adding new configurations in \'launch.json\'."),
+					description: nls.localize('zycode.extension.contributes.debuggers.configurationSnippets', "Snippets for adding new configurations in \'launch.json\'."),
 					type: 'array'
 				},
 				configurationAttributes: {
-					description: nls.localize('vscode.extension.contributes.debuggers.configurationAttributes', "JSON schema configurations for validating \'launch.json\'."),
+					description: nls.localize('zycode.extension.contributes.debuggers.configurationAttributes', "JSON schema configurations for validating \'launch.json\'."),
 					type: 'object'
 				},
 				when: {
-					description: nls.localize('vscode.extension.contributes.debuggers.when', "Condition which must be true to enable this type of debugger. Consider using 'shellExecutionSupported', 'virtualWorkspace', 'resourceScheme' or an extension-defined context key as appropriate for this."),
+					description: nls.localize('zycode.extension.contributes.debuggers.when', "Condition which must be true to enable this type of debugger. Consider using 'shellExecutionSupported', 'virtualWorkspace', 'resourceScheme' or an extension-defined context key as appropriate for this."),
 					type: 'string',
 					default: ''
 				},
 				deprecated: {
-					description: nls.localize('vscode.extension.contributes.debuggers.deprecated', "Optional message to mark this debug type as being deprecated."),
+					description: nls.localize('zycode.extension.contributes.debuggers.deprecated', "Optional message to mark this debug type as being deprecated."),
 					type: 'string',
 					default: ''
 				},
 				windows: {
-					description: nls.localize('vscode.extension.contributes.debuggers.windows', "Windows specific settings."),
+					description: nls.localize('zycode.extension.contributes.debuggers.windows', "Windows specific settings."),
 					type: 'object',
 					properties: {
 						runtime: {
-							description: nls.localize('vscode.extension.contributes.debuggers.windows.runtime', "Runtime used for Windows."),
+							description: nls.localize('zycode.extension.contributes.debuggers.windows.runtime', "Runtime used for Windows."),
 							type: 'string'
 						}
 					}
 				},
 				osx: {
-					description: nls.localize('vscode.extension.contributes.debuggers.osx', "macOS specific settings."),
+					description: nls.localize('zycode.extension.contributes.debuggers.osx', "macOS specific settings."),
 					type: 'object',
 					properties: {
 						runtime: {
-							description: nls.localize('vscode.extension.contributes.debuggers.osx.runtime', "Runtime used for macOS."),
+							description: nls.localize('zycode.extension.contributes.debuggers.osx.runtime', "Runtime used for macOS."),
 							type: 'string'
 						}
 					}
 				},
 				linux: {
-					description: nls.localize('vscode.extension.contributes.debuggers.linux', "Linux specific settings."),
+					description: nls.localize('zycode.extension.contributes.debuggers.linux', "Linux specific settings."),
 					type: 'object',
 					properties: {
 						runtime: {
-							description: nls.localize('vscode.extension.contributes.debuggers.linux.runtime', "Runtime used for Linux."),
+							description: nls.localize('zycode.extension.contributes.debuggers.linux.runtime', "Runtime used for Linux."),
 							type: 'string'
 						}
 					}
 				},
 				strings: {
-					description: nls.localize('vscode.extension.contributes.debuggers.strings', "UI strings contributed by this debug adapter."),
+					description: nls.localize('zycode.extension.contributes.debuggers.strings', "UI strings contributed by this debug adapter."),
 					type: 'object',
 					properties: {
 						unverifiedBreakpoints: {
-							description: nls.localize('vscode.extension.contributes.debuggers.strings.unverifiedBreakpoints', "When there are unverified breakpoints in a language supported by this debug adapter, this message will appear on the breakpoint hover and in the breakpoints view. Markdown and command links are supported."),
+							description: nls.localize('zycode.extension.contributes.debuggers.strings.unverifiedBreakpoints', "When there are unverified breakpoints in a language supported by this debug adapter, this message will appear on the breakpoint hover and in the breakpoints view. Markdown and command links are supported."),
 							type: 'string'
 						}
 					}
@@ -126,7 +126,7 @@ export const debuggersExtPoint = extensionsRegistry.ExtensionsRegistry.registerE
 export const breakpointsExtPoint = extensionsRegistry.ExtensionsRegistry.registerExtensionPoint<IBreakpointContribution[]>({
 	extensionPoint: 'breakpoints',
 	jsonSchema: {
-		description: nls.localize('vscode.extension.contributes.breakpoints', 'Contributes breakpoints.'),
+		description: nls.localize('zycode.extension.contributes.breakpoints', 'Contributes breakpoints.'),
 		type: 'array',
 		defaultSnippets: [{ body: [{ language: '' }] }],
 		items: {
@@ -135,11 +135,11 @@ export const breakpointsExtPoint = extensionsRegistry.ExtensionsRegistry.registe
 			defaultSnippets: [{ body: { language: '' } }],
 			properties: {
 				language: {
-					description: nls.localize('vscode.extension.contributes.breakpoints.language', "Allow breakpoints for this language."),
+					description: nls.localize('zycode.extension.contributes.breakpoints.language', "Allow breakpoints for this language."),
 					type: 'string'
 				},
 				when: {
-					description: nls.localize('vscode.extension.contributes.breakpoints.when', "Condition which must be true to enable breakpoints in this language. Consider matching this to the debugger when clause as appropriate."),
+					description: nls.localize('zycode.extension.contributes.breakpoints.when', "Condition which must be true to enable breakpoints in this language. Consider matching this to the debugger when clause as appropriate."),
 					type: 'string',
 					default: ''
 				}

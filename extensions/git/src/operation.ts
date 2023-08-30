@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { LogOutputChannel } from 'vscode';
+import { LogOutputChannel } from 'zycode';
 
 export const enum OperationKind {
 	Add = 'Add',

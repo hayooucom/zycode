@@ -203,7 +203,7 @@ export class WebWorkerExtensionHost extends Disposable implements IExtensionHost
 
 		// Send over message ports for extension API
 		const messagePorts = this._environmentService.options?.messagePorts ?? new Map();
-		iframe.contentWindow!.postMessage({ type: 'vscode.init', data: messagePorts }, '*', [...messagePorts.values()]);
+		iframe.contentWindow!.postMessage({ type: 'zycode.init', data: messagePorts }, '*', [...messagePorts.values()]);
 
 		port.onmessage = (event) => {
 			const { data } = event;

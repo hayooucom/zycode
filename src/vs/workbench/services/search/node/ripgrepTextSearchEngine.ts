@@ -16,11 +16,11 @@ import { URI } from 'vs/base/common/uri';
 import { Progress } from 'vs/platform/progress/common/progress';
 import { IExtendedExtensionSearchOptions, SearchError, SearchErrorCode, serializeSearchError } from 'vs/workbench/services/search/common/search';
 import { Range, TextSearchComplete, TextSearchContext, TextSearchMatch, TextSearchOptions, TextSearchPreviewOptions, TextSearchQuery, TextSearchResult } from 'vs/workbench/services/search/common/searchExtTypes';
-import { AST as ReAST, RegExpParser, RegExpVisitor } from 'vscode-regexpp';
-import { rgPath } from '@vscode/ripgrep';
+import { AST as ReAST, RegExpParser, RegExpVisitor } from 'zycode-regexpp';
+import { rgPath } from '@zycode/ripgrep';
 import { anchorGlob, createTextSearchResult, IOutputChannel, Maybe } from './ripgrepSearchUtils';
 
-// If @vscode/ripgrep is in an .asar file, then the binary is unpacked.
+// If @zycode/ripgrep is in an .asar file, then the binary is unpacked.
 const rgDiskPath = rgPath.replace(/\bnode_modules\.asar\b/, 'node_modules.asar.unpacked');
 
 export class RipgrepTextSearchEngine {
@@ -280,7 +280,7 @@ export class RipgrepParser extends EventEmitter {
 
 		// it looks like certain regexes can match a line, but cause rg to not
 		// emit any specific submatches for that line.
-		// https://github.com/microsoft/vscode/issues/100569#issuecomment-738496991
+		// https://github.com/microsoft/zycode/issues/100569#issuecomment-738496991
 		if (data.submatches.length === 0) {
 			data.submatches.push(
 				fullText.length

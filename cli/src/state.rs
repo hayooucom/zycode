@@ -118,7 +118,7 @@ impl LauncherPaths {
 			Some(d) => d,
 		};
 
-		let old_dir = home_dir.join(".vscode-cli");
+		let old_dir = home_dir.join(".zycode-cli");
 		let mut new_dir = home_dir;
 		new_dir.push(DEFAULT_DATA_PARENT_DIR);
 		new_dir.push("cli");

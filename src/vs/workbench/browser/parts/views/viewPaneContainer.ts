@@ -1250,7 +1250,7 @@ registerAction2(
 registerAction2(class MoveViews extends Action2 {
 	constructor() {
 		super({
-			id: 'vscode.moveViews',
+			id: 'zycode.moveViews',
 			title: nls.localize('viewsMove', "Move Views"),
 		});
 	}

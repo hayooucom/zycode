@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ExtensionContext, l10n, workspace } from 'vscode';
+import { ExtensionContext, l10n, workspace } from 'zycode';
 import { filterEvent, IDisposable } from './util';
 
 export interface ITerminalEnvironmentProvider {

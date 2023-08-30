@@ -56,7 +56,7 @@ const SECRET_KEY_BYTES: usize = 32;
 /// Path to mint the key combining server and client parts.
 const SECRET_KEY_MINT_PATH: &str = "/_vscode-cli/mint-key";
 /// Cookie set to the `SECRET_KEY_MINT_PATH`
-const PATH_COOKIE_NAME: &str = "vscode-secret-key-path";
+const PATH_COOKIE_NAME: &str = "zycode-secret-key-path";
 /// Cookie set to the `SECRET_KEY_MINT_PATH`
 const PATH_COOKIE_VALUE: &str = concatcp!(
 	PATH_COOKIE_NAME,
@@ -65,9 +65,9 @@ const PATH_COOKIE_VALUE: &str = concatcp!(
 	"; SameSite=Strict; Path=/"
 );
 /// HTTP-only cookie where the client's secret half is stored.
-const SECRET_KEY_COOKIE_NAME: &str = "vscode-cli-secret-half";
+const SECRET_KEY_COOKIE_NAME: &str = "zycode-cli-secret-half";
 
-/// Implements the vscode "server of servers". Clients who go to the URI get
+/// Implements the zycode "server of servers". Clients who go to the URI get
 /// served the latest version of the VS Code server whenever they load the
 /// page. The VS Code server prefixes all assets and connections it loads with
 /// its version string, so existing clients can continue to get served even

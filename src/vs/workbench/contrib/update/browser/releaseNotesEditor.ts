@@ -241,7 +241,7 @@ export class ReleaseNotesManager {
 			<body>
 				${content}
 				<script nonce="${nonce}">
-					const vscode = acquireVsCodeApi();
+					const zycode = acquireVsCodeApi();
 					const container = document.createElement('p');
 					container.style.display = 'flex';
 					container.style.alignItems = 'center';
@@ -271,7 +271,7 @@ export class ReleaseNotesManager {
 					});
 
 					input.addEventListener('change', event => {
-						vscode.postMessage({ type: 'showReleaseNotes', value: input.checked }, '*');
+						zycode.postMessage({ type: 'showReleaseNotes', value: input.checked }, '*');
 					});
 				</script>
 			</body>

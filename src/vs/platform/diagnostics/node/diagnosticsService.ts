@@ -171,7 +171,7 @@ export function getMachineInfo(): IMachineInfo {
 export async function collectLaunchConfigs(folder: string): Promise<WorkspaceStatItem[]> {
 	try {
 		const launchConfigs = new Map<string, number>();
-		const launchConfig = join(folder, '.vscode', 'launch.json');
+		const launchConfig = join(folder, '.zycode', 'launch.json');
 
 		const contents = await pfs.readFile(launchConfig);
 

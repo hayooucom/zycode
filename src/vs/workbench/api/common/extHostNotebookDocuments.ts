@@ -9,14 +9,14 @@ import * as extHostProtocol from 'vs/workbench/api/common/extHost.protocol';
 import { ExtHostNotebookController } from 'vs/workbench/api/common/extHostNotebook';
 import { NotebookDocumentMetadata } from 'vs/workbench/contrib/notebook/common/notebookCommon';
 import { SerializableObjectWithBuffers } from 'vs/workbench/services/extensions/common/proxyIdentifier';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 
 export class ExtHostNotebookDocuments implements extHostProtocol.ExtHostNotebookDocumentsShape {
 
-	private readonly _onDidSaveNotebookDocument = new Emitter<vscode.NotebookDocument>();
+	private readonly _onDidSaveNotebookDocument = new Emitter<zycode.NotebookDocument>();
 	readonly onDidSaveNotebookDocument = this._onDidSaveNotebookDocument.event;
 
-	private readonly _onDidChangeNotebookDocument = new Emitter<vscode.NotebookDocumentChangeEvent>();
+	private readonly _onDidChangeNotebookDocument = new Emitter<zycode.NotebookDocumentChangeEvent>();
 	readonly onDidChangeNotebookDocument = this._onDidChangeNotebookDocument.event;
 
 	constructor(

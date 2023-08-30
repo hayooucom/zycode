@@ -14,7 +14,7 @@ import { ExtHostCommands } from 'vs/workbench/api/common/extHostCommands';
 import { MainContext, MainThreadSCMShape, SCMRawResource, SCMRawResourceSplice, SCMRawResourceSplices, IMainContext, ExtHostSCMShape, ICommandDto, MainThreadTelemetryShape, SCMGroupFeatures } from './extHost.protocol';
 import { sortedDiff, equals } from 'vs/base/common/arrays';
 import { comparePaths } from 'vs/base/common/comparers';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ISplice } from 'vs/base/common/sequence';
 import { ILogService } from 'vs/platform/log/common/log';
 import { CancellationToken } from 'vs/base/common/cancellation';
@@ -31,7 +31,7 @@ type ProviderHandle = number;
 type GroupHandle = number;
 type ResourceStateHandle = number;
 
-function getIconResource(decorations?: vscode.SourceControlResourceThemableDecorations): UriComponents | ThemeIcon | undefined {
+function getIconResource(decorations?: zycode.SourceControlResourceThemableDecorations): UriComponents | ThemeIcon | undefined {
 	if (!decorations) {
 		return undefined;
 	} else if (typeof decorations.iconPath === 'string') {
@@ -45,7 +45,7 @@ function getIconResource(decorations?: vscode.SourceControlResourceThemableDecor
 	}
 }
 
-function compareResourceThemableDecorations(a: vscode.SourceControlResourceThemableDecorations, b: vscode.SourceControlResourceThemableDecorations): number {
+function compareResourceThemableDecorations(a: zycode.SourceControlResourceThemableDecorations, b: zycode.SourceControlResourceThemableDecorations): number {
 	if (!a.iconPath && !b.iconPath) {
 		return 0;
 	} else if (!a.iconPath) {
@@ -54,12 +54,12 @@ function compareResourceThemableDecorations(a: vscode.SourceControlResourceThema
 		return 1;
 	}
 
-	const aPath = typeof a.iconPath === 'string' ? a.iconPath : URI.isUri(a.iconPath) ? a.iconPath.fsPath : (a.iconPath as vscode.ThemeIcon).id;
-	const bPath = typeof b.iconPath === 'string' ? b.iconPath : URI.isUri(b.iconPath) ? b.iconPath.fsPath : (b.iconPath as vscode.ThemeIcon).id;
+	const aPath = typeof a.iconPath === 'string' ? a.iconPath : URI.isUri(a.iconPath) ? a.iconPath.fsPath : (a.iconPath as zycode.ThemeIcon).id;
+	const bPath = typeof b.iconPath === 'string' ? b.iconPath : URI.isUri(b.iconPath) ? b.iconPath.fsPath : (b.iconPath as zycode.ThemeIcon).id;
 	return comparePaths(aPath, bPath);
 }
 
-function compareResourceStatesDecorations(a: vscode.SourceControlResourceDecorations, b: vscode.SourceControlResourceDecorations): number {
+function compareResourceStatesDecorations(a: zycode.SourceControlResourceDecorations, b: zycode.SourceControlResourceDecorations): number {
 	let result = 0;
 
 	if (a.strikeThrough !== b.strikeThrough) {
@@ -103,7 +103,7 @@ function compareResourceStatesDecorations(a: vscode.SourceControlResourceDecorat
 	return result;
 }
 
-function compareCommands(a: vscode.Command, b: vscode.Command): number {
+function compareCommands(a: zycode.Command, b: zycode.Command): number {
 	if (a.command !== b.command) {
 		return a.command < b.command ? -1 : 1;
 	}
@@ -146,7 +146,7 @@ function compareCommands(a: vscode.Command, b: vscode.Command): number {
 	return 0;
 }
 
-function compareResourceStates(a: vscode.SourceControlResourceState, b: vscode.SourceControlResourceState): number {
+function compareResourceStates(a: zycode.SourceControlResourceState, b: zycode.SourceControlResourceState): number {
 	let result = comparePaths(a.resourceUri.fsPath, b.resourceUri.fsPath, true);
 
 	if (result !== 0) {
@@ -186,22 +186,22 @@ function compareArgs(a: any[], b: any[]): boolean {
 	return true;
 }
 
-function commandEquals(a: vscode.Command, b: vscode.Command): boolean {
+function commandEquals(a: zycode.Command, b: zycode.Command): boolean {
 	return a.command === b.command
 		&& a.title === b.title
 		&& a.tooltip === b.tooltip
 		&& (a.arguments && b.arguments ? compareArgs(a.arguments, b.arguments) : a.arguments === b.arguments);
 }
 
-function commandListEquals(a: readonly vscode.Command[], b: readonly vscode.Command[]): boolean {
+function commandListEquals(a: readonly zycode.Command[], b: readonly zycode.Command[]): boolean {
 	return equals(a, b, commandEquals);
 }
 
 export interface IValidateInput {
-	(value: string, cursorPosition: number): vscode.ProviderResult<vscode.SourceControlInputBoxValidation | undefined | null>;
+	(value: string, cursorPosition: number): zycode.ProviderResult<zycode.SourceControlInputBoxValidation | undefined | null>;
 }
 
-export class ExtHostSCMInputBox implements vscode.SourceControlInputBox {
+export class ExtHostSCMInputBox implements zycode.SourceControlInputBox {
 
 	#proxy: MainThreadSCMShape;
 	#extHostDocuments: ExtHostDocuments;
@@ -288,7 +288,7 @@ export class ExtHostSCMInputBox implements vscode.SourceControlInputBox {
 		this.#proxy.$setInputBoxVisibility(this._sourceControlHandle, visible);
 	}
 
-	get document(): vscode.TextDocument {
+	get document(): zycode.TextDocument {
 		checkProposedApiEnabled(this._extension, 'scmTextDocument');
 
 		return this.#extHostDocuments.getDocument(this._documentUri);
@@ -299,7 +299,7 @@ export class ExtHostSCMInputBox implements vscode.SourceControlInputBox {
 		this.#proxy = proxy;
 	}
 
-	showValidationMessage(message: string | vscode.MarkdownString, type: vscode.SourceControlInputBoxValidationType) {
+	showValidationMessage(message: string | zycode.MarkdownString, type: zycode.SourceControlInputBoxValidationType) {
 		checkProposedApiEnabled(this._extension, 'scmValidation');
 
 		this.#proxy.$showValidationMessage(this._sourceControlHandle, message, type as any);
@@ -315,14 +315,14 @@ export class ExtHostSCMInputBox implements vscode.SourceControlInputBox {
 	}
 }
 
-class ExtHostSourceControlResourceGroup implements vscode.SourceControlResourceGroup {
+class ExtHostSourceControlResourceGroup implements zycode.SourceControlResourceGroup {
 
 	private static _handlePool: number = 0;
 	private _resourceHandlePool: number = 0;
-	private _resourceStates: vscode.SourceControlResourceState[] = [];
+	private _resourceStates: zycode.SourceControlResourceState[] = [];
 
-	private _resourceStatesMap = new Map<ResourceStateHandle, vscode.SourceControlResourceState>();
-	private _resourceStatesCommandsMap = new Map<ResourceStateHandle, vscode.Command>();
+	private _resourceStatesMap = new Map<ResourceStateHandle, zycode.SourceControlResourceState>();
+	private _resourceStatesCommandsMap = new Map<ResourceStateHandle, zycode.Command>();
 	private _resourceStatesDisposablesMap = new Map<ResourceStateHandle, IDisposable>();
 
 	private readonly _onDidUpdateResourceStates = new Emitter<void>();
@@ -334,7 +334,7 @@ class ExtHostSourceControlResourceGroup implements vscode.SourceControlResourceG
 	readonly onDidDispose = this._onDidDispose.event;
 
 	private _handlesSnapshot: number[] = [];
-	private _resourceSnapshot: vscode.SourceControlResourceState[] = [];
+	private _resourceSnapshot: zycode.SourceControlResourceState[] = [];
 
 	get id(): string { return this._id; }
 
@@ -357,8 +357,8 @@ class ExtHostSourceControlResourceGroup implements vscode.SourceControlResourceG
 		};
 	}
 
-	get resourceStates(): vscode.SourceControlResourceState[] { return [...this._resourceStates]; }
-	set resourceStates(resources: vscode.SourceControlResourceState[]) {
+	get resourceStates(): zycode.SourceControlResourceState[] { return [...this._resourceStates]; }
+	set resourceStates(resources: zycode.SourceControlResourceState[]) {
 		this._resourceStates = [...resources];
 		this._onDidUpdateResourceStates.fire();
 	}
@@ -373,7 +373,7 @@ class ExtHostSourceControlResourceGroup implements vscode.SourceControlResourceG
 		private _label: string,
 	) { }
 
-	getResourceState(handle: number): vscode.SourceControlResourceState | undefined {
+	getResourceState(handle: number): zycode.SourceControlResourceState | undefined {
 		return this._resourceStatesMap.get(handle);
 	}
 
@@ -400,7 +400,7 @@ class ExtHostSourceControlResourceGroup implements vscode.SourceControlResourceG
 
 				let command: ICommandDto | undefined;
 				if (r.command) {
-					if (r.command.command === 'vscode.open' || r.command.command === 'vscode.diff') {
+					if (r.command.command === 'zycode.open' || r.command.command === 'zycode.diff') {
 						const disposables = new DisposableStore();
 						command = this._commands.converter.toInternal(r.command, disposables);
 						this._resourceStatesDisposablesMap.set(handle, disposables);
@@ -454,7 +454,7 @@ class ExtHostSourceControlResourceGroup implements vscode.SourceControlResourceG
 	}
 }
 
-class ExtHostSourceControl implements vscode.SourceControl {
+class ExtHostSourceControl implements zycode.SourceControl {
 
 	private static _handlePool: number = 0;
 
@@ -470,7 +470,7 @@ class ExtHostSourceControl implements vscode.SourceControl {
 		return this._label;
 	}
 
-	get rootUri(): vscode.Uri | undefined {
+	get rootUri(): zycode.Uri | undefined {
 		return this._rootUri;
 	}
 
@@ -492,13 +492,13 @@ class ExtHostSourceControl implements vscode.SourceControl {
 		this.#proxy.$updateSourceControl(this.handle, { count });
 	}
 
-	private _quickDiffProvider: vscode.QuickDiffProvider | undefined = undefined;
+	private _quickDiffProvider: zycode.QuickDiffProvider | undefined = undefined;
 
-	get quickDiffProvider(): vscode.QuickDiffProvider | undefined {
+	get quickDiffProvider(): zycode.QuickDiffProvider | undefined {
 		return this._quickDiffProvider;
 	}
 
-	set quickDiffProvider(quickDiffProvider: vscode.QuickDiffProvider | undefined) {
+	set quickDiffProvider(quickDiffProvider: zycode.QuickDiffProvider | undefined) {
 		this._quickDiffProvider = quickDiffProvider;
 		let quickDiffLabel = undefined;
 		if (isProposedApiEnabled(this._extension, 'quickDiffProvider')) {
@@ -523,13 +523,13 @@ class ExtHostSourceControl implements vscode.SourceControl {
 	}
 
 	private _acceptInputDisposables = new MutableDisposable<DisposableStore>();
-	private _acceptInputCommand: vscode.Command | undefined = undefined;
+	private _acceptInputCommand: zycode.Command | undefined = undefined;
 
-	get acceptInputCommand(): vscode.Command | undefined {
+	get acceptInputCommand(): zycode.Command | undefined {
 		return this._acceptInputCommand;
 	}
 
-	set acceptInputCommand(acceptInputCommand: vscode.Command | undefined) {
+	set acceptInputCommand(acceptInputCommand: zycode.Command | undefined) {
 		this._acceptInputDisposables.value = new DisposableStore();
 
 		this._acceptInputCommand = acceptInputCommand;
@@ -539,12 +539,12 @@ class ExtHostSourceControl implements vscode.SourceControl {
 	}
 
 	private _actionButtonDisposables = new MutableDisposable<DisposableStore>();
-	private _actionButton: vscode.SourceControlActionButton | undefined;
-	get actionButton(): vscode.SourceControlActionButton | undefined {
+	private _actionButton: zycode.SourceControlActionButton | undefined;
+	get actionButton(): zycode.SourceControlActionButton | undefined {
 		checkProposedApiEnabled(this._extension, 'scmActionButton');
 		return this._actionButton;
 	}
-	set actionButton(actionButton: vscode.SourceControlActionButton | undefined) {
+	set actionButton(actionButton: zycode.SourceControlActionButton | undefined) {
 		checkProposedApiEnabled(this._extension, 'scmActionButton');
 		this._actionButtonDisposables.value = new DisposableStore();
 
@@ -564,13 +564,13 @@ class ExtHostSourceControl implements vscode.SourceControl {
 
 
 	private _statusBarDisposables = new MutableDisposable<DisposableStore>();
-	private _statusBarCommands: vscode.Command[] | undefined = undefined;
+	private _statusBarCommands: zycode.Command[] | undefined = undefined;
 
-	get statusBarCommands(): vscode.Command[] | undefined {
+	get statusBarCommands(): zycode.Command[] | undefined {
 		return this._statusBarCommands;
 	}
 
-	set statusBarCommands(statusBarCommands: vscode.Command[] | undefined) {
+	set statusBarCommands(statusBarCommands: zycode.Command[] | undefined) {
 		if (this._statusBarCommands && statusBarCommands && commandListEquals(this._statusBarCommands, statusBarCommands)) {
 			return;
 		}
@@ -601,7 +601,7 @@ class ExtHostSourceControl implements vscode.SourceControl {
 		private _commands: ExtHostCommands,
 		private _id: string,
 		private _label: string,
-		private _rootUri?: vscode.Uri
+		private _rootUri?: zycode.Uri
 	) {
 		this.#proxy = proxy;
 
@@ -710,8 +710,8 @@ export class ExtHostSCM implements ExtHostSCMShape {
 	private _sourceControls: Map<ProviderHandle, ExtHostSourceControl> = new Map<ProviderHandle, ExtHostSourceControl>();
 	private _sourceControlsByExtension: ExtensionIdentifierMap<ExtHostSourceControl[]> = new ExtensionIdentifierMap<ExtHostSourceControl[]>();
 
-	private readonly _onDidChangeActiveProvider = new Emitter<vscode.SourceControl>();
-	get onDidChangeActiveProvider(): Event<vscode.SourceControl> { return this._onDidChangeActiveProvider.event; }
+	private readonly _onDidChangeActiveProvider = new Emitter<zycode.SourceControl>();
+	get onDidChangeActiveProvider(): Event<zycode.SourceControl> { return this._onDidChangeActiveProvider.event; }
 
 	private _selectedSourceControlHandle: number | undefined;
 
@@ -763,7 +763,7 @@ export class ExtHostSCM implements ExtHostSCMShape {
 		});
 	}
 
-	createSourceControl(extension: IExtensionDescription, id: string, label: string, rootUri: vscode.Uri | undefined): vscode.SourceControl {
+	createSourceControl(extension: IExtensionDescription, id: string, label: string, rootUri: zycode.Uri | undefined): zycode.SourceControl {
 		this.logService.trace('ExtHostSCM#createSourceControl', extension.identifier.value, id, label, rootUri);
 
 		type TEvent = { extensionId: string };

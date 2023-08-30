@@ -3,26 +3,26 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { BinarySizeStatusBarEntry } from './binarySizeStatusBarEntry';
 import { MediaPreview, reopenAsText } from './mediaPreview';
 import { escapeAttribute, getNonce } from './util/dom';
 
 
-class VideoPreviewProvider implements vscode.CustomReadonlyEditorProvider {
+class VideoPreviewProvider implements zycode.CustomReadonlyEditorProvider {
 
-	public static readonly viewType = 'vscode.videoPreview';
+	public static readonly viewType = 'zycode.videoPreview';
 
 	constructor(
-		private readonly extensionRoot: vscode.Uri,
+		private readonly extensionRoot: zycode.Uri,
 		private readonly binarySizeStatusBarEntry: BinarySizeStatusBarEntry,
 	) { }
 
-	public async openCustomDocument(uri: vscode.Uri) {
+	public async openCustomDocument(uri: zycode.Uri) {
 		return { uri, dispose: () => { } };
 	}
 
-	public async resolveCustomEditor(document: vscode.CustomDocument, webviewEditor: vscode.WebviewPanel): Promise<void> {
+	public async resolveCustomEditor(document: zycode.CustomDocument, webviewEditor: zycode.WebviewPanel): Promise<void> {
 		new VideoPreview(this.extensionRoot, document.uri, webviewEditor, this.binarySizeStatusBarEntry);
 	}
 }
@@ -31,9 +31,9 @@ class VideoPreviewProvider implements vscode.CustomReadonlyEditorProvider {
 class VideoPreview extends MediaPreview {
 
 	constructor(
-		private readonly extensionRoot: vscode.Uri,
-		resource: vscode.Uri,
-		webviewEditor: vscode.WebviewPanel,
+		private readonly extensionRoot: zycode.Uri,
+		resource: zycode.Uri,
+		webviewEditor: zycode.WebviewPanel,
 		binarySizeStatusBarEntry: BinarySizeStatusBarEntry,
 	) {
 		super(extensionRoot, resource, webviewEditor, binarySizeStatusBarEntry);
@@ -54,7 +54,7 @@ class VideoPreview extends MediaPreview {
 
 	protected async getWebviewContents(): Promise<string> {
 		const version = Date.now().toString();
-		const configurations = vscode.workspace.getConfiguration('mediaPreview.video');
+		const configurations = zycode.workspace.getConfiguration('mediaPreview.video');
 		const settings = {
 			src: await this.getResourcePath(this.webviewEditor, this.resource, version),
 			autoplay: configurations.get('autoPlay'),
@@ -80,20 +80,20 @@ class VideoPreview extends MediaPreview {
 	<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: ${cspSource}; media-src ${cspSource}; script-src 'nonce-${nonce}'; style-src ${cspSource} 'nonce-${nonce}';">
 	<meta id="settings" data-settings="${escapeAttribute(JSON.stringify(settings))}">
 </head>
-<body class="loading" data-vscode-context='{ "preventDefaultContextMenuItems": true }'>
+<body class="loading" data-zycode-context='{ "preventDefaultContextMenuItems": true }'>
 	<div class="loading-indicator"></div>
 	<div class="loading-error">
-		<p>${vscode.l10n.t("An error occurred while loading the video file.")}</p>
-		<a href="#" class="open-file-link">${vscode.l10n.t("Open file using VS Code's standard text/binary editor?")}</a>
+		<p>${zycode.l10n.t("An error occurred while loading the video file.")}</p>
+		<a href="#" class="open-file-link">${zycode.l10n.t("Open file using VS Code's standard text/binary editor?")}</a>
 	</div>
 	<script src="${escapeAttribute(this.extensionResource('media', 'videoPreview.js'))}" nonce="${nonce}"></script>
 </body>
 </html>`;
 	}
 
-	private async getResourcePath(webviewEditor: vscode.WebviewPanel, resource: vscode.Uri, version: string): Promise<string | null> {
+	private async getResourcePath(webviewEditor: zycode.WebviewPanel, resource: zycode.Uri, version: string): Promise<string | null> {
 		if (resource.scheme === 'git') {
-			const stat = await vscode.workspace.fs.stat(resource);
+			const stat = await zycode.workspace.fs.stat(resource);
 			if (stat.size === 0) {
 				// The file is stored on git lfs
 				return null;
@@ -108,13 +108,13 @@ class VideoPreview extends MediaPreview {
 	}
 
 	private extensionResource(...parts: string[]) {
-		return this.webviewEditor.webview.asWebviewUri(vscode.Uri.joinPath(this.extensionRoot, ...parts));
+		return this.webviewEditor.webview.asWebviewUri(zycode.Uri.joinPath(this.extensionRoot, ...parts));
 	}
 }
 
-export function registerVideoPreviewSupport(context: vscode.ExtensionContext, binarySizeStatusBarEntry: BinarySizeStatusBarEntry): vscode.Disposable {
+export function registerVideoPreviewSupport(context: zycode.ExtensionContext, binarySizeStatusBarEntry: BinarySizeStatusBarEntry): zycode.Disposable {
 	const provider = new VideoPreviewProvider(context.extensionUri, binarySizeStatusBarEntry);
-	return vscode.window.registerCustomEditorProvider(VideoPreviewProvider.viewType, provider, {
+	return zycode.window.registerCustomEditorProvider(VideoPreviewProvider.viewType, provider, {
 		supportsMultipleEditorsPerDocument: true,
 		webviewOptions: {
 			retainContextWhenHidden: true,

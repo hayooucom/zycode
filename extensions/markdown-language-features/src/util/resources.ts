@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 export interface WebviewResourceProvider {
-	asWebviewUri(resource: vscode.Uri): vscode.Uri;
+	asWebviewUri(resource: zycode.Uri): zycode.Uri;
 
 	readonly cspSource: string;
 }

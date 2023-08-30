@@ -5,5 +5,5 @@
 
 
 .monaco-editor.vs .valueSetReplacement {
-	outline: solid 2px var(--vscode-editorBracketMatch-border);
+	outline: solid 2px var(--zycode-editorBracketMatch-border);
 }

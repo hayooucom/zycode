@@ -122,7 +122,7 @@ class LocalTerminalBackend extends BaseTerminalBackend implements ITerminalBacke
 
 		mark('code/terminal/willConnectPtyHost');
 		this._logService.trace('Renderer->PtyHost#connect: before acquirePort');
-		acquirePort('vscode:createPtyHostMessageChannel', 'vscode:createPtyHostMessageChannelResult').then(port => {
+		acquirePort('zycode:createPtyHostMessageChannel', 'zycode:createPtyHostMessageChannelResult').then(port => {
 			mark('code/terminal/didConnectPtyHost');
 			this._logService.trace('Renderer->PtyHost#connect: connection established');
 			// There are two connections to the pty host; one to the regular shared process

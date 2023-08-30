@@ -5,8 +5,8 @@
 
 import * as os from 'os';
 import * as path from 'path';
-import { Command, commands, Disposable, LineChange, MessageOptions, Position, ProgressLocation, QuickPickItem, Range, SourceControlResourceState, TextDocumentShowOptions, TextEditor, Uri, ViewColumn, window, workspace, WorkspaceEdit, WorkspaceFolder, TimelineItem, env, Selection, TextDocumentContentProvider, InputBoxValidationSeverity, TabInputText, TabInputTextMerge, QuickPickItemKind, TextDocument, LogOutputChannel, l10n, Memento, UIKind, QuickInputButton, ThemeIcon } from 'vscode';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { Command, commands, Disposable, LineChange, MessageOptions, Position, ProgressLocation, QuickPickItem, Range, SourceControlResourceState, TextDocumentShowOptions, TextEditor, Uri, ViewColumn, window, workspace, WorkspaceEdit, WorkspaceFolder, TimelineItem, env, Selection, TextDocumentContentProvider, InputBoxValidationSeverity, TabInputText, TabInputTextMerge, QuickPickItemKind, TextDocument, LogOutputChannel, l10n, Memento, UIKind, QuickInputButton, ThemeIcon } from 'zycode';
+import TelemetryReporter from '@zycode/extension-telemetry';
 import { uniqueNamesGenerator, adjectives, animals, colors, NumberDictionary } from '@joaomoreno/unique-names-generator';
 import { Branch, ForcePushMode, GitErrorCodes, Ref, RefType, Status, CommitOptions, RemoteSourcePublisher, Remote } from './api/git';
 import { Git, Stash } from './git';
@@ -475,7 +475,7 @@ export class CommandCenter {
 			}
 
 			void commands.executeCommand(
-				'vscode.open',
+				'zycode.open',
 				resource.resourceUri,
 				{ background: true, preview: false, }
 			);
@@ -694,11 +694,11 @@ export class CommandCenter {
 			const uri = Uri.file(repositoryPath);
 
 			if (action === PostCloneAction.Open) {
-				commands.executeCommand('vscode.openFolder', uri, { forceReuseWindow: true });
+				commands.executeCommand('zycode.openFolder', uri, { forceReuseWindow: true });
 			} else if (action === PostCloneAction.AddToWorkspace) {
 				workspace.updateWorkspaceFolders(workspace.workspaceFolders!.length, 0, { uri });
 			} else if (action === PostCloneAction.OpenNewWindow) {
-				commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
+				commands.executeCommand('zycode.openFolder', uri, { forceNewWindow: true });
 			}
 		} catch (err) {
 			if (/already exists and is not an empty directory/.test(err && err.stderr || '')) {
@@ -749,7 +749,7 @@ export class CommandCenter {
 		const ref = selection.repository.HEAD?.upstream?.name;
 
 		if (uri !== undefined) {
-			let target = `${env.uriScheme}://vscode.git/clone?url=${encodeURIComponent(uri)}`;
+			let target = `${env.uriScheme}://zycode.git/clone?url=${encodeURIComponent(uri)}`;
 			const isWeb = env.uiKind === UIKind.Web;
 			const isRemote = env.remoteName !== undefined;
 
@@ -874,11 +874,11 @@ export class CommandCenter {
 		const uri = Uri.file(repositoryPath);
 
 		if (result === open) {
-			commands.executeCommand('vscode.openFolder', uri);
+			commands.executeCommand('zycode.openFolder', uri);
 		} else if (result === addToWorkspace) {
 			workspace.updateWorkspaceFolders(workspace.workspaceFolders!.length, 0, { uri });
 		} else if (result === openNewWindow) {
-			commands.executeCommand('vscode.openFolder', uri, true);
+			commands.executeCommand('zycode.openFolder', uri, true);
 		} else {
 			await this.model.openRepository(repositoryPath);
 		}
@@ -993,7 +993,7 @@ export class CommandCenter {
 				viewColumn: ViewColumn.Active
 			};
 
-			await commands.executeCommand('vscode.open', uri, {
+			await commands.executeCommand('zycode.open', uri, {
 				...opts,
 				override: arg instanceof Resource && arg.type === Status.BOTH_MODIFIED ? false : undefined
 			});
@@ -1055,7 +1055,7 @@ export class CommandCenter {
 			preview
 		};
 
-		return await commands.executeCommand<void>('vscode.open', HEAD, opts, title);
+		return await commands.executeCommand<void>('zycode.open', HEAD, opts, title);
 	}
 
 	@command('git.openChange')
@@ -3414,7 +3414,7 @@ export class CommandCenter {
 		}
 
 		return {
-			command: 'vscode.diff',
+			command: 'zycode.diff',
 			title: l10n.t('Open Comparison'),
 			arguments: [toGitUri(uri, item.previousRef), item.ref === '' ? uri : toGitUri(uri, item.ref), title, options]
 		};
@@ -3481,7 +3481,7 @@ export class CommandCenter {
 
 
 		const title = l10n.t('{0} ↔ {1}', leftTitle, rightTitle);
-		await commands.executeCommand('vscode.diff', selected.ref === '' ? uri : toGitUri(uri, selected.ref), item.ref === '' ? uri : toGitUri(uri, item.ref), title);
+		await commands.executeCommand('zycode.diff', selected.ref === '' ? uri : toGitUri(uri, selected.ref), item.ref === '' ? uri : toGitUri(uri, item.ref), title);
 	}
 
 	@command('git.rebaseAbort', { repository: true })
@@ -3682,7 +3682,7 @@ export class CommandCenter {
 					case GitErrorCodes.NoUserNameConfigured:
 					case GitErrorCodes.NoUserEmailConfigured:
 						message = l10n.t('Make sure you configure your "user.name" and "user.email" in git.');
-						choices.set(l10n.t('Learn More'), () => commands.executeCommand('vscode.open', Uri.parse('https://aka.ms/vscode-setup-git')));
+						choices.set(l10n.t('Learn More'), () => commands.executeCommand('zycode.open', Uri.parse('https://aka.ms/zycode-setup-git')));
 						break;
 					case GitErrorCodes.EmptyCommitMessage:
 						message = l10n.t('Commit operation was cancelled due to empty commit message.');

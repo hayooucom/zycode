@@ -48,16 +48,16 @@ if (monacoEnvironment?.globalAPI || (typeof define === 'function' && (<any>defin
 if (typeof globalThis.require !== 'undefined' && typeof globalThis.require.config === 'function') {
 	globalThis.require.config({
 		ignoreDuplicateModules: [
-			'vscode-languageserver-types',
-			'vscode-languageserver-types/main',
-			'vscode-languageserver-textdocument',
-			'vscode-languageserver-textdocument/main',
-			'vscode-nls',
-			'vscode-nls/vscode-nls',
+			'zycode-languageserver-types',
+			'zycode-languageserver-types/main',
+			'zycode-languageserver-textdocument',
+			'zycode-languageserver-textdocument/main',
+			'zycode-nls',
+			'zycode-nls/zycode-nls',
 			'jsonc-parser',
 			'jsonc-parser/main',
-			'vscode-uri',
-			'vscode-uri/index',
+			'zycode-uri',
+			'zycode-uri/index',
 			'vs/basic-languages/typescript/typescript'
 		]
 	});

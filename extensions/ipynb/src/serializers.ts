@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type * as nbformat from '@jupyterlab/nbformat';
-import { NotebookCell, NotebookCellData, NotebookCellKind, NotebookCellOutput } from 'vscode';
+import { NotebookCell, NotebookCellData, NotebookCellKind, NotebookCellOutput } from 'zycode';
 import { CellOutputMetadata } from './common';
 import { textMimeTypes } from './deserializers';
 
@@ -35,7 +35,7 @@ export function createJupyterCellFromNotebookCell(
 /**
  * Sort the JSON to minimize unnecessary SCM changes.
  * Jupyter notbeooks/labs sorts the JSON keys in alphabetical order.
- * https://github.com/microsoft/vscode-python/issues/13155
+ * https://github.com/microsoft/zycode-python/issues/13155
  */
 export function sortObjectPropertiesRecursively(obj: any): any {
 	if (Array.isArray(obj)) {
@@ -69,13 +69,13 @@ function createCodeCellFromNotebookCell(cell: NotebookCellData, preferredLanguag
 	if (cell.languageId !== preferredLanguage) {
 		metadata = {
 			...metadata,
-			vscode: {
+			zycode: {
 				languageId: cell.languageId
 			}
 		};
 	} else {
-		// cell current language is the same as the preferred cell language in the document, flush the vscode custom language id metadata
-		metadata.vscode = undefined;
+		// cell current language is the same as the preferred cell language in the document, flush the zycode custom language id metadata
+		metadata.zycode = undefined;
 	}
 
 	const codeCell: any = {

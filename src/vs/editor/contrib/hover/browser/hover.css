@@ -4,30 +4,30 @@
  *--------------------------------------------------------------------------------------------*/
 
 .monaco-editor .hoverHighlight {
-	background-color: var(--vscode-editor-hoverHighlightBackground);
+	background-color: var(--zycode-editor-hoverHighlightBackground);
 }
 
 .monaco-editor .monaco-hover {
-	color: var(--vscode-editorHoverWidget-foreground);
-	background-color: var(--vscode-editorHoverWidget-background);
-	border: 1px solid var(--vscode-editorHoverWidget-border);
+	color: var(--zycode-editorHoverWidget-foreground);
+	background-color: var(--zycode-editorHoverWidget-background);
+	border: 1px solid var(--zycode-editorHoverWidget-border);
 	border-radius: 3px;
 }
 
 .monaco-editor .monaco-hover a {
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 }
 
 .monaco-editor .monaco-hover a:hover {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 }
 
 .monaco-editor .monaco-hover .hover-row .actions {
-	background-color: var(--vscode-editorHoverWidget-statusBarBackground);
+	background-color: var(--zycode-editorHoverWidget-statusBarBackground);
 }
 
 .monaco-editor .monaco-hover code {
-	background-color: var(--vscode-textCodeBlock-background);
+	background-color: var(--zycode-textCodeBlock-background);
 }
 
 

@@ -1,5 +1,5 @@
 {
-	"$schema": "vscode://schemas/color-theme",
+	"$schema": "zycode://schemas/color-theme",
 	"name": "Light+",
 	"include": "./light_vs.json",
 	"tokenColors": [ // adds rules to the light vs rules

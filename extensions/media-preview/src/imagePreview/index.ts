@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { BinarySizeStatusBarEntry } from '../binarySizeStatusBarEntry';
 import { MediaPreview, PreviewState, reopenAsText } from '../mediaPreview';
 import { escapeAttribute, getNonce } from '../util/dom';
@@ -11,7 +11,7 @@ import { SizeStatusBarEntry } from './sizeStatusBarEntry';
 import { Scale, ZoomStatusBarEntry } from './zoomStatusBarEntry';
 
 
-export class PreviewManager implements vscode.CustomReadonlyEditorProvider {
+export class PreviewManager implements zycode.CustomReadonlyEditorProvider {
 
 	public static readonly viewType = 'imagePreview.previewEditor';
 
@@ -19,19 +19,19 @@ export class PreviewManager implements vscode.CustomReadonlyEditorProvider {
 	private _activePreview: ImagePreview | undefined;
 
 	constructor(
-		private readonly extensionRoot: vscode.Uri,
+		private readonly extensionRoot: zycode.Uri,
 		private readonly sizeStatusBarEntry: SizeStatusBarEntry,
 		private readonly binarySizeStatusBarEntry: BinarySizeStatusBarEntry,
 		private readonly zoomStatusBarEntry: ZoomStatusBarEntry,
 	) { }
 
-	public async openCustomDocument(uri: vscode.Uri) {
+	public async openCustomDocument(uri: zycode.Uri) {
 		return { uri, dispose: () => { } };
 	}
 
 	public async resolveCustomEditor(
-		document: vscode.CustomDocument,
-		webviewEditor: vscode.WebviewPanel,
+		document: zycode.CustomDocument,
+		webviewEditor: zycode.WebviewPanel,
 	): Promise<void> {
 		const preview = new ImagePreview(this.extensionRoot, document.uri, webviewEditor, this.sizeStatusBarEntry, this.binarySizeStatusBarEntry, this.zoomStatusBarEntry);
 		this._previews.add(preview);
@@ -64,9 +64,9 @@ class ImagePreview extends MediaPreview {
 	private readonly emptyPngDataUri = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAEElEQVR42gEFAPr/AP///wAI/AL+Sr4t6gAAAABJRU5ErkJggg==';
 
 	constructor(
-		private readonly extensionRoot: vscode.Uri,
-		resource: vscode.Uri,
-		webviewEditor: vscode.WebviewPanel,
+		private readonly extensionRoot: zycode.Uri,
+		resource: zycode.Uri,
+		webviewEditor: zycode.WebviewPanel,
 		private readonly sizeStatusBarEntry: SizeStatusBarEntry,
 		binarySizeStatusBarEntry: BinarySizeStatusBarEntry,
 		private readonly zoomStatusBarEntry: ZoomStatusBarEntry,
@@ -183,20 +183,20 @@ class ImagePreview extends MediaPreview {
 	<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: ${cspSource}; connect-src ${cspSource}; script-src 'nonce-${nonce}'; style-src ${cspSource} 'nonce-${nonce}';">
 	<meta id="image-preview-settings" data-settings="${escapeAttribute(JSON.stringify(settings))}">
 </head>
-<body class="container image scale-to-fit loading" data-vscode-context='{ "preventDefaultContextMenuItems": true }'>
+<body class="container image scale-to-fit loading" data-zycode-context='{ "preventDefaultContextMenuItems": true }'>
 	<div class="loading-indicator"></div>
 	<div class="image-load-error">
-		<p>${vscode.l10n.t("An error occurred while loading the image.")}</p>
-		<a href="#" class="open-file-link">${vscode.l10n.t("Open file using VS Code's standard text/binary editor?")}</a>
+		<p>${zycode.l10n.t("An error occurred while loading the image.")}</p>
+		<a href="#" class="open-file-link">${zycode.l10n.t("Open file using VS Code's standard text/binary editor?")}</a>
 	</div>
 	<script src="${escapeAttribute(this.extensionResource('media', 'imagePreview.js'))}" nonce="${nonce}"></script>
 </body>
 </html>`;
 	}
 
-	private async getResourcePath(webviewEditor: vscode.WebviewPanel, resource: vscode.Uri, version: string): Promise<string> {
+	private async getResourcePath(webviewEditor: zycode.WebviewPanel, resource: zycode.Uri, version: string): Promise<string> {
 		if (resource.scheme === 'git') {
-			const stat = await vscode.workspace.fs.stat(resource);
+			const stat = await zycode.workspace.fs.stat(resource);
 			if (stat.size === 0) {
 				return this.emptyPngDataUri;
 			}
@@ -210,13 +210,13 @@ class ImagePreview extends MediaPreview {
 	}
 
 	private extensionResource(...parts: string[]) {
-		return this.webviewEditor.webview.asWebviewUri(vscode.Uri.joinPath(this.extensionRoot, ...parts));
+		return this.webviewEditor.webview.asWebviewUri(zycode.Uri.joinPath(this.extensionRoot, ...parts));
 	}
 }
 
 
-export function registerImagePreviewSupport(context: vscode.ExtensionContext, binarySizeStatusBarEntry: BinarySizeStatusBarEntry): vscode.Disposable {
-	const disposables: vscode.Disposable[] = [];
+export function registerImagePreviewSupport(context: zycode.ExtensionContext, binarySizeStatusBarEntry: BinarySizeStatusBarEntry): zycode.Disposable {
+	const disposables: zycode.Disposable[] = [];
 
 	const sizeStatusBarEntry = new SizeStatusBarEntry();
 	disposables.push(sizeStatusBarEntry);
@@ -226,21 +226,21 @@ export function registerImagePreviewSupport(context: vscode.ExtensionContext, bi
 
 	const previewManager = new PreviewManager(context.extensionUri, sizeStatusBarEntry, binarySizeStatusBarEntry, zoomStatusBarEntry);
 
-	disposables.push(vscode.window.registerCustomEditorProvider(PreviewManager.viewType, previewManager, {
+	disposables.push(zycode.window.registerCustomEditorProvider(PreviewManager.viewType, previewManager, {
 		supportsMultipleEditorsPerDocument: true,
 	}));
 
-	disposables.push(vscode.commands.registerCommand('imagePreview.zoomIn', () => {
+	disposables.push(zycode.commands.registerCommand('imagePreview.zoomIn', () => {
 		previewManager.activePreview?.zoomIn();
 	}));
 
-	disposables.push(vscode.commands.registerCommand('imagePreview.zoomOut', () => {
+	disposables.push(zycode.commands.registerCommand('imagePreview.zoomOut', () => {
 		previewManager.activePreview?.zoomOut();
 	}));
 
-	disposables.push(vscode.commands.registerCommand('imagePreview.copyImage', () => {
+	disposables.push(zycode.commands.registerCommand('imagePreview.copyImage', () => {
 		previewManager.activePreview?.copyImage();
 	}));
 
-	return vscode.Disposable.from(...disposables);
+	return zycode.Disposable.from(...disposables);
 }

@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 .monaco-editor .contentWidgets .untitled-hint {
-	color: var(--vscode-input-placeholderForeground);
+	color: var(--zycode-input-placeholderForeground);
 }
 
 .monaco-editor .contentWidgets .untitled-hint a {
-	color: var(--vscode-textLink-foreground)
+	color: var(--zycode-textLink-foreground)
 }

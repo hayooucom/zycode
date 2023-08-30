@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { UriHandler, Uri, window, Disposable, commands, LogOutputChannel, l10n } from 'vscode';
+import { UriHandler, Uri, window, Disposable, commands, LogOutputChannel, l10n } from 'zycode';
 import { dispose } from './util';
 import * as querystring from 'querystring';
 
@@ -50,7 +50,7 @@ export class GitProtocolHandler implements UriHandler {
 			let rawUri = Array.isArray(data.url) ? data.url[0] : data.url;
 
 			// Handle SSH Uri
-			// Ex: git@github.com:microsoft/vscode.git
+			// Ex: git@github.com:microsoft/zycode.git
 			rawUri = rawUri.replace(/^(git@[^\/:]+)(:)/i, 'ssh://$1/');
 
 			cloneUri = Uri.parse(rawUri, true);
@@ -77,7 +77,7 @@ export class GitProtocolHandler implements UriHandler {
 			const downloadGit = l10n.t('Download Git');
 
 			if (await window.showErrorMessage(errorMessage, { modal: true }, downloadGit) === downloadGit) {
-				commands.executeCommand('vscode.open', Uri.parse('https://aka.ms/vscode-download-git'));
+				commands.executeCommand('zycode.open', Uri.parse('https://aka.ms/zycode-download-git'));
 			}
 
 			return;

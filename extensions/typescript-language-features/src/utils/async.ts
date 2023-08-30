@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Disposable } from 'vscode';
+import { Disposable } from 'zycode';
 
 export interface ITask<T> {
 	(): T;

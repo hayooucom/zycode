@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { OpenJsDocLinkCommand, OpenJsDocLinkCommand_Args } from '../../commands/openJsDocLink';
 import type * as Proto from '../../tsServer/protocol/protocol';
 import * as typeConverters from '../../typeConverters';
@@ -12,7 +12,7 @@ export interface IFilePathToResourceConverter {
 	/**
 	 * Convert a typescript filepath to a VS Code resource.
 	 */
-	toResource(filepath: string): vscode.Uri;
+	toResource(filepath: string): zycode.Uri;
 }
 
 function replaceLinks(text: string): string {
@@ -242,9 +242,9 @@ export function documentationToMarkdown(
 	documentation: readonly Proto.SymbolDisplayPart[] | string,
 	tags: readonly Proto.JSDocTagInfo[],
 	filePathConverter: IFilePathToResourceConverter,
-	baseUri: vscode.Uri | undefined,
-): vscode.MarkdownString {
-	const out = new vscode.MarkdownString();
+	baseUri: zycode.Uri | undefined,
+): zycode.MarkdownString {
+	const out = new zycode.MarkdownString();
 	appendDocumentationAsMarkdown(out, documentation, tags, filePathConverter);
 	out.baseUri = baseUri;
 	out.isTrusted = { enabledCommands: [OpenJsDocLinkCommand.id] };
@@ -252,11 +252,11 @@ export function documentationToMarkdown(
 }
 
 export function appendDocumentationAsMarkdown(
-	out: vscode.MarkdownString,
+	out: zycode.MarkdownString,
 	documentation: readonly Proto.SymbolDisplayPart[] | string | undefined,
 	tags: readonly Proto.JSDocTagInfo[] | undefined,
 	converter: IFilePathToResourceConverter,
-): vscode.MarkdownString {
+): zycode.MarkdownString {
 	if (documentation) {
 		out.appendMarkdown(asPlainTextWithLinks(documentation, converter));
 	}

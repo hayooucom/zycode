@@ -22,7 +22,7 @@ import { ITelemetryService } from 'vs/platform/telemetry/common/telemetry';
 import { ICreateData, ITextMateWorkerHost, StateDeltas, TextMateTokenizationWorker } from 'vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker';
 import { TextMateWorkerTokenizerController } from 'vs/workbench/services/textMate/browser/backgroundTokenization/textMateWorkerTokenizerController';
 import { IValidGrammarDefinition } from 'vs/workbench/services/textMate/common/TMScopeRegistry';
-import type { IRawTheme } from 'vscode-textmate';
+import type { IRawTheme } from 'zycode-textmate';
 
 export class ThreadedBackgroundTokenizerFactory implements IDisposable {
 	private static _reportedMismatchingTokens = false;
@@ -127,10 +127,10 @@ export class ThreadedBackgroundTokenizerFactory implements IDisposable {
 	}
 
 	private async _createWorkerProxy(): Promise<TextMateTokenizationWorker | null> {
-		const textmateModuleLocation: AppResourcePath = `${nodeModulesPath}/vscode-textmate`;
-		const textmateModuleLocationAsar: AppResourcePath = `${nodeModulesAsarPath}/vscode-textmate`;
-		const onigurumaModuleLocation: AppResourcePath = `${nodeModulesPath}/vscode-oniguruma`;
-		const onigurumaModuleLocationAsar: AppResourcePath = `${nodeModulesAsarPath}/vscode-oniguruma`;
+		const textmateModuleLocation: AppResourcePath = `${nodeModulesPath}/zycode-textmate`;
+		const textmateModuleLocationAsar: AppResourcePath = `${nodeModulesAsarPath}/zycode-textmate`;
+		const onigurumaModuleLocation: AppResourcePath = `${nodeModulesPath}/zycode-oniguruma`;
+		const onigurumaModuleLocationAsar: AppResourcePath = `${nodeModulesAsarPath}/zycode-oniguruma`;
 
 		const useAsar = this._environmentService.isBuilt && !isWeb;
 		const textmateLocation: AppResourcePath = useAsar ? textmateModuleLocationAsar : textmateModuleLocation;

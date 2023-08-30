@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import VsCodeTelemetryReporter from '@vscode/extension-telemetry';
-import * as vscode from 'vscode';
+import VsCodeTelemetryReporter from '@zycode/extension-telemetry';
+import * as zycode from 'zycode';
 import { Api, getExtensionApi } from './api';
 import { CommandManager } from './commands/commandManager';
 import { registerBaseCommands } from './commands/index';
@@ -45,14 +45,14 @@ class StaticVersionProvider implements ITypeScriptVersionProvider {
 	readonly localVersions = [];
 }
 
-export async function activate(context: vscode.ExtensionContext): Promise<Api> {
+export async function activate(context: zycode.ExtensionContext): Promise<Api> {
 	const pluginManager = new PluginManager();
 	context.subscriptions.push(pluginManager);
 
 	const commandManager = new CommandManager();
 	context.subscriptions.push(commandManager);
 
-	const onCompletionAccepted = new vscode.EventEmitter<vscode.CompletionItem>();
+	const onCompletionAccepted = new zycode.EventEmitter<zycode.CompletionItem>();
 	context.subscriptions.push(onCompletionAccepted);
 
 	const activeJsTsEditorTracker = new ActiveJsTsEditorTracker();
@@ -61,7 +61,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Api> {
 	const versionProvider = new StaticVersionProvider(
 		new TypeScriptVersion(
 			TypeScriptVersionSource.Bundled,
-			vscode.Uri.joinPath(context.extensionUri, 'dist/browser/typescript/tsserver.web.js').toString(),
+			zycode.Uri.joinPath(context.extensionUri, 'dist/browser/typescript/tsserver.web.js').toString(),
 			API.fromSimpleString('5.1.3')));
 
 	let experimentTelemetryReporter: IExperimentationTelemetryReporter | undefined;
@@ -101,11 +101,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<Api> {
 	context.subscriptions.push(lazilyActivateClient(lazyClientHost, pluginManager, activeJsTsEditorTracker, async () => {
 		await startPreloadWorkspaceContentsIfNeeded(context, logger);
 	}));
-	context.subscriptions.push(vscode.workspace.registerFileSystemProvider('vscode-global-typings', new MemFs(), {
+	context.subscriptions.push(zycode.workspace.registerFileSystemProvider('zycode-global-typings', new MemFs(), {
 		isCaseSensitive: true,
 		isReadonly: false
 	}));
-	context.subscriptions.push(vscode.workspace.registerFileSystemProvider('vscode-node-modules', new AutoInstallerFs(), {
+	context.subscriptions.push(zycode.workspace.registerFileSystemProvider('zycode-node-modules', new AutoInstallerFs(), {
 		isCaseSensitive: true,
 		isReadonly: false
 	}));
@@ -113,13 +113,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<Api> {
 	return getExtensionApi(onCompletionAccepted.event, pluginManager);
 }
 
-async function startPreloadWorkspaceContentsIfNeeded(context: vscode.ExtensionContext, logger: Logger): Promise<void> {
+async function startPreloadWorkspaceContentsIfNeeded(context: zycode.ExtensionContext, logger: Logger): Promise<void> {
 	if (!isWebAndHasSharedArrayBuffers()) {
 		return;
 	}
 
-	const workspaceUri = vscode.workspace.workspaceFolders?.[0].uri;
-	if (!workspaceUri || workspaceUri.scheme !== 'vscode-vfs' || !workspaceUri.authority.startsWith('github')) {
+	const workspaceUri = zycode.workspace.workspaceFolders?.[0].uri;
+	if (!workspaceUri || workspaceUri.scheme !== 'zycode-vfs' || !workspaceUri.authority.startsWith('github')) {
 		logger.info(`Skipped loading workspace contents for repository ${workspaceUri?.toString()}`);
 		return;
 	}
@@ -134,12 +134,12 @@ class RemoteWorkspaceContentsPreloader extends Disposable {
 	private _preload: Promise<void> | undefined;
 
 	constructor(
-		private readonly workspaceUri: vscode.Uri,
+		private readonly workspaceUri: zycode.Uri,
 		private readonly logger: Logger,
 	) {
 		super();
 
-		const fsWatcher = this._register(vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(workspaceUri, '*')));
+		const fsWatcher = this._register(zycode.workspace.createFileSystemWatcher(new zycode.RelativePattern(workspaceUri, '*')));
 		this._register(fsWatcher.onDidChange(uri => {
 			if (uri.toString() === workspaceUri.toString()) {
 				this._preload = undefined;

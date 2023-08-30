@@ -68,9 +68,9 @@ const compilations = [
 	'typescript-language-features/test-workspace/tsconfig.json',
 	'typescript-language-features/web/tsconfig.json',
 	'typescript-language-features/tsconfig.json',
-	'vscode-api-tests/tsconfig.json',
-	'vscode-colorize-tests/tsconfig.json',
-	'vscode-test-resolver/tsconfig.json'
+	'zycode-api-tests/tsconfig.json',
+	'zycode-colorize-tests/tsconfig.json',
+	'zycode-test-resolver/tsconfig.json'
 ];
 
 const getBaseUrl = out => `https://ticino.blob.core.windows.net/sourcemaps/${commit}/${out}`;
@@ -95,15 +95,15 @@ const tasks = compilations.map(function (tsconfigFile) {
 	let headerId, headerOut;
 	const index = relativeDirname.indexOf('/');
 	if (index < 0) {
-		headerId = 'vscode.' + relativeDirname;
+		headerId = 'zycode.' + relativeDirname;
 		headerOut = 'out';
 	} else {
-		headerId = 'vscode.' + relativeDirname.substr(0, index);
+		headerId = 'zycode.' + relativeDirname.substr(0, index);
 		headerOut = relativeDirname.substr(index + 1) + '/out';
 	}
 
 	function createPipeline(build, emitError, transpileOnly) {
-		const nlsDev = require('vscode-nls-dev');
+		const nlsDev = require('zycode-nls-dev');
 		const tsb = require('./lib/tsb');
 		const sourcemaps = require('gulp-sourcemaps');
 

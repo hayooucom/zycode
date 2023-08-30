@@ -5,16 +5,16 @@
 
 import type * as MarkdownIt from 'markdown-it';
 import type * as MarkdownItToken from 'markdown-it/lib/token';
-import type { RendererContext } from 'vscode-notebook-renderer';
+import type { RendererContext } from 'zycode-notebook-renderer';
 
 interface MarkdownItRenderer {
 	extendMarkdownIt(fn: (md: MarkdownIt) => void): void;
 }
 
 export async function activate(ctx: RendererContext<void>) {
-	const markdownItRenderer = (await ctx.getRenderer('vscode.markdown-it-renderer')) as MarkdownItRenderer | any;
+	const markdownItRenderer = (await ctx.getRenderer('zycode.markdown-it-renderer')) as MarkdownItRenderer | any;
 	if (!markdownItRenderer) {
-		throw new Error(`Could not load 'vscode.markdown-it-renderer'`);
+		throw new Error(`Could not load 'zycode.markdown-it-renderer'`);
 	}
 
 	markdownItRenderer.extendMarkdownIt((md: MarkdownIt) => {

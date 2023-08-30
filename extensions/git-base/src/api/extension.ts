@@ -5,7 +5,7 @@
 
 import { Model } from '../model';
 import { GitBaseExtension, API } from './git-base';
-import { Event, EventEmitter } from 'vscode';
+import { Event, EventEmitter } from 'zycode';
 import { ApiImpl } from './api1';
 
 export class GitBaseExtensionImpl implements GitBaseExtension {

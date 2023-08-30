@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as l10n from '@vscode/l10n';
-import { CancellationToken, CompletionRegistrationOptions, CompletionRequest, Connection, Disposable, DocumentHighlightRegistrationOptions, DocumentHighlightRequest, InitializeParams, InitializeResult, NotebookDocuments, ResponseError, TextDocuments } from 'vscode-languageserver';
-import { TextDocument } from 'vscode-languageserver-textdocument';
-import * as lsp from 'vscode-languageserver-types';
-import * as md from 'vscode-markdown-languageservice';
-import { URI } from 'vscode-uri';
+import * as l10n from '@zycode/l10n';
+import { CancellationToken, CompletionRegistrationOptions, CompletionRequest, Connection, Disposable, DocumentHighlightRegistrationOptions, DocumentHighlightRequest, InitializeParams, InitializeResult, NotebookDocuments, ResponseError, TextDocuments } from 'zycode-languageserver';
+import { TextDocument } from 'zycode-languageserver-textdocument';
+import * as lsp from 'zycode-languageserver-types';
+import * as md from 'zycode-markdown-languageservice';
+import { URI } from 'zycode-uri';
 import { LsConfiguration, getLsConfiguration } from './config';
 import { ConfigurationManager, Settings } from './configuration';
 import { registerValidateSupport } from './languageFeatures/diagnostics';

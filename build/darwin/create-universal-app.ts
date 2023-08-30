@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { makeUniversalApp } from 'vscode-universal-bundler';
+import { makeUniversalApp } from 'zycode-universal-bundler';
 import { spawn } from '@malept/cross-spawn-promise';
 
 const root = path.dirname(path.dirname(__dirname));

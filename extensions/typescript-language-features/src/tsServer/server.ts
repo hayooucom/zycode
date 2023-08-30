@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Cancellation } from '@vscode/sync-api-common/lib/common/messageCancellation';
-import * as vscode from 'vscode';
+import { Cancellation } from '@zycode/sync-api-common/lib/common/messageCancellation';
+import * as zycode from 'zycode';
 import { TypeScriptServiceConfiguration } from '../configuration/configuration';
 import { TelemetryReporter } from '../logging/telemetry';
 import Tracer from '../logging/tracer';
@@ -31,13 +31,13 @@ export interface TypeScriptServerExitEvent {
 }
 
 export type TsServerLog =
-	{ readonly type: 'file'; readonly uri: vscode.Uri } |
-	{ readonly type: 'output'; readonly output: vscode.OutputChannel };
+	{ readonly type: 'file'; readonly uri: zycode.Uri } |
+	{ readonly type: 'output'; readonly output: zycode.OutputChannel };
 
 export interface ITypeScriptServer {
-	readonly onEvent: vscode.Event<Proto.Event>;
-	readonly onExit: vscode.Event<TypeScriptServerExitEvent>;
-	readonly onError: vscode.Event<any>;
+	readonly onEvent: zycode.Event<Proto.Event>;
+	readonly onExit: zycode.Event<TypeScriptServerExitEvent>;
+	readonly onError: zycode.Event<any>;
 
 	readonly tsServerLog: TsServerLog | undefined;
 
@@ -47,7 +47,7 @@ export interface ITypeScriptServer {
 	 * @return A list of all execute requests. If there are multiple entries, the first item is the primary
 	 * request while the rest are secondary ones.
 	 */
-	executeImpl(command: keyof TypeScriptRequests, args: any, executeInfo: { isAsync: boolean; token?: vscode.CancellationToken; expectsResult: boolean; lowPriority?: boolean; executionTarget?: ExecutionTarget }): Array<Promise<ServerResponse.Response<Proto.Response>> | undefined>;
+	executeImpl(command: keyof TypeScriptRequests, args: any, executeInfo: { isAsync: boolean; token?: zycode.CancellationToken; expectsResult: boolean; lowPriority?: boolean; executionTarget?: ExecutionTarget }): Array<Promise<ServerResponse.Response<Proto.Response>> | undefined>;
 
 	dispose(): void;
 }
@@ -116,13 +116,13 @@ export class SingleTsServer extends Disposable implements ITypeScriptServer {
 		});
 	}
 
-	private readonly _onEvent = this._register(new vscode.EventEmitter<Proto.Event>());
+	private readonly _onEvent = this._register(new zycode.EventEmitter<Proto.Event>());
 	public readonly onEvent = this._onEvent.event;
 
-	private readonly _onExit = this._register(new vscode.EventEmitter<TypeScriptServerExitEvent>());
+	private readonly _onExit = this._register(new zycode.EventEmitter<TypeScriptServerExitEvent>());
 	public readonly onExit = this._onExit.event;
 
-	private readonly _onError = this._register(new vscode.EventEmitter<any>());
+	private readonly _onError = this._register(new zycode.EventEmitter<any>());
 	public readonly onError = this._onError.event;
 
 	public get tsServerLog() { return this._tsServerLog; }
@@ -213,7 +213,7 @@ export class SingleTsServer extends Disposable implements ITypeScriptServer {
 		}
 	}
 
-	public executeImpl(command: keyof TypeScriptRequests, args: any, executeInfo: { isAsync: boolean; token?: vscode.CancellationToken; expectsResult: boolean; lowPriority?: boolean; executionTarget?: ExecutionTarget }): Array<Promise<ServerResponse.Response<Proto.Response>> | undefined> {
+	public executeImpl(command: keyof TypeScriptRequests, args: any, executeInfo: { isAsync: boolean; token?: zycode.CancellationToken; expectsResult: boolean; lowPriority?: boolean; executionTarget?: ExecutionTarget }): Array<Promise<ServerResponse.Response<Proto.Response>> | undefined> {
 		const request = this._requestQueue.createRequest(command, args);
 		const requestInfo: RequestItem = {
 			request,
@@ -318,7 +318,7 @@ export class SingleTsServer extends Disposable implements ITypeScriptServer {
 
 interface ExecuteInfo {
 	readonly isAsync: boolean;
-	readonly token?: vscode.CancellationToken;
+	readonly token?: zycode.CancellationToken;
 	readonly expectsResult: boolean;
 	readonly lowPriority?: boolean;
 	readonly executionTarget?: ExecutionTarget;
@@ -353,9 +353,9 @@ class RequestRouter {
 			const requestStates: RequestState.State[] = this.servers.map(() => RequestState.Unresolved);
 
 			// Also make sure we never cancel requests to just one server
-			let token: vscode.CancellationToken | undefined = undefined;
+			let token: zycode.CancellationToken | undefined = undefined;
 			if (executeInfo.token) {
-				const source = new vscode.CancellationTokenSource();
+				const source = new zycode.CancellationTokenSource();
 				executeInfo.token.onCancellationRequested(() => {
 					if (requestStates.some(state => state === RequestState.Resolved)) {
 						// Don't cancel.
@@ -460,13 +460,13 @@ export class GetErrRoutingTsServer extends Disposable implements ITypeScriptServ
 		}));
 	}
 
-	private readonly _onEvent = this._register(new vscode.EventEmitter<Proto.Event>());
+	private readonly _onEvent = this._register(new zycode.EventEmitter<Proto.Event>());
 	public readonly onEvent = this._onEvent.event;
 
-	private readonly _onExit = this._register(new vscode.EventEmitter<TypeScriptServerExitEvent>());
+	private readonly _onExit = this._register(new zycode.EventEmitter<TypeScriptServerExitEvent>());
 	public readonly onExit = this._onExit.event;
 
-	private readonly _onError = this._register(new vscode.EventEmitter<any>());
+	private readonly _onError = this._register(new zycode.EventEmitter<any>());
 	public readonly onError = this._onError.event;
 
 	public get tsServerLog() { return this.mainServer.tsServerLog; }
@@ -476,7 +476,7 @@ export class GetErrRoutingTsServer extends Disposable implements ITypeScriptServ
 		this.mainServer.kill();
 	}
 
-	public executeImpl(command: keyof TypeScriptRequests, args: any, executeInfo: { isAsync: boolean; token?: vscode.CancellationToken; expectsResult: boolean; lowPriority?: boolean; executionTarget?: ExecutionTarget }): Array<Promise<ServerResponse.Response<Proto.Response>> | undefined> {
+	public executeImpl(command: keyof TypeScriptRequests, args: any, executeInfo: { isAsync: boolean; token?: zycode.CancellationToken; expectsResult: boolean; lowPriority?: boolean; executionTarget?: ExecutionTarget }): Array<Promise<ServerResponse.Response<Proto.Response>> | undefined> {
 		return this.router.execute(command, args, executeInfo);
 	}
 }
@@ -601,13 +601,13 @@ export class SyntaxRoutingTsServer extends Disposable implements ITypeScriptServ
 
 	private get projectLoading() { return this._projectLoading; }
 
-	private readonly _onEvent = this._register(new vscode.EventEmitter<Proto.Event>());
+	private readonly _onEvent = this._register(new zycode.EventEmitter<Proto.Event>());
 	public readonly onEvent = this._onEvent.event;
 
-	private readonly _onExit = this._register(new vscode.EventEmitter<any>());
+	private readonly _onExit = this._register(new zycode.EventEmitter<any>());
 	public readonly onExit = this._onExit.event;
 
-	private readonly _onError = this._register(new vscode.EventEmitter<any>());
+	private readonly _onError = this._register(new zycode.EventEmitter<any>());
 	public readonly onError = this._onError.event;
 
 	public get tsServerLog() { return this.semanticServer.tsServerLog; }
@@ -617,7 +617,7 @@ export class SyntaxRoutingTsServer extends Disposable implements ITypeScriptServ
 		this.semanticServer.kill();
 	}
 
-	public executeImpl(command: keyof TypeScriptRequests, args: any, executeInfo: { isAsync: boolean; token?: vscode.CancellationToken; expectsResult: boolean; lowPriority?: boolean; executionTarget?: ExecutionTarget }): Array<Promise<ServerResponse.Response<Proto.Response>> | undefined> {
+	public executeImpl(command: keyof TypeScriptRequests, args: any, executeInfo: { isAsync: boolean; token?: zycode.CancellationToken; expectsResult: boolean; lowPriority?: boolean; executionTarget?: ExecutionTarget }): Array<Promise<ServerResponse.Response<Proto.Response>> | undefined> {
 		return this.router.execute(command, args, executeInfo);
 	}
 }

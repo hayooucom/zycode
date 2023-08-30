@@ -7,13 +7,13 @@ import {
 	Connection,
 	TextDocuments, InitializeParams, InitializeResult, NotificationType, RequestType,
 	DocumentRangeFormattingRequest, Disposable, ServerCapabilities, TextDocumentSyncKind, TextEdit, DocumentFormattingRequest, TextDocumentIdentifier, FormattingOptions, Diagnostic
-} from 'vscode-languageserver';
+} from 'zycode-languageserver';
 
 import { runSafe, runSafeAsync } from './utils/runner';
 import { DiagnosticsSupport, registerDiagnosticsPullSupport, registerDiagnosticsPushSupport } from './utils/validation';
-import { TextDocument, JSONDocument, JSONSchema, getLanguageService, DocumentLanguageSettings, SchemaConfiguration, ClientCapabilities, Range, Position, SortOptions } from 'vscode-json-languageservice';
+import { TextDocument, JSONDocument, JSONSchema, getLanguageService, DocumentLanguageSettings, SchemaConfiguration, ClientCapabilities, Range, Position, SortOptions } from 'zycode-json-languageservice';
 import { getLanguageModelCache } from './languageModelCache';
-import { Utils, URI } from 'vscode-uri';
+import { Utils, URI } from 'zycode-uri';
 
 type ISchemaAssociations = Record<string, string[]>;
 
@@ -24,7 +24,7 @@ namespace SchemaAssociationNotification {
 }
 
 namespace VSCodeContentRequest {
-	export const type: RequestType<string, string, any> = new RequestType('vscode/content');
+	export const type: RequestType<string, string, any> = new RequestType('zycode/content');
 }
 
 namespace SchemaContentChangeNotification {
@@ -341,7 +341,7 @@ export function startServer(connection: Connection, runtime: RuntimeEnvironment)
 			jsonConfigurationSettings.forEach((schema, index) => {
 				let uri = schema.url;
 				if (!uri && schema.schema) {
-					uri = schema.schema.id || `vscode://schemas/custom/${index}`;
+					uri = schema.schema.id || `zycode://schemas/custom/${index}`;
 				}
 				if (uri) {
 					languageSettings.schemas.push({ uri, fileMatch: schema.fileMatch, schema: schema.schema, folderUri: schema.folderUri });

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Event, RelativePattern, Uri, workspace } from 'vscode';
+import { Event, RelativePattern, Uri, workspace } from 'zycode';
 import { IDisposable, anyEvent } from './util';
 
 export interface IFileWatcher extends IDisposable {

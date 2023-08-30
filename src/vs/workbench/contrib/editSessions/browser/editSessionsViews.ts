@@ -280,7 +280,7 @@ class EditSessionDataViewDataProvider implements ITreeViewDataProvider {
 						label: { label: change.relativeFilePath },
 						themeIcon: Codicon.file,
 						command: {
-							id: 'vscode.diff',
+							id: 'zycode.diff',
 							title: localize('compare changes', 'Compare Changes'),
 							arguments: [
 								localCopy,

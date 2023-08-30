@@ -598,8 +598,8 @@
 			"component": {
 				"type": "git",
 				"git": {
-					"name": "vscode-codicons",
-					"repositoryUrl": "https://github.com/microsoft/vscode-codicons",
+					"name": "zycode-codicons",
+					"repositoryUrl": "https://github.com/microsoft/zycode-codicons",
 					"commitHash": "ccdcf91d57d3a5a1d6b620d95d518bab4d75984d"
 				}
 			},
@@ -642,12 +642,12 @@
 			"version": "0.10.0"
 		},
 		{
-			"name": "@vscode/win32-app-container-tokens",
+			"name": "@zycode/win32-app-container-tokens",
 			"component": {
 				"type": "git",
 				"git": {
-					"name": "vscode-win32-app-container-tokens",
-					"repositoryUrl": "https://github.com/microsoft/vscode-win32-app-container-tokens",
+					"name": "zycode-win32-app-container-tokens",
+					"repositoryUrl": "https://github.com/microsoft/zycode-win32-app-container-tokens",
 					"commitHash": "5b871f95fd9cb8efa8ee9a80600510d5e5339137"
 				}
 			},

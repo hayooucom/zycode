@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as httpRequest from 'request-light';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { addJSONProviders } from './features/jsonContributions';
 import { runSelectedScript, selectAndRunScriptFromFolder } from './commands';
 import { NpmScriptsTreeDataProvider } from './npmView';
@@ -23,9 +23,9 @@ function invalidateScriptCaches() {
 	}
 }
 
-export async function activate(context: vscode.ExtensionContext): Promise<void> {
+export async function activate(context: zycode.ExtensionContext): Promise<void> {
 	configureHttpRequest();
-	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
+	context.subscriptions.push(zycode.workspace.onDidChangeConfiguration(e => {
 		if (e.affectsConfiguration('http.proxy') || e.affectsConfiguration('http.proxyStrictSSL')) {
 			configureHttpRequest();
 		}
@@ -37,7 +37,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
 	treeDataProvider = registerExplorer(context);
 
-	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration((e) => {
+	context.subscriptions.push(zycode.workspace.onDidChangeConfiguration((e) => {
 		if (e.affectsConfiguration('npm.exclude') || e.affectsConfiguration('npm.autoDetect') || e.affectsConfiguration('npm.scriptExplorerExclude')) {
 			invalidateTasksCache();
 			if (treeDataProvider) {
@@ -53,32 +53,32 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
 	registerHoverProvider(context);
 
-	context.subscriptions.push(vscode.commands.registerCommand('npm.runSelectedScript', runSelectedScript));
+	context.subscriptions.push(zycode.commands.registerCommand('npm.runSelectedScript', runSelectedScript));
 
 	if (await hasPackageJson()) {
-		vscode.commands.executeCommand('setContext', 'npm:showScriptExplorer', true);
+		zycode.commands.executeCommand('setContext', 'npm:showScriptExplorer', true);
 	}
 
-	context.subscriptions.push(vscode.commands.registerCommand('npm.runScriptFromFolder', selectAndRunScriptFromFolder));
-	context.subscriptions.push(vscode.commands.registerCommand('npm.refresh', () => {
+	context.subscriptions.push(zycode.commands.registerCommand('npm.runScriptFromFolder', selectAndRunScriptFromFolder));
+	context.subscriptions.push(zycode.commands.registerCommand('npm.refresh', () => {
 		invalidateScriptCaches();
 	}));
-	context.subscriptions.push(vscode.commands.registerCommand('npm.packageManager', (args) => {
-		if (args instanceof vscode.Uri) {
+	context.subscriptions.push(zycode.commands.registerCommand('npm.packageManager', (args) => {
+		if (args instanceof zycode.Uri) {
 			return getPackageManager(context, args);
 		}
 		return '';
 	}));
 	context.subscriptions.push(new NpmScriptLensProvider());
 
-	context.subscriptions.push(vscode.window.registerTerminalQuickFixProvider('ms-vscode.npm-command', {
+	context.subscriptions.push(zycode.window.registerTerminalQuickFixProvider('ms-zycode.npm-command', {
 		provideTerminalQuickFixes({ outputMatch }) {
 			if (!outputMatch) {
 				return;
 			}
 
 			const lines = outputMatch.regexMatch[1];
-			const fixes: vscode.TerminalQuickFixExecuteTerminalCommand[] = [];
+			const fixes: zycode.TerminalQuickFixExecuteTerminalCommand[] = [];
 			for (const line of lines.split('\n')) {
 				// search from the second char, since the lines might be prefixed with
 				// "npm ERR!" which comes before the actual command suggestion.
@@ -108,58 +108,58 @@ async function getNPMCommandPath(): Promise<string | undefined> {
 }
 
 function canRunNpmInCurrentWorkspace() {
-	if (vscode.workspace.workspaceFolders) {
-		return vscode.workspace.workspaceFolders.some(f => f.uri.scheme === 'file');
+	if (zycode.workspace.workspaceFolders) {
+		return zycode.workspace.workspaceFolders.some(f => f.uri.scheme === 'file');
 	}
 	return false;
 }
 
 let taskProvider: NpmTaskProvider;
-function registerTaskProvider(context: vscode.ExtensionContext): vscode.Disposable | undefined {
-	if (vscode.workspace.workspaceFolders) {
-		const watcher = vscode.workspace.createFileSystemWatcher('**/package.json');
+function registerTaskProvider(context: zycode.ExtensionContext): zycode.Disposable | undefined {
+	if (zycode.workspace.workspaceFolders) {
+		const watcher = zycode.workspace.createFileSystemWatcher('**/package.json');
 		watcher.onDidChange((_e) => invalidateScriptCaches());
 		watcher.onDidDelete((_e) => invalidateScriptCaches());
 		watcher.onDidCreate((_e) => invalidateScriptCaches());
 		context.subscriptions.push(watcher);
 
-		const workspaceWatcher = vscode.workspace.onDidChangeWorkspaceFolders((_e) => invalidateScriptCaches());
+		const workspaceWatcher = zycode.workspace.onDidChangeWorkspaceFolders((_e) => invalidateScriptCaches());
 		context.subscriptions.push(workspaceWatcher);
 
 		taskProvider = new NpmTaskProvider(context);
-		const disposable = vscode.tasks.registerTaskProvider('npm', taskProvider);
+		const disposable = zycode.tasks.registerTaskProvider('npm', taskProvider);
 		context.subscriptions.push(disposable);
 		return disposable;
 	}
 	return undefined;
 }
 
-function registerExplorer(context: vscode.ExtensionContext): NpmScriptsTreeDataProvider | undefined {
-	if (vscode.workspace.workspaceFolders) {
+function registerExplorer(context: zycode.ExtensionContext): NpmScriptsTreeDataProvider | undefined {
+	if (zycode.workspace.workspaceFolders) {
 		const treeDataProvider = new NpmScriptsTreeDataProvider(context, taskProvider!);
-		const view = vscode.window.createTreeView('npm', { treeDataProvider: treeDataProvider, showCollapseAll: true });
+		const view = zycode.window.createTreeView('npm', { treeDataProvider: treeDataProvider, showCollapseAll: true });
 		context.subscriptions.push(view);
 		return treeDataProvider;
 	}
 	return undefined;
 }
 
-function registerHoverProvider(context: vscode.ExtensionContext): NpmScriptHoverProvider | undefined {
-	if (vscode.workspace.workspaceFolders) {
-		const npmSelector: vscode.DocumentSelector = {
+function registerHoverProvider(context: zycode.ExtensionContext): NpmScriptHoverProvider | undefined {
+	if (zycode.workspace.workspaceFolders) {
+		const npmSelector: zycode.DocumentSelector = {
 			language: 'json',
 			scheme: 'file',
 			pattern: '**/package.json'
 		};
 		const provider = new NpmScriptHoverProvider(context);
-		context.subscriptions.push(vscode.languages.registerHoverProvider(npmSelector, provider));
+		context.subscriptions.push(zycode.languages.registerHoverProvider(npmSelector, provider));
 		return provider;
 	}
 	return undefined;
 }
 
 function configureHttpRequest() {
-	const httpSettings = vscode.workspace.getConfiguration('http');
+	const httpSettings = zycode.workspace.getConfiguration('http');
 	httpRequest.configure(httpSettings.get<string>('proxy', ''), httpSettings.get<boolean>('proxyStrictSSL', true));
 }
 

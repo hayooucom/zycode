@@ -16,7 +16,7 @@ jschardet/index.js
 jschardet/src/**
 jschardet/dist/jschardet.js
 
-vscode-textmate/webpack.config.js
+zycode-textmate/webpack.config.js
 
 xterm/src/**
 
@@ -37,7 +37,7 @@ xterm-addon-webgl/src/**
 xterm-addon-webgl/out/**
 
 # This makes sure the model is included in the package
-!@vscode/vscode-languagedetection/model/**
+!@zycode/zycode-languagedetection/model/**
 
 # Ensure only the required telemetry pieces are loaded in web to reduce bundle size
 @microsoft/1ds-core-js/**

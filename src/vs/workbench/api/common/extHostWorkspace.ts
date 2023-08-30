@@ -30,13 +30,13 @@ import { Range } from 'vs/workbench/api/common/extHostTypes';
 import { IURITransformerService } from 'vs/workbench/api/common/extHostUriTransformerService';
 import { ITextQueryBuilderOptions } from 'vs/workbench/services/search/common/queryBuilder';
 import { IRawFileMatch2, resultIsMatch } from 'vs/workbench/services/search/common/search';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { ExtHostWorkspaceShape, IRelativePatternDto, IWorkspaceData, MainContext, MainThreadMessageOptions, MainThreadMessageServiceShape, MainThreadWorkspaceShape } from './extHost.protocol';
 
 export interface IExtHostWorkspaceProvider {
-	getWorkspaceFolder2(uri: vscode.Uri, resolveParent?: boolean): Promise<vscode.WorkspaceFolder | undefined>;
-	resolveWorkspaceFolder(uri: vscode.Uri): Promise<vscode.WorkspaceFolder | undefined>;
-	getWorkspaceFolders2(): Promise<vscode.WorkspaceFolder[] | undefined>;
+	getWorkspaceFolder2(uri: zycode.Uri, resolveParent?: boolean): Promise<zycode.WorkspaceFolder | undefined>;
+	resolveWorkspaceFolder(uri: zycode.Uri): Promise<zycode.WorkspaceFolder | undefined>;
+	getWorkspaceFolders2(): Promise<zycode.WorkspaceFolder[] | undefined>;
 	resolveProxy(url: string): Promise<string | undefined>;
 }
 
@@ -44,11 +44,11 @@ function isFolderEqual(folderA: URI, folderB: URI, extHostFileSystemInfo: IExtHo
 	return new ExtUri(uri => ignorePathCasing(uri, extHostFileSystemInfo)).isEqual(folderA, folderB);
 }
 
-function compareWorkspaceFolderByUri(a: vscode.WorkspaceFolder, b: vscode.WorkspaceFolder, extHostFileSystemInfo: IExtHostFileSystemInfo): number {
+function compareWorkspaceFolderByUri(a: zycode.WorkspaceFolder, b: zycode.WorkspaceFolder, extHostFileSystemInfo: IExtHostFileSystemInfo): number {
 	return isFolderEqual(a.uri, b.uri, extHostFileSystemInfo) ? 0 : compare(a.uri.toString(), b.uri.toString());
 }
 
-function compareWorkspaceFolderByUriAndNameAndIndex(a: vscode.WorkspaceFolder, b: vscode.WorkspaceFolder, extHostFileSystemInfo: IExtHostFileSystemInfo): number {
+function compareWorkspaceFolderByUriAndNameAndIndex(a: zycode.WorkspaceFolder, b: zycode.WorkspaceFolder, extHostFileSystemInfo: IExtHostFileSystemInfo): number {
 	if (a.index !== b.index) {
 		return a.index < b.index ? -1 : 1;
 	}
@@ -56,7 +56,7 @@ function compareWorkspaceFolderByUriAndNameAndIndex(a: vscode.WorkspaceFolder, b
 	return isFolderEqual(a.uri, b.uri, extHostFileSystemInfo) ? compare(a.name, b.name) : compare(a.uri.toString(), b.uri.toString());
 }
 
-function delta(oldFolders: vscode.WorkspaceFolder[], newFolders: vscode.WorkspaceFolder[], compare: (a: vscode.WorkspaceFolder, b: vscode.WorkspaceFolder, extHostFileSystemInfo: IExtHostFileSystemInfo) => number, extHostFileSystemInfo: IExtHostFileSystemInfo): { removed: vscode.WorkspaceFolder[]; added: vscode.WorkspaceFolder[] } {
+function delta(oldFolders: zycode.WorkspaceFolder[], newFolders: zycode.WorkspaceFolder[], compare: (a: zycode.WorkspaceFolder, b: zycode.WorkspaceFolder, extHostFileSystemInfo: IExtHostFileSystemInfo) => number, extHostFileSystemInfo: IExtHostFileSystemInfo): { removed: zycode.WorkspaceFolder[]; added: zycode.WorkspaceFolder[] } {
 	const oldSortedFolders = oldFolders.slice(0).sort((a, b) => compare(a, b, extHostFileSystemInfo));
 	const newSortedFolders = newFolders.slice(0).sort((a, b) => compare(a, b, extHostFileSystemInfo));
 
@@ -68,20 +68,20 @@ function ignorePathCasing(uri: URI, extHostFileSystemInfo: IExtHostFileSystemInf
 	return !(capabilities && (capabilities & FileSystemProviderCapabilities.PathCaseSensitive));
 }
 
-interface MutableWorkspaceFolder extends vscode.WorkspaceFolder {
+interface MutableWorkspaceFolder extends zycode.WorkspaceFolder {
 	name: string;
 	index: number;
 }
 
 class ExtHostWorkspaceImpl extends Workspace {
 
-	static toExtHostWorkspace(data: IWorkspaceData | null, previousConfirmedWorkspace: ExtHostWorkspaceImpl | undefined, previousUnconfirmedWorkspace: ExtHostWorkspaceImpl | undefined, extHostFileSystemInfo: IExtHostFileSystemInfo): { workspace: ExtHostWorkspaceImpl | null; added: vscode.WorkspaceFolder[]; removed: vscode.WorkspaceFolder[] } {
+	static toExtHostWorkspace(data: IWorkspaceData | null, previousConfirmedWorkspace: ExtHostWorkspaceImpl | undefined, previousUnconfirmedWorkspace: ExtHostWorkspaceImpl | undefined, extHostFileSystemInfo: IExtHostFileSystemInfo): { workspace: ExtHostWorkspaceImpl | null; added: zycode.WorkspaceFolder[]; removed: zycode.WorkspaceFolder[] } {
 		if (!data) {
 			return { workspace: null, added: [], removed: [] };
 		}
 
 		const { id, name, folders, configuration, transient, isUntitled } = data;
-		const newWorkspaceFolders: vscode.WorkspaceFolder[] = [];
+		const newWorkspaceFolders: zycode.WorkspaceFolder[] = [];
 
 		// If we have an existing workspace, we try to find the folders that match our
 		// data and update their properties. It could be that an extension stored them
@@ -125,12 +125,12 @@ class ExtHostWorkspaceImpl extends Workspace {
 		return undefined;
 	}
 
-	private readonly _workspaceFolders: vscode.WorkspaceFolder[] = [];
-	private readonly _structure: TernarySearchTree<URI, vscode.WorkspaceFolder>;
+	private readonly _workspaceFolders: zycode.WorkspaceFolder[] = [];
+	private readonly _structure: TernarySearchTree<URI, zycode.WorkspaceFolder>;
 
-	constructor(id: string, private _name: string, folders: vscode.WorkspaceFolder[], transient: boolean, configuration: URI | null, private _isUntitled: boolean, ignorePathCasing: (key: URI) => boolean) {
+	constructor(id: string, private _name: string, folders: zycode.WorkspaceFolder[], transient: boolean, configuration: URI | null, private _isUntitled: boolean, ignorePathCasing: (key: URI) => boolean) {
 		super(id, folders.map(f => new WorkspaceFolder(f)), transient, configuration, ignorePathCasing);
-		this._structure = TernarySearchTree.forUris<vscode.WorkspaceFolder>(ignorePathCasing);
+		this._structure = TernarySearchTree.forUris<zycode.WorkspaceFolder>(ignorePathCasing);
 
 		// setup the workspace folder data structure
 		folders.forEach(folder => {
@@ -147,11 +147,11 @@ class ExtHostWorkspaceImpl extends Workspace {
 		return this._isUntitled;
 	}
 
-	get workspaceFolders(): vscode.WorkspaceFolder[] {
+	get workspaceFolders(): zycode.WorkspaceFolder[] {
 		return this._workspaceFolders.slice(0);
 	}
 
-	getWorkspaceFolder(uri: URI, resolveParent?: boolean): vscode.WorkspaceFolder | undefined {
+	getWorkspaceFolder(uri: URI, resolveParent?: boolean): zycode.WorkspaceFolder | undefined {
 		if (resolveParent && this._structure.get(uri)) {
 			// `uri` is a workspace folder so we check for its parent
 			uri = dirname(uri);
@@ -159,7 +159,7 @@ class ExtHostWorkspaceImpl extends Workspace {
 		return this._structure.findSubstr(uri);
 	}
 
-	resolveWorkspaceFolder(uri: URI): vscode.WorkspaceFolder | undefined {
+	resolveWorkspaceFolder(uri: URI): zycode.WorkspaceFolder | undefined {
 		return this._structure.get(uri);
 	}
 }
@@ -168,8 +168,8 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 
 	readonly _serviceBrand: undefined;
 
-	private readonly _onDidChangeWorkspace = new Emitter<vscode.WorkspaceFoldersChangeEvent>();
-	readonly onDidChangeWorkspace: Event<vscode.WorkspaceFoldersChangeEvent> = this._onDidChangeWorkspace.event;
+	private readonly _onDidChangeWorkspace = new Emitter<zycode.WorkspaceFoldersChangeEvent>();
+	readonly onDidChangeWorkspace: Event<zycode.WorkspaceFoldersChangeEvent> = this._onDidChangeWorkspace.event;
 
 	private readonly _onDidGrantWorkspaceTrust = new Emitter<void>();
 	readonly onDidGrantWorkspaceTrust: Event<void> = this._onDidGrantWorkspaceTrust.event;
@@ -190,7 +190,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 
 	private _trusted: boolean = false;
 
-	private readonly _editSessionIdentityProviders = new Map<string, vscode.EditSessionIdentityProvider>();
+	private readonly _editSessionIdentityProviders = new Map<string, zycode.EditSessionIdentityProvider>();
 
 	constructor(
 		@IExtHostRpcService extHostRpc: IExtHostRpcService,
@@ -231,7 +231,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 		return this._actualWorkspace ? this._actualWorkspace.name : undefined;
 	}
 
-	get workspaceFile(): vscode.Uri | undefined {
+	get workspaceFile(): zycode.Uri | undefined {
 		if (this._actualWorkspace) {
 			if (this._actualWorkspace.configuration) {
 				if (this._actualWorkspace.isUntitled) {
@@ -249,14 +249,14 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 		return this._unconfirmedWorkspace || this._confirmedWorkspace;
 	}
 
-	getWorkspaceFolders(): vscode.WorkspaceFolder[] | undefined {
+	getWorkspaceFolders(): zycode.WorkspaceFolder[] | undefined {
 		if (!this._actualWorkspace) {
 			return undefined;
 		}
 		return this._actualWorkspace.workspaceFolders.slice(0);
 	}
 
-	async getWorkspaceFolders2(): Promise<vscode.WorkspaceFolder[] | undefined> {
+	async getWorkspaceFolders2(): Promise<zycode.WorkspaceFolder[] | undefined> {
 		await this._barrier.wait();
 		if (!this._actualWorkspace) {
 			return undefined;
@@ -264,8 +264,8 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 		return this._actualWorkspace.workspaceFolders.slice(0);
 	}
 
-	updateWorkspaceFolders(extension: IExtensionDescription, index: number, deleteCount: number, ...workspaceFoldersToAdd: { uri: vscode.Uri; name?: string }[]): boolean {
-		const validatedDistinctWorkspaceFoldersToAdd: { uri: vscode.Uri; name?: string }[] = [];
+	updateWorkspaceFolders(extension: IExtensionDescription, index: number, deleteCount: number, ...workspaceFoldersToAdd: { uri: zycode.Uri; name?: string }[]): boolean {
+		const validatedDistinctWorkspaceFoldersToAdd: { uri: zycode.Uri; name?: string }[] = [];
 		if (Array.isArray(workspaceFoldersToAdd)) {
 			workspaceFoldersToAdd.forEach(folderToAdd => {
 				if (URI.isUri(folderToAdd.uri) && !validatedDistinctWorkspaceFoldersToAdd.some(f => isFolderEqual(f.uri, folderToAdd.uri, this._extHostFileSystemInfo))) {
@@ -329,14 +329,14 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 		return true;
 	}
 
-	getWorkspaceFolder(uri: vscode.Uri, resolveParent?: boolean): vscode.WorkspaceFolder | undefined {
+	getWorkspaceFolder(uri: zycode.Uri, resolveParent?: boolean): zycode.WorkspaceFolder | undefined {
 		if (!this._actualWorkspace) {
 			return undefined;
 		}
 		return this._actualWorkspace.getWorkspaceFolder(uri, resolveParent);
 	}
 
-	async getWorkspaceFolder2(uri: vscode.Uri, resolveParent?: boolean): Promise<vscode.WorkspaceFolder | undefined> {
+	async getWorkspaceFolder2(uri: zycode.Uri, resolveParent?: boolean): Promise<zycode.WorkspaceFolder | undefined> {
 		await this._barrier.wait();
 		if (!this._actualWorkspace) {
 			return undefined;
@@ -344,7 +344,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 		return this._actualWorkspace.getWorkspaceFolder(uri, resolveParent);
 	}
 
-	async resolveWorkspaceFolder(uri: vscode.Uri): Promise<vscode.WorkspaceFolder | undefined> {
+	async resolveWorkspaceFolder(uri: zycode.Uri): Promise<zycode.WorkspaceFolder | undefined> {
 		await this._barrier.wait();
 		if (!this._actualWorkspace) {
 			return undefined;
@@ -369,7 +369,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 		return folders[0].uri.fsPath;
 	}
 
-	getRelativePath(pathOrUri: string | vscode.Uri, includeWorkspace?: boolean): string {
+	getRelativePath(pathOrUri: string | zycode.Uri, includeWorkspace?: boolean): string {
 
 		let resource: URI | undefined;
 		let path: string = '';
@@ -405,7 +405,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 		return result!;
 	}
 
-	private trySetWorkspaceFolders(folders: vscode.WorkspaceFolder[]): void {
+	private trySetWorkspaceFolders(folders: zycode.WorkspaceFolder[]): void {
 
 		// Update directly here. The workspace is unconfirmed as long as we did not get an
 		// acknowledgement from the main side (via $acceptWorkspaceData)
@@ -441,7 +441,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 	/**
 	 * Note, null/undefined have different and important meanings for "exclude"
 	 */
-	findFiles(include: vscode.GlobPattern | undefined, exclude: vscode.GlobPattern | null | undefined, maxResults: number | undefined, extensionId: ExtensionIdentifier, token: vscode.CancellationToken = CancellationToken.None): Promise<vscode.Uri[]> {
+	findFiles(include: zycode.GlobPattern | undefined, exclude: zycode.GlobPattern | null | undefined, maxResults: number | undefined, extensionId: ExtensionIdentifier, token: zycode.CancellationToken = CancellationToken.None): Promise<zycode.Uri[]> {
 		this._logService.trace(`extHostWorkspace#findFiles: fileSearch, extension: ${extensionId.value}, entryPoint: findFiles`);
 
 		let excludePatternOrDisregardExcludes: string | false | undefined = undefined;
@@ -470,12 +470,12 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 			.then(data => Array.isArray(data) ? data.map(d => URI.revive(d)) : []);
 	}
 
-	async findTextInFiles(query: vscode.TextSearchQuery, options: vscode.FindTextInFilesOptions, callback: (result: vscode.TextSearchResult) => void, extensionId: ExtensionIdentifier, token: vscode.CancellationToken = CancellationToken.None): Promise<vscode.TextSearchComplete> {
+	async findTextInFiles(query: zycode.TextSearchQuery, options: zycode.FindTextInFilesOptions, callback: (result: zycode.TextSearchResult) => void, extensionId: ExtensionIdentifier, token: zycode.CancellationToken = CancellationToken.None): Promise<zycode.TextSearchComplete> {
 		this._logService.trace(`extHostWorkspace#findTextInFiles: textSearch, extension: ${extensionId.value}, entryPoint: findTextInFiles`);
 
 		const requestId = this._requestIdProvider.getNext();
 
-		const previewOptions: vscode.TextSearchPreviewOptions = typeof options.previewOptions === 'undefined' ?
+		const previewOptions: zycode.TextSearchPreviewOptions = typeof options.previewOptions === 'undefined' ?
 			{
 				matchLines: 100,
 				charsPerLine: 10000
@@ -511,7 +511,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 			const uri = URI.revive(p.resource);
 			p.results!.forEach(result => {
 				if (resultIsMatch(result)) {
-					callback(<vscode.TextSearchMatch>{
+					callback(<zycode.TextSearchMatch>{
 						uri,
 						preview: {
 							text: result.preview.text,
@@ -524,7 +524,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 							r => new Range(r.startLineNumber, r.startColumn, r.endLineNumber, r.endColumn))
 					});
 				} else {
-					callback(<vscode.TextSearchContext>{
+					callback(<zycode.TextSearchContext>{
 						uri,
 						text: result.text,
 						lineNumber: result.lineNumber
@@ -582,7 +582,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 		return this._trusted;
 	}
 
-	requestWorkspaceTrust(options?: vscode.WorkspaceTrustRequestOptions): Promise<boolean | undefined> {
+	requestWorkspaceTrust(options?: zycode.WorkspaceTrustRequestOptions): Promise<boolean | undefined> {
 		return this._proxy.$requestWorkspaceTrust(options);
 	}
 
@@ -598,7 +598,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 	private _providerHandlePool = 0;
 
 	// called by ext host
-	registerEditSessionIdentityProvider(scheme: string, provider: vscode.EditSessionIdentityProvider) {
+	registerEditSessionIdentityProvider(scheme: string, provider: zycode.EditSessionIdentityProvider) {
 		if (this._editSessionIdentityProviders.has(scheme)) {
 			throw new Error(`A provider has already been registered for scheme ${scheme}`);
 		}
@@ -665,11 +665,11 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 		return result;
 	}
 
-	private readonly _onWillCreateEditSessionIdentityEvent = new AsyncEmitter<vscode.EditSessionIdentityWillCreateEvent>();
+	private readonly _onWillCreateEditSessionIdentityEvent = new AsyncEmitter<zycode.EditSessionIdentityWillCreateEvent>();
 
-	getOnWillCreateEditSessionIdentityEvent(extension: IExtensionDescription): Event<vscode.EditSessionIdentityWillCreateEvent> {
+	getOnWillCreateEditSessionIdentityEvent(extension: IExtensionDescription): Event<zycode.EditSessionIdentityWillCreateEvent> {
 		return (listener, thisArg, disposables) => {
-			const wrappedListener: IExtensionListener<vscode.EditSessionIdentityWillCreateEvent> = function wrapped(e) { listener.call(thisArg, e); };
+			const wrappedListener: IExtensionListener<zycode.EditSessionIdentityWillCreateEvent> = function wrapped(e) { listener.call(thisArg, e); };
 			wrappedListener.extension = extension;
 			return this._onWillCreateEditSessionIdentityEvent.event(wrappedListener, undefined, disposables);
 		};
@@ -687,7 +687,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 			const now = Date.now();
 			await Promise.resolve(thenable);
 			if (Date.now() - now > timeout) {
-				this._logService.warn('SLOW edit session create-participant', (<IExtensionListener<vscode.EditSessionIdentityWillCreateEvent>>listener).extension.identifier);
+				this._logService.warn('SLOW edit session create-participant', (<IExtensionListener<zycode.EditSessionIdentityWillCreateEvent>>listener).extension.identifier);
 			}
 		});
 
@@ -698,10 +698,10 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 
 	// --- canonical uri identity ---
 
-	private readonly _canonicalUriProviders = new Map<string, vscode.CanonicalUriProvider>();
+	private readonly _canonicalUriProviders = new Map<string, zycode.CanonicalUriProvider>();
 
 	// called by ext host
-	registerCanonicalUriProvider(scheme: string, provider: vscode.CanonicalUriProvider) {
+	registerCanonicalUriProvider(scheme: string, provider: zycode.CanonicalUriProvider) {
 		if (this._canonicalUriProviders.has(scheme)) {
 			throw new Error(`A provider has already been registered for scheme ${scheme}`);
 		}
@@ -717,7 +717,7 @@ export class ExtHostWorkspace implements ExtHostWorkspaceShape, IExtHostWorkspac
 		});
 	}
 
-	async provideCanonicalUri(uri: URI, options: vscode.CanonicalUriRequestOptions, cancellationToken: CancellationToken): Promise<URI | undefined> {
+	async provideCanonicalUri(uri: URI, options: zycode.CanonicalUriRequestOptions, cancellationToken: CancellationToken): Promise<URI | undefined> {
 		const provider = this._canonicalUriProviders.get(uri.scheme);
 		if (!provider) {
 			return undefined;

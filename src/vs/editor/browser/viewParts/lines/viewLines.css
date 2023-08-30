@@ -20,17 +20,17 @@
 }
 
 .mtkoverflow {
-	background-color: var(--vscode-button-background, var(--vscode-editor-background));
-	color: var(--vscode-button-foreground, var(--vscode-editor-foreground));
+	background-color: var(--zycode-button-background, var(--zycode-editor-background));
+	color: var(--zycode-button-foreground, var(--zycode-editor-foreground));
 	border-width: 1px;
 	border-style: solid;
-	border-color: var(--vscode-contrastBorder);
+	border-color: var(--zycode-contrastBorder);
 	border-radius: 2px;
 	padding: 4px;
 	cursor: pointer;
 }
 .mtkoverflow:hover {
-	background-color: var(--vscode-button-hoverBackground);
+	background-color: var(--zycode-button-hoverBackground);
 }
 
 .monaco-editor.no-user-select .lines-content,
@@ -40,7 +40,7 @@
 	-webkit-user-select: none;
 }
 /* Use user-select: text for lookup feature on macOS */
-/* https://github.com/microsoft/vscode/issues/85632 */
+/* https://github.com/microsoft/zycode/issues/85632 */
 .monaco-editor.mac .lines-content:hover,
 .monaco-editor.mac .view-line:hover,
 .monaco-editor.mac .view-lines:hover {
@@ -64,12 +64,12 @@
 }
 
 .monaco-editor .mtkw {
-	color: var(--vscode-editorWhitespace-foreground) !important;
+	color: var(--zycode-editorWhitespace-foreground) !important;
 }
 
 .monaco-editor .mtkz {
 	display: inline-block;
-	color: var(--vscode-editorWhitespace-foreground) !important;
+	color: var(--zycode-editorWhitespace-foreground) !important;
 }
 
 /* TODO@tokenization bootstrap fix */

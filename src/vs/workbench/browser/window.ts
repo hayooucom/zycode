@@ -141,7 +141,7 @@ export class BrowserWindow extends Disposable {
 		// We need to ignore the `beforeunload` event while
 		// we handle external links to open specifically for
 		// the case of application protocols that e.g. invoke
-		// vscode itself. We do not want to open these links
+		// zycode itself. We do not want to open these links
 		// in a new window because that would leave a blank
 		// window to the user, but using `window.location.href`
 		// will trigger the `beforeunload`.
@@ -173,7 +173,7 @@ export class BrowserWindow extends Disposable {
 									},
 									{
 										label: localize({ key: 'learnMore', comment: ['&& denotes a mnemonic'] }, "&&Learn More"),
-										run: () => this.openerService.open(URI.parse('https://aka.ms/allow-vscode-popup'))
+										run: () => this.openerService.open(URI.parse('https://aka.ms/allow-zycode-popup'))
 									}
 								],
 								cancelButton: true

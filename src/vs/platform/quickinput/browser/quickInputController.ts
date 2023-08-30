@@ -686,7 +686,7 @@ export class QuickInputController extends Disposable {
 				content.push(`.quick-input-list .quick-input-list-separator { color:  ${this.styles.pickerGroup.pickerGroupForeground}; }`);
 			}
 			if (this.styles.pickerGroup.pickerGroupForeground) {
-				content.push(`.quick-input-list .quick-input-list-separator-as-item { color: var(--vscode-descriptionForeground); }`);
+				content.push(`.quick-input-list .quick-input-list-separator-as-item { color: var(--zycode-descriptionForeground); }`);
 			}
 
 			if (this.styles.keybindingLabel.keybindingLabelBackground ||

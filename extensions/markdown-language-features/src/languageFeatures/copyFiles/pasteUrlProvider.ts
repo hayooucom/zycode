@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Mime } from '../../util/mimes';
 import { createEditAddingLinksForUriList, getPasteUrlAsFormattedLinkSetting, PasteUrlAsFormattedLink, validateLink } from './shared';
 
-class PasteUrlEditProvider implements vscode.DocumentPasteEditProvider {
+class PasteUrlEditProvider implements zycode.DocumentPasteEditProvider {
 
 	public static readonly id = 'insertMarkdownLink';
 
@@ -16,11 +16,11 @@ class PasteUrlEditProvider implements vscode.DocumentPasteEditProvider {
 	];
 
 	async provideDocumentPasteEdits(
-		document: vscode.TextDocument,
-		ranges: readonly vscode.Range[],
-		dataTransfer: vscode.DataTransfer,
-		token: vscode.CancellationToken,
-	): Promise<vscode.DocumentPasteEdit | undefined> {
+		document: zycode.TextDocument,
+		ranges: readonly zycode.Range[],
+		dataTransfer: zycode.DataTransfer,
+		token: zycode.CancellationToken,
+	): Promise<zycode.DocumentPasteEdit | undefined> {
 		const pasteUrlSetting = getPasteUrlAsFormattedLinkSetting(document);
 		if (pasteUrlSetting === PasteUrlAsFormattedLink.Never) {
 			return;
@@ -37,13 +37,13 @@ class PasteUrlEditProvider implements vscode.DocumentPasteEditProvider {
 			return;
 		}
 
-		const edit = new vscode.DocumentPasteEdit('', pasteEdit.label);
+		const edit = new zycode.DocumentPasteEdit('', pasteEdit.label);
 		edit.additionalEdit = pasteEdit.additionalEdits;
 		edit.yieldTo = pasteEdit.markdownLink ? undefined : [{ mimeType: Mime.textPlain }];
 		return edit;
 	}
 }
 
-export function registerLinkPasteSupport(selector: vscode.DocumentSelector,) {
-	return vscode.languages.registerDocumentPasteEditProvider(selector, new PasteUrlEditProvider(), PasteUrlEditProvider);
+export function registerLinkPasteSupport(selector: zycode.DocumentSelector,) {
+	return zycode.languages.registerDocumentPasteEditProvider(selector, new PasteUrlEditProvider(), PasteUrlEditProvider);
 }

@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { BaseLanguageClient, LanguageClientOptions, NotebookDocumentSyncRegistrationType } from 'vscode-languageclient';
+import * as zycode from 'zycode';
+import { BaseLanguageClient, LanguageClientOptions, NotebookDocumentSyncRegistrationType } from 'zycode-languageclient';
 import { IMdParser } from '../markdownEngine';
 import * as proto from './protocol';
 import { looksLikeMarkdownPath, markdownFileExtensions } from '../util/file';
@@ -27,15 +27,15 @@ export class MdLanguageClient implements IDisposable {
 		this._workspace.dispose();
 	}
 
-	resolveLinkTarget(linkText: string, uri: vscode.Uri): Promise<proto.ResolvedDocumentLinkTarget> {
+	resolveLinkTarget(linkText: string, uri: zycode.Uri): Promise<proto.ResolvedDocumentLinkTarget> {
 		return this._client.sendRequest(proto.resolveLinkTarget, { linkText, uri: uri.toString() });
 	}
 
-	getEditForFileRenames(files: ReadonlyArray<{ oldUri: string; newUri: string }>, token: vscode.CancellationToken) {
+	getEditForFileRenames(files: ReadonlyArray<{ oldUri: string; newUri: string }>, token: zycode.CancellationToken) {
 		return this._client.sendRequest(proto.getEditForFileRenames, files, token);
 	}
 
-	getReferencesToFileInWorkspace(resource: vscode.Uri, token: vscode.CancellationToken) {
+	getReferencesToFileInWorkspace(resource: zycode.Uri, token: zycode.CancellationToken) {
 		return this._client.sendRequest(proto.getReferencesToFileInWorkspace, { uri: resource.toString() }, token);
 	}
 }
@@ -48,11 +48,11 @@ export async function startClient(factory: LanguageClientConstructor, parser: IM
 		documentSelector: [{ language: 'markdown' }],
 		synchronize: {
 			configurationSection: ['markdown'],
-			fileEvents: vscode.workspace.createFileSystemWatcher(mdFileGlob),
+			fileEvents: zycode.workspace.createFileSystemWatcher(mdFileGlob),
 		},
 		initializationOptions: {
 			markdownFileExtensions,
-			i10lLocation: vscode.l10n.uri?.toJSON(),
+			i10lLocation: zycode.l10n.uri?.toJSON(),
 		},
 		diagnosticPullOptions: {
 			onChange: true,
@@ -63,7 +63,7 @@ export async function startClient(factory: LanguageClientConstructor, parser: IM
 		},
 	};
 
-	const client = factory('markdown', vscode.l10n.t("Markdown Language Server"), clientOptions);
+	const client = factory('markdown', zycode.l10n.t("Markdown Language Server"), clientOptions);
 
 	client.registerProposedFeatures();
 
@@ -83,7 +83,7 @@ export async function startClient(factory: LanguageClientConstructor, parser: IM
 	const workspace = new VsCodeMdWorkspace();
 
 	client.onRequest(proto.parse, async (e) => {
-		const uri = vscode.Uri.parse(e.uri);
+		const uri = zycode.Uri.parse(e.uri);
 		const doc = await workspace.getOrLoadMarkdownDocument(uri);
 		if (doc) {
 			return parser.tokenize(doc);
@@ -93,35 +93,35 @@ export async function startClient(factory: LanguageClientConstructor, parser: IM
 	});
 
 	client.onRequest(proto.fs_readFile, async (e): Promise<number[]> => {
-		const uri = vscode.Uri.parse(e.uri);
-		return Array.from(await vscode.workspace.fs.readFile(uri));
+		const uri = zycode.Uri.parse(e.uri);
+		return Array.from(await zycode.workspace.fs.readFile(uri));
 	});
 
 	client.onRequest(proto.fs_stat, async (e): Promise<{ isDirectory: boolean } | undefined> => {
-		const uri = vscode.Uri.parse(e.uri);
+		const uri = zycode.Uri.parse(e.uri);
 		try {
-			const stat = await vscode.workspace.fs.stat(uri);
-			return { isDirectory: stat.type === vscode.FileType.Directory };
+			const stat = await zycode.workspace.fs.stat(uri);
+			return { isDirectory: stat.type === zycode.FileType.Directory };
 		} catch {
 			return undefined;
 		}
 	});
 
 	client.onRequest(proto.fs_readDirectory, async (e): Promise<[string, { isDirectory: boolean }][]> => {
-		const uri = vscode.Uri.parse(e.uri);
-		const result = await vscode.workspace.fs.readDirectory(uri);
-		return result.map(([name, type]) => [name, { isDirectory: type === vscode.FileType.Directory }]);
+		const uri = zycode.Uri.parse(e.uri);
+		const result = await zycode.workspace.fs.readDirectory(uri);
+		return result.map(([name, type]) => [name, { isDirectory: type === zycode.FileType.Directory }]);
 	});
 
 	client.onRequest(proto.findMarkdownFilesInWorkspace, async (): Promise<string[]> => {
-		return (await vscode.workspace.findFiles(mdFileGlob, '**/node_modules/**')).map(x => x.toString());
+		return (await zycode.workspace.findFiles(mdFileGlob, '**/node_modules/**')).map(x => x.toString());
 	});
 
 	const watchers = new FileWatcherManager();
 
 	client.onRequest(proto.fs_watcher_create, async (params): Promise<void> => {
 		const id = params.id;
-		const uri = vscode.Uri.parse(params.uri);
+		const uri = zycode.Uri.parse(params.uri);
 
 		const sendWatcherChange = (kind: 'create' | 'change' | 'delete') => {
 			client.sendRequest(proto.fs_watcher_onChange, { id, uri: params.uri, kind });
@@ -138,12 +138,12 @@ export async function startClient(factory: LanguageClientConstructor, parser: IM
 		watchers.delete(params.id);
 	});
 
-	vscode.commands.registerCommand('vscodeMarkdownLanguageservice.open', (uri, args) => {
-		return vscode.commands.executeCommand('vscode.open', uri, args);
+	zycode.commands.registerCommand('vscodeMarkdownLanguageservice.open', (uri, args) => {
+		return zycode.commands.executeCommand('zycode.open', uri, args);
 	});
 
-	vscode.commands.registerCommand('vscodeMarkdownLanguageservice.rename', (uri, pos) => {
-		return vscode.commands.executeCommand('editor.action.rename', [vscode.Uri.from(uri), new vscode.Position(pos.line, pos.character)]);
+	zycode.commands.registerCommand('vscodeMarkdownLanguageservice.rename', (uri, pos) => {
+		return zycode.commands.executeCommand('editor.action.rename', [zycode.Uri.from(uri), new zycode.Position(pos.line, pos.character)]);
 	});
 
 	await client.start();

@@ -77,9 +77,9 @@ export class ExtHostExtensionService extends AbstractExtHostExtensionService {
 
 		// fetch JS sources as text and create a new function around it
 		const source = await response.text();
-		// Here we append #vscode-extension to serve as a marker, such that source maps
+		// Here we append #zycode-extension to serve as a marker, such that source maps
 		// can be adjusted for the extra wrapping function.
-		const sourceURL = `${module.toString(true)}#vscode-extension`;
+		const sourceURL = `${module.toString(true)}#zycode-extension`;
 		const fullSource = `${source}\n//# sourceURL=${sourceURL}`;
 		let initFn: Function;
 		try {

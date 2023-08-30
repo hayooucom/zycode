@@ -5,7 +5,7 @@
 
 import * as assert from 'assert';
 import 'mocha';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { joinLines } from './util';
 
 const testFileA = workspaceFile('a.md');
@@ -19,25 +19,25 @@ function debugLog(...args: any[]) {
 }
 
 function workspaceFile(...segments: string[]) {
-	return vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, ...segments);
+	return zycode.Uri.joinPath(zycode.workspace.workspaceFolders![0].uri, ...segments);
 }
 
-async function getLinksForFile(file: vscode.Uri): Promise<vscode.DocumentLink[]> {
+async function getLinksForFile(file: zycode.Uri): Promise<zycode.DocumentLink[]> {
 	debugLog('getting links', file.toString(), Date.now());
-	const r = (await vscode.commands.executeCommand<vscode.DocumentLink[]>('vscode.executeLinkProvider', file, /*linkResolveCount*/ 100))!;
+	const r = (await zycode.commands.executeCommand<zycode.DocumentLink[]>('zycode.executeLinkProvider', file, /*linkResolveCount*/ 100))!;
 	debugLog('got links', file.toString(), Date.now());
 	return r;
 }
 
-(vscode.env.uiKind === vscode.UIKind.Web ? suite.skip : suite)('Markdown Document links', () => {
+(zycode.env.uiKind === zycode.UIKind.Web ? suite.skip : suite)('Markdown Document links', () => {
 
 	setup(async () => {
 		// the tests make the assumption that link providers are already registered
-		await vscode.extensions.getExtension('vscode.markdown-language-features')!.activate();
+		await zycode.extensions.getExtension('zycode.markdown-language-features')!.activate();
 	});
 
 	teardown(async () => {
-		await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+		await zycode.commands.executeCommand('workbench.action.closeAllEditors');
 	});
 
 	test('Should navigate to markdown file', async () => {
@@ -92,7 +92,7 @@ async function getLinksForFile(file: vscode.Uri): Promise<vscode.DocumentLink[]>
 		await executeLink(link);
 
 		assertActiveDocumentUri(workspaceFile('sub', 'c.md'));
-		assert.strictEqual(vscode.window.activeTextEditor!.selection.start.line, 1);
+		assert.strictEqual(zycode.window.activeTextEditor!.selection.start.line, 1);
 	});
 
 	test('Should navigate to fragment by line', async () => {
@@ -102,7 +102,7 @@ async function getLinksForFile(file: vscode.Uri): Promise<vscode.DocumentLink[]>
 		await executeLink(link);
 
 		assertActiveDocumentUri(workspaceFile('sub', 'c.md'));
-		assert.strictEqual(vscode.window.activeTextEditor!.selection.start.line, 1);
+		assert.strictEqual(zycode.window.activeTextEditor!.selection.start.line, 1);
 	});
 
 	test('Should navigate to line number within non-md file', async () => {
@@ -112,7 +112,7 @@ async function getLinksForFile(file: vscode.Uri): Promise<vscode.DocumentLink[]>
 		await executeLink(link);
 
 		assertActiveDocumentUri(workspaceFile('sub', 'foo.txt'));
-		assert.strictEqual(vscode.window.activeTextEditor!.selection.start.line, 2);
+		assert.strictEqual(zycode.window.activeTextEditor!.selection.start.line, 2);
 	});
 
 	test('Should navigate to fragment within current file', async () => {
@@ -125,12 +125,12 @@ async function getLinksForFile(file: vscode.Uri): Promise<vscode.DocumentLink[]>
 		{
 			await executeLink(links[0]);
 			assertActiveDocumentUri(workspaceFile('a.md'));
-			assert.strictEqual(vscode.window.activeTextEditor!.selection.start.line, 2);
+			assert.strictEqual(zycode.window.activeTextEditor!.selection.start.line, 2);
 		}
 		{
 			await executeLink(links[1]);
 			assertActiveDocumentUri(workspaceFile('a.md'));
-			assert.strictEqual(vscode.window.activeTextEditor!.selection.start.line, 2);
+			assert.strictEqual(zycode.window.activeTextEditor!.selection.start.line, 2);
 		}
 	});
 
@@ -144,33 +144,33 @@ async function getLinksForFile(file: vscode.Uri): Promise<vscode.DocumentLink[]>
 		await executeLink(link);
 
 		assertActiveDocumentUri(testFile);
-		assert.strictEqual(vscode.window.activeTextEditor!.selection.start.line, 1);
+		assert.strictEqual(zycode.window.activeTextEditor!.selection.start.line, 1);
 	});
 });
 
 
-function assertActiveDocumentUri(expectedUri: vscode.Uri) {
+function assertActiveDocumentUri(expectedUri: zycode.Uri) {
 	assert.strictEqual(
-		vscode.window.activeTextEditor!.document.uri.fsPath,
+		zycode.window.activeTextEditor!.document.uri.fsPath,
 		expectedUri.fsPath
 	);
 }
 
-async function withFileContents(file: vscode.Uri, contents: string): Promise<void> {
+async function withFileContents(file: zycode.Uri, contents: string): Promise<void> {
 	debugLog('openTextDocument', file.toString(), Date.now());
-	const document = await vscode.workspace.openTextDocument(file);
+	const document = await zycode.workspace.openTextDocument(file);
 	debugLog('showTextDocument', file.toString(), Date.now());
-	const editor = await vscode.window.showTextDocument(document);
+	const editor = await zycode.window.showTextDocument(document);
 	debugLog('editTextDocument', file.toString(), Date.now());
 	await editor.edit(edit => {
-		edit.replace(new vscode.Range(0, 0, 1000, 0), contents);
+		edit.replace(new zycode.Range(0, 0, 1000, 0), contents);
 	});
-	debugLog('opened done', vscode.window.activeTextEditor?.document.toString(), Date.now());
+	debugLog('opened done', zycode.window.activeTextEditor?.document.toString(), Date.now());
 }
 
-async function executeLink(link: vscode.DocumentLink) {
+async function executeLink(link: zycode.DocumentLink) {
 	debugLog('executingLink', link.target?.toString(), Date.now());
 
-	await vscode.commands.executeCommand('vscode.open', link.target!);
-	debugLog('executedLink', vscode.window.activeTextEditor?.document.toString(), Date.now());
+	await zycode.commands.executeCommand('zycode.open', link.target!);
+	debugLog('executedLink', zycode.window.activeTextEditor?.document.toString(), Date.now());
 }

@@ -133,6 +133,6 @@
 }
 
 .monaco-workbench .debug-inline-value {
-	background-color: var(--vscode-editor-inlineValuesBackground);
-	color: var(--vscode-editor-inlineValuesForeground);
+	background-color: var(--zycode-editor-inlineValuesBackground);
+	color: var(--zycode-editor-inlineValuesForeground);
 }

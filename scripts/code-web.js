@@ -5,7 +5,7 @@
 
 // @ts-check
 
-const testWebLocation = require.resolve('@vscode/test-web');
+const testWebLocation = require.resolve('@zycode/test-web');
 
 const fs = require('fs');
 const path = require('path');
@@ -43,7 +43,7 @@ async function main() {
 			'./scripts/code-web.sh|bat[, folderMountPath[, options]]\n' +
 			'                           Start with an empty workspace and no folder opened in explorer\n' +
 			'  folderMountPath          Open local folder (eg: use `.` to open current directory)\n' +
-			'  --playground             Include the vscode-web-playground extension\n'
+			'  --playground             Include the zycode-web-playground extension\n'
 		);
 		startServer(['--help']);
 		return;
@@ -61,7 +61,7 @@ async function main() {
 		serverArgs.push('--port', PORT);
 	}
 
-	// only use `./scripts/code-web.sh --playground` to add vscode-web-playground extension by default.
+	// only use `./scripts/code-web.sh --playground` to add zycode-web-playground extension by default.
 	if (args['playground'] === true) {
 		serverArgs.push('--extensionPath', WEB_DEV_EXTENSIONS_ROOT);
 		serverArgs.push('--folder-uri', 'memfs:///sample-folder');
@@ -87,7 +87,7 @@ async function main() {
 function startServer(runnerArguments) {
 	const env = { ...process.env };
 
-	console.log(`Starting @vscode/test-web: ${testWebLocation} ${runnerArguments.join(' ')}`);
+	console.log(`Starting @zycode/test-web: ${testWebLocation} ${runnerArguments.join(' ')}`);
 	const proc = cp.spawn(process.execPath, [testWebLocation, ...runnerArguments], { env, stdio: 'inherit' });
 
 	proc.on('exit', (code) => process.exit(code));
@@ -130,8 +130,8 @@ async function downloadPlaygroundFile(fileName, httpsLocation, destinationRoot) 
 
 async function ensureWebDevExtensions(verbose) {
 
-	// Playground (https://github.com/microsoft/vscode-web-playground)
-	const webDevPlaygroundRoot = path.join(WEB_DEV_EXTENSIONS_ROOT, 'vscode-web-playground');
+	// Playground (https://github.com/microsoft/zycode-web-playground)
+	const webDevPlaygroundRoot = path.join(WEB_DEV_EXTENSIONS_ROOT, 'zycode-web-playground');
 	const webDevPlaygroundExists = await directoryExists(webDevPlaygroundRoot);
 
 	let downloadPlayground = false;
@@ -150,16 +150,16 @@ async function ensureWebDevExtensions(verbose) {
 
 	if (downloadPlayground) {
 		if (verbose) {
-			fancyLog(`${ansiColors.magenta('Web Development extensions')}: Downloading vscode-web-playground to ${webDevPlaygroundRoot}`);
+			fancyLog(`${ansiColors.magenta('Web Development extensions')}: Downloading zycode-web-playground to ${webDevPlaygroundRoot}`);
 		}
-		const playgroundRepo = `https://raw.githubusercontent.com/microsoft/vscode-web-playground/main/`;
+		const playgroundRepo = `https://raw.githubusercontent.com/microsoft/zycode-web-playground/main/`;
 		await Promise.all(['package.json', 'dist/extension.js', 'dist/extension.js.map'].map(
 			fileName => downloadPlaygroundFile(fileName, playgroundRepo, webDevPlaygroundRoot)
 		));
 
 	} else {
 		if (verbose) {
-			fancyLog(`${ansiColors.magenta('Web Development extensions')}: Using existing vscode-web-playground in ${webDevPlaygroundRoot}`);
+			fancyLog(`${ansiColors.magenta('Web Development extensions')}: Using existing zycode-web-playground in ${webDevPlaygroundRoot}`);
 		}
 	}
 }

@@ -14,7 +14,7 @@ import { ExtHostInlineChatShape, IInlineChatResponseDto, IMainContext, MainConte
 import { ExtHostDocuments } from 'vs/workbench/api/common/extHostDocuments';
 import * as typeConvert from 'vs/workbench/api/common/extHostTypeConverters';
 import * as extHostTypes from 'vs/workbench/api/common/extHostTypes';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ApiCommand, ApiCommandArgument, ApiCommandResult, ExtHostCommands } from 'vs/workbench/api/common/extHostCommands';
 import { IRange } from 'vs/editor/common/core/range';
 import { IPosition } from 'vs/editor/common/core/position';
@@ -27,16 +27,16 @@ class ProviderWrapper {
 
 	constructor(
 		readonly extension: Readonly<IRelaxedExtensionDescription>,
-		readonly provider: vscode.InteractiveEditorSessionProvider,
+		readonly provider: zycode.InteractiveEditorSessionProvider,
 	) { }
 }
 
 class SessionWrapper {
 
-	readonly responses: (vscode.InteractiveEditorResponse | vscode.InteractiveEditorMessageResponse)[] = [];
+	readonly responses: (zycode.InteractiveEditorResponse | zycode.InteractiveEditorMessageResponse)[] = [];
 
 	constructor(
-		readonly session: vscode.InteractiveEditorSession
+		readonly session: zycode.InteractiveEditorSession
 	) { }
 }
 
@@ -57,11 +57,11 @@ export class ExtHostInteractiveEditor implements ExtHostInlineChatShape {
 		this._proxy = mainContext.getProxy(MainContext.MainThreadInlineChat);
 
 		type EditorChatApiArg = {
-			initialRange?: vscode.Range;
-			initialSelection?: vscode.Selection;
+			initialRange?: zycode.Range;
+			initialSelection?: zycode.Selection;
 			message?: string;
 			autoSend?: boolean;
-			position?: vscode.Position;
+			position?: zycode.Position;
 		};
 
 		type InteractiveEditorRunOptions = {
@@ -73,7 +73,7 @@ export class ExtHostInteractiveEditor implements ExtHostInlineChatShape {
 		};
 
 		extHostCommands.registerApiCommand(new ApiCommand(
-			'vscode.editorChat.start', 'inlineChat.start', 'Invoke a new editor chat session',
+			'zycode.editorChat.start', 'inlineChat.start', 'Invoke a new editor chat session',
 			[new ApiCommandArgument<EditorChatApiArg | undefined, InteractiveEditorRunOptions | undefined>('Run arguments', '', _v => true, v => {
 
 				if (!v) {
@@ -92,7 +92,7 @@ export class ExtHostInteractiveEditor implements ExtHostInlineChatShape {
 		));
 	}
 
-	registerProvider(extension: Readonly<IRelaxedExtensionDescription>, provider: vscode.InteractiveEditorSessionProvider): vscode.Disposable {
+	registerProvider(extension: Readonly<IRelaxedExtensionDescription>, provider: zycode.InteractiveEditorSessionProvider): zycode.Disposable {
 		const wrapper = new ProviderWrapper(extension, provider);
 		this._inputProvider.set(wrapper.handle, wrapper);
 		this._proxy.$registerInteractiveEditorProvider(wrapper.handle, provider.label, extension.identifier.value, typeof provider.handleInteractiveEditorResponseFeedback === 'function');
@@ -142,7 +142,7 @@ export class ExtHostInteractiveEditor implements ExtHostInlineChatShape {
 			return;
 		}
 
-		const apiRequest: vscode.InteractiveEditorRequest = {
+		const apiRequest: zycode.InteractiveEditorRequest = {
 			session: sessionData.session,
 			prompt: request.prompt,
 			selection: typeConvert.Selection.to(request.selection),
@@ -153,7 +153,7 @@ export class ExtHostInteractiveEditor implements ExtHostInlineChatShape {
 
 
 		let done = false;
-		const progress: vscode.Progress<{ message?: string; edits?: vscode.TextEdit[] }> = {
+		const progress: zycode.Progress<{ message?: string; edits?: zycode.TextEdit[] }> = {
 			report: value => {
 				if (!request.live) {
 					throw new Error('Progress reporting is only supported for live sessions');
@@ -255,7 +255,7 @@ export class ExtHostInteractiveEditor implements ExtHostInlineChatShape {
 		this._inputSessions.delete(sessionId);
 	}
 
-	private static _isMessageResponse(thing: any): thing is vscode.InteractiveEditorMessageResponse {
-		return typeof thing === 'object' && typeof (<vscode.InteractiveEditorMessageResponse>thing).contents === 'object';
+	private static _isMessageResponse(thing: any): thing is zycode.InteractiveEditorMessageResponse {
+		return typeof thing === 'object' && typeof (<zycode.InteractiveEditorMessageResponse>thing).contents === 'object';
 	}
 }

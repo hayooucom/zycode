@@ -23,24 +23,24 @@ const configurationEntrySchema: IJSONSchema = {
 	defaultSnippets: [{ body: { title: '', properties: {} } }],
 	properties: {
 		title: {
-			description: nls.localize('vscode.extension.contributes.configuration.title', 'A title for the current category of settings. This label will be rendered in the Settings editor as a subheading. If the title is the same as the extension display name, then the category will be grouped under the main extension heading.'),
+			description: nls.localize('zycode.extension.contributes.configuration.title', 'A title for the current category of settings. This label will be rendered in the Settings editor as a subheading. If the title is the same as the extension display name, then the category will be grouped under the main extension heading.'),
 			type: 'string'
 		},
 		order: {
-			description: nls.localize('vscode.extension.contributes.configuration.order', 'When specified, gives the order of this category of settings relative to other categories.'),
+			description: nls.localize('zycode.extension.contributes.configuration.order', 'When specified, gives the order of this category of settings relative to other categories.'),
 			type: 'integer'
 		},
 		properties: {
-			description: nls.localize('vscode.extension.contributes.configuration.properties', 'Description of the configuration properties.'),
+			description: nls.localize('zycode.extension.contributes.configuration.properties', 'Description of the configuration properties.'),
 			type: 'object',
 			propertyNames: {
 				pattern: '\\S+',
-				patternErrorMessage: nls.localize('vscode.extension.contributes.configuration.property.empty', 'Property should not be empty.'),
+				patternErrorMessage: nls.localize('zycode.extension.contributes.configuration.property.empty', 'Property should not be empty.'),
 			},
 			additionalProperties: {
 				anyOf: [
 					{
-						title: nls.localize('vscode.extension.contributes.configuration.properties.schema', 'Schema of the configuration property.'),
+						title: nls.localize('zycode.extension.contributes.configuration.properties.schema', 'Schema of the configuration property.'),
 						$ref: 'http://json-schema.org/draft-07/schema#'
 					},
 					{
@@ -177,7 +177,7 @@ const configurationExtPoint = ExtensionsRegistry.registerExtensionPoint<IConfigu
 	extensionPoint: 'configuration',
 	deps: [defaultConfigurationExtPoint],
 	jsonSchema: {
-		description: nls.localize('vscode.extension.contributes.configuration', 'Contributes configuration settings.'),
+		description: nls.localize('zycode.extension.contributes.configuration', 'Contributes configuration settings.'),
 		oneOf: [
 			configurationEntrySchema,
 			{
@@ -300,7 +300,7 @@ configurationExtPoint.setHandler((extensions, { added, removed }) => {
 });
 // END VSCode extension point `configuration`
 
-jsonRegistry.registerSchema('vscode://schemas/workspaceConfig', {
+jsonRegistry.registerSchema('zycode://schemas/workspaceConfig', {
 	allowComments: true,
 	allowTrailingCommas: true,
 	default: {
@@ -370,7 +370,7 @@ jsonRegistry.registerSchema('vscode://schemas/workspaceConfig', {
 			type: 'object',
 			default: {},
 			description: nls.localize('workspaceConfig.extensions.description', "Workspace extensions"),
-			$ref: 'vscode://schemas/extensions'
+			$ref: 'zycode://schemas/extensions'
 		},
 		'remoteAuthority': {
 			type: 'string',

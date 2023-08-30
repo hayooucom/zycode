@@ -182,9 +182,9 @@ suite('Editor ViewModel - MonospaceLineBreaksComputer', () => {
 		);
 
 		assertIncrementalLineBreaks(
-			factory, '\t\t"owner": "vscode",', 4,
+			factory, '\t\t"owner": "zycode",', 4,
 			14, '\t\t"owner|": |"vscod|e",',
-			16, '\t\t"owner":| |"vscode"|,',
+			16, '\t\t"owner":| |"zycode"|,',
 			WrappingIndent.Same
 		);
 

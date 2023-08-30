@@ -5,11 +5,11 @@
 /// <reference lib='webworker.importscripts' />
 /// <reference lib='webworker' />
 
-import { ApiClient, FileStat, FileSystem, FileType, Requests } from '@vscode/sync-api-client';
-import { ClientConnection } from '@vscode/sync-api-common/browser';
+import { ApiClient, FileStat, FileSystem, FileType, Requests } from '@zycode/sync-api-client';
+import { ClientConnection } from '@zycode/sync-api-common/browser';
 import { basename } from 'path';
 import * as ts from 'typescript/lib/tsserverlibrary';
-import { URI } from 'vscode-uri';
+import { URI } from 'zycode-uri';
 import WebTypingsInstaller from './typingsInstaller';
 
 // GLOBALS
@@ -91,7 +91,7 @@ type ServerHostWithImport = ts.server.ServerHost & { importPlugin(root: string, 
 
 function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient: ApiClient | undefined, args: string[], fsWatcher: MessagePort, enabledExperimentalTypeAcquisition: boolean): ServerHostWithImport {
 	const currentDirectory = '/';
-	const fs = apiClient?.vscode.workspace.fileSystem;
+	const fs = apiClient?.zycode.workspace.fileSystem;
 	let watchId = 0;
 
 	// Legacy web
@@ -139,7 +139,7 @@ function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient
 			fsWatcher.postMessage({ type: 'watchFile', uri: uri, id: watchIds[0] });
 			if (enabledExperimentalTypeAcquisition && looksLikeNodeModules(path)) {
 				watchIds.push(++watchId);
-				fsWatcher.postMessage({ type: 'watchFile', uri: mapUri(uri, 'vscode-node-modules'), id: watchIds[1] });
+				fsWatcher.postMessage({ type: 'watchFile', uri: mapUri(uri, 'zycode-node-modules'), id: watchIds[1] });
 			}
 			return {
 				close() {
@@ -217,7 +217,7 @@ function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient
 		newLine: '\n',
 		useCaseSensitiveFileNames: true,
 		write: s => {
-			apiClient?.vscode.terminal.write(s);
+			apiClient?.zycode.terminal.write(s);
 		},
 		writeOutputIsTTY() {
 			return true;
@@ -253,7 +253,7 @@ function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient
 					return undefined;
 				}
 				try {
-					contents = fs.readFile(mapUri(uri, 'vscode-node-modules'));
+					contents = fs.readFile(mapUri(uri, 'zycode-node-modules'));
 				} catch (e) {
 					return undefined;
 				}
@@ -274,7 +274,7 @@ function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient
 			} catch (_error) {
 				if (enabledExperimentalTypeAcquisition) {
 					try {
-						ret = fs.stat(mapUri(uri, 'vscode-node-modules')).size;
+						ret = fs.stat(mapUri(uri, 'zycode-node-modules')).size;
 					} catch (_error) {
 					}
 				}
@@ -302,8 +302,8 @@ function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient
 			try {
 				fs.writeFile(uri, encoded);
 				const name = basename(uri.path);
-				if (uri.scheme !== 'vscode-global-typings' && (name === 'package.json' || name === 'package-lock.json' || name === 'package-lock.kdl')) {
-					fs.writeFile(mapUri(uri, 'vscode-node-modules'), encoded);
+				if (uri.scheme !== 'zycode-global-typings' && (name === 'package.json' || name === 'package-lock.json' || name === 'package-lock.kdl')) {
+					fs.writeFile(mapUri(uri, 'zycode-node-modules'), encoded);
 				}
 			} catch (error) {
 				console.error('fs.writeFile', { path, error });
@@ -339,7 +339,7 @@ function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient
 			} catch (_error) {
 				if (enabledExperimentalTypeAcquisition) {
 					try {
-						ret = fs.stat(mapUri(uri, 'vscode-node-modules')).type === FileType.File;
+						ret = fs.stat(mapUri(uri, 'zycode-node-modules')).type === FileType.File;
 					} catch (_error) {
 					}
 				}
@@ -366,7 +366,7 @@ function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient
 			} catch (_error) {
 				if (enabledExperimentalTypeAcquisition) {
 					try {
-						stat = fs.stat(mapUri(uri, 'vscode-node-modules'));
+						stat = fs.stat(mapUri(uri, 'zycode-node-modules'));
 					} catch (_error) {
 					}
 				}
@@ -425,7 +425,7 @@ function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient
 			} catch (_e) {
 				if (enabledExperimentalTypeAcquisition) {
 					try {
-						s = fs.stat(mapUri(uri, 'vscode-node-modules'));
+						s = fs.stat(mapUri(uri, 'zycode-node-modules'));
 					} catch (_e) {
 					}
 				}
@@ -460,7 +460,7 @@ function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient
 	// For module resolution only. `node_modules` is also automatically mapped
 	// as if all node_modules-like paths are symlinked.
 	function realpath(path: string): string {
-		const isNm = looksLikeNodeModules(path) && !path.startsWith('/vscode-global-typings/');
+		const isNm = looksLikeNodeModules(path) && !path.startsWith('/zycode-global-typings/');
 		// skip paths without .. or ./ or /. And things that look like node_modules
 		if (!isNm && !path.match(/\.\.|\/\.|\.\//)) {
 			return path;
@@ -468,7 +468,7 @@ function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient
 
 		let uri = toResource(path);
 		if (isNm) {
-			uri = mapUri(uri, 'vscode-node-modules');
+			uri = mapUri(uri, 'zycode-node-modules');
 		}
 		const out = [uri.scheme];
 		if (uri.authority) { out.push(uri.authority); }
@@ -501,7 +501,7 @@ function createServerHost(extensionUri: URI, logger: ts.server.Logger, apiClient
 			entries = fs.readDirectory(uri);
 		} catch (_e) {
 			try {
-				entries = fs.readDirectory(mapUri(uri, 'vscode-node-modules'));
+				entries = fs.readDirectory(mapUri(uri, 'zycode-node-modules'));
 			} catch (_e) {
 			}
 		}
@@ -632,7 +632,7 @@ class WorkerSession extends ts.server.Session<{}> {
 		hrtime: ts.server.SessionOptions['hrtime']
 	) {
 		const cancellationToken = new WasmCancellationToken();
-		const typingsInstaller = options.disableAutomaticTypingAcquisition || !fs ? ts.server.nullTypingsInstaller : new WebTypingsInstaller(host, '/vscode-global-typings/ts-nul-authority/projects');
+		const typingsInstaller = options.disableAutomaticTypingAcquisition || !fs ? ts.server.nullTypingsInstaller : new WebTypingsInstaller(host, '/zycode-global-typings/ts-nul-authority/projects');
 
 		super({
 			host,
@@ -794,7 +794,7 @@ async function initializeSession(args: string[], extensionUri: URI, ports: { tss
 		await connection.serviceReady();
 
 		const apiClient = new ApiClient(connection);
-		fs = apiClient.vscode.workspace.fileSystem;
+		fs = apiClient.zycode.workspace.fileSystem;
 		sys = createServerHost(extensionUri, logger, apiClient, args, ports.watcher, enabledExperimentalTypeAcquisition);
 	} else {
 		sys = createServerHost(extensionUri, logger, undefined, args, ports.watcher, false);
@@ -852,8 +852,8 @@ const listener = async (e: any) => {
 addEventListener('message', listener);
 
 function mapUri(uri: URI, mappedScheme: string): URI {
-	if (uri.scheme === 'vscode-global-typings') {
-		throw new Error('can\'t map vscode-global-typings');
+	if (uri.scheme === 'zycode-global-typings') {
+		throw new Error('can\'t map zycode-global-typings');
 	}
 	if (!uri.authority) {
 		uri = uri.with({ authority: 'ts-nul-authority' });

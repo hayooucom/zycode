@@ -146,7 +146,7 @@ export class NativeWindow extends Disposable {
 		}
 
 		// Support `runAction` event
-		ipcRenderer.on('vscode:runAction', async (event: unknown, request: INativeRunActionInWindowRequest) => {
+		ipcRenderer.on('zycode:runAction', async (event: unknown, request: INativeRunActionInWindowRequest) => {
 			const args: unknown[] = request.args || [];
 
 			// If we run an action from the touchbar, we fill in the currently active resource
@@ -173,30 +173,30 @@ export class NativeWindow extends Disposable {
 		});
 
 		// Support runKeybinding event
-		ipcRenderer.on('vscode:runKeybinding', (event: unknown, request: INativeRunKeybindingInWindowRequest) => {
+		ipcRenderer.on('zycode:runKeybinding', (event: unknown, request: INativeRunKeybindingInWindowRequest) => {
 			if (document.activeElement) {
 				this.keybindingService.dispatchByUserSettingsLabel(request.userSettingsLabel, document.activeElement);
 			}
 		});
 
 		// Error reporting from main
-		ipcRenderer.on('vscode:reportError', (event: unknown, error: string) => {
+		ipcRenderer.on('zycode:reportError', (event: unknown, error: string) => {
 			if (error) {
 				onUnexpectedError(JSON.parse(error));
 			}
 		});
 
 		// Support openFiles event for existing and new files
-		ipcRenderer.on('vscode:openFiles', (event: unknown, request: IOpenFileRequest) => { this.onOpenFiles(request); });
+		ipcRenderer.on('zycode:openFiles', (event: unknown, request: IOpenFileRequest) => { this.onOpenFiles(request); });
 
 		// Support addFolders event if we have a workspace opened
-		ipcRenderer.on('vscode:addFolders', (event: unknown, request: IAddFoldersRequest) => { this.onAddFoldersRequest(request); });
+		ipcRenderer.on('zycode:addFolders', (event: unknown, request: IAddFoldersRequest) => { this.onAddFoldersRequest(request); });
 
 		// Message support
-		ipcRenderer.on('vscode:showInfoMessage', (event: unknown, message: string) => { this.notificationService.info(message); });
+		ipcRenderer.on('zycode:showInfoMessage', (event: unknown, message: string) => { this.notificationService.info(message); });
 
 		// Shell Environment Issue Notifications
-		ipcRenderer.on('vscode:showResolveShellEnvError', (event: unknown, message: string) => {
+		ipcRenderer.on('zycode:showResolveShellEnvError', (event: unknown, message: string) => {
 			this.notificationService.prompt(
 				Severity.Error,
 				message,
@@ -215,7 +215,7 @@ export class NativeWindow extends Disposable {
 			);
 		});
 
-		ipcRenderer.on('vscode:showCredentialsError', (event: unknown, message: string) => {
+		ipcRenderer.on('zycode:showCredentialsError', (event: unknown, message: string) => {
 			this.notificationService.prompt(
 				Severity.Error,
 				localize('keychainWriteError', "Writing login information to the keychain failed with error '{0}'.", message),
@@ -226,7 +226,7 @@ export class NativeWindow extends Disposable {
 			);
 		});
 
-		ipcRenderer.on('vscode:showTranslatedBuildWarning', (event: unknown, message: string) => {
+		ipcRenderer.on('zycode:showTranslatedBuildWarning', (event: unknown, message: string) => {
 			this.notificationService.prompt(
 				Severity.Warning,
 				localize("runningTranslated", "You are running an emulated version of {0}. For better performance download the native arm64 version of {0} build for your machine.", this.productService.nameLong),
@@ -243,11 +243,11 @@ export class NativeWindow extends Disposable {
 		});
 
 		// Fullscreen Events
-		ipcRenderer.on('vscode:enterFullScreen', async () => { setFullscreen(true); });
-		ipcRenderer.on('vscode:leaveFullScreen', async () => { setFullscreen(false); });
+		ipcRenderer.on('zycode:enterFullScreen', async () => { setFullscreen(true); });
+		ipcRenderer.on('zycode:leaveFullScreen', async () => { setFullscreen(false); });
 
 		// Proxy Login Dialog
-		ipcRenderer.on('vscode:openProxyAuthenticationDialog', async (event: unknown, payload: { authInfo: AuthInfo; username?: string; password?: string; replyChannel: string }) => {
+		ipcRenderer.on('zycode:openProxyAuthenticationDialog', async (event: unknown, payload: { authInfo: AuthInfo; username?: string; password?: string; replyChannel: string }) => {
 			const rememberCredentialsKey = 'window.rememberProxyCredentials';
 			const rememberCredentials = this.storageService.getBoolean(rememberCredentialsKey, StorageScope.APPLICATION);
 			const result = await this.dialogService.input({
@@ -289,12 +289,12 @@ export class NativeWindow extends Disposable {
 		});
 
 		// Accessibility support changed event
-		ipcRenderer.on('vscode:accessibilitySupportChanged', (event: unknown, accessibilitySupportEnabled: boolean) => {
+		ipcRenderer.on('zycode:accessibilitySupportChanged', (event: unknown, accessibilitySupportEnabled: boolean) => {
 			this.accessibilityService.setAccessibilitySupport(accessibilitySupportEnabled ? AccessibilitySupport.Enabled : AccessibilitySupport.Disabled);
 		});
 
 		// Allow to update settings around allowed UNC Host
-		ipcRenderer.on('vscode:configureAllowedUNCHost', (event: unknown, host: string) => {
+		ipcRenderer.on('zycode:configureAllowedUNCHost', (event: unknown, host: string) => {
 			if (!isWindows) {
 				return; // only supported on Windows
 			}
@@ -702,7 +702,7 @@ export class NativeWindow extends Disposable {
 		if (this.environmentService.isBuilt) {
 			let installLocationUri: URI;
 			if (isMacintosh) {
-				// appRoot = /Applications/Visual Studio Code - Insiders.app/Contents/Resources/app
+				// appRoot = /Applications/ZY Studio Code - Insiders.app/Contents/Resources/app
 				installLocationUri = dirname(dirname(dirname(URI.file(this.environmentService.appRoot))));
 			} else {
 				// appRoot = C:\Users\<name>\AppData\Local\Programs\Microsoft VS Code Insiders\resources\app
@@ -728,7 +728,7 @@ export class NativeWindow extends Disposable {
 			const message = localize('windows32eolmessage', "{0} on Windows 32-bit will soon stop receiving updates. Consider upgrading to the 64-bit build.", this.productService.nameLong);
 			const actions = [{
 				label: localize('windowseolBannerLearnMore', "Learn More"),
-				href: 'https://aka.ms/vscode-faq-old-windows'
+				href: 'https://aka.ms/zycode-faq-old-windows'
 			}];
 
 			this.bannerService.show({
@@ -744,7 +744,7 @@ export class NativeWindow extends Disposable {
 				message,
 				[{
 					label: localize('learnMore', "Learn More"),
-					run: () => this.openerService.open(URI.parse('https://aka.ms/vscode-faq-old-windows'))
+					run: () => this.openerService.open(URI.parse('https://aka.ms/zycode-faq-old-windows'))
 				}],
 				{
 					neverShowAgain: { id: 'windows32eol', isSecondary: true, scope: NeverShowAgainScope.APPLICATION },

@@ -18,7 +18,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	color: var(--vscode-interactive-session-foreground);
+	color: var(--zycode-interactive-session-foreground);
 
 	cursor: default;
 	user-select: text;
@@ -50,7 +50,7 @@
 	width: 24px;
 	height: 24px;
 	border-radius: 50%;
-	background: var(--vscode-badge-background);
+	background: var(--zycode-badge-background);
 	pointer-events: none;
 	user-select: none;
 }
@@ -62,7 +62,7 @@
 }
 
 .interactive-item-container .header .avatar .codicon {
-	color: var(--vscode-badge-foreground) !important;
+	color: var(--zycode-badge-foreground) !important;
 }
 
 .monaco-list-row:not(.focused) .interactive-item-container:not(:hover) .header .monaco-toolbar,
@@ -86,9 +86,9 @@
 
 .interactive-item-container .header .monaco-toolbar .checked.action-label,
 .interactive-item-container .header .monaco-toolbar .checked.action-label:hover {
-	color: var(--vscode-inputOption-activeForeground) !important;
-	border-color: var(--vscode-inputOption-activeBorder);
-	background-color: var(--vscode-inputOption-activeBackground);
+	color: var(--zycode-inputOption-activeForeground) !important;
+	border-color: var(--zycode-inputOption-activeBorder);
+	background-color: var(--zycode-inputOption-activeBackground);
 }
 
 .interactive-item-container .value {
@@ -104,19 +104,19 @@
 .interactive-item-container .value table,
 .interactive-item-container .value table td,
 .interactive-item-container .value table th {
-	border: 1px solid var(--vscode-chat-requestBorder);
+	border: 1px solid var(--zycode-chat-requestBorder);
 	border-collapse: collapse;
 	padding: 4px 6px;
 }
 
 .interactive-item-container .value a,
 .interactive-item-container .value a code {
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 }
 
 .interactive-item-container .value a:hover,
 .interactive-item-container .value a:active {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 }
 
 .interactive-list {
@@ -124,8 +124,8 @@
 }
 
 .interactive-request {
-	border-bottom: 1px solid var(--vscode-chat-requestBorder);
-	border-top: 1px solid var(--vscode-chat-requestBorder);
+	border-bottom: 1px solid var(--zycode-chat-requestBorder);
+	border-top: 1px solid var(--zycode-chat-requestBorder);
 }
 
 .interactive-item-container .value {
@@ -175,7 +175,7 @@
 .interactive-item-container .monaco-tokenized-source,
 .interactive-item-container code {
 	font-family: var(--monaco-monospace-font);
-	color: var(--vscode-textPreformat-foreground);
+	color: var(--zycode-textPreformat-foreground);
 }
 
 .interactive-item-container.interactive-item-compact {
@@ -226,8 +226,8 @@
 	box-sizing: border-box;
 	cursor: text;
 	margin: 0px 20px;
-	background-color: var(--vscode-input-background);
-	border: 1px solid var(--vscode-input-border, transparent);
+	background-color: var(--zycode-input-background);
+	border: 1px solid var(--zycode-input-border, transparent);
 	border-radius: 4px;
 	position: relative;
 	padding: 0 6px;
@@ -243,12 +243,12 @@
 }
 
 .interactive-session .interactive-input-and-execute-toolbar.focused {
-	border-color: var(--vscode-focusBorder);
+	border-color: var(--zycode-focusBorder);
 }
 
 .interactive-session .interactive-input-and-execute-toolbar .monaco-editor,
 .interactive-session .interactive-input-and-execute-toolbar .monaco-editor .monaco-editor-background {
-	background-color: var(--vscode-input-background) !important;
+	background-color: var(--zycode-input-background) !important;
 }
 
 .interactive-session .interactive-input-and-execute-toolbar .monaco-editor .cursors-layer {
@@ -260,7 +260,7 @@
 }
 
 .interactive-session .interactive-input-part .interactive-execute-toolbar .codicon-debug-stop {
-	color: var(--vscode-icon-foreground) !important;
+	color: var(--zycode-icon-foreground) !important;
 }
 
 .interactive-item-container .interactive-result-editor-wrapper {
@@ -273,8 +273,8 @@
 	top: -13px;
 	right: 10px;
 	height: 26px;
-	background-color: var(--vscode-interactive-result-editor-background-color, var(--vscode-editor-background));
-	border: 1px solid var(--vscode-chat-requestBorder);
+	background-color: var(--zycode-interactive-result-editor-background-color, var(--zycode-editor-background));
+	border: 1px solid var(--zycode-chat-requestBorder);
 	z-index: 100;
 }
 
@@ -302,15 +302,15 @@
 .interactive-session .interactive-item-container.interactive-response .interactive-result-editor-wrapper .interactive-result-editor .monaco-editor,
 .interactive-session .interactive-item-container.interactive-response .interactive-result-editor-wrapper .interactive-result-editor .monaco-editor .margin,
 .interactive-session .interactive-item-container.interactive-response .interactive-result-editor-wrapper .interactive-result-editor .monaco-editor .monaco-editor-background {
-	background-color: var(--vscode-interactive-result-editor-background-color);
+	background-color: var(--zycode-interactive-result-editor-background-color);
 }
 
 .interactive-item-container .interactive-result-editor-wrapper .interactive-result-editor .monaco-editor {
-	border: 1px solid var(--vscode-input-border, transparent);
+	border: 1px solid var(--zycode-input-border, transparent);
 }
 
 .interactive-item-container .interactive-result-editor-wrapper .interactive-result-editor .monaco-editor.focused {
-	border-color: var(--vscode-focusBorder, transparent);
+	border-color: var(--zycode-focusBorder, transparent);
 }
 
 .interactive-item-container .interactive-result-editor-wrapper,
@@ -334,15 +334,15 @@
 }
 
 .interactive-response .interactive-response-error-details .codicon-error {
-	color: var(--vscode-errorForeground) !important; /* Have to override default styles which apply to all lists */
+	color: var(--zycode-errorForeground) !important; /* Have to override default styles which apply to all lists */
 }
 
 .interactive-response .interactive-response-error-details .codicon-info {
-	color: var(--vscode-notificationsInfoIcon-foreground) !important; /* Have to override default styles which apply to all lists */
+	color: var(--zycode-notificationsInfoIcon-foreground) !important; /* Have to override default styles which apply to all lists */
 }
 
 .interactive-item-container .value .interactive-slash-command {
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 }
 
 .interactive-session .interactive-input-part {
@@ -382,7 +382,7 @@
 
 .interactive-session .interactive-input-part .interactive-input-followups .interactive-session-followups .monaco-button {
 	display: block;
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 }
 
 .interactive-session .interactive-input-part .interactive-input-followups .interactive-session-followups code {
@@ -406,7 +406,7 @@
 
 .interactive-item-container .monaco-toolbar .codicon {
 	/* Very aggressive list styles try to apply focus colors to every codicon in a list row. */
-	color: var(--vscode-icon-foreground) !important;
+	color: var(--zycode-icon-foreground) !important;
 }
 
 .interactive-item-container.filtered-response .value .rendered-markdown {
@@ -437,7 +437,7 @@
 /* #endregion */
 
 .interactive-response-progress-tree .monaco-tl-row:hover {
-	background-color: var(--vscode-list-hoverBackground);
+	background-color: var(--zycode-list-hoverBackground);
 }
 
 .interactive-response-progress-tree {
@@ -445,15 +445,15 @@
 }
 
 .interactive-response-progress-tree.focused {
-	border-color: var(--vscode-focusBorder, transparent);
+	border-color: var(--zycode-focusBorder, transparent);
 }
 
 .interactive-item-container .value .interactive-response-placeholder-codicon .codicon {
-	color: var(--vscode-editorGhostText-foreground);
+	color: var(--zycode-editorGhostText-foreground);
 }
 
 .interactive-item-container .value .interactive-response-placeholder-content {
-	color: var(--vscode-editorGhostText-foreground);
+	color: var(--zycode-editorGhostText-foreground);
 	font-size: 12px;
 }
 
@@ -464,7 +464,7 @@
 }
 
 .interactive-response-progress-tree .monaco-list .monaco-scrollable-element .monaco-list-rows {
-	border: 1px solid var(--vscode-input-border,transparent);
+	border: 1px solid var(--zycode-input-border,transparent);
 	border-radius: 4px;
 	width: auto;
 }

@@ -17,7 +17,7 @@ const winptyProcessOptions: ITerminalProcessOptions = { shellIntegration: { enab
 const pwshExe = process.platform === 'win32' ? 'pwsh.exe' : 'pwsh';
 const repoRoot = process.platform === 'win32' ? process.cwd()[0].toLowerCase() + process.cwd().substring(1) : process.cwd();
 const logService = new NullLogService();
-const productService = { applicationName: 'vscode' } as IProductService;
+const productService = { applicationName: 'zycode' } as IProductService;
 const defaultEnvironment = {};
 
 suite('platform - terminalEnvironment', () => {
@@ -108,13 +108,13 @@ suite('platform - terminalEnvironment', () => {
 			suite('zsh', () => {
 				suite('should override args', () => {
 					const username = userInfo().username;
-					const expectedDir = new RegExp(`.+\/${username}-vscode-zsh`);
+					const expectedDir = new RegExp(`.+\/${username}-zycode-zsh`);
 					const customZdotdir = '/custom/zsh/dotdir';
 					const expectedDests = [
-						new RegExp(`.+\\/${username}-vscode-zsh\\/\\.zshrc`),
-						new RegExp(`.+\\/${username}-vscode-zsh\\/\\.zprofile`),
-						new RegExp(`.+\\/${username}-vscode-zsh\\/\\.zshenv`),
-						new RegExp(`.+\\/${username}-vscode-zsh\\/\\.zlogin`)
+						new RegExp(`.+\\/${username}-zycode-zsh\\/\\.zshrc`),
+						new RegExp(`.+\\/${username}-zycode-zsh\\/\\.zprofile`),
+						new RegExp(`.+\\/${username}-zycode-zsh\\/\\.zshenv`),
+						new RegExp(`.+\\/${username}-zycode-zsh\\/\\.zlogin`)
 					];
 					const expectedSources = [
 						/.+\/out\/vs\/workbench\/contrib\/terminal\/browser\/media\/shellIntegration-rc.zsh/,

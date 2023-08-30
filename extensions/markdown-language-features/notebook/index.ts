@@ -6,7 +6,7 @@
 import * as DOMPurify from 'dompurify';
 import MarkdownIt from 'markdown-it';
 import type * as MarkdownItToken from 'markdown-it/lib/token';
-import type { ActivationFunction } from 'vscode-notebook-renderer';
+import type { ActivationFunction } from 'zycode-notebook-renderer';
 
 const allowedHtmlTags = Object.freeze(['a',
 	'abbr',
@@ -135,7 +135,7 @@ export const activate: ActivationFunction<void> = (ctx) => {
 		linkify: true,
 		highlight: (str: string, lang?: string) => {
 			if (lang) {
-				return `<code class="vscode-code-block" data-vscode-code-block-lang="${markdownIt.utils.escapeHtml(lang)}">${markdownIt.utils.escapeHtml(str)}</code>`;
+				return `<code class="zycode-code-block" data-zycode-code-block-lang="${markdownIt.utils.escapeHtml(lang)}">${markdownIt.utils.escapeHtml(str)}</code>`;
 			}
 			return `<code>${markdownIt.utils.escapeHtml(str)}</code>`;
 		}
@@ -275,7 +275,7 @@ export const activate: ActivationFunction<void> = (ctx) => {
 
 		code {
 			font-size: 1em;
-			font-family: var(--vscode-editor-font-family);
+			font-family: var(--zycode-editor-font-family);
 		}
 
 		pre code {

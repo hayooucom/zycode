@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import * as uri from 'vscode-uri';
+import * as zycode from 'zycode';
+import * as uri from 'zycode-uri';
 import { ILogger } from '../logging';
 import { MarkdownItEngine } from '../markdownEngine';
 import { MarkdownContributionProvider } from '../markdownExtensions';
@@ -21,11 +21,11 @@ import { ContentSecurityPolicyArbiter, MarkdownPreviewSecurityLevel } from './se
  * can be localized using our normal localization process.
  */
 const previewStrings = {
-	cspAlertMessageText: vscode.l10n.t("Some content has been disabled in this document"),
+	cspAlertMessageText: zycode.l10n.t("Some content has been disabled in this document"),
 
-	cspAlertMessageTitle: vscode.l10n.t("Potentially unsafe or insecure content has been disabled in the Markdown preview. Change the Markdown preview security setting to allow insecure content or enable scripts"),
+	cspAlertMessageTitle: zycode.l10n.t("Potentially unsafe or insecure content has been disabled in the Markdown preview. Change the Markdown preview security setting to allow insecure content or enable scripts"),
 
-	cspAlertMessageLabel: vscode.l10n.t("Content Disabled Security Warning")
+	cspAlertMessageLabel: zycode.l10n.t("Content Disabled Security Warning")
 };
 
 export interface MarkdownContentProviderOutput {
@@ -42,28 +42,28 @@ export interface ImageInfo {
 export class MdDocumentRenderer {
 	constructor(
 		private readonly _engine: MarkdownItEngine,
-		private readonly _context: vscode.ExtensionContext,
+		private readonly _context: zycode.ExtensionContext,
 		private readonly _cspArbiter: ContentSecurityPolicyArbiter,
 		private readonly _contributionProvider: MarkdownContributionProvider,
 		private readonly _logger: ILogger
 	) {
 		this.iconPath = {
-			dark: vscode.Uri.joinPath(this._context.extensionUri, 'media', 'preview-dark.svg'),
-			light: vscode.Uri.joinPath(this._context.extensionUri, 'media', 'preview-light.svg'),
+			dark: zycode.Uri.joinPath(this._context.extensionUri, 'media', 'preview-dark.svg'),
+			light: zycode.Uri.joinPath(this._context.extensionUri, 'media', 'preview-light.svg'),
 		};
 	}
 
-	public readonly iconPath: { light: vscode.Uri; dark: vscode.Uri };
+	public readonly iconPath: { light: zycode.Uri; dark: zycode.Uri };
 
 	public async renderDocument(
-		markdownDocument: vscode.TextDocument,
+		markdownDocument: zycode.TextDocument,
 		resourceProvider: WebviewResourceProvider,
 		previewConfigurations: MarkdownPreviewConfigurationManager,
 		initialLine: number | undefined,
 		selectedLine: number | undefined,
 		state: any | undefined,
 		imageInfo: readonly ImageInfo[],
-		token: vscode.CancellationToken
+		token: zycode.CancellationToken
 	): Promise<MarkdownContentProviderOutput> {
 		const sourceUri = markdownDocument.uri;
 		const config = previewConfigurations.loadAndCacheConfiguration(sourceUri);
@@ -95,7 +95,7 @@ export class MdDocumentRenderer {
 			<head>
 				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 				${csp}
-				<meta id="vscode-markdown-preview-data"
+				<meta id="zycode-markdown-preview-data"
 					data-settings="${escapeAttribute(JSON.stringify(initialData))}"
 					data-strings="${escapeAttribute(JSON.stringify(previewStrings))}"
 					data-state="${escapeAttribute(JSON.stringify(state || {}))}">
@@ -103,7 +103,7 @@ export class MdDocumentRenderer {
 				${this._getStyles(resourceProvider, sourceUri, config, imageInfo)}
 				<base href="${resourceProvider.asWebviewUri(markdownDocument.uri)}">
 			</head>
-			<body class="vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
+			<body class="zycode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
 				${body.html}
 				${this._getScripts(resourceProvider, nonce)}
 			</body>
@@ -115,7 +115,7 @@ export class MdDocumentRenderer {
 	}
 
 	public async renderBody(
-		markdownDocument: vscode.TextDocument,
+		markdownDocument: zycode.TextDocument,
 		resourceProvider: WebviewResourceProvider,
 	): Promise<MarkdownContentProviderOutput> {
 		const rendered = await this._engine.render(markdownDocument, resourceProvider);
@@ -126,12 +126,12 @@ export class MdDocumentRenderer {
 		};
 	}
 
-	public renderFileNotFoundDocument(resource: vscode.Uri): string {
+	public renderFileNotFoundDocument(resource: zycode.Uri): string {
 		const resourcePath = uri.Utils.basename(resource);
-		const body = vscode.l10n.t('{0} cannot be found', resourcePath);
+		const body = zycode.l10n.t('{0} cannot be found', resourcePath);
 		return `<!DOCTYPE html>
 			<html>
-			<body class="vscode-body">
+			<body class="zycode-body">
 				${body}
 			</body>
 			</html>`;
@@ -139,11 +139,11 @@ export class MdDocumentRenderer {
 
 	private _extensionResourcePath(resourceProvider: WebviewResourceProvider, mediaFile: string): string {
 		const webviewResource = resourceProvider.asWebviewUri(
-			vscode.Uri.joinPath(this._context.extensionUri, 'media', mediaFile));
+			zycode.Uri.joinPath(this._context.extensionUri, 'media', mediaFile));
 		return webviewResource.toString();
 	}
 
-	private _fixHref(resourceProvider: WebviewResourceProvider, resource: vscode.Uri, href: string): string {
+	private _fixHref(resourceProvider: WebviewResourceProvider, resource: zycode.Uri, href: string): string {
 		if (!href) {
 			return href;
 		}
@@ -154,20 +154,20 @@ export class MdDocumentRenderer {
 
 		// Assume it must be a local file
 		if (href.startsWith('/') || /^[a-z]:\\/i.test(href)) {
-			return resourceProvider.asWebviewUri(vscode.Uri.file(href)).toString();
+			return resourceProvider.asWebviewUri(zycode.Uri.file(href)).toString();
 		}
 
 		// Use a workspace relative path if there is a workspace
-		const root = vscode.workspace.getWorkspaceFolder(resource);
+		const root = zycode.workspace.getWorkspaceFolder(resource);
 		if (root) {
-			return resourceProvider.asWebviewUri(vscode.Uri.joinPath(root.uri, href)).toString();
+			return resourceProvider.asWebviewUri(zycode.Uri.joinPath(root.uri, href)).toString();
 		}
 
 		// Otherwise look relative to the markdown file
-		return resourceProvider.asWebviewUri(vscode.Uri.joinPath(uri.Utils.dirname(resource), href)).toString();
+		return resourceProvider.asWebviewUri(zycode.Uri.joinPath(uri.Utils.dirname(resource), href)).toString();
 	}
 
-	private _computeCustomStyleSheetIncludes(resourceProvider: WebviewResourceProvider, resource: vscode.Uri, config: MarkdownPreviewConfiguration): string {
+	private _computeCustomStyleSheetIncludes(resourceProvider: WebviewResourceProvider, resource: zycode.Uri, config: MarkdownPreviewConfiguration): string {
 		if (!Array.isArray(config.styles)) {
 			return '';
 		}
@@ -203,7 +203,7 @@ export class MdDocumentRenderer {
 		return ret;
 	}
 
-	private _getStyles(resourceProvider: WebviewResourceProvider, resource: vscode.Uri, config: MarkdownPreviewConfiguration, imageInfo: readonly ImageInfo[]): string {
+	private _getStyles(resourceProvider: WebviewResourceProvider, resource: zycode.Uri, config: MarkdownPreviewConfiguration, imageInfo: readonly ImageInfo[]): string {
 		const baseStyles: string[] = [];
 		for (const resource of this._contributionProvider.contributions.previewStyles) {
 			baseStyles.push(`<link rel="stylesheet" type="text/css" href="${escapeAttribute(resourceProvider.asWebviewUri(resource))}">`);
@@ -227,7 +227,7 @@ export class MdDocumentRenderer {
 
 	private _getCsp(
 		provider: WebviewResourceProvider,
-		resource: vscode.Uri,
+		resource: zycode.Uri,
 		nonce: string
 	): string {
 		const rule = provider.cspSource;

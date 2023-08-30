@@ -275,7 +275,7 @@ impl StorageImplementation for ThreadKeyringStorage {
 #[derive(Default)]
 struct KeyringStorage {
 	// keywring storage can be split into multiple entries due to entry length limits
-	// on Windows https://github.com/microsoft/vscode-cli/issues/358
+	// on Windows https://github.com/microsoft/zycode-cli/issues/358
 	entries: Vec<keyring::Entry>,
 }
 
@@ -284,7 +284,7 @@ macro_rules! get_next_entry {
 		match $self.entries.get($i) {
 			Some(e) => e,
 			None => {
-				let e = keyring::Entry::new("vscode-cli", &format!("vscode-cli-{}", $i)).unwrap();
+				let e = keyring::Entry::new("zycode-cli", &format!("zycode-cli-{}", $i)).unwrap();
 				$self.entries.push(e);
 				$self.entries.last().unwrap()
 			}
@@ -705,23 +705,23 @@ lazy_static::lazy_static! {
 	static ref HOSTNAME: Vec<u8> = gethostname().to_string_lossy().bytes().collect();
 }
 
-#[cfg(feature = "vscode-encrypt")]
+#[cfg(feature = "zycode-encrypt")]
 fn encrypt(value: &str) -> String {
 	vscode_encrypt::encrypt(&HOSTNAME, value.as_bytes()).expect("expected to encrypt")
 }
 
-#[cfg(feature = "vscode-encrypt")]
+#[cfg(feature = "zycode-encrypt")]
 fn decrypt(value: &str) -> Option<String> {
 	let b = vscode_encrypt::decrypt(&HOSTNAME, value).ok()?;
 	String::from_utf8(b).ok()
 }
 
-#[cfg(not(feature = "vscode-encrypt"))]
+#[cfg(not(feature = "zycode-encrypt"))]
 fn encrypt(value: &str) -> String {
 	value.to_owned()
 }
 
-#[cfg(not(feature = "vscode-encrypt"))]
+#[cfg(not(feature = "zycode-encrypt"))]
 fn decrypt(value: &str) -> Option<String> {
 	Some(value.to_owned())
 }

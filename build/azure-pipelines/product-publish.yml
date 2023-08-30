@@ -6,8 +6,8 @@ steps:
   - task: AzureKeyVault@1
     displayName: "Azure Key Vault: Get Secrets"
     inputs:
-      azureSubscription: "vscode-builds-subscription"
-      KeyVaultName: vscode-build-secrets
+      azureSubscription: "zycode-builds-subscription"
+      KeyVaultName: zycode-build-secrets
       SecretsFilter: "github-distro-mixin-password"
 
   # allow-any-unicode-next-line
@@ -24,7 +24,7 @@ steps:
 
   - task: AzureCLI@2
     inputs:
-      azureSubscription: "vscode-builds-subscription"
+      azureSubscription: "zycode-builds-subscription"
       scriptType: pscore
       scriptLocation: inlineScript
       addSpnToEnvironment: true
@@ -35,7 +35,7 @@ steps:
 
   - task: AzureCLI@2
     inputs:
-      azureSubscription: "vscode-builds-mooncake-subscription"
+      azureSubscription: "zycode-builds-mooncake-subscription"
       scriptType: pscore
       scriptLocation: inlineScript
       addSpnToEnvironment: true

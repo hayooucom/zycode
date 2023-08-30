@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as httpRequest from 'request-light';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { addJSONProviders } from './features/jsonContributions';
 
-export async function activate(context: vscode.ExtensionContext): Promise<void> {
+export async function activate(context: zycode.ExtensionContext): Promise<void> {
 	context.subscriptions.push(addJSONProviders(httpRequest.xhr, undefined));
 }
 

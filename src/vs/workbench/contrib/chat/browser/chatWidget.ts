@@ -393,8 +393,8 @@ export class ChatWidget extends Disposable implements IChatWidget {
 	}
 
 	private onDidStyleChange(): void {
-		this.container.style.setProperty('--vscode-interactive-result-editor-background-color', this.editorOptions.configuration.resultEditor.backgroundColor?.toString() ?? '');
-		this.container.style.setProperty('--vscode-interactive-session-foreground', this.editorOptions.configuration.foreground?.toString() ?? '');
+		this.container.style.setProperty('--zycode-interactive-result-editor-background-color', this.editorOptions.configuration.resultEditor.backgroundColor?.toString() ?? '');
+		this.container.style.setProperty('--zycode-interactive-session-foreground', this.editorOptions.configuration.foreground?.toString() ?? '');
 	}
 
 	setModel(model: IChatModel, viewState: IViewState): void {

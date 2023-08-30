@@ -5,7 +5,7 @@
 
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import * as path from 'path';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { DeferredPromise } from './deferredPromise';
 import { splitNewLines } from './split';
 
@@ -24,13 +24,13 @@ const CLEANUP_TIMEOUT = 10_000;
 const cliPath = process.env.VSCODE_FORWARDING_IS_DEV
 	? path.join(__dirname, '../../../cli/target/debug/code')
 	: path.join(
-		vscode.env.appRoot,
+		zycode.env.appRoot,
 		process.platform === 'darwin' ? 'bin' : '../../bin',
-		vscode.env.appQuality === 'stable' ? 'code-tunnel' : 'code-tunnel-insiders',
+		zycode.env.appQuality === 'stable' ? 'code-tunnel' : 'code-tunnel-insiders',
 	) + (process.platform === 'win32' ? '.exe' : '');
 
-class Tunnel implements vscode.Tunnel {
-	private readonly disposeEmitter = new vscode.EventEmitter<void>();
+class Tunnel implements zycode.Tunnel {
+	private readonly disposeEmitter = new zycode.EventEmitter<void>();
 	public readonly onDidDispose = this.disposeEmitter.event;
 	public localAddress!: string;
 
@@ -61,30 +61,30 @@ type StateT =
 	| { state: State.Active; portFormat: string; process: ChildProcessWithoutNullStreams; cleanupTimeout?: NodeJS.Timeout }
 	| { state: State.Error; error: string };
 
-export async function activate(context: vscode.ExtensionContext) {
-	if (vscode.env.remoteAuthority) {
+export async function activate(context: zycode.ExtensionContext) {
+	if (zycode.env.remoteAuthority) {
 		return; // forwarding is local-only at the moment
 	}
 
-	const logger = new Logger(vscode.l10n.t('Port Forwarding'));
+	const logger = new Logger(zycode.l10n.t('Port Forwarding'));
 	const provider = new TunnelProvider(logger);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('tunnel-forwarding.showLog', () => logger.show()),
-		vscode.commands.registerCommand('tunnel-forwarding.restart', () => provider.restart()),
+		zycode.commands.registerCommand('tunnel-forwarding.showLog', () => logger.show()),
+		zycode.commands.registerCommand('tunnel-forwarding.restart', () => provider.restart()),
 
 		provider.onDidStateChange(s => {
-			vscode.commands.executeCommand('setContext', 'tunnelForwardingIsRunning', s.state !== State.Inactive);
+			zycode.commands.executeCommand('setContext', 'tunnelForwardingIsRunning', s.state !== State.Inactive);
 		}),
 
-		await vscode.workspace.registerTunnelProvider(
+		await zycode.workspace.registerTunnelProvider(
 			provider,
 			{
 				tunnelFeatures: {
 					elevation: false,
 					privacyOptions: [
-						{ themeIcon: 'globe', id: TunnelPrivacyId.Public, label: vscode.l10n.t('Public') },
-						{ themeIcon: 'lock', id: TunnelPrivacyId.Private, label: vscode.l10n.t('Private') },
+						{ themeIcon: 'globe', id: TunnelPrivacyId.Public, label: zycode.l10n.t('Public') },
+						{ themeIcon: 'lock', id: TunnelPrivacyId.Private, label: zycode.l10n.t('Private') },
 					],
 				},
 			},
@@ -95,7 +95,7 @@ export async function activate(context: vscode.ExtensionContext) {
 export function deactivate() { }
 
 class Logger {
-	private outputChannel?: vscode.LogOutputChannel;
+	private outputChannel?: zycode.LogOutputChannel;
 
 	constructor(private readonly label: string) { }
 
@@ -113,16 +113,16 @@ class Logger {
 		...args: unknown[]
 	) {
 		if (!this.outputChannel) {
-			this.outputChannel = vscode.window.createOutputChannel(this.label, { log: true });
-			vscode.commands.executeCommand('setContext', 'tunnelForwardingHasLog', true);
+			this.outputChannel = zycode.window.createOutputChannel(this.label, { log: true });
+			zycode.commands.executeCommand('setContext', 'tunnelForwardingHasLog', true);
 		}
 		this.outputChannel[logLevel](message, ...args);
 	}
 }
 
-class TunnelProvider implements vscode.TunnelProvider {
+class TunnelProvider implements zycode.TunnelProvider {
 	private readonly tunnels = new Set<Tunnel>();
-	private readonly stateChange = new vscode.EventEmitter<StateT>();
+	private readonly stateChange = new zycode.EventEmitter<StateT>();
 	private _state: StateT = { state: State.Inactive };
 
 	private get state(): StateT {
@@ -139,7 +139,7 @@ class TunnelProvider implements vscode.TunnelProvider {
 	constructor(private readonly logger: Logger) { }
 
 	/** @inheritdoc */
-	public async provideTunnel(tunnelOptions: vscode.TunnelOptions): Promise<vscode.Tunnel> {
+	public async provideTunnel(tunnelOptions: zycode.TunnelOptions): Promise<zycode.Tunnel> {
 		const tunnel = new Tunnel(
 			tunnelOptions.remoteAddress,
 			(tunnelOptions.privacy as TunnelPrivacyId) || TunnelPrivacyId.Private,
@@ -216,7 +216,7 @@ class TunnelProvider implements vscode.TunnelProvider {
 	}
 
 	private async setupPortForwardingProcess() {
-		const session = await vscode.authentication.getSession('github', ['user:email', 'read:org'], {
+		const session = await zycode.authentication.getSession('github', ['user:email', 'read:org'], {
 			createIfNone: true,
 		});
 
@@ -235,10 +235,10 @@ class TunnelProvider implements vscode.TunnelProvider {
 		this.state = { state: State.Starting, process };
 
 		const progressP = new DeferredPromise<void>();
-		vscode.window.withProgress(
+		zycode.window.withProgress(
 			{
-				location: vscode.ProgressLocation.Notification,
-				title: vscode.l10n.t({
+				location: zycode.ProgressLocation.Notification,
+				title: zycode.l10n.t({
 					comment: ['do not change link format [Show Log](command), only change the text "Show Log"'],
 					message: 'Starting port forwarding system ([Show Log]({0}))',
 					args: ['command:tunnel-forwarding.showLog']

@@ -16,13 +16,13 @@ export interface MessagePoster {
 	): void;
 }
 
-export const createPosterForVsCode = (vscode: any, settingsManager: SettingsManager): MessagePoster => {
+export const createPosterForVsCode = (zycode: any, settingsManager: SettingsManager): MessagePoster => {
 	return {
 		postMessage<T extends FromWebviewMessage.Type>(
 			type: T['type'],
 			body: Omit<T, 'source' | 'type'>
 		): void {
-			vscode.postMessage({
+			zycode.postMessage({
 				type,
 				source: settingsManager.settings!.source,
 				...body

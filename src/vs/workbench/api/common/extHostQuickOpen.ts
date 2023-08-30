@@ -8,7 +8,7 @@ import { Emitter } from 'vs/base/common/event';
 import { dispose, IDisposable } from 'vs/base/common/lifecycle';
 import { ExtHostCommands } from 'vs/workbench/api/common/extHostCommands';
 import { IExtHostWorkspaceProvider } from 'vs/workbench/api/common/extHostWorkspace';
-import { InputBox, InputBoxOptions, InputBoxValidationMessage, QuickInput, QuickInputButton, QuickPick, QuickPickItem, QuickPickItemButtonEvent, QuickPickOptions, WorkspaceFolder, WorkspaceFolderPickOptions } from 'vscode';
+import { InputBox, InputBoxOptions, InputBoxValidationMessage, QuickInput, QuickInputButton, QuickPick, QuickPickItem, QuickPickItemButtonEvent, QuickPickOptions, WorkspaceFolder, WorkspaceFolderPickOptions } from 'zycode';
 import { ExtHostQuickOpenShape, IMainContext, MainContext, TransferQuickInput, TransferQuickInputButton, TransferQuickPickItemOrSeparator } from './extHost.protocol';
 import { URI } from 'vs/base/common/uri';
 import { ThemeIcon, QuickInputButtons, QuickPickItemKind, InputBoxValidationSeverity } from 'vs/workbench/api/common/extHostTypes';
@@ -499,7 +499,7 @@ export function createExtHostQuickOpen(mainContext: IMainContext, workspace: IEx
 		}
 		const dark = getDarkIconUri(iconPath as URI | { light: URI; dark: URI });
 		const light = getLightIconUri(iconPath as URI | { light: URI; dark: URI });
-		// Tolerate strings: https://github.com/microsoft/vscode/issues/110432#issuecomment-726144556
+		// Tolerate strings: https://github.com/microsoft/zycode/issues/110432#issuecomment-726144556
 		return {
 			dark: typeof dark === 'string' ? URI.file(dark) : dark,
 			light: typeof light === 'string' ? URI.file(light) : light

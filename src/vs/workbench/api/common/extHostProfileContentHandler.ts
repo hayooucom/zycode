@@ -10,7 +10,7 @@ import { URI, UriComponents } from 'vs/base/common/uri';
 import { IExtensionDescription } from 'vs/platform/extensions/common/extensions';
 import { checkProposedApiEnabled } from 'vs/workbench/services/extensions/common/extensions';
 import { ISaveProfileResult } from 'vs/workbench/services/userDataProfile/common/userDataProfile';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ExtHostProfileContentHandlersShape, IMainContext, MainContext, MainThreadProfileContentHandlersShape } from './extHost.protocol';
 
 
@@ -18,7 +18,7 @@ export class ExtHostProfileContentHandlers implements ExtHostProfileContentHandl
 
 	private readonly proxy: MainThreadProfileContentHandlersShape;
 
-	private readonly handlers = new Map<string, vscode.ProfileContentHandler>();
+	private readonly handlers = new Map<string, zycode.ProfileContentHandler>();
 
 	constructor(
 		mainContext: IMainContext,
@@ -29,8 +29,8 @@ export class ExtHostProfileContentHandlers implements ExtHostProfileContentHandl
 	registrProfileContentHandler(
 		extension: IExtensionDescription,
 		id: string,
-		handler: vscode.ProfileContentHandler,
-	): vscode.Disposable {
+		handler: zycode.ProfileContentHandler,
+	): zycode.Disposable {
 		checkProposedApiEnabled(extension, 'profileContentHandlers');
 		if (this.handlers.has(id)) {
 			throw new Error(`Handler with id '${id}' already registered`);

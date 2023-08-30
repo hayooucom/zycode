@@ -277,7 +277,7 @@ function generateApiProposalNames() {
 		eol = os.EOL;
 	}
 
-	const pattern = /vscode\.proposed\.([a-zA-Z]+)\.d\.ts$/;
+	const pattern = /zycode\.proposed\.([a-zA-Z]+)\.d\.ts$/;
 	const proposalNames = new Set<string>();
 
 	const input = es.through();
@@ -301,7 +301,7 @@ function generateApiProposalNames() {
 				'// THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY.',
 				'',
 				'export const allApiProposals = Object.freeze({',
-				`${names.map(name => `\t${name}: 'https://raw.githubusercontent.com/microsoft/vscode/main/src/vscode-dts/vscode.proposed.${name}.d.ts'`).join(`,${eol}`)}`,
+				`${names.map(name => `\t${name}: 'https://raw.githubusercontent.com/microsoft/zycode/main/src/zycode-dts/zycode.proposed.${name}.d.ts'`).join(`,${eol}`)}`,
 				'});',
 				'export type ApiProposalName = keyof typeof allApiProposals;',
 				'',
@@ -320,18 +320,18 @@ function generateApiProposalNames() {
 const apiProposalNamesReporter = createReporter('api-proposal-names');
 
 export const compileApiProposalNamesTask = task.define('compile-api-proposal-names', () => {
-	return gulp.src('src/vscode-dts/**')
+	return gulp.src('src/zycode-dts/**')
 		.pipe(generateApiProposalNames())
 		.pipe(gulp.dest('src'))
 		.pipe(apiProposalNamesReporter.end(true));
 });
 
 export const watchApiProposalNamesTask = task.define('watch-api-proposal-names', () => {
-	const task = () => gulp.src('src/vscode-dts/**')
+	const task = () => gulp.src('src/zycode-dts/**')
 		.pipe(generateApiProposalNames())
 		.pipe(apiProposalNamesReporter.end(true));
 
-	return watch('src/vscode-dts/**', { readDelay: 200 })
+	return watch('src/zycode-dts/**', { readDelay: 200 })
 		.pipe(util.debounce(task))
 		.pipe(gulp.dest('src'));
 });

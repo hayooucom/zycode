@@ -166,7 +166,7 @@
 }
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-list-row:not(.focused):not(.selected) .monaco-table-tr .monaco-table-td .source a {
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 }
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table-tr .monaco-table-td .source a:hover {
@@ -174,11 +174,11 @@
 }
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-list-row:not(.focused):not(.selected) .monaco-table-tr .monaco-table-td .source a:hover {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 }
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-list-row:not(.focused):not(.selected) .monaco-table-tr .monaco-table-td .source a:active {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 }
 
 /** columns styling **/
@@ -213,7 +213,7 @@
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table-tr .monaco-table-td .highlight {
 	font-weight: bold;
-	color: var(--vscode-list-highlightForeground);
+	color: var(--zycode-list-highlightForeground);
 }
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table.focused .monaco-list-row.selected .monaco-table-td .highlight,
@@ -223,29 +223,29 @@
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table .monaco-list-row.selected .monaco-table-tr .monaco-table-td .monaco-keybinding-key,
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table .monaco-list-row.selected.focused .monaco-table-tr .monaco-table-td .monaco-keybinding-key {
-	color: var(--vscode-list-inactiveSelectionForeground);
+	color: var(--zycode-list-inactiveSelectionForeground);
 }
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table .monaco-list-row.focused .monaco-table-tr .monaco-table-td .monaco-keybinding-key {
-	color: var(--vscode-list-focusForeground);
+	color: var(--zycode-list-focusForeground);
 }
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table.focused .monaco-list-row.selected .monaco-table-tr .monaco-table-td .monaco-keybinding-key {
-	color: var(--vscode-list-activeSelectionForeground);
+	color: var(--zycode-list-activeSelectionForeground);
 }
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table .monaco-list-row:hover:not(.selected):not(.focused) .monaco-table-tr .monaco-table-td .monaco-keybinding-key {
-	color: var(--vscode-list-hoverForeground);
+	color: var(--zycode-list-hoverForeground);
 }
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table .monaco-list-row[data-parity=odd]:not(.focused):not(.selected):not(:hover) .monaco-table-tr,
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table .monaco-list:not(:focus) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr,
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table .monaco-list:not(.focused) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr {
-	background-color: var(--vscode-keybindingTable-rowsBackground);
+	background-color: var(--zycode-keybindingTable-rowsBackground);
 }
 
 .keybindings-editor > .keybindings-body > .keybindings-table-container .monaco-table-th {
-	background-color: var(--vscode-keybindingTable-headerBackground);
+	background-color: var(--zycode-keybindingTable-headerBackground);
 }
 
 .keybindings-editor .monaco-table-th,

@@ -46,12 +46,12 @@ export async function connect(window: BrowserWindow): Promise<MessagePortMain> {
 	// Ask to create message channel inside the window
 	// and send over a UUID to correlate the response
 	const nonce = generateUuid();
-	window.webContents.send('vscode:createMessageChannel', nonce);
+	window.webContents.send('zycode:createMessageChannel', nonce);
 
 	// Wait until the window has returned the `MessagePort`
 	// We need to filter by the `nonce` to ensure we listen
 	// to the right response.
-	const onMessageChannelResult = Event.fromNodeEventEmitter<{ nonce: string; port: MessagePortMain }>(validatedIpcMain, 'vscode:createMessageChannelResult', (e: IpcMainEvent, nonce: string) => ({ nonce, port: e.ports[0] }));
+	const onMessageChannelResult = Event.fromNodeEventEmitter<{ nonce: string; port: MessagePortMain }>(validatedIpcMain, 'zycode:createMessageChannelResult', (e: IpcMainEvent, nonce: string) => ({ nonce, port: e.ports[0] }));
 	const { port } = await Event.toPromise(Event.once(Event.filter(onMessageChannelResult, e => e.nonce === nonce)));
 
 	return port;

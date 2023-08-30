@@ -46,7 +46,7 @@ export interface IMenubarMenuItemSubmenu {
 }
 
 export interface IMenubarMenuItemSeparator {
-	id: 'vscode.menubar.separator';
+	id: 'zycode.menubar.separator';
 }
 
 export type MenubarMenuItem = IMenubarMenuItemAction | IMenubarMenuItemSubmenu | IMenubarMenuItemSeparator | IMenubarMenuRecentItemAction;
@@ -56,7 +56,7 @@ export function isMenubarMenuItemSubmenu(menuItem: MenubarMenuItem): menuItem is
 }
 
 export function isMenubarMenuItemSeparator(menuItem: MenubarMenuItem): menuItem is IMenubarMenuItemSeparator {
-	return (<IMenubarMenuItemSeparator>menuItem).id === 'vscode.menubar.separator';
+	return (<IMenubarMenuItemSeparator>menuItem).id === 'zycode.menubar.separator';
 }
 
 export function isMenubarMenuItemRecentAction(menuItem: MenubarMenuItem): menuItem is IMenubarMenuRecentItemAction {

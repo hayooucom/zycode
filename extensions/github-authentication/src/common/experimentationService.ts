@@ -3,26 +3,26 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import TelemetryReporter from '@vscode/extension-telemetry';
-import { getExperimentationService, IExperimentationService, IExperimentationTelemetry, TargetPopulation } from 'vscode-tas-client';
+import * as zycode from 'zycode';
+import TelemetryReporter from '@zycode/extension-telemetry';
+import { getExperimentationService, IExperimentationService, IExperimentationTelemetry, TargetPopulation } from 'zycode-tas-client';
 
 export class ExperimentationTelemetry implements IExperimentationTelemetry {
 	private sharedProperties: Record<string, string> = {};
 	private experimentationServicePromise: Promise<IExperimentationService> | undefined;
 
-	constructor(private readonly context: vscode.ExtensionContext, private baseReporter: TelemetryReporter) { }
+	constructor(private readonly context: zycode.ExtensionContext, private baseReporter: TelemetryReporter) { }
 
 	private async createExperimentationService(): Promise<IExperimentationService> {
 		let targetPopulation: TargetPopulation;
-		switch (vscode.env.uriScheme) {
-			case 'vscode':
+		switch (zycode.env.uriScheme) {
+			case 'zycode':
 				targetPopulation = TargetPopulation.Public;
 				break;
-			case 'vscode-insiders':
+			case 'zycode-insiders':
 				targetPopulation = TargetPopulation.Insiders;
 				break;
-			case 'vscode-exploration':
+			case 'zycode-exploration':
 				targetPopulation = TargetPopulation.Internal;
 				break;
 			case 'code-oss':

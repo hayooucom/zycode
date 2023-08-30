@@ -17,8 +17,8 @@ import { ILogService } from 'vs/platform/log/common/log';
 
 export class WebLocaleService implements ILocaleService {
 	declare readonly _serviceBrand: undefined;
-	static readonly _LOCAL_STORAGE_EXTENSION_ID_KEY = 'vscode.nls.languagePackExtensionId';
-	static readonly _LOCAL_STORAGE_LOCALE_KEY = 'vscode.nls.locale';
+	static readonly _LOCAL_STORAGE_EXTENSION_ID_KEY = 'zycode.nls.languagePackExtensionId';
+	static readonly _LOCAL_STORAGE_LOCALE_KEY = 'zycode.nls.locale';
 
 	constructor(
 		@IDialogService private readonly dialogService: IDialogService,
@@ -99,8 +99,8 @@ class WebActiveLanguagePackService implements IActiveLanguagePackService {
 		try {
 			const tagResult = await this.galleryService.query({ text: `tag:lp-${language}` }, CancellationToken.None);
 
-			// Only install extensions that are published by Microsoft and start with vscode-language-pack for extra certainty
-			const extensionToInstall = tagResult.firstPage.find(e => e.publisher === 'MS-CEINTL' && e.name.startsWith('vscode-language-pack'));
+			// Only install extensions that are published by Microsoft and start with zycode-language-pack for extra certainty
+			const extensionToInstall = tagResult.firstPage.find(e => e.publisher === 'MS-CEINTL' && e.name.startsWith('zycode-language-pack'));
 			if (extensionToInstall) {
 				window.localStorage.setItem(WebLocaleService._LOCAL_STORAGE_EXTENSION_ID_KEY, extensionToInstall.identifier.id);
 				return extensionToInstall.identifier.id;

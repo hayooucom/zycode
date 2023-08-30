@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { createDecorator } from 'vs/platform/instantiation/common/instantiation';
 import { Event, Emitter } from 'vs/base/common/event';
 import { ExtHostTelemetryShape } from 'vs/workbench/api/common/extHost.protocol';
@@ -26,8 +26,8 @@ export class ExtHostTelemetry extends Disposable implements ExtHostTelemetryShap
 	private readonly _onDidChangeTelemetryEnabled = this._register(new Emitter<boolean>());
 	readonly onDidChangeTelemetryEnabled: Event<boolean> = this._onDidChangeTelemetryEnabled.event;
 
-	private readonly _onDidChangeTelemetryConfiguration = this._register(new Emitter<vscode.TelemetryConfiguration>());
-	readonly onDidChangeTelemetryConfiguration: Event<vscode.TelemetryConfiguration> = this._onDidChangeTelemetryConfiguration.event;
+	private readonly _onDidChangeTelemetryConfiguration = this._register(new Emitter<zycode.TelemetryConfiguration>());
+	readonly onDidChangeTelemetryConfiguration: Event<zycode.TelemetryConfiguration> = this._onDidChangeTelemetryConfiguration.event;
 
 	private _productConfig: { usage: boolean; error: boolean } = { usage: true, error: true };
 	private _level: TelemetryLevel = TelemetryLevel.NONE;
@@ -64,7 +64,7 @@ export class ExtHostTelemetry extends Disposable implements ExtHostTelemetryShap
 		return this._level === TelemetryLevel.USAGE;
 	}
 
-	getTelemetryDetails(): vscode.TelemetryConfiguration {
+	getTelemetryDetails(): zycode.TelemetryConfiguration {
 		return {
 			isCrashEnabled: this._level >= TelemetryLevel.CRASH,
 			isErrorsEnabled: this._productConfig.error ? this._level >= TelemetryLevel.ERROR : false,
@@ -72,7 +72,7 @@ export class ExtHostTelemetry extends Disposable implements ExtHostTelemetryShap
 		};
 	}
 
-	instantiateLogger(extension: IExtensionDescription, sender: vscode.TelemetrySender, options?: vscode.TelemetryLoggerOptions) {
+	instantiateLogger(extension: IExtensionDescription, sender: zycode.TelemetrySender, options?: zycode.TelemetryLoggerOptions) {
 		const telemetryDetails = this.getTelemetryDetails();
 		const logger = new ExtHostTelemetryLogger(
 			sender,
@@ -171,7 +171,7 @@ export class ExtHostTelemetry extends Disposable implements ExtHostTelemetryShap
 
 export class ExtHostTelemetryLogger {
 
-	static validateSender(sender: vscode.TelemetrySender): void {
+	static validateSender(sender: zycode.TelemetrySender): void {
 		if (typeof sender !== 'object') {
 			throw new TypeError('TelemetrySender argument is invalid');
 		}
@@ -186,18 +186,18 @@ export class ExtHostTelemetryLogger {
 		}
 	}
 
-	private readonly _onDidChangeEnableStates = new Emitter<vscode.TelemetryLogger>();
+	private readonly _onDidChangeEnableStates = new Emitter<zycode.TelemetryLogger>();
 	private readonly _ignoreBuiltinCommonProperties: boolean;
 	private readonly _additionalCommonProperties: Record<string, any> | undefined;
 	public readonly ignoreUnhandledExtHostErrors: boolean;
 
 	private _telemetryEnablements: { isUsageEnabled: boolean; isErrorsEnabled: boolean };
-	private _apiObject: vscode.TelemetryLogger | undefined;
-	private _sender: vscode.TelemetrySender | undefined;
+	private _apiObject: zycode.TelemetryLogger | undefined;
+	private _sender: zycode.TelemetrySender | undefined;
 
 	constructor(
-		sender: vscode.TelemetrySender,
-		options: vscode.TelemetryLoggerOptions | undefined,
+		sender: zycode.TelemetrySender,
+		options: zycode.TelemetryLoggerOptions | undefined,
 		private readonly _extension: IExtensionDescription,
 		private readonly _logger: ILogger,
 		private readonly _inLoggingOnlyMode: boolean,
@@ -248,8 +248,8 @@ export class ExtHostTelemetryLogger {
 		if (!this._sender) {
 			return;
 		}
-		// If it's a built-in extension (vscode publisher) we don't prefix the publisher and only the ext name
-		if (this._extension.publisher === 'vscode') {
+		// If it's a built-in extension (zycode publisher) we don't prefix the publisher and only the ext name
+		if (this._extension.publisher === 'zycode') {
 			eventName = this._extension.name + '/' + eventName;
 		} else {
 			eventName = this._extension.identifier.value + '/' + eventName;
@@ -296,10 +296,10 @@ export class ExtHostTelemetryLogger {
 		}
 	}
 
-	get apiTelemetryLogger(): vscode.TelemetryLogger {
+	get apiTelemetryLogger(): zycode.TelemetryLogger {
 		if (!this._apiObject) {
 			const that = this;
-			const obj: vscode.TelemetryLogger = {
+			const obj: zycode.TelemetryLogger = {
 				logUsage: that.logUsage.bind(that),
 				get isUsageEnabled() {
 					return that._telemetryEnablements.isUsageEnabled;
@@ -322,7 +322,7 @@ export class ExtHostTelemetryLogger {
 
 	dispose(): void {
 		if (this._sender?.flush) {
-			let tempSender: vscode.TelemetrySender | undefined = this._sender;
+			let tempSender: zycode.TelemetrySender | undefined = this._sender;
 			this._sender = undefined;
 			Promise.resolve(tempSender.flush!()).then(tempSender = undefined);
 			this._apiObject = undefined;

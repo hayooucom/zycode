@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Connection, Emitter } from 'vscode-languageserver';
+import { Connection, Emitter } from 'zycode-languageserver';
 import { Disposable } from './util/dispose';
 
 export type ValidateEnabled = 'ignore' | 'warning' | 'error' | 'hint';

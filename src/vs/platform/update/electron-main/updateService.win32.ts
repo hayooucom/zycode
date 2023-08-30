@@ -53,7 +53,7 @@ export class Win32UpdateService extends AbstractUpdateService implements IRelaun
 
 	@memoize
 	get cachePath(): Promise<string> {
-		const result = path.join(tmpdir(), `vscode-${this.productService.quality}-${this.productService.target}-${process.arch}`);
+		const result = path.join(tmpdir(), `zycode-${this.productService.quality}-${this.productService.target}-${process.arch}`);
 		return pfs.Promises.mkdir(result, { recursive: true }).then(() => result);
 	}
 
@@ -242,7 +242,7 @@ export class Win32UpdateService extends AbstractUpdateService implements IRelaun
 		});
 
 		const readyMutexName = `${this.productService.win32MutexName}-ready`;
-		const mutex = await import('@vscode/windows-mutex');
+		const mutex = await import('@zycode/windows-mutex');
 
 		// poll for mutex-ready
 		pollUntil(() => mutex.isActive(readyMutexName))

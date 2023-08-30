@@ -24,7 +24,7 @@ import { IWindowsMainService } from 'vs/platform/windows/electron-main/windows';
  * - macOS:   we rely on `app.on('open-url')` to be called by the OS
  * - Linux:   we have a special shortcut installed (`resources/linux/code-url-handler.desktop`)
  *            that calls VSCode with the `open-url` command line argument
- *            (https://github.com/microsoft/vscode/pull/56727)
+ *            (https://github.com/microsoft/zycode/pull/56727)
  */
 export class ElectronURLListener {
 

@@ -5,19 +5,19 @@
 
 /* eslint-disable local/code-no-native-private */
 
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 
 import { ExtHostSecretState } from 'vs/workbench/api/common/extHostSecretState';
 import { ExtensionIdentifier, IExtensionDescription } from 'vs/platform/extensions/common/extensions';
 import { Emitter, Event } from 'vs/base/common/event';
 
-export class ExtensionSecrets implements vscode.SecretStorage {
+export class ExtensionSecrets implements zycode.SecretStorage {
 
 	protected readonly _id: string;
 	readonly #secretState: ExtHostSecretState;
 
-	private _onDidChange = new Emitter<vscode.SecretStorageChangeEvent>();
-	readonly onDidChange: Event<vscode.SecretStorageChangeEvent> = this._onDidChange.event;
+	private _onDidChange = new Emitter<zycode.SecretStorageChangeEvent>();
+	readonly onDidChange: Event<zycode.SecretStorageChangeEvent> = this._onDidChange.event;
 
 
 	constructor(extensionDescription: IExtensionDescription, secretState: ExtHostSecretState) {

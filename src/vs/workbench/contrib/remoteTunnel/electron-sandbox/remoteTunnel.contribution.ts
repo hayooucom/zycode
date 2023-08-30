@@ -716,7 +716,7 @@ export class RemoteTunnelWorkbenchContribution extends Disposable implements IWo
 
 			async run(accessor: ServicesAccessor) {
 				const openerService = accessor.get(IOpenerService);
-				await openerService.open('https://aka.ms/vscode-server-doc');
+				await openerService.open('https://aka.ms/zycode-server-doc');
 			}
 		}));
 	}

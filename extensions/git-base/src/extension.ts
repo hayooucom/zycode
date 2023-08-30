@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ExtensionContext } from 'vscode';
+import { ExtensionContext } from 'zycode';
 import { registerAPICommands } from './api/api1';
 import { GitBaseExtensionImpl } from './api/extension';
 import { Model } from './model';

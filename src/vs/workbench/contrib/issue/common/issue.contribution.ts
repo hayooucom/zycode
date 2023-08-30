@@ -14,7 +14,7 @@ import { IWorkbenchContribution } from 'vs/workbench/common/contributions';
 import { IWorkbenchIssueService } from 'vs/workbench/services/issue/common/issue';
 
 const OpenIssueReporterActionId = 'workbench.action.openIssueReporter';
-const OpenIssueReporterApiId = 'vscode.openIssueReporter';
+const OpenIssueReporterApiId = 'zycode.openIssueReporter';
 
 const OpenIssueReporterCommandDescription: ICommandHandlerDescription = {
 	description: 'Open the issue reporter and optionally prefill part of the form.',

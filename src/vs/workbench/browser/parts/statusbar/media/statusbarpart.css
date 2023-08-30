@@ -142,7 +142,7 @@
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item > a:hover:not(.disabled) {
 	text-decoration: none;
-	color: var(--vscode-statusBarItem-hoverForeground);
+	color: var(--zycode-statusBarItem-hoverForeground);
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item > a.disabled {
@@ -156,71 +156,71 @@
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item a:active:not(.disabled) {
-	outline: 1px solid var(--vscode-contrastActiveBorder) !important;
+	outline: 1px solid var(--zycode-contrastActiveBorder) !important;
 	outline-offset: -1px;
 }
 
 .monaco-workbench:not(.hc-light):not(.hc-black) .part.statusbar > .items-container > .statusbar-item a:active:not(.disabled) {
-	background-color: var(--vscode-statusBarItem-activeBackground) !important;
+	background-color: var(--zycode-statusBarItem-activeBackground) !important;
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item a:hover:not(.disabled) {
-	outline: 1px dashed var(--vscode-contrastActiveBorder);
+	outline: 1px dashed var(--zycode-contrastActiveBorder);
 	outline-offset: -1px;
 }
 
 .monaco-workbench:not(.hc-light):not(.hc-black) .part.statusbar > .items-container > .statusbar-item a:hover:not(.disabled) {
-	background-color: var(--vscode-statusBarItem-hoverBackground);
+	background-color: var(--zycode-statusBarItem-hoverBackground);
 }
 
 /** Status bar entry item kinds */
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item.warning-kind {
-	color: var(--vscode-statusBarItem-warningForeground);
-	background-color: var(--vscode-statusBarItem-warningBackground);
+	color: var(--zycode-statusBarItem-warningForeground);
+	background-color: var(--zycode-statusBarItem-warningBackground);
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item.warning-kind a:hover:not(.disabled) {
-	color: var(--vscode-statusBarItem-warningHoverForeground);
-	background-color: var(--vscode-statusBarItem-warningHoverBackground) !important;
+	color: var(--zycode-statusBarItem-warningHoverForeground);
+	background-color: var(--zycode-statusBarItem-warningHoverBackground) !important;
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item.error-kind {
-	color: var(--vscode-statusBarItem-errorForeground);
-	background-color: var(--vscode-statusBarItem-errorBackground);
+	color: var(--zycode-statusBarItem-errorForeground);
+	background-color: var(--zycode-statusBarItem-errorBackground);
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item.error-kind a:hover:not(.disabled) {
-	color: var(--vscode-statusBarItem-errorHoverForeground);
-	background-color: var(--vscode-statusBarItem-errorHoverBackground) !important;
+	color: var(--zycode-statusBarItem-errorHoverForeground);
+	background-color: var(--zycode-statusBarItem-errorHoverBackground) !important;
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item.prominent-kind {
-	color: var(--vscode-statusBarItem-prominentForeground);
-	background-color: var(--vscode-statusBarItem-prominentBackground);
+	color: var(--zycode-statusBarItem-prominentForeground);
+	background-color: var(--zycode-statusBarItem-prominentBackground);
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item.prominent-kind a:hover:not(.disabled) {
-	color: var(--vscode-statusBarItem-prominentHoverForeground);
-	background-color: var(--vscode-statusBarItem-prominentHoverBackground) !important;
+	color: var(--zycode-statusBarItem-prominentHoverForeground);
+	background-color: var(--zycode-statusBarItem-prominentHoverBackground) !important;
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item.remote-kind {
-	color: var(--vscode-statusBarItem-remoteForeground);
-	background-color: var(--vscode-statusBarItem-remoteBackground);
+	color: var(--zycode-statusBarItem-remoteForeground);
+	background-color: var(--zycode-statusBarItem-remoteBackground);
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item.remote-kind a:hover:not(.disabled) {
-	color: var(--vscode-statusBarItem-remoteHoverForeground);
-	background-color: var(--vscode-statusBarItem-remoteHoverBackground) !important;
+	color: var(--zycode-statusBarItem-remoteHoverForeground);
+	background-color: var(--zycode-statusBarItem-remoteHoverBackground) !important;
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item.offline-kind {
-	color: var(--vscode-statusBarItem-offlineForeground);
-	background-color: var(--vscode-statusBarItem-offlineBackground);
+	color: var(--zycode-statusBarItem-offlineForeground);
+	background-color: var(--zycode-statusBarItem-offlineBackground);
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item.offline-kind a:hover:not(.disabled) {
-	color: var(--vscode-statusBarItem-offlineHoverForeground);
-	background-color: var(--vscode-statusBarItem-offlineHoverBackground) !important;
+	color: var(--zycode-statusBarItem-offlineHoverForeground);
+	background-color: var(--zycode-statusBarItem-offlineHoverBackground) !important;
 }

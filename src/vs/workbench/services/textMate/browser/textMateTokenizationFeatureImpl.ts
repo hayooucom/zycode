@@ -37,7 +37,7 @@ import { TMGrammarFactory, missingTMGrammarErrorMessage } from 'vs/workbench/ser
 import { ITMSyntaxExtensionPoint, grammarsExtPoint } from 'vs/workbench/services/textMate/common/TMGrammars';
 import { IValidEmbeddedLanguagesMap, IValidGrammarDefinition, IValidTokenTypeMap } from 'vs/workbench/services/textMate/common/TMScopeRegistry';
 import { ITextMateThemingRule, IWorkbenchColorTheme, IWorkbenchThemeService } from 'vs/workbench/services/themes/common/workbenchThemeService';
-import type { IGrammar, IOnigLib, IRawTheme } from 'vscode-textmate';
+import type { IGrammar, IOnigLib, IRawTheme } from 'zycode-textmate';
 
 export class TextMateTokenizationFeature extends Disposable implements ITextMateTokenizationService {
 	private static reportTokenizationTimeCounter = { sync: 0, async: 0 };
@@ -76,7 +76,7 @@ export class TextMateTokenizationFeature extends Disposable implements ITextMate
 		super();
 
 		this._styleElement = dom.createStyleSheet();
-		this._styleElement.className = 'vscode-tokens-styles';
+		this._styleElement.className = 'zycode-tokens-styles';
 
 		grammarsExtPoint.setHandler((extensions) => this._handleGrammarsExtPoint(extensions));
 
@@ -245,7 +245,7 @@ export class TextMateTokenizationFeature extends Disposable implements ITextMate
 			return this._grammarFactory;
 		}
 
-		const [vscodeTextmate, vscodeOniguruma] = await Promise.all([importAMDNodeModule<typeof import('vscode-textmate')>('vscode-textmate', 'release/main.js'), this._getVSCodeOniguruma()]);
+		const [vscodeTextmate, vscodeOniguruma] = await Promise.all([importAMDNodeModule<typeof import('zycode-textmate')>('zycode-textmate', 'release/main.js'), this._getVSCodeOniguruma()]);
 		const onigLib: Promise<IOnigLib> = Promise.resolve({
 			createOnigScanner: (sources: string[]) => vscodeOniguruma.createOnigScanner(sources),
 			createOnigString: (str: string) => vscodeOniguruma.createOnigString(str)
@@ -352,11 +352,11 @@ export class TextMateTokenizationFeature extends Disposable implements ITextMate
 		return grammar;
 	}
 
-	private _vscodeOniguruma: Promise<typeof import('vscode-oniguruma')> | null = null;
-	private _getVSCodeOniguruma(): Promise<typeof import('vscode-oniguruma')> {
+	private _vscodeOniguruma: Promise<typeof import('zycode-oniguruma')> | null = null;
+	private _getVSCodeOniguruma(): Promise<typeof import('zycode-oniguruma')> {
 		if (!this._vscodeOniguruma) {
 			this._vscodeOniguruma = (async () => {
-				const [vscodeOniguruma, wasm] = await Promise.all([importAMDNodeModule<typeof import('vscode-oniguruma')>('vscode-oniguruma', 'release/main.js'), this._loadVSCodeOnigurumaWASM()]);
+				const [vscodeOniguruma, wasm] = await Promise.all([importAMDNodeModule<typeof import('zycode-oniguruma')>('zycode-oniguruma', 'release/main.js'), this._loadVSCodeOnigurumaWASM()]);
 				await vscodeOniguruma.loadWASM({
 					data: wasm,
 					print: (str: string) => {
@@ -371,15 +371,15 @@ export class TextMateTokenizationFeature extends Disposable implements ITextMate
 
 	private async _loadVSCodeOnigurumaWASM(): Promise<Response | ArrayBuffer> {
 		if (isWeb) {
-			const response = await fetch(FileAccess.asBrowserUri('vscode-oniguruma/../onig.wasm').toString(true));
+			const response = await fetch(FileAccess.asBrowserUri('zycode-oniguruma/../onig.wasm').toString(true));
 			// Using the response directly only works if the server sets the MIME type 'application/wasm'.
 			// Otherwise, a TypeError is thrown when using the streaming compiler.
 			// We therefore use the non-streaming compiler :(.
 			return await response.arrayBuffer();
 		} else {
 			const response = await fetch(this._environmentService.isBuilt
-				? FileAccess.asBrowserUri(`${nodeModulesAsarUnpackedPath}/vscode-oniguruma/release/onig.wasm`).toString(true)
-				: FileAccess.asBrowserUri(`${nodeModulesPath}/vscode-oniguruma/release/onig.wasm`).toString(true));
+				? FileAccess.asBrowserUri(`${nodeModulesAsarUnpackedPath}/zycode-oniguruma/release/onig.wasm`).toString(true)
+				: FileAccess.asBrowserUri(`${nodeModulesPath}/zycode-oniguruma/release/onig.wasm`).toString(true));
 			return response;
 		}
 	}

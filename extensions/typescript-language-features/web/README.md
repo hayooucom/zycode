@@ -1,18 +1,18 @@
-# vscode-wasm-typescript
+# zycode-wasm-typescript
 
-Language server host for typescript using vscode's sync-api in the browser.
+Language server host for typescript using zycode's sync-api in the browser.
 
 ## Getting up and running
 
 To test this out, you'll need three shells:
 
-1. `yarn watch` for vscode itself
+1. `yarn watch` for zycode itself
 2. `yarn watch-web` for the web side
 3. `node <root>/scripts/code-web.js --coi`
 
-The last command will open a browser window. You'll want to add `?vscode-coi=`
+The last command will open a browser window. You'll want to add `?zycode-coi=`
 to the end. This is for enabling shared array buffers. So, for example:
-`http://localhost:8080/?vscode-coi=`.
+`http://localhost:8080/?zycode-coi=`.
 
 ### Working on type acquisition
 
@@ -26,7 +26,7 @@ declared types. You should be able to open `file.js` and write something like
 types and other intellisense features (like Go To Def/Source Def) working as
 expected. This scenario works off Tsserver's own Automatic Type Acquisition
 capabilities, and simulates a "global" types cache stored at
-`/vscode-global-typings/ts-nul-authority/project`, which is backed by an
+`/zycode-global-typings/ts-nul-authority/project`, which is backed by an
 in-memory `MemFs` `FileSystemProvider`.
 
 ### Simulated `node_modules`
@@ -41,5 +41,5 @@ across any project in the workspace, and will use the "real" `package.json`
 A fallback is then set up such that when a URI like
 `memfs:/path/to/node_modules/lodash/lodash.d.ts` is accessed, that gets
 redirected to
-`vscode-node-modules:/ts-nul-authority/memfs/ts-nul-authority/path/to/node_modules/lodash/lodash.d.ts`,
+`zycode-node-modules:/ts-nul-authority/memfs/ts-nul-authority/path/to/node_modules/lodash/lodash.d.ts`,
 which will be sent to the `AutoInstallerFs`.

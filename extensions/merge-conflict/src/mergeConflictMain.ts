@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import MergeConflictServices from './services';
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: zycode.ExtensionContext) {
 	// Register disposables
 	const services = new MergeConflictServices(context);
 	services.begin();

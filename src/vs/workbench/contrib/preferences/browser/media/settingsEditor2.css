@@ -76,7 +76,7 @@
 .settings-editor > .settings-header > .settings-header-controls .settings-tabs-widget .action-label {
 	opacity: 0.9;
 	border-radius: 0;
-	color: var(--vscode-foreground);
+	color: var(--zycode-foreground);
 }
 
 .settings-editor > .settings-header > .settings-header-controls .last-synced-label {
@@ -94,10 +94,10 @@
 
 .settings-editor > .settings-header > .settings-header-controls .settings-tabs-widget .action-label.checked {
 	opacity: 1;
-	color: var(--vscode-settings-headerForeground);
+	color: var(--zycode-settings-headerForeground);
 }
 .settings-editor > .settings-header > .settings-header-controls .settings-tabs-widget .action-label.checked:not(:focus) {
-	border-bottom-color: var(--vscode-settings-headerForeground);
+	border-bottom-color: var(--zycode-settings-headerForeground);
 }
 
 .settings-editor > .settings-header .settings-tabs-widget > .monaco-action-bar .action-item .action-label {
@@ -157,7 +157,7 @@
 
 .settings-editor > .settings-body .settings-tree-container .settings-group-title-label,
 .settings-editor > .settings-body .settings-tree-container .setting-item-label {
-	color: var(--vscode-settings-headerForeground);
+	color: var(--zycode-settings-headerForeground);
 }
 
 .settings-editor > .settings-body .settings-tree-container .setting-item-extension-toggle .setting-item-extension-toggle-button {
@@ -193,16 +193,16 @@
 }
 
 .settings-editor > .settings-body .settings-tree-container .monaco-list-row.focused .settings-row-inner-container {
-	background-color: var(--vscode-settings-focusedRowBackground);
+	background-color: var(--zycode-settings-focusedRowBackground);
 }
 
 .settings-editor > .settings-body .settings-tree-container .monaco-list-row:not(.focused) .settings-row-inner-container:hover {
-	background-color: var(--vscode-settings-rowHoverBackground);
+	background-color: var(--zycode-settings-rowHoverBackground);
 }
 
 .settings-editor > .settings-body .settings-tree-container .monaco-list:focus-within .monaco-list-row.focused .setting-item-contents,
 .settings-editor > .settings-body .settings-tree-container .monaco-list:focus-within .monaco-list-row.focused .settings-group-title-label {
-	outline: 1px solid var(--vscode-settings-focusedRowBorder);
+	outline: 1px solid var(--zycode-settings-focusedRowBorder);
 }
 
 .settings-editor > .settings-body .settings-tree-container .settings-editor-tree > .monaco-scrollable-element > .shadow.top {
@@ -253,7 +253,7 @@
 }
 
 .settings-editor > .settings-body .settings-toc-container .monaco-list-row:not(.selected) {
-	color: var(--vscode-foreground);
+	color: var(--zycode-foreground);
 	opacity: 0.9;
 }
 
@@ -357,7 +357,7 @@
 
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-modified-indicator {
 	display: none;
-	border-color: var(--vscode-settings-modifiedItemIndicator);
+	border-color: var(--zycode-settings-modifiedItemIndicator);
 }
 
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents.is-configured .setting-item-modified-indicator {
@@ -384,7 +384,7 @@
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-title .setting-item-overrides,
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-title .setting-item-ignored {
 	/* Hack for subpixel antialiasing */
-	color: var(--vscode-foreground);
+	color: var(--zycode-foreground);
 	opacity: 0.9;
 }
 
@@ -430,7 +430,7 @@
 	user-select: text;
 	-webkit-user-select: text;
 	display: none;
-	color: var(--vscode-errorForeground);
+	color: var(--zycode-errorForeground);
 }
 
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents.is-deprecated .setting-item-deprecation-message {
@@ -446,15 +446,15 @@
 	margin-top: -1px;
 	user-select: text;
 	-webkit-user-select: text;
-	color: var(--vscode-foreground);
+	color: var(--zycode-foreground);
 	opacity: 0.9;
 }
 
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-validation-message {
 	display: none;
-	background-color: var(--vscode-inputValidation-errorBackground);
-	color: var(--vscode-inputValidation-errorForeground);
-	border: solid 1px var(--vscode-inputValidation-errorBorder);
+	background-color: var(--zycode-inputValidation-errorBackground);
+	color: var(--zycode-inputValidation-errorForeground);
+	border: solid 1px var(--zycode-inputValidation-errorBorder);
 }
 
 .settings-editor > .settings-body .settings-tree-container .setting-item .setting-item-contents.invalid-input .setting-item-validation-message {
@@ -503,7 +503,7 @@
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-markdown a,
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .edit-in-settings-button,
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-markdown a > code {
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 }
 
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-markdown a:focus,
@@ -511,7 +511,7 @@
 	outline: 1px solid -webkit-focus-ring-color;
 	outline-offset: -1px;
 	text-decoration: underline;
-	outline-color: var(--vscode-focusBorder);
+	outline-color: var(--zycode-focusBorder);
 }
 
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-markdown a:hover,
@@ -520,7 +520,7 @@
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .edit-in-settings-button:active,
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-markdown a:hover > code,
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-markdown a:active > code {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 }
 
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-markdown a:hover,
@@ -533,7 +533,7 @@
 	line-height: 15px;
 	/** For some reason, this is needed, otherwise <code> will take up 20px height */
 	font-family: var(--monaco-monospace-font);
-	color: var(--vscode-textPreformat-foreground);
+	color: var(--zycode-textPreformat-foreground);
 }
 
 .settings-editor > .settings-body .settings-tree-container .setting-item-contents .setting-item-markdown .monaco-tokenized-source {
@@ -599,19 +599,19 @@
 }
 
 .monaco-select-box-dropdown-container > .select-box-details-pane > .select-box-description-markdown code {
-	color: var(--vscode-textPreformat-foreground);
+	color: var(--zycode-textPreformat-foreground);
 }
 
 .monaco-select-box-dropdown-container > .select-box-details-pane > .select-box-description-markdown a,
 .monaco-select-box-dropdown-container > .select-box-details-pane > .select-box-description-markdown a > code {
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 }
 
 .monaco-select-box-dropdown-container > .select-box-details-pane > .select-box-description-markdown a:hover,
 .monaco-select-box-dropdown-container > .select-box-details-pane > .select-box-description-markdown a:active,
 .monaco-select-box-dropdown-container > .select-box-details-pane > .select-box-description-markdown a:hover > code,
 .monaco-select-box-dropdown-container > .select-box-details-pane > .select-box-description-markdown a:active > code {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 }
 
 .settings-editor > .settings-body .settings-tree-container .setting-item-new-extensions {

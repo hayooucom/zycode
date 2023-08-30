@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { NotebookSerializer } from './notebookSerializer';
 import { ensureAllNewCellsHaveCellIds } from './cellIdService';
 import { notebookImagePasteSetup } from './notebookImagePaste';
@@ -28,10 +28,10 @@ type NotebookMetadata = {
 	[propName: string]: unknown;
 };
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: zycode.ExtensionContext) {
 	const serializer = new NotebookSerializer(context);
 	ensureAllNewCellsHaveCellIds(context);
-	context.subscriptions.push(vscode.workspace.registerNotebookSerializer('jupyter-notebook', serializer, {
+	context.subscriptions.push(zycode.workspace.registerNotebookSerializer('jupyter-notebook', serializer, {
 		transientOutputs: false,
 		transientCellMetadata: {
 			breakpointMargin: true,
@@ -41,9 +41,9 @@ export function activate(context: vscode.ExtensionContext) {
 		cellContentMetadata: {
 			attachments: true
 		}
-	} as vscode.NotebookDocumentContentOptions));
+	} as zycode.NotebookDocumentContentOptions));
 
-	context.subscriptions.push(vscode.workspace.registerNotebookSerializer('interactive', serializer, {
+	context.subscriptions.push(zycode.workspace.registerNotebookSerializer('interactive', serializer, {
 		transientOutputs: false,
 		transientCellMetadata: {
 			breakpointMargin: true,
@@ -53,26 +53,26 @@ export function activate(context: vscode.ExtensionContext) {
 		cellContentMetadata: {
 			attachments: true
 		}
-	} as vscode.NotebookDocumentContentOptions));
+	} as zycode.NotebookDocumentContentOptions));
 
-	vscode.languages.registerCodeLensProvider({ pattern: '**/*.ipynb' }, {
+	zycode.languages.registerCodeLensProvider({ pattern: '**/*.ipynb' }, {
 		provideCodeLenses: (document) => {
 			if (
-				document.uri.scheme === 'vscode-notebook-cell' ||
-				document.uri.scheme === 'vscode-notebook-cell-metadata' ||
-				document.uri.scheme === 'vscode-notebook-cell-output'
+				document.uri.scheme === 'zycode-notebook-cell' ||
+				document.uri.scheme === 'zycode-notebook-cell-metadata' ||
+				document.uri.scheme === 'zycode-notebook-cell-output'
 			) {
 				return [];
 			}
-			const codelens = new vscode.CodeLens(new vscode.Range(0, 0, 0, 0), { title: 'Open in Notebook Editor', command: 'ipynb.openIpynbInNotebookEditor', arguments: [document.uri] });
+			const codelens = new zycode.CodeLens(new zycode.Range(0, 0, 0, 0), { title: 'Open in Notebook Editor', command: 'ipynb.openIpynbInNotebookEditor', arguments: [document.uri] });
 			return [codelens];
 		}
 	});
 
-	context.subscriptions.push(vscode.commands.registerCommand('ipynb.newUntitledIpynb', async () => {
+	context.subscriptions.push(zycode.commands.registerCommand('ipynb.newUntitledIpynb', async () => {
 		const language = 'python';
-		const cell = new vscode.NotebookCellData(vscode.NotebookCellKind.Code, '', language);
-		const data = new vscode.NotebookData([cell]);
+		const cell = new zycode.NotebookCellData(zycode.NotebookCellKind.Code, '', language);
+		const data = new zycode.NotebookData([cell]);
 		data.metadata = {
 			custom: {
 				cells: [],
@@ -83,45 +83,45 @@ export function activate(context: vscode.ExtensionContext) {
 				nbformat_minor: 2
 			}
 		};
-		const doc = await vscode.workspace.openNotebookDocument('jupyter-notebook', data);
-		await vscode.window.showNotebookDocument(doc);
+		const doc = await zycode.workspace.openNotebookDocument('jupyter-notebook', data);
+		await zycode.window.showNotebookDocument(doc);
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('ipynb.openIpynbInNotebookEditor', async (uri: vscode.Uri) => {
-		if (vscode.window.activeTextEditor?.document.uri.toString() === uri.toString()) {
-			await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+	context.subscriptions.push(zycode.commands.registerCommand('ipynb.openIpynbInNotebookEditor', async (uri: zycode.Uri) => {
+		if (zycode.window.activeTextEditor?.document.uri.toString() === uri.toString()) {
+			await zycode.commands.executeCommand('workbench.action.closeActiveEditor');
 		}
-		const document = await vscode.workspace.openNotebookDocument(uri);
-		await vscode.window.showNotebookDocument(document);
+		const document = await zycode.workspace.openNotebookDocument(uri);
+		await zycode.window.showNotebookDocument(document);
 	}));
 
 	context.subscriptions.push(notebookImagePasteSetup());
 
-	const enabled = vscode.workspace.getConfiguration('ipynb').get('pasteImagesAsAttachments.enabled', false);
+	const enabled = zycode.workspace.getConfiguration('ipynb').get('pasteImagesAsAttachments.enabled', false);
 	if (enabled) {
 		const cleaner = new AttachmentCleaner();
 		context.subscriptions.push(cleaner);
 	}
 
 	// Update new file contribution
-	vscode.extensions.onDidChange(() => {
-		vscode.commands.executeCommand('setContext', 'jupyterEnabled', vscode.extensions.getExtension('ms-toolsai.jupyter'));
+	zycode.extensions.onDidChange(() => {
+		zycode.commands.executeCommand('setContext', 'jupyterEnabled', zycode.extensions.getExtension('ms-toolsai.jupyter'));
 	});
-	vscode.commands.executeCommand('setContext', 'jupyterEnabled', vscode.extensions.getExtension('ms-toolsai.jupyter'));
+	zycode.commands.executeCommand('setContext', 'jupyterEnabled', zycode.extensions.getExtension('ms-toolsai.jupyter'));
 
 
 	return {
-		exportNotebook: (notebook: vscode.NotebookData): string => {
+		exportNotebook: (notebook: zycode.NotebookData): string => {
 			return exportNotebook(notebook, serializer);
 		},
-		setNotebookMetadata: async (resource: vscode.Uri, metadata: Partial<NotebookMetadata>): Promise<boolean> => {
-			const document = vscode.workspace.notebookDocuments.find(doc => doc.uri.toString() === resource.toString());
+		setNotebookMetadata: async (resource: zycode.Uri, metadata: Partial<NotebookMetadata>): Promise<boolean> => {
+			const document = zycode.workspace.notebookDocuments.find(doc => doc.uri.toString() === resource.toString());
 			if (!document) {
 				return false;
 			}
 
-			const edit = new vscode.WorkspaceEdit();
-			edit.set(resource, [vscode.NotebookEdit.updateNotebookMetadata({
+			const edit = new zycode.WorkspaceEdit();
+			edit.set(resource, [zycode.NotebookEdit.updateNotebookMetadata({
 				...document.metadata,
 				custom: {
 					...(document.metadata.custom ?? {}),
@@ -131,12 +131,12 @@ export function activate(context: vscode.ExtensionContext) {
 					},
 				}
 			})]);
-			return vscode.workspace.applyEdit(edit);
+			return zycode.workspace.applyEdit(edit);
 		},
 	};
 }
 
-function exportNotebook(notebook: vscode.NotebookData, serializer: NotebookSerializer): string {
+function exportNotebook(notebook: zycode.NotebookData, serializer: NotebookSerializer): string {
 	return serializer.serializeNotebookToString(notebook);
 }
 

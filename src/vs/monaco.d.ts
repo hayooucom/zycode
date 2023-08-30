@@ -3292,7 +3292,7 @@ declare namespace monaco.editor {
 		lineNumbersMinChars?: number;
 		/**
 		 * Enable the rendering of the glyph margin.
-		 * Defaults to true in vscode and to false in monaco-editor.
+		 * Defaults to true in zycode and to false in monaco-editor.
 		 */
 		glyphMargin?: boolean;
 		/**
@@ -3483,7 +3483,7 @@ declare namespace monaco.editor {
 		wordWrapColumn?: number;
 		/**
 		 * Control indentation of wrapped lines. Can be: 'none', 'same', 'indent' or 'deepIndent'.
-		 * Defaults to 'same' in vscode and to 'none' in monaco-editor.
+		 * Defaults to 'same' in zycode and to 'none' in monaco-editor.
 		 */
 		wrappingIndent?: 'none' | 'same' | 'indent' | 'deepIndent';
 		/**

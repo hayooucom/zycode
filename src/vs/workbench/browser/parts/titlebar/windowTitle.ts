@@ -117,7 +117,7 @@ export class WindowTitle extends Disposable {
 				// in the "Windows" menu. As such, we set the title
 				// briefly to something different to ensure macOS
 				// recognizes we have a window.
-				// See: https://github.com/microsoft/vscode/issues/191288
+				// See: https://github.com/microsoft/zycode/issues/191288
 				window.document.title = `${this.productService.nameLong} ${WindowTitle.TITLE_DIRTY}`;
 			}
 			window.document.title = nativeTitle;
@@ -221,7 +221,7 @@ export class WindowTitle extends Disposable {
 		}
 
 		// Compute remote
-		// vscode-remtoe: use as is
+		// zycode-remtoe: use as is
 		// otherwise figure out if we have a virtual folder opened
 		let remoteName: string | undefined = undefined;
 		if (this.environmentService.remoteAuthority && !isWeb) {

@@ -1405,8 +1405,8 @@ namespace ConfiguringTask {
 	const grunt = 'grunt.';
 	const jake = 'jake.';
 	const gulp = 'gulp.';
-	const npm = 'vscode.npm.';
-	const typescript = 'vscode.typescript.';
+	const npm = 'zycode.npm.';
+	const typescript = 'zycode.typescript.';
 
 	interface ICustomizeShape {
 		customize: string;
@@ -1463,7 +1463,7 @@ namespace ConfiguringTask {
 		}
 		const configElement: Tasks.ITaskSourceConfigElement = {
 			workspaceFolder: context.workspaceFolder,
-			file: '.vscode/tasks.json',
+			file: '.zycode/tasks.json',
 			index,
 			element: external
 		};
@@ -1543,15 +1543,15 @@ namespace CustomTask {
 		let taskSource: Tasks.FileBasedTaskSource;
 		switch (source) {
 			case TaskConfigSource.User: {
-				taskSource = Object.assign({} as Tasks.IUserTaskSource, partialSource, { kind: Tasks.TaskSourceKind.User, config: { index, element: external, file: '.vscode/tasks.json', workspaceFolder: context.workspaceFolder } });
+				taskSource = Object.assign({} as Tasks.IUserTaskSource, partialSource, { kind: Tasks.TaskSourceKind.User, config: { index, element: external, file: '.zycode/tasks.json', workspaceFolder: context.workspaceFolder } });
 				break;
 			}
 			case TaskConfigSource.WorkspaceFile: {
-				taskSource = Object.assign({} as Tasks.WorkspaceFileTaskSource, partialSource, { kind: Tasks.TaskSourceKind.WorkspaceFile, config: { index, element: external, file: '.vscode/tasks.json', workspaceFolder: context.workspaceFolder, workspace: context.workspace } });
+				taskSource = Object.assign({} as Tasks.WorkspaceFileTaskSource, partialSource, { kind: Tasks.TaskSourceKind.WorkspaceFile, config: { index, element: external, file: '.zycode/tasks.json', workspaceFolder: context.workspaceFolder, workspace: context.workspace } });
 				break;
 			}
 			default: {
-				taskSource = Object.assign({} as Tasks.IWorkspaceTaskSource, partialSource, { kind: Tasks.TaskSourceKind.Workspace, config: { index, element: external, file: '.vscode/tasks.json', workspaceFolder: context.workspaceFolder } });
+				taskSource = Object.assign({} as Tasks.IWorkspaceTaskSource, partialSource, { kind: Tasks.TaskSourceKind.Workspace, config: { index, element: external, file: '.zycode/tasks.json', workspaceFolder: context.workspaceFolder } });
 				break;
 			}
 		}

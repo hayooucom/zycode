@@ -10,7 +10,7 @@ import { URL } from 'url';
 import { parseTree, findNodeAtLocation, Node as JsonNode, getNodeValue } from 'jsonc-parser';
 import * as MarkdownItType from 'markdown-it';
 
-import { commands, languages, workspace, Disposable, TextDocument, Uri, Diagnostic, Range, DiagnosticSeverity, Position, env, l10n } from 'vscode';
+import { commands, languages, workspace, Disposable, TextDocument, Uri, Diagnostic, Range, DiagnosticSeverity, Position, env, l10n } from 'zycode';
 import { INormalizedVersion, normalizeVersion, parseVersion } from './extensionEngineValidation';
 import { JsonStringScanner } from './jsonReconstruct';
 
@@ -393,7 +393,7 @@ export class ExtensionLinter {
 	}
 
 	private readPackageJsonInfo(folder: Uri, tree: JsonNode | undefined) {
-		const engine = tree && findNodeAtLocation(tree, ['engines', 'vscode']);
+		const engine = tree && findNodeAtLocation(tree, ['engines', 'zycode']);
 		const parsedEngineVersion = engine?.type === 'string' ? normalizeVersion(parseVersion(engine.value)) : null;
 		const repo = tree && findNodeAtLocation(tree, ['repository', 'url']);
 		const uri = repo && parseUri(repo.value);

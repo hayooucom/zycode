@@ -169,7 +169,7 @@ suite('ExtensionsActivator', () => {
 		assert.deepStrictEqual(host.errors[1][0], idA);
 	});
 
-	test('issue #144518: Problem with git extension and vscode-icons', async () => {
+	test('issue #144518: Problem with git extension and zycode-icons', async () => {
 		const extActivationA = new ExtensionActivationPromiseSource();
 		const extActivationB = new ExtensionActivationPromiseSource();
 		const extActivationC = new ExtensionActivationPromiseSource();
@@ -259,7 +259,7 @@ suite('ExtensionsActivator', () => {
 			name: id.value,
 			publisher: 'test',
 			version: '0.0.0',
-			engines: { vscode: '^1.0.0' },
+			engines: { zycode: '^1.0.0' },
 			identifier: id,
 			extensionLocation: URI.parse(`nothing://nowhere`),
 			isBuiltin: false,

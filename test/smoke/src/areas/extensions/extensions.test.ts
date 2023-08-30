@@ -12,15 +12,15 @@ export function setup(logger: Logger) {
 		// Shared before/after handling
 		installAllHandlers(logger);
 
-		it('install and enable vscode-smoketest-check extension', async function () {
+		it('install and enable zycode-smoketest-check extension', async function () {
 			const app = this.app as Application;
 
 			await app.workbench.extensions.openExtensionsViewlet();
-			await app.workbench.extensions.installExtension('ms-vscode.vscode-smoketest-check', true);
+			await app.workbench.extensions.installExtension('ms-zycode.zycode-smoketest-check', true);
 
 			// Close extension editor because keybindings dispatch is not working when web views are opened and focused
-			// https://github.com/microsoft/vscode/issues/110276
-			await app.workbench.extensions.closeExtension('vscode-smoketest-check');
+			// https://github.com/microsoft/zycode/issues/110276
+			await app.workbench.extensions.closeExtension('zycode-smoketest-check');
 
 			await app.workbench.quickaccess.runCommand('Smoke Test Check');
 		});

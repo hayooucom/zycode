@@ -8,14 +8,14 @@ import { IDisposable, toDisposable } from 'vs/base/common/lifecycle';
 import { ILogService } from 'vs/platform/log/common/log';
 import { ExtHostChatProviderShape, IMainContext, MainContext, MainThreadChatProviderShape } from 'vs/workbench/api/common/extHost.protocol';
 import * as typeConvert from 'vs/workbench/api/common/extHostTypeConverters';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { Progress } from 'vs/platform/progress/common/progress';
 import { IChatMessage, IChatResponseFragment } from 'vs/workbench/contrib/chat/common/chatProvider';
 import { ExtensionIdentifier, ExtensionIdentifierMap } from 'vs/platform/extensions/common/extensions';
 
 type ProviderData = {
 	readonly extension: ExtensionIdentifier;
-	readonly provider: vscode.ChatResponseProvider;
+	readonly provider: zycode.ChatResponseProvider;
 };
 
 export class ExtHostChatProvider implements ExtHostChatProviderShape {
@@ -32,7 +32,7 @@ export class ExtHostChatProvider implements ExtHostChatProviderShape {
 		this._proxy = mainContext.getProxy(MainContext.MainThreadChatProvider);
 	}
 
-	registerProvider(extension: ExtensionIdentifier, identifier: string, provider: vscode.ChatResponseProvider, metadata: vscode.ChatResponseProviderMetadata): IDisposable {
+	registerProvider(extension: ExtensionIdentifier, identifier: string, provider: zycode.ChatResponseProvider, metadata: zycode.ChatResponseProviderMetadata): IDisposable {
 
 		const handle = ExtHostChatProvider._idPool++;
 		this._providers.set(handle, { extension, provider });
@@ -49,7 +49,7 @@ export class ExtHostChatProvider implements ExtHostChatProviderShape {
 		if (!data) {
 			return;
 		}
-		const progress = new Progress<vscode.ChatResponseFragment>(async fragment => {
+		const progress = new Progress<zycode.ChatResponseFragment>(async fragment => {
 			if (token.isCancellationRequested) {
 				this._logService.warn(`[CHAT](${data.extension.value}) CANNOT send progress because the REQUEST IS CANCELLED`);
 				return;
@@ -62,7 +62,7 @@ export class ExtHostChatProvider implements ExtHostChatProviderShape {
 
 	//#region --- making request
 
-	private readonly _pendingRequest = new Map<number, vscode.Progress<vscode.ChatResponseFragment>>();
+	private readonly _pendingRequest = new Map<number, zycode.Progress<zycode.ChatResponseFragment>>();
 
 	private readonly _chatAccessAllowList = new ExtensionIdentifierMap<Promise<unknown>>();
 
@@ -71,7 +71,7 @@ export class ExtHostChatProvider implements ExtHostChatProviderShape {
 		promise.finally(() => this._chatAccessAllowList.delete(extension));
 	}
 
-	async requestChatResponseProvider(from: ExtensionIdentifier, identifier: string): Promise<vscode.ChatAccess> {
+	async requestChatResponseProvider(from: ExtensionIdentifier, identifier: string): Promise<zycode.ChatAccess> {
 		// check if a UI command is running/active
 
 		if (!this._chatAccessAllowList.has(from)) {

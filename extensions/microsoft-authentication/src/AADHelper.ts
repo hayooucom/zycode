@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import * as path from 'path';
 import { isSupportedEnvironment } from './utils';
 import { generateCodeChallenge, generateCodeVerifier, randomUUID } from './cryptoUtils';
@@ -12,10 +12,10 @@ import { LoopbackAuthServer } from './node/authServer';
 import { base64Decode } from './node/buffer';
 import { fetching } from './node/fetch';
 import { UriEventHandler } from './UriEventHandler';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import TelemetryReporter from '@zycode/extension-telemetry';
 import { Environment } from '@azure/ms-rest-azure-env';
 
-const redirectUrl = 'https://vscode.dev/redirect';
+const redirectUrl = 'https://zycode.dev/redirect';
 const defaultActiveDirectoryEndpointUrl = Environment.AzureCloud.activeDirectoryEndpointUrl;
 const DEFAULT_CLIENT_ID = 'aebc6443-996d-45c2-90f0-388ff96faa56';
 const DEFAULT_TENANT = 'organizations';
@@ -83,22 +83,22 @@ interface IScopeData {
 export const REFRESH_NETWORK_FAILURE = 'Network failure';
 
 export class AzureActiveDirectoryService {
-	// For details on why this is set to 2/3... see https://github.com/microsoft/vscode/issues/133201#issuecomment-966668197
+	// For details on why this is set to 2/3... see https://github.com/microsoft/zycode/issues/133201#issuecomment-966668197
 	private static REFRESH_TIMEOUT_MODIFIER = 1000 * 2 / 3;
 	private static POLLING_CONSTANT = 1000 * 60 * 30;
 	private _tokens: IToken[] = [];
 	private _refreshTimeouts: Map<string, NodeJS.Timeout> = new Map<string, NodeJS.Timeout>();
 	private _refreshingPromise: Promise<any> | undefined;
-	private _sessionChangeEmitter: vscode.EventEmitter<vscode.AuthenticationProviderAuthenticationSessionsChangeEvent> = new vscode.EventEmitter<vscode.AuthenticationProviderAuthenticationSessionsChangeEvent>();
+	private _sessionChangeEmitter: zycode.EventEmitter<zycode.AuthenticationProviderAuthenticationSessionsChangeEvent> = new zycode.EventEmitter<zycode.AuthenticationProviderAuthenticationSessionsChangeEvent>();
 
 	// Used to keep track of current requests when not using the local server approach.
 	private _pendingNonces = new Map<string, string[]>();
-	private _codeExchangePromises = new Map<string, Promise<vscode.AuthenticationSession>>();
+	private _codeExchangePromises = new Map<string, Promise<zycode.AuthenticationSession>>();
 	private _codeVerfifiers = new Map<string, string>();
 
 	constructor(
-		private readonly _logger: vscode.LogOutputChannel,
-		_context: vscode.ExtensionContext,
+		private readonly _logger: zycode.LogOutputChannel,
+		_context: zycode.ExtensionContext,
 		private readonly _uriHandler: UriEventHandler,
 		private readonly _tokenStorage: BetterTokenStorage<IStoredSession>,
 		private readonly _telemetryReporter: TelemetryReporter,
@@ -139,7 +139,7 @@ export class AzureActiveDirectoryService {
 						sessionId: session.id
 					});
 				} else {
-					vscode.window.showErrorMessage(vscode.l10n.t('You have been signed out because reading stored authentication information failed.'));
+					zycode.window.showErrorMessage(zycode.l10n.t('You have been signed out because reading stored authentication information failed.'));
 					this._logger.error(e);
 					await this.removeSessionByIToken({
 						accessToken: undefined,
@@ -183,11 +183,11 @@ export class AzureActiveDirectoryService {
 
 	//#region session operations
 
-	public get onDidChangeSessions(): vscode.Event<vscode.AuthenticationProviderAuthenticationSessionsChangeEvent> {
+	public get onDidChangeSessions(): zycode.Event<zycode.AuthenticationProviderAuthenticationSessionsChangeEvent> {
 		return this._sessionChangeEmitter.event;
 	}
 
-	async getSessions(scopes?: string[]): Promise<vscode.AuthenticationSession[]> {
+	async getSessions(scopes?: string[]): Promise<zycode.AuthenticationSession[]> {
 		if (!scopes) {
 			this._logger.info('Getting sessions for all scopes...');
 			const sessions = this._tokens.map(token => this.convertToSessionSync(token));
@@ -271,7 +271,7 @@ export class AzureActiveDirectoryService {
 		return Promise.all(matchingTokens.map(token => this.convertToSession(token, scopeData)));
 	}
 
-	public async createSession(scopes: string[]): Promise<vscode.AuthenticationSession> {
+	public async createSession(scopes: string[]): Promise<zycode.AuthenticationSession> {
 		let modifiedScopes = [...scopes];
 		if (!modifiedScopes.includes('openid')) {
 			modifiedScopes.push('openid');
@@ -298,8 +298,8 @@ export class AzureActiveDirectoryService {
 
 		this._logger.info(`Logging in for the following scopes: ${scopeData.scopeStr}`);
 
-		const runsRemote = vscode.env.remoteName !== undefined;
-		const runsServerless = vscode.env.remoteName === undefined && vscode.env.uiKind === vscode.UIKind.Web;
+		const runsRemote = zycode.env.remoteName !== undefined;
+		const runsServerless = zycode.env.remoteName === undefined && zycode.env.uiKind === zycode.UIKind.Web;
 
 		if (runsServerless && this._env.activeDirectoryEndpointUrl !== defaultActiveDirectoryEndpointUrl) {
 			throw new Error('Sign in to non-public clouds is not supported on the web.');
@@ -342,7 +342,7 @@ export class AzureActiveDirectoryService {
 
 		let codeToExchange;
 		try {
-			vscode.env.openExternal(vscode.Uri.parse(`http://127.0.0.1:${server.port}/signin?nonce=${encodeURIComponent(server.nonce)}`));
+			zycode.env.openExternal(zycode.Uri.parse(`http://127.0.0.1:${server.port}/signin?nonce=${encodeURIComponent(server.nonce)}`));
 			const { code } = await server.waitForOAuthResponse();
 			codeToExchange = code;
 		} finally {
@@ -356,8 +356,8 @@ export class AzureActiveDirectoryService {
 		return session;
 	}
 
-	private async createSessionWithoutLocalServer(scopeData: IScopeData): Promise<vscode.AuthenticationSession> {
-		let callbackUri = await vscode.env.asExternalUri(vscode.Uri.parse(`${vscode.env.uriScheme}://vscode.microsoft-authentication`));
+	private async createSessionWithoutLocalServer(scopeData: IScopeData): Promise<zycode.AuthenticationSession> {
+		let callbackUri = await zycode.env.asExternalUri(zycode.Uri.parse(`${zycode.env.uriScheme}://zycode.microsoft-authentication`));
 		const nonce = generateCodeVerifier();
 		const callbackQuery = new URLSearchParams(callbackUri.query);
 		callbackQuery.set('nonce', encodeURIComponent(nonce));
@@ -379,11 +379,11 @@ export class AzureActiveDirectoryService {
 			code_challenge_method: 'S256',
 			code_challenge: codeChallenge,
 		}).toString();
-		const uri = vscode.Uri.parse(signInUrl.toString());
-		vscode.env.openExternal(uri);
+		const uri = zycode.Uri.parse(signInUrl.toString());
+		zycode.env.openExternal(uri);
 
-		let inputBox: vscode.InputBox | undefined;
-		const timeoutPromise = new Promise((_: (value: vscode.AuthenticationSession) => void, reject) => {
+		let inputBox: zycode.InputBox | undefined;
+		const timeoutPromise = new Promise((_: (value: zycode.AuthenticationSession) => void, reject) => {
 			const wait = setTimeout(() => {
 				clearTimeout(wait);
 				inputBox?.dispose();
@@ -401,7 +401,7 @@ export class AzureActiveDirectoryService {
 			if (isSupportedEnvironment(callbackUri)) {
 				existingPromise = this.handleCodeResponse(scopeData);
 			} else {
-				inputBox = vscode.window.createInputBox();
+				inputBox = zycode.window.createInputBox();
 				existingPromise = this.handleCodeInputBox(inputBox, codeVerifier, scopeData);
 			}
 			this._codeExchangePromises.set(scopeData.scopeStr, existingPromise);
@@ -417,7 +417,7 @@ export class AzureActiveDirectoryService {
 			});
 	}
 
-	public async removeSessionById(sessionId: string, writeToDisk: boolean = true): Promise<vscode.AuthenticationSession | undefined> {
+	public async removeSessionById(sessionId: string, writeToDisk: boolean = true): Promise<zycode.AuthenticationSession | undefined> {
 		this._logger.info(`Logging out of session '${sessionId}'`);
 		const tokenIndex = this._tokens.findIndex(token => token.sessionId === sessionId);
 		if (tokenIndex === -1) {
@@ -447,7 +447,7 @@ export class AzureActiveDirectoryService {
 		this._refreshTimeouts.clear();
 	}
 
-	private async removeSessionByIToken(token: IToken, writeToDisk: boolean = true): Promise<vscode.AuthenticationSession | undefined> {
+	private async removeSessionByIToken(token: IToken, writeToDisk: boolean = true): Promise<zycode.AuthenticationSession | undefined> {
 		this.removeSessionTimeout(token.sessionId);
 
 		if (writeToDisk) {
@@ -479,7 +479,7 @@ export class AzureActiveDirectoryService {
 				this._sessionChangeEmitter.fire({ added: [], removed: [], changed: [this.convertToSessionSync(refreshedToken)] });
 			} catch (e) {
 				if (e.message !== REFRESH_NETWORK_FAILURE) {
-					vscode.window.showErrorMessage(vscode.l10n.t('You have been signed out because reading stored authentication information failed.'));
+					zycode.window.showErrorMessage(zycode.l10n.t('You have been signed out because reading stored authentication information failed.'));
 					await this.removeSessionById(sessionId);
 				}
 			}
@@ -540,7 +540,7 @@ export class AzureActiveDirectoryService {
 	 * Return a session object without checking for expiry and potentially refreshing.
 	 * @param token The token information.
 	 */
-	private convertToSessionSync(token: IToken): vscode.AuthenticationSession {
+	private convertToSessionSync(token: IToken): zycode.AuthenticationSession {
 		return {
 			id: token.sessionId,
 			accessToken: token.accessToken!,
@@ -550,7 +550,7 @@ export class AzureActiveDirectoryService {
 		};
 	}
 
-	private async convertToSession(token: IToken, scopeData: IScopeData): Promise<vscode.AuthenticationSession> {
+	private async convertToSession(token: IToken, scopeData: IScopeData): Promise<zycode.AuthenticationSession> {
 		if (token.accessToken && (!token.expiresAt || token.expiresAt > Date.now())) {
 			token.expiresAt
 				? this._logger.info(`Token available from cache (for scopes ${token.scope}), expires in ${token.expiresAt - Date.now()} milliseconds`)
@@ -656,10 +656,10 @@ export class AzureActiveDirectoryService {
 
 	//#region oauth flow
 
-	private async handleCodeResponse(scopeData: IScopeData): Promise<vscode.AuthenticationSession> {
-		let uriEventListener: vscode.Disposable;
-		return new Promise((resolve: (value: vscode.AuthenticationSession) => void, reject) => {
-			uriEventListener = this._uriHandler.event(async (uri: vscode.Uri) => {
+	private async handleCodeResponse(scopeData: IScopeData): Promise<zycode.AuthenticationSession> {
+		let uriEventListener: zycode.Disposable;
+		return new Promise((resolve: (value: zycode.AuthenticationSession) => void, reject) => {
+			uriEventListener = this._uriHandler.event(async (uri: zycode.Uri) => {
 				try {
 					const query = new URLSearchParams(uri.query);
 					let code = query.get('code');
@@ -704,12 +704,12 @@ export class AzureActiveDirectoryService {
 		});
 	}
 
-	private async handleCodeInputBox(inputBox: vscode.InputBox, verifier: string, scopeData: IScopeData): Promise<vscode.AuthenticationSession> {
+	private async handleCodeInputBox(inputBox: zycode.InputBox, verifier: string, scopeData: IScopeData): Promise<zycode.AuthenticationSession> {
 		inputBox.ignoreFocusOut = true;
-		inputBox.title = vscode.l10n.t('Microsoft Authentication');
-		inputBox.prompt = vscode.l10n.t('Provide the authorization code to complete the sign in flow.');
-		inputBox.placeholder = vscode.l10n.t('Paste authorization code here...');
-		return new Promise((resolve: (value: vscode.AuthenticationSession) => void, reject) => {
+		inputBox.title = zycode.l10n.t('Microsoft Authentication');
+		inputBox.prompt = zycode.l10n.t('Provide the authorization code to complete the sign in flow.');
+		inputBox.placeholder = zycode.l10n.t('Paste authorization code here...');
+		return new Promise((resolve: (value: zycode.AuthenticationSession) => void, reject) => {
 			inputBox.show();
 			inputBox.onDidAccept(async () => {
 				const code = inputBox.value;
@@ -729,7 +729,7 @@ export class AzureActiveDirectoryService {
 		});
 	}
 
-	private async exchangeCodeForSession(code: string, codeVerifier: string, scopeData: IScopeData): Promise<vscode.AuthenticationSession> {
+	private async exchangeCodeForSession(code: string, codeVerifier: string, scopeData: IScopeData): Promise<zycode.AuthenticationSession> {
 		this._logger.info(`Exchanging login code for token for scopes: ${scopeData.scopeStr}`);
 		let token: IToken | undefined;
 		try {
@@ -764,7 +764,7 @@ export class AzureActiveDirectoryService {
 			// If this is for sovereign clouds, don't try using the proxy endpoint, which supports only public cloud
 			endpointUrl = this._env.activeDirectoryEndpointUrl;
 		} else {
-			const proxyEndpoints: { [providerId: string]: string } | undefined = await vscode.commands.executeCommand('workbench.getCodeExchangeProxyEndpoints');
+			const proxyEndpoints: { [providerId: string]: string } | undefined = await zycode.commands.executeCommand('workbench.getCodeExchangeProxyEndpoints');
 			endpointUrl = proxyEndpoints?.microsoft || this._env.activeDirectoryEndpointUrl;
 		}
 		const endpoint = new URL(`${scopeData.tenant}/oauth2/v2.0/token`, endpointUrl);
@@ -827,7 +827,7 @@ export class AzureActiveDirectoryService {
 	}
 
 	private async storeToken(token: IToken, scopeData: IScopeData): Promise<void> {
-		if (!vscode.window.state.focused) {
+		if (!zycode.window.state.focused) {
 			const shouldStore = await new Promise((resolve, _) => {
 				// To handle the case where the window is not focused for a long time. We want to store the token
 				// at some point so that the next time they _do_ interact with VS Code, they don't have to sign in again.
@@ -836,8 +836,8 @@ export class AzureActiveDirectoryService {
 					// 5 hours + random extra 0-30 seconds so that each window doesn't try to store at the same time
 					(18000000) + Math.floor(Math.random() * 30000)
 				);
-				const dispose = vscode.Disposable.from(
-					vscode.window.onDidChangeWindowState(e => {
+				const dispose = zycode.Disposable.from(
+					zycode.window.onDidChangeWindowState(e => {
 						if (e.focused) {
 							resolve(true);
 							dispose.dispose();
@@ -903,7 +903,7 @@ export class AzureActiveDirectoryService {
 				} catch (e) {
 					// Network failures will automatically retry on next poll.
 					if (e.message !== REFRESH_NETWORK_FAILURE) {
-						vscode.window.showErrorMessage(vscode.l10n.t('You have been signed out because reading stored authentication information failed.'));
+						zycode.window.showErrorMessage(zycode.l10n.t('You have been signed out because reading stored authentication information failed.'));
 						await this.removeSessionById(session.id);
 					}
 					return;

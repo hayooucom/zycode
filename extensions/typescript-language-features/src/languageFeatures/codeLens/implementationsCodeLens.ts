@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { DocumentSelector } from '../../configuration/documentSelector';
 import { LanguageDescription } from '../../configuration/languageDescription';
 import { CachedResponse } from '../../tsServer/cachedResponse';
@@ -19,8 +19,8 @@ export default class TypeScriptImplementationsCodeLensProvider extends TypeScrip
 
 	public async resolveCodeLens(
 		codeLens: ReferencesCodeLens,
-		token: vscode.CancellationToken,
-	): Promise<vscode.CodeLens> {
+		token: zycode.CancellationToken,
+	): Promise<zycode.CodeLens> {
 		const args = typeConverters.Position.toFileLocationRequestArgs(codeLens.file, codeLens.range.start);
 		const response = await this.client.execute('implementation', args, token, { lowPriority: true, cancelOnResourceChange: codeLens.document });
 		if (response.type !== 'response' || !response.body) {
@@ -32,13 +32,13 @@ export default class TypeScriptImplementationsCodeLensProvider extends TypeScrip
 
 		const locations = response.body
 			.map(reference =>
-				// Only take first line on implementation: https://github.com/microsoft/vscode/issues/23924
-				new vscode.Location(this.client.toResource(reference.file),
+				// Only take first line on implementation: https://github.com/microsoft/zycode/issues/23924
+				new zycode.Location(this.client.toResource(reference.file),
 					reference.start.line === reference.end.line
 						? typeConverters.Range.fromTextSpan(reference)
-						: new vscode.Range(
+						: new zycode.Range(
 							typeConverters.Position.fromLocation(reference.start),
-							new vscode.Position(reference.start.line, 0))))
+							new zycode.Position(reference.start.line, 0))))
 			// Exclude original from implementations
 			.filter(location =>
 				!(location.uri.toString() === codeLens.document.toString() &&
@@ -49,7 +49,7 @@ export default class TypeScriptImplementationsCodeLensProvider extends TypeScrip
 		return codeLens;
 	}
 
-	private getCommand(locations: vscode.Location[], codeLens: ReferencesCodeLens): vscode.Command | undefined {
+	private getCommand(locations: zycode.Location[], codeLens: ReferencesCodeLens): zycode.Command | undefined {
 		return {
 			title: this.getTitle(locations),
 			command: locations.length ? 'editor.action.showReferences' : '',
@@ -57,17 +57,17 @@ export default class TypeScriptImplementationsCodeLensProvider extends TypeScrip
 		};
 	}
 
-	private getTitle(locations: vscode.Location[]): string {
+	private getTitle(locations: zycode.Location[]): string {
 		return locations.length === 1
-			? vscode.l10n.t("1 implementation")
-			: vscode.l10n.t("{0} implementations", locations.length);
+			? zycode.l10n.t("1 implementation")
+			: zycode.l10n.t("{0} implementations", locations.length);
 	}
 
 	protected extractSymbol(
-		document: vscode.TextDocument,
+		document: zycode.TextDocument,
 		item: Proto.NavigationTree,
 		_parent: Proto.NavigationTree | undefined
-	): vscode.Range | undefined {
+	): zycode.Range | undefined {
 		switch (item.kind) {
 			case PConst.Kind.interface:
 				return getSymbolRange(document, item);
@@ -96,7 +96,7 @@ export function register(
 		requireGlobalConfiguration(language.id, 'implementationsCodeLens.enabled'),
 		requireSomeCapability(client, ClientCapability.Semantic),
 	], () => {
-		return vscode.languages.registerCodeLensProvider(selector.semantic,
+		return zycode.languages.registerCodeLensProvider(selector.semantic,
 			new TypeScriptImplementationsCodeLensProvider(client, cachedResponse));
 	});
 }

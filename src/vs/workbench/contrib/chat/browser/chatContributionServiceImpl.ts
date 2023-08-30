@@ -25,7 +25,7 @@ import * as extensionsRegistry from 'vs/workbench/services/extensions/common/ext
 const chatExtensionPoint = extensionsRegistry.ExtensionsRegistry.registerExtensionPoint<IRawChatProviderContribution[]>({
 	extensionPoint: 'interactiveSession',
 	jsonSchema: {
-		description: localize('vscode.extension.contributes.interactiveSession', 'Contributes an Interactive Session provider'),
+		description: localize('zycode.extension.contributes.interactiveSession', 'Contributes an Interactive Session provider'),
 		type: 'array',
 		items: {
 			additionalProperties: false,
@@ -34,19 +34,19 @@ const chatExtensionPoint = extensionsRegistry.ExtensionsRegistry.registerExtensi
 			required: ['id', 'label'],
 			properties: {
 				id: {
-					description: localize('vscode.extension.contributes.interactiveSession.id', "Unique identifier for this Interactive Session provider."),
+					description: localize('zycode.extension.contributes.interactiveSession.id', "Unique identifier for this Interactive Session provider."),
 					type: 'string'
 				},
 				label: {
-					description: localize('vscode.extension.contributes.interactiveSession.label', "Display name for this Interactive Session provider."),
+					description: localize('zycode.extension.contributes.interactiveSession.label', "Display name for this Interactive Session provider."),
 					type: 'string'
 				},
 				icon: {
-					description: localize('vscode.extension.contributes.interactiveSession.icon', "An icon for this Interactive Session provider."),
+					description: localize('zycode.extension.contributes.interactiveSession.icon', "An icon for this Interactive Session provider."),
 					type: 'string'
 				},
 				when: {
-					description: localize('vscode.extension.contributes.interactiveSession.when', "A condition which must be true to enable this Interactive Session provider."),
+					description: localize('zycode.extension.contributes.interactiveSession.when', "A condition which must be true to enable this Interactive Session provider."),
 					type: 'string'
 				},
 			}

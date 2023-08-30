@@ -11,7 +11,7 @@ import { TextEdit } from 'vs/workbench/api/common/extHostTypes';
 import { Range, TextDocumentSaveReason, EndOfLine } from 'vs/workbench/api/common/extHostTypeConverters';
 import { ExtHostDocuments } from 'vs/workbench/api/common/extHostDocuments';
 import { SaveReason } from 'vs/workbench/common/editor';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { LinkedList } from 'vs/base/common/linkedList';
 import { ILogService } from 'vs/platform/log/common/log';
 import { IExtensionDescription } from 'vs/platform/extensions/common/extensions';
@@ -36,7 +36,7 @@ export class ExtHostDocumentSaveParticipant implements ExtHostDocumentSavePartic
 		this._callbacks.clear();
 	}
 
-	getOnWillSaveTextDocumentEvent(extension: IExtensionDescription): Event<vscode.TextDocumentWillSaveEvent> {
+	getOnWillSaveTextDocumentEvent(extension: IExtensionDescription): Event<zycode.TextDocumentWillSaveEvent> {
 		return (listener, thisArg, disposables) => {
 			const remove = this._callbacks.push([listener, thisArg, extension]);
 			const result = { dispose: remove };
@@ -70,7 +70,7 @@ export class ExtHostDocumentSaveParticipant implements ExtHostDocumentSavePartic
 		return results;
 	}
 
-	private _deliverEventAsyncAndBlameBadListeners([listener, thisArg, extension]: Listener, stubEvent: vscode.TextDocumentWillSaveEvent): Promise<any> {
+	private _deliverEventAsyncAndBlameBadListeners([listener, thisArg, extension]: Listener, stubEvent: zycode.TextDocumentWillSaveEvent): Promise<any> {
 		const errors = this._badListeners.get(listener);
 		if (typeof errors === 'number' && errors > this._thresholds.errors) {
 			// bad listener - ignore
@@ -98,18 +98,18 @@ export class ExtHostDocumentSaveParticipant implements ExtHostDocumentSavePartic
 		});
 	}
 
-	private _deliverEventAsync(extension: IExtensionDescription, listener: Function, thisArg: any, stubEvent: vscode.TextDocumentWillSaveEvent): Promise<any> {
+	private _deliverEventAsync(extension: IExtensionDescription, listener: Function, thisArg: any, stubEvent: zycode.TextDocumentWillSaveEvent): Promise<any> {
 
-		const promises: Promise<vscode.TextEdit[]>[] = [];
+		const promises: Promise<zycode.TextEdit[]>[] = [];
 
 		const t1 = Date.now();
 		const { document, reason } = stubEvent;
 		const { version } = document;
 
-		const event = Object.freeze<vscode.TextDocumentWillSaveEvent>({
+		const event = Object.freeze<zycode.TextDocumentWillSaveEvent>({
 			document,
 			reason,
-			waitUntil(p: Promise<any | vscode.TextEdit[]>) {
+			waitUntil(p: Promise<any | zycode.TextEdit[]>) {
 				if (Object.isFrozen(promises)) {
 					throw illegalState('waitUntil can not be called async');
 				}
@@ -127,7 +127,7 @@ export class ExtHostDocumentSaveParticipant implements ExtHostDocumentSavePartic
 		// freeze promises after event call
 		Object.freeze(promises);
 
-		return new Promise<vscode.TextEdit[][]>((resolve, reject) => {
+		return new Promise<zycode.TextEdit[][]>((resolve, reject) => {
 			// join on all listener promises, reject after timeout
 			const handle = setTimeout(() => reject(new Error('timeout')), this._thresholds.timeout);
 
@@ -143,7 +143,7 @@ export class ExtHostDocumentSaveParticipant implements ExtHostDocumentSavePartic
 		}).then(values => {
 			const dto: IWorkspaceEditDto = { edits: [] };
 			for (const value of values) {
-				if (Array.isArray(value) && (<vscode.TextEdit[]>value).every(e => e instanceof TextEdit)) {
+				if (Array.isArray(value) && (<zycode.TextEdit[]>value).every(e => e instanceof TextEdit)) {
 					for (const { newText, newEol, range } of value) {
 						dto.edits.push({
 							resource: document.uri,

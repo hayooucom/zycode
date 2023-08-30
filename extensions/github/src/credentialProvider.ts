@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { CredentialsProvider, Credentials, API as GitAPI } from './typings/git';
-import { workspace, Uri, Disposable } from 'vscode';
+import { workspace, Uri, Disposable } from 'zycode';
 import { getSession } from './auth';
 
 const EmptyDisposable: Disposable = { dispose() { } };

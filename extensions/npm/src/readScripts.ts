@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { JSONVisitor, visit } from 'jsonc-parser';
-import { Location, Position, Range, TextDocument } from 'vscode';
+import { Location, Position, Range, TextDocument } from 'zycode';
 
 export interface INpmScriptReference {
 	name: string;

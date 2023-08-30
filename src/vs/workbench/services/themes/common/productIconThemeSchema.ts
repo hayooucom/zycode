@@ -15,7 +15,7 @@ export const fontWeightRegex = '^(normal|bold|lighter|bolder|(\\d{0-1000}))$';
 export const fontSizeRegex = '^([\\w .%_-]+)$';
 export const fontFormatRegex = '^woff|woff2|truetype|opentype|embedded-opentype|svg$';
 
-const schemaId = 'vscode://schemas/product-icon-theme';
+const schemaId = 'zycode://schemas/product-icon-theme';
 const schema: IJSONSchema = {
 	type: 'object',
 	allowComments: true,

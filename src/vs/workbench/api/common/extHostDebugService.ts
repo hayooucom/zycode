@@ -22,7 +22,7 @@ import { IAdapterDescriptor, IConfig, IDebugAdapter, IDebugAdapterExecutable, ID
 import { convertToDAPaths, convertToVSCPaths, isDebuggerMainContribution } from 'vs/workbench/contrib/debug/common/debugUtils';
 import { ExtensionDescriptionRegistry } from 'vs/workbench/services/extensions/common/extensionDescriptionRegistry';
 import { Dto } from 'vs/workbench/services/extensions/common/proxyIdentifier';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { IExtHostConfiguration } from '../common/extHostConfiguration';
 import { IExtHostVariableResolverProvider } from './extHostVariableResolverService';
 
@@ -32,25 +32,25 @@ export interface IExtHostDebugService extends ExtHostDebugServiceShape {
 
 	readonly _serviceBrand: undefined;
 
-	onDidStartDebugSession: Event<vscode.DebugSession>;
-	onDidTerminateDebugSession: Event<vscode.DebugSession>;
-	onDidChangeActiveDebugSession: Event<vscode.DebugSession | undefined>;
-	activeDebugSession: vscode.DebugSession | undefined;
-	activeDebugConsole: vscode.DebugConsole;
-	onDidReceiveDebugSessionCustomEvent: Event<vscode.DebugSessionCustomEvent>;
-	onDidChangeBreakpoints: Event<vscode.BreakpointsChangeEvent>;
-	breakpoints: vscode.Breakpoint[];
-	onDidChangeStackFrameFocus: Event<vscode.ThreadFocus | vscode.StackFrameFocus | undefined>;
-	stackFrameFocus: vscode.ThreadFocus | vscode.StackFrameFocus | undefined;
+	onDidStartDebugSession: Event<zycode.DebugSession>;
+	onDidTerminateDebugSession: Event<zycode.DebugSession>;
+	onDidChangeActiveDebugSession: Event<zycode.DebugSession | undefined>;
+	activeDebugSession: zycode.DebugSession | undefined;
+	activeDebugConsole: zycode.DebugConsole;
+	onDidReceiveDebugSessionCustomEvent: Event<zycode.DebugSessionCustomEvent>;
+	onDidChangeBreakpoints: Event<zycode.BreakpointsChangeEvent>;
+	breakpoints: zycode.Breakpoint[];
+	onDidChangeStackFrameFocus: Event<zycode.ThreadFocus | zycode.StackFrameFocus | undefined>;
+	stackFrameFocus: zycode.ThreadFocus | zycode.StackFrameFocus | undefined;
 
-	addBreakpoints(breakpoints0: readonly vscode.Breakpoint[]): Promise<void>;
-	removeBreakpoints(breakpoints0: readonly vscode.Breakpoint[]): Promise<void>;
-	startDebugging(folder: vscode.WorkspaceFolder | undefined, nameOrConfig: string | vscode.DebugConfiguration, options: vscode.DebugSessionOptions): Promise<boolean>;
-	stopDebugging(session?: vscode.DebugSession): Promise<void>;
-	registerDebugConfigurationProvider(type: string, provider: vscode.DebugConfigurationProvider, trigger: vscode.DebugConfigurationProviderTriggerKind): vscode.Disposable;
-	registerDebugAdapterDescriptorFactory(extension: IExtensionDescription, type: string, factory: vscode.DebugAdapterDescriptorFactory): vscode.Disposable;
-	registerDebugAdapterTrackerFactory(type: string, factory: vscode.DebugAdapterTrackerFactory): vscode.Disposable;
-	asDebugSourceUri(source: vscode.DebugProtocolSource, session?: vscode.DebugSession): vscode.Uri;
+	addBreakpoints(breakpoints0: readonly zycode.Breakpoint[]): Promise<void>;
+	removeBreakpoints(breakpoints0: readonly zycode.Breakpoint[]): Promise<void>;
+	startDebugging(folder: zycode.WorkspaceFolder | undefined, nameOrConfig: string | zycode.DebugConfiguration, options: zycode.DebugSessionOptions): Promise<boolean>;
+	stopDebugging(session?: zycode.DebugSession): Promise<void>;
+	registerDebugConfigurationProvider(type: string, provider: zycode.DebugConfigurationProvider, trigger: zycode.DebugConfigurationProviderTriggerKind): zycode.Disposable;
+	registerDebugAdapterDescriptorFactory(extension: IExtensionDescription, type: string, factory: zycode.DebugAdapterDescriptorFactory): zycode.Disposable;
+	registerDebugAdapterTrackerFactory(type: string, factory: zycode.DebugAdapterTrackerFactory): zycode.Disposable;
+	asDebugSourceUri(source: zycode.DebugProtocolSource, session?: zycode.DebugSession): zycode.Uri;
 }
 
 export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, ExtHostDebugServiceShape {
@@ -69,33 +69,33 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 	private _debugServiceProxy: MainThreadDebugServiceShape;
 	private _debugSessions: Map<DebugSessionUUID, ExtHostDebugSession> = new Map<DebugSessionUUID, ExtHostDebugSession>();
 
-	private readonly _onDidStartDebugSession: Emitter<vscode.DebugSession>;
-	get onDidStartDebugSession(): Event<vscode.DebugSession> { return this._onDidStartDebugSession.event; }
+	private readonly _onDidStartDebugSession: Emitter<zycode.DebugSession>;
+	get onDidStartDebugSession(): Event<zycode.DebugSession> { return this._onDidStartDebugSession.event; }
 
-	private readonly _onDidTerminateDebugSession: Emitter<vscode.DebugSession>;
-	get onDidTerminateDebugSession(): Event<vscode.DebugSession> { return this._onDidTerminateDebugSession.event; }
+	private readonly _onDidTerminateDebugSession: Emitter<zycode.DebugSession>;
+	get onDidTerminateDebugSession(): Event<zycode.DebugSession> { return this._onDidTerminateDebugSession.event; }
 
-	private readonly _onDidChangeActiveDebugSession: Emitter<vscode.DebugSession | undefined>;
-	get onDidChangeActiveDebugSession(): Event<vscode.DebugSession | undefined> { return this._onDidChangeActiveDebugSession.event; }
+	private readonly _onDidChangeActiveDebugSession: Emitter<zycode.DebugSession | undefined>;
+	get onDidChangeActiveDebugSession(): Event<zycode.DebugSession | undefined> { return this._onDidChangeActiveDebugSession.event; }
 
 	private _activeDebugSession: ExtHostDebugSession | undefined;
 	get activeDebugSession(): ExtHostDebugSession | undefined { return this._activeDebugSession; }
 
-	private readonly _onDidReceiveDebugSessionCustomEvent: Emitter<vscode.DebugSessionCustomEvent>;
-	get onDidReceiveDebugSessionCustomEvent(): Event<vscode.DebugSessionCustomEvent> { return this._onDidReceiveDebugSessionCustomEvent.event; }
+	private readonly _onDidReceiveDebugSessionCustomEvent: Emitter<zycode.DebugSessionCustomEvent>;
+	get onDidReceiveDebugSessionCustomEvent(): Event<zycode.DebugSessionCustomEvent> { return this._onDidReceiveDebugSessionCustomEvent.event; }
 
 	private _activeDebugConsole: ExtHostDebugConsole;
-	get activeDebugConsole(): vscode.DebugConsole { return this._activeDebugConsole.value; }
+	get activeDebugConsole(): zycode.DebugConsole { return this._activeDebugConsole.value; }
 
-	private _breakpoints: Map<string, vscode.Breakpoint>;
+	private _breakpoints: Map<string, zycode.Breakpoint>;
 
-	private readonly _onDidChangeBreakpoints: Emitter<vscode.BreakpointsChangeEvent>;
+	private readonly _onDidChangeBreakpoints: Emitter<zycode.BreakpointsChangeEvent>;
 
-	private _stackFrameFocus: vscode.ThreadFocus | vscode.StackFrameFocus | undefined;
-	private readonly _onDidChangeStackFrameFocus: Emitter<vscode.ThreadFocus | vscode.StackFrameFocus | undefined>;
+	private _stackFrameFocus: zycode.ThreadFocus | zycode.StackFrameFocus | undefined;
+	private readonly _onDidChangeStackFrameFocus: Emitter<zycode.ThreadFocus | zycode.StackFrameFocus | undefined>;
 
 	private _debugAdapters: Map<number, IDebugAdapter>;
-	private _debugAdaptersTrackers: Map<number, vscode.DebugAdapterTracker>;
+	private _debugAdaptersTrackers: Map<number, zycode.DebugAdapterTracker>;
 
 	private _signService: ISignService | undefined;
 
@@ -119,20 +119,20 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		this._debugAdapters = new Map();
 		this._debugAdaptersTrackers = new Map();
 
-		this._onDidStartDebugSession = new Emitter<vscode.DebugSession>();
-		this._onDidTerminateDebugSession = new Emitter<vscode.DebugSession>();
-		this._onDidChangeActiveDebugSession = new Emitter<vscode.DebugSession | undefined>();
-		this._onDidReceiveDebugSessionCustomEvent = new Emitter<vscode.DebugSessionCustomEvent>();
+		this._onDidStartDebugSession = new Emitter<zycode.DebugSession>();
+		this._onDidTerminateDebugSession = new Emitter<zycode.DebugSession>();
+		this._onDidChangeActiveDebugSession = new Emitter<zycode.DebugSession | undefined>();
+		this._onDidReceiveDebugSessionCustomEvent = new Emitter<zycode.DebugSessionCustomEvent>();
 
 		this._debugServiceProxy = extHostRpcService.getProxy(MainContext.MainThreadDebugService);
 
-		this._onDidChangeBreakpoints = new Emitter<vscode.BreakpointsChangeEvent>();
+		this._onDidChangeBreakpoints = new Emitter<zycode.BreakpointsChangeEvent>();
 
-		this._onDidChangeStackFrameFocus = new Emitter<vscode.ThreadFocus | vscode.StackFrameFocus | undefined>();
+		this._onDidChangeStackFrameFocus = new Emitter<zycode.ThreadFocus | zycode.StackFrameFocus | undefined>();
 
 		this._activeDebugConsole = new ExtHostDebugConsole(this._debugServiceProxy);
 
-		this._breakpoints = new Map<string, vscode.Breakpoint>();
+		this._breakpoints = new Map<string, zycode.Breakpoint>();
 
 		this._extensionService.getExtensionRegistry().then((extensionRegistry: ExtensionDescriptionRegistry) => {
 			extensionRegistry.onDidChange(_ => {
@@ -142,7 +142,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		});
 	}
 
-	public asDebugSourceUri(src: vscode.DebugProtocolSource, session?: vscode.DebugSession): URI {
+	public asDebugSourceUri(src: zycode.DebugProtocolSource, session?: zycode.DebugSession): URI {
 
 		const source = <any>src;
 
@@ -191,25 +191,25 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 	// extension debug API
 
 
-	get stackFrameFocus(): vscode.ThreadFocus | vscode.StackFrameFocus | undefined {
+	get stackFrameFocus(): zycode.ThreadFocus | zycode.StackFrameFocus | undefined {
 		return this._stackFrameFocus;
 	}
 
-	get onDidChangeStackFrameFocus(): Event<vscode.ThreadFocus | vscode.StackFrameFocus | undefined> {
+	get onDidChangeStackFrameFocus(): Event<zycode.ThreadFocus | zycode.StackFrameFocus | undefined> {
 		return this._onDidChangeStackFrameFocus.event;
 	}
 
-	get onDidChangeBreakpoints(): Event<vscode.BreakpointsChangeEvent> {
+	get onDidChangeBreakpoints(): Event<zycode.BreakpointsChangeEvent> {
 		return this._onDidChangeBreakpoints.event;
 	}
 
-	get breakpoints(): vscode.Breakpoint[] {
-		const result: vscode.Breakpoint[] = [];
+	get breakpoints(): zycode.Breakpoint[] {
+		const result: zycode.Breakpoint[] = [];
 		this._breakpoints.forEach(bp => result.push(bp));
 		return result;
 	}
 
-	public addBreakpoints(breakpoints0: vscode.Breakpoint[]): Promise<void> {
+	public addBreakpoints(breakpoints0: zycode.Breakpoint[]): Promise<void> {
 		// filter only new breakpoints
 		const breakpoints = breakpoints0.filter(bp => {
 			const id = bp.id;
@@ -264,7 +264,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		return this._debugServiceProxy.$registerBreakpoints(dtos);
 	}
 
-	public removeBreakpoints(breakpoints0: vscode.Breakpoint[]): Promise<void> {
+	public removeBreakpoints(breakpoints0: zycode.Breakpoint[]): Promise<void> {
 		// remove from array
 		const breakpoints = breakpoints0.filter(b => this._breakpoints.delete(b.id));
 
@@ -278,7 +278,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		return this._debugServiceProxy.$unregisterBreakpoints(ids, fids, dids);
 	}
 
-	public startDebugging(folder: vscode.WorkspaceFolder | undefined, nameOrConfig: string | vscode.DebugConfiguration, options: vscode.DebugSessionOptions): Promise<boolean> {
+	public startDebugging(folder: zycode.WorkspaceFolder | undefined, nameOrConfig: string | zycode.DebugConfiguration, options: zycode.DebugSessionOptions): Promise<boolean> {
 		return this._debugServiceProxy.$startDebugging(folder ? folder.uri : undefined, nameOrConfig, {
 			parentSessionID: options.parentSession ? options.parentSession.id : undefined,
 			lifecycleManagedByParent: options.lifecycleManagedByParent,
@@ -294,11 +294,11 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		});
 	}
 
-	public stopDebugging(session?: vscode.DebugSession): Promise<void> {
+	public stopDebugging(session?: zycode.DebugSession): Promise<void> {
 		return this._debugServiceProxy.$stopDebugging(session ? session.id : undefined);
 	}
 
-	public registerDebugConfigurationProvider(type: string, provider: vscode.DebugConfigurationProvider, trigger: vscode.DebugConfigurationProviderTriggerKind): vscode.Disposable {
+	public registerDebugConfigurationProvider(type: string, provider: zycode.DebugConfigurationProvider, trigger: zycode.DebugConfigurationProviderTriggerKind): zycode.Disposable {
 
 		if (!provider) {
 			return new Disposable(() => { });
@@ -319,7 +319,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		});
 	}
 
-	public registerDebugAdapterDescriptorFactory(extension: IExtensionDescription, type: string, factory: vscode.DebugAdapterDescriptorFactory): vscode.Disposable {
+	public registerDebugAdapterDescriptorFactory(extension: IExtensionDescription, type: string, factory: zycode.DebugAdapterDescriptorFactory): zycode.Disposable {
 
 		if (!factory) {
 			return new Disposable(() => { });
@@ -346,7 +346,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		});
 	}
 
-	public registerDebugAdapterTrackerFactory(type: string, factory: vscode.DebugAdapterTrackerFactory): vscode.Disposable {
+	public registerDebugAdapterTrackerFactory(type: string, factory: zycode.DebugAdapterTrackerFactory): zycode.Disposable {
 
 		if (!factory) {
 			return new Disposable(() => { });
@@ -521,9 +521,9 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 
 	public $acceptBreakpointsDelta(delta: IBreakpointsDeltaDto): void {
 
-		const a: vscode.Breakpoint[] = [];
-		const r: vscode.Breakpoint[] = [];
-		const c: vscode.Breakpoint[] = [];
+		const a: zycode.Breakpoint[] = [];
+		const r: zycode.Breakpoint[] = [];
+		const c: zycode.Breakpoint[] = [];
 
 		if (delta.added) {
 			for (const bpd of delta.added) {
@@ -597,11 +597,11 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 			focus = new StackFrameFocus(session, focusDto.threadId, focusDto.frameId);
 		}
 
-		this._stackFrameFocus = <vscode.ThreadFocus | vscode.StackFrameFocus>focus;
+		this._stackFrameFocus = <zycode.ThreadFocus | zycode.StackFrameFocus>focus;
 		this._onDidChangeStackFrameFocus.fire(this._stackFrameFocus);
 	}
 
-	public $provideDebugConfigurations(configProviderHandle: number, folderUri: UriComponents | undefined, token: CancellationToken): Promise<vscode.DebugConfiguration[]> {
+	public $provideDebugConfigurations(configProviderHandle: number, folderUri: UriComponents | undefined, token: CancellationToken): Promise<zycode.DebugConfiguration[]> {
 		return asPromise(async () => {
 			const provider = this.getConfigProviderByHandle(configProviderHandle);
 			if (!provider) {
@@ -620,7 +620,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		});
 	}
 
-	public $resolveDebugConfiguration(configProviderHandle: number, folderUri: UriComponents | undefined, debugConfiguration: vscode.DebugConfiguration, token: CancellationToken): Promise<vscode.DebugConfiguration | null | undefined> {
+	public $resolveDebugConfiguration(configProviderHandle: number, folderUri: UriComponents | undefined, debugConfiguration: zycode.DebugConfiguration, token: CancellationToken): Promise<zycode.DebugConfiguration | null | undefined> {
 		return asPromise(async () => {
 			const provider = this.getConfigProviderByHandle(configProviderHandle);
 			if (!provider) {
@@ -634,7 +634,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		});
 	}
 
-	public $resolveDebugConfigurationWithSubstitutedVariables(configProviderHandle: number, folderUri: UriComponents | undefined, debugConfiguration: vscode.DebugConfiguration, token: CancellationToken): Promise<vscode.DebugConfiguration | null | undefined> {
+	public $resolveDebugConfigurationWithSubstitutedVariables(configProviderHandle: number, folderUri: UriComponents | undefined, debugConfiguration: zycode.DebugConfiguration, token: CancellationToken): Promise<zycode.DebugConfiguration | null | undefined> {
 		return asPromise(async () => {
 			const provider = this.getConfigProviderByHandle(configProviderHandle);
 			if (!provider) {
@@ -687,7 +687,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 
 	public async $acceptDebugSessionCustomEvent(sessionDto: IDebugSessionDto, event: any): Promise<void> {
 		const session = await this.getSession(sessionDto);
-		const ee: vscode.DebugSessionCustomEvent = {
+		const ee: zycode.DebugSessionCustomEvent = {
 			session: session,
 			event: event.event,
 			body: event.body
@@ -697,7 +697,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 
 	// private & dto helpers
 
-	private convertToDto(x: vscode.DebugAdapterDescriptor): Dto<IAdapterDescriptor> {
+	private convertToDto(x: zycode.DebugAdapterDescriptor): Dto<IAdapterDescriptor> {
 
 		if (x instanceof DebugAdapterExecutable) {
 			return <IDebugAdapterExecutable>{
@@ -727,7 +727,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		}
 	}
 
-	private getAdapterDescriptorFactoryByType(type: string): vscode.DebugAdapterDescriptorFactory | undefined {
+	private getAdapterDescriptorFactoryByType(type: string): zycode.DebugAdapterDescriptorFactory | undefined {
 		const results = this._adapterFactories.filter(p => p.type === type);
 		if (results.length > 0) {
 			return results[0].factory;
@@ -735,7 +735,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		return undefined;
 	}
 
-	private getAdapterDescriptorFactoryByHandle(handle: number): vscode.DebugAdapterDescriptorFactory | undefined {
+	private getAdapterDescriptorFactoryByHandle(handle: number): zycode.DebugAdapterDescriptorFactory | undefined {
 		const results = this._adapterFactories.filter(p => p.handle === handle);
 		if (results.length > 0) {
 			return results[0].factory;
@@ -743,7 +743,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		return undefined;
 	}
 
-	private getConfigProviderByHandle(handle: number): vscode.DebugConfigurationProvider | undefined {
+	private getConfigProviderByHandle(handle: number): zycode.DebugConfigurationProvider | undefined {
 		const results = this._configProviders.filter(p => p.handle === handle);
 		if (results.length > 0) {
 			return results[0].provider;
@@ -768,18 +768,18 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		return false;
 	}
 
-	private getDebugAdapterTrackers(session: ExtHostDebugSession): Promise<vscode.DebugAdapterTracker | undefined> {
+	private getDebugAdapterTrackers(session: ExtHostDebugSession): Promise<zycode.DebugAdapterTracker | undefined> {
 
 		const config = session.configuration;
 		const type = config.type;
 
 		const promises = this._trackerFactories
 			.filter(tuple => tuple.type === type || tuple.type === '*')
-			.map(tuple => asPromise<vscode.ProviderResult<vscode.DebugAdapterTracker>>(() => tuple.factory.createDebugAdapterTracker(session)).then(p => p, err => null));
+			.map(tuple => asPromise<zycode.ProviderResult<zycode.DebugAdapterTracker>>(() => tuple.factory.createDebugAdapterTracker(session)).then(p => p, err => null));
 
 		return Promise.race([
 			Promise.all(promises).then(result => {
-				const trackers = <vscode.DebugAdapterTracker[]>result.filter(t => !!t);	// filter null
+				const trackers = <zycode.DebugAdapterTracker[]>result.filter(t => !!t);	// filter null
 				if (trackers.length > 0) {
 					return new MultiTracker(trackers);
 				}
@@ -792,7 +792,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		});
 	}
 
-	private async getAdapterDescriptor(adapterDescriptorFactory: vscode.DebugAdapterDescriptorFactory | undefined, session: ExtHostDebugSession): Promise<vscode.DebugAdapterDescriptor | undefined> {
+	private async getAdapterDescriptor(adapterDescriptorFactory: zycode.DebugAdapterDescriptorFactory | undefined, session: ExtHostDebugSession): Promise<zycode.DebugAdapterDescriptor | undefined> {
 
 		// a "debugServer" attribute in the launch config takes precedence
 		const serverPort = session.configuration.debugServer;
@@ -819,7 +819,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		return undefined;
 	}
 
-	private fireBreakpointChanges(added: vscode.Breakpoint[], removed: vscode.Breakpoint[], changed: vscode.Breakpoint[]) {
+	private fireBreakpointChanges(added: zycode.Breakpoint[], removed: zycode.Breakpoint[], changed: zycode.Breakpoint[]) {
 		if (added.length > 0 || removed.length > 0 || changed.length > 0) {
 			this._onDidChangeBreakpoints.fire(Object.freeze({
 				added,
@@ -851,7 +851,7 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 		throw new Error('cannot find session');
 	}
 
-	private getFolder(_folderUri: UriComponents | undefined): Promise<vscode.WorkspaceFolder | undefined> {
+	private getFolder(_folderUri: UriComponents | undefined): Promise<zycode.WorkspaceFolder | undefined> {
 		if (_folderUri) {
 			const folderURI = URI.revive(_folderUri);
 			return this._workspaceService.resolveWorkspaceFolder(folderURI);
@@ -860,16 +860,16 @@ export abstract class ExtHostDebugServiceBase implements IExtHostDebugService, E
 	}
 }
 
-export class ExtHostDebugSession implements vscode.DebugSession {
+export class ExtHostDebugSession implements zycode.DebugSession {
 
 	constructor(
 		private _debugServiceProxy: MainThreadDebugServiceShape,
 		private _id: DebugSessionUUID,
 		private _type: string,
 		private _name: string,
-		private _workspaceFolder: vscode.WorkspaceFolder | undefined,
-		private _configuration: vscode.DebugConfiguration,
-		private _parentSession: vscode.DebugSession | undefined) {
+		private _workspaceFolder: zycode.WorkspaceFolder | undefined,
+		private _configuration: zycode.DebugConfiguration,
+		private _parentSession: zycode.DebugSession | undefined) {
 	}
 
 	public get id(): string {
@@ -888,7 +888,7 @@ export class ExtHostDebugSession implements vscode.DebugSession {
 		this._debugServiceProxy.$setDebugSessionName(this._id, name);
 	}
 
-	public get parentSession(): vscode.DebugSession | undefined {
+	public get parentSession(): zycode.DebugSession | undefined {
 		return this._parentSession;
 	}
 
@@ -896,11 +896,11 @@ export class ExtHostDebugSession implements vscode.DebugSession {
 		this._name = name;
 	}
 
-	public get workspaceFolder(): vscode.WorkspaceFolder | undefined {
+	public get workspaceFolder(): zycode.WorkspaceFolder | undefined {
 		return this._workspaceFolder;
 	}
 
-	public get configuration(): vscode.DebugConfiguration {
+	public get configuration(): zycode.DebugConfiguration {
 		return this._configuration;
 	}
 
@@ -908,14 +908,14 @@ export class ExtHostDebugSession implements vscode.DebugSession {
 		return this._debugServiceProxy.$customDebugAdapterRequest(this._id, command, args);
 	}
 
-	public getDebugProtocolBreakpoint(breakpoint: vscode.Breakpoint): Promise<vscode.DebugProtocolBreakpoint | undefined> {
+	public getDebugProtocolBreakpoint(breakpoint: zycode.Breakpoint): Promise<zycode.DebugProtocolBreakpoint | undefined> {
 		return this._debugServiceProxy.$getDebugProtocolBreakpoint(this._id, breakpoint.id);
 	}
 }
 
 export class ExtHostDebugConsole {
 
-	readonly value: vscode.DebugConsole;
+	readonly value: zycode.DebugConsole;
 
 	constructor(proxy: MainThreadDebugServiceShape) {
 
@@ -933,24 +933,24 @@ export class ExtHostDebugConsole {
 interface ConfigProviderTuple {
 	type: string;
 	handle: number;
-	provider: vscode.DebugConfigurationProvider;
+	provider: zycode.DebugConfigurationProvider;
 }
 
 interface DescriptorFactoryTuple {
 	type: string;
 	handle: number;
-	factory: vscode.DebugAdapterDescriptorFactory;
+	factory: zycode.DebugAdapterDescriptorFactory;
 }
 
 interface TrackerFactoryTuple {
 	type: string;
 	handle: number;
-	factory: vscode.DebugAdapterTrackerFactory;
+	factory: zycode.DebugAdapterTrackerFactory;
 }
 
-class MultiTracker implements vscode.DebugAdapterTracker {
+class MultiTracker implements zycode.DebugAdapterTracker {
 
-	constructor(private trackers: vscode.DebugAdapterTracker[]) {
+	constructor(private trackers: zycode.DebugAdapterTracker[]) {
 	}
 
 	onWillStartSession(): void {
@@ -983,10 +983,10 @@ class MultiTracker implements vscode.DebugAdapterTracker {
  */
 class DirectDebugAdapter extends AbstractDebugAdapter {
 
-	constructor(private implementation: vscode.DebugAdapter) {
+	constructor(private implementation: zycode.DebugAdapter) {
 		super();
 
-		implementation.onDidSendMessage((message: vscode.DebugProtocolMessage) => {
+		implementation.onDidSendMessage((message: zycode.DebugProtocolMessage) => {
 			this.acceptMessage(message as DebugProtocol.ProtocolMessage);
 		});
 	}

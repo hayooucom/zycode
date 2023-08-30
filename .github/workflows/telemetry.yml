@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - name: 'Run vscode-telemetry-extractor'
-        run: 'npx --package=@vscode/telemetry-extractor --yes vscode-telemetry-extractor -s .'
+      - name: 'Run zycode-telemetry-extractor'
+        run: 'npx --package=@zycode/telemetry-extractor --yes zycode-telemetry-extractor -s .'
         env:
           GITHUB_TOKEN: ${{secrets.VSCODE_ISSUE_TRIAGE_BOT_PAT}}

@@ -121,7 +121,7 @@ export class MarkerDecorationsService extends Disposable implements IMarkerDecor
 		// clean up markers for internal, transient models
 		if (model.uri.scheme === Schemas.inMemory
 			|| model.uri.scheme === Schemas.internal
-			|| model.uri.scheme === Schemas.vscode) {
+			|| model.uri.scheme === Schemas.zycode) {
 			this._markerService?.read({ resource: model.uri }).map(marker => marker.owner).forEach(owner => this._markerService.remove(owner, [model.uri]));
 		}
 	}

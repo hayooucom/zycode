@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { UriComponents, URI } from 'vs/base/common/uri';
 import { createDecorator } from 'vs/platform/instantiation/common/instantiation';
 import { ExtHostTimelineShape, MainThreadTimelineShape, IMainContext, MainContext } from 'vs/workbench/api/common/extHost.protocol';
@@ -19,7 +19,7 @@ import { isString } from 'vs/base/common/types';
 
 export interface IExtHostTimeline extends ExtHostTimelineShape {
 	readonly _serviceBrand: undefined;
-	$getTimeline(id: string, uri: UriComponents, options: vscode.TimelineOptions, token: vscode.CancellationToken): Promise<Timeline | undefined>;
+	$getTimeline(id: string, uri: UriComponents, options: zycode.TimelineOptions, token: zycode.CancellationToken): Promise<Timeline | undefined>;
 }
 
 export const IExtHostTimeline = createDecorator<IExtHostTimeline>('IExtHostTimeline');
@@ -31,7 +31,7 @@ export class ExtHostTimeline implements IExtHostTimeline {
 
 	private _providers = new Map<string, { provider: TimelineProvider; extension: ExtensionIdentifier }>();
 
-	private _itemsBySourceAndUriMap = new Map<string, Map<string | undefined, Map<string, vscode.TimelineItem>>>();
+	private _itemsBySourceAndUriMap = new Map<string, Map<string | undefined, Map<string, zycode.TimelineItem>>>();
 
 	constructor(
 		mainContext: IMainContext,
@@ -54,12 +54,12 @@ export class ExtHostTimeline implements IExtHostTimeline {
 		});
 	}
 
-	async $getTimeline(id: string, uri: UriComponents, options: vscode.TimelineOptions, token: vscode.CancellationToken): Promise<Timeline | undefined> {
+	async $getTimeline(id: string, uri: UriComponents, options: zycode.TimelineOptions, token: zycode.CancellationToken): Promise<Timeline | undefined> {
 		const item = this._providers.get(id);
 		return item?.provider.provideTimeline(URI.revive(uri), options, token);
 	}
 
-	registerTimelineProvider(scheme: string | string[], provider: vscode.TimelineProvider, extensionId: ExtensionIdentifier, commandConverter: CommandsConverter): IDisposable {
+	registerTimelineProvider(scheme: string | string[], provider: zycode.TimelineProvider, extensionId: ExtensionIdentifier, commandConverter: CommandsConverter): IDisposable {
 		const timelineDisposables = new DisposableStore();
 
 		const convertTimelineItem = this.convertTimelineItem(provider.id, commandConverter, timelineDisposables).bind(this);
@@ -110,7 +110,7 @@ export class ExtHostTimeline implements IExtHostTimeline {
 
 	private convertTimelineItem(source: string, commandConverter: CommandsConverter, disposables: DisposableStore) {
 		return (uri: URI, options?: TimelineOptions) => {
-			let items: Map<string, vscode.TimelineItem> | undefined;
+			let items: Map<string, zycode.TimelineItem> | undefined;
 			if (options?.cacheResults) {
 				let itemsByUri = this._itemsBySourceAndUriMap.get(source);
 				if (itemsByUri === undefined) {
@@ -126,7 +126,7 @@ export class ExtHostTimeline implements IExtHostTimeline {
 				}
 			}
 
-			return (item: vscode.TimelineItem): TimelineItem => {
+			return (item: zycode.TimelineItem): TimelineItem => {
 				const { iconPath, ...props } = item;
 
 				const handle = `${source}|${item.id ?? item.timestamp}`;

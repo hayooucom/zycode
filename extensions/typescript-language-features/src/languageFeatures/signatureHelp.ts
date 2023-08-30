@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import type * as Proto from '../tsServer/protocol/protocol';
 import * as typeConverters from '../typeConverters';
@@ -11,7 +11,7 @@ import { ClientCapability, ITypeScriptServiceClient } from '../typescriptService
 import { conditionalRegistration, requireSomeCapability } from './util/dependentRegistration';
 import * as Previewer from './util/textRendering';
 
-class TypeScriptSignatureHelpProvider implements vscode.SignatureHelpProvider {
+class TypeScriptSignatureHelpProvider implements zycode.SignatureHelpProvider {
 
 	public static readonly triggerCharacters = ['(', ',', '<'];
 	public static readonly retriggerCharacters = [')'];
@@ -21,11 +21,11 @@ class TypeScriptSignatureHelpProvider implements vscode.SignatureHelpProvider {
 	) { }
 
 	public async provideSignatureHelp(
-		document: vscode.TextDocument,
-		position: vscode.Position,
-		token: vscode.CancellationToken,
-		context: vscode.SignatureHelpContext,
-	): Promise<vscode.SignatureHelp | undefined> {
+		document: zycode.TextDocument,
+		position: zycode.Position,
+		token: zycode.CancellationToken,
+		context: zycode.SignatureHelpContext,
+	): Promise<zycode.SignatureHelp | undefined> {
 		const filepath = this.client.toOpenTsFilePath(document);
 		if (!filepath) {
 			return undefined;
@@ -41,7 +41,7 @@ class TypeScriptSignatureHelpProvider implements vscode.SignatureHelpProvider {
 		}
 
 		const info = response.body;
-		const result = new vscode.SignatureHelp();
+		const result = new zycode.SignatureHelp();
 		result.signatures = info.items.map(signature => this.convertSignature(signature, document.uri));
 		result.activeSignature = this.getActiveSignature(context, info, result.signatures);
 		result.activeParameter = this.getActiveParameter(info);
@@ -49,7 +49,7 @@ class TypeScriptSignatureHelpProvider implements vscode.SignatureHelpProvider {
 		return result;
 	}
 
-	private getActiveSignature(context: vscode.SignatureHelpContext, info: Proto.SignatureHelpItems, signatures: readonly vscode.SignatureInformation[]): number {
+	private getActiveSignature(context: zycode.SignatureHelpContext, info: Proto.SignatureHelpItems, signatures: readonly zycode.SignatureInformation[]): number {
 		// Try matching the previous active signature's label to keep it selected
 		const previouslyActiveSignature = context.activeSignatureHelp?.signatures[context.activeSignatureHelp.activeSignature];
 		if (previouslyActiveSignature && context.isRetrigger) {
@@ -70,8 +70,8 @@ class TypeScriptSignatureHelpProvider implements vscode.SignatureHelpProvider {
 		return info.argumentIndex;
 	}
 
-	private convertSignature(item: Proto.SignatureHelpItem, baseUri: vscode.Uri) {
-		const signature = new vscode.SignatureInformation(
+	private convertSignature(item: Proto.SignatureHelpItem, baseUri: zycode.Uri) {
+		const signature = new zycode.SignatureInformation(
 			Previewer.asPlainTextWithLinks(item.prefixDisplayParts, this.client),
 			Previewer.documentationToMarkdown(item.documentation, item.tags.filter(x => x.name !== 'param'), this.client, baseUri));
 
@@ -82,7 +82,7 @@ class TypeScriptSignatureHelpProvider implements vscode.SignatureHelpProvider {
 			const label = Previewer.asPlainTextWithLinks(parameter.displayParts, this.client);
 
 			signature.parameters.push(
-				new vscode.ParameterInformation(
+				new zycode.ParameterInformation(
 					[textIndex, textIndex + label.length],
 					Previewer.documentationToMarkdown(parameter.documentation, [], this.client, baseUri)));
 
@@ -100,9 +100,9 @@ class TypeScriptSignatureHelpProvider implements vscode.SignatureHelpProvider {
 	}
 }
 
-function toTsTriggerReason(context: vscode.SignatureHelpContext): Proto.SignatureHelpTriggerReason {
+function toTsTriggerReason(context: zycode.SignatureHelpContext): Proto.SignatureHelpTriggerReason {
 	switch (context.triggerKind) {
-		case vscode.SignatureHelpTriggerKind.TriggerCharacter:
+		case zycode.SignatureHelpTriggerKind.TriggerCharacter:
 			if (context.triggerCharacter) {
 				if (context.isRetrigger) {
 					return { kind: 'retrigger', triggerCharacter: context.triggerCharacter as any };
@@ -113,10 +113,10 @@ function toTsTriggerReason(context: vscode.SignatureHelpContext): Proto.Signatur
 				return { kind: 'invoked' };
 			}
 
-		case vscode.SignatureHelpTriggerKind.ContentChange:
+		case zycode.SignatureHelpTriggerKind.ContentChange:
 			return context.isRetrigger ? { kind: 'retrigger' } : { kind: 'invoked' };
 
-		case vscode.SignatureHelpTriggerKind.Invoke:
+		case zycode.SignatureHelpTriggerKind.Invoke:
 		default:
 			return { kind: 'invoked' };
 	}
@@ -128,7 +128,7 @@ export function register(
 	return conditionalRegistration([
 		requireSomeCapability(client, ClientCapability.EnhancedSyntax, ClientCapability.Semantic),
 	], () => {
-		return vscode.languages.registerSignatureHelpProvider(selector.syntax,
+		return zycode.languages.registerSignatureHelpProvider(selector.syntax,
 			new TypeScriptSignatureHelpProvider(client), {
 			triggerCharacters: TypeScriptSignatureHelpProvider.triggerCharacters,
 			retriggerCharacters: TypeScriptSignatureHelpProvider.retriggerCharacters

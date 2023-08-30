@@ -29,7 +29,7 @@ export const serverOptions: OptionDescriptions<Required<ServerParsedArgs>> = {
 	'server-data-dir': { type: 'string', cat: 'o', description: nls.localize('serverDataDir', "Specifies the directory that server data is kept in.") },
 	'telemetry-level': { type: 'string', cat: 'o', args: 'level', description: nls.localize('telemetry-level', "Sets the initial telemetry level. Valid levels are: 'off', 'crash', 'error' and 'all'. If not specified, the server will send telemetry until a client connects, it will then use the clients telemetry setting. Setting this to 'off' is equivalent to --disable-telemetry") },
 
-	/* ----- vs code options ---	-- */
+	/* ----- zy code options ---	-- */
 
 	'user-data-dir': OPTIONS['user-data-dir'],
 	'enable-smoke-test-driver': OPTIONS['enable-smoke-test-driver'],
@@ -40,7 +40,7 @@ export const serverOptions: OptionDescriptions<Required<ServerParsedArgs>> = {
 	'logsPath': OPTIONS['logsPath'],
 	'force-disable-user-env': OPTIONS['force-disable-user-env'],
 
-	/* ----- vs code web options ----- */
+	/* ----- zy code web options ----- */
 
 	'folder': { type: 'string', deprecationMessage: 'No longer supported. Folder needs to be provided in the browser URL or with `default-folder`.' },
 	'workspace': { type: 'string', deprecationMessage: 'No longer supported. Workspace needs to be provided in the browser URL or with `default-workspace`.' },
@@ -119,7 +119,7 @@ export interface ServerParsedArgs {
 	 * The contents of the file will be used as the connection token. Use only `[0-9A-Z\-]` as contents in the file.
 	 * The file can optionally end in a `\n` which will be ignored.
 	 *
-	 * This secret must be communicated to any vscode instance via the resolver or embedder API.
+	 * This secret must be communicated to any zycode instance via the resolver or embedder API.
 	 */
 	'connection-token-file'?: string;
 
@@ -141,7 +141,7 @@ export interface ServerParsedArgs {
 
 	'disable-workspace-trust'?: boolean;
 
-	/* ----- vs code options ----- */
+	/* ----- zy code options ----- */
 
 	'user-data-dir'?: string;
 
@@ -155,7 +155,7 @@ export interface ServerParsedArgs {
 
 	'force-disable-user-env'?: boolean;
 
-	/* ----- vs code web options ----- */
+	/* ----- zy code web options ----- */
 
 	'default-workspace'?: string;
 	'default-folder'?: string;

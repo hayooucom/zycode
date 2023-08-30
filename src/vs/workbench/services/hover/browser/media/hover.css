@@ -11,11 +11,11 @@
 	z-index: 40;
 	overflow: hidden;
 	max-width: 700px;
-	background: var(--vscode-editorHoverWidget-background);
-	border: 1px solid var(--vscode-editorHoverWidget-border);
+	background: var(--zycode-editorHoverWidget-background);
+	border: 1px solid var(--zycode-editorHoverWidget-border);
 	border-radius: 3px;
-	color: var(--vscode-editorHoverWidget-foreground);
-	box-shadow: 0 2px 8px var(--vscode-widget-shadow);
+	color: var(--zycode-editorHoverWidget-foreground);
+	box-shadow: 0 2px 8px var(--zycode-widget-shadow);
 }
 
 .monaco-workbench .workbench-hover hr {
@@ -35,14 +35,14 @@
 }
 
 .monaco-workbench .workbench-hover-container.locked .workbench-hover {
-	outline: 1px solid var(--vscode-editorHoverWidget-border);
+	outline: 1px solid var(--zycode-editorHoverWidget-border);
 }
 .monaco-workbench .workbench-hover-container.locked .workbench-hover:focus,
 .monaco-workbench .workbench-hover-lock:focus {
-	outline: 1px solid var(--vscode-focusBorder);
+	outline: 1px solid var(--zycode-focusBorder);
 }
 .monaco-workbench .workbench-hover-container.locked .workbench-hover-lock:hover {
-	background: var(--vscode-toolbar-hoverBackground);
+	background: var(--zycode-toolbar-hoverBackground);
 }
 
 .monaco-workbench .workbench-hover-pointer {
@@ -57,9 +57,9 @@
 	position: absolute;
 	width: 5px;
 	height: 5px;
-	background-color: var(--vscode-editorHoverWidget-background);
-	border-right: 1px solid var(--vscode-editorHoverWidget-border);
-	border-bottom: 1px solid var(--vscode-editorHoverWidget-border);
+	background-color: var(--zycode-editorHoverWidget-background);
+	border-right: 1px solid var(--zycode-editorHoverWidget-border);
+	border-bottom: 1px solid var(--zycode-editorHoverWidget-border);
 }
 .monaco-workbench .locked .workbench-hover-pointer:after {
 	width: 4px;
@@ -90,27 +90,27 @@
 }
 
 .monaco-workbench .workbench-hover a {
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 }
 
 .monaco-workbench .workbench-hover a:focus {
 	outline: 1px solid;
 	outline-offset: -1px;
 	text-decoration: underline;
-	outline-color: var(--vscode-focusBorder);
+	outline-color: var(--zycode-focusBorder);
 }
 
 .monaco-workbench .workbench-hover a:hover,
 .monaco-workbench .workbench-hover a:active {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 }
 
 .monaco-workbench .workbench-hover code {
-	background: var(--vscode-textCodeBlock-background);
+	background: var(--zycode-textCodeBlock-background);
 }
 
 .monaco-workbench .workbench-hover .hover-row .actions {
-	background: var(--vscode-editorHoverWidget-statusBarBackground);
+	background: var(--zycode-editorHoverWidget-statusBarBackground);
 }
 
 .monaco-workbench .workbench-hover.right-aligned {

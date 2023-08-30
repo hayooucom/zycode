@@ -20,7 +20,7 @@ import * as convert from 'vs/workbench/api/common/extHostTypeConverters';
 import { Location, Position, Range, TestMessage, TestResultState, TestRunProfileKind, TestRunRequest as TestRunRequestImpl, TestTag } from 'vs/workbench/api/common/extHostTypes';
 import { TestId } from 'vs/workbench/contrib/testing/common/testId';
 import { TestDiffOpType, TestItemExpandState, TestMessageType, TestsDiff } from 'vs/workbench/contrib/testing/common/testTypes';
-import type { TestItem, TestRunRequest } from 'vscode';
+import type { TestItem, TestRunRequest } from 'zycode';
 
 const simplify = (item: TestItem) => ({
 	id: item.id,

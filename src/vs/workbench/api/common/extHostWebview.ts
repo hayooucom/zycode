@@ -18,10 +18,10 @@ import { deserializeWebviewMessage, serializeWebviewMessage } from 'vs/workbench
 import { IExtHostWorkspace } from 'vs/workbench/api/common/extHostWorkspace';
 import { asWebviewUri, webviewGenericCspSource, WebviewRemoteInfo } from 'vs/workbench/contrib/webview/common/webview';
 import { SerializableObjectWithBuffers } from 'vs/workbench/services/extensions/common/proxyIdentifier';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as extHostProtocol from './extHost.protocol';
 
-export class ExtHostWebview implements vscode.Webview {
+export class ExtHostWebview implements zycode.Webview {
 
 	readonly #handle: extHostProtocol.WebviewHandle;
 	readonly #proxy: extHostProtocol.MainThreadWebviewsShape;
@@ -32,7 +32,7 @@ export class ExtHostWebview implements vscode.Webview {
 	readonly #extension: IExtensionDescription;
 
 	#html: string = '';
-	#options: vscode.WebviewOptions;
+	#options: zycode.WebviewOptions;
 	#isDisposed: boolean = false;
 	#hasCalledAsWebviewUri = false;
 
@@ -42,7 +42,7 @@ export class ExtHostWebview implements vscode.Webview {
 	constructor(
 		handle: extHostProtocol.WebviewHandle,
 		proxy: extHostProtocol.MainThreadWebviewsShape,
-		options: vscode.WebviewOptions,
+		options: zycode.WebviewOptions,
 		remoteInfo: WebviewRemoteInfo,
 		workspace: IExtHostWorkspace | undefined,
 		extension: IExtensionDescription,
@@ -74,7 +74,7 @@ export class ExtHostWebview implements vscode.Webview {
 		this._onMessageEmitter.dispose();
 	}
 
-	public asWebviewUri(resource: vscode.Uri): vscode.Uri {
+	public asWebviewUri(resource: zycode.Uri): zycode.Uri {
 		this.#hasCalledAsWebviewUri = true;
 		return asWebviewUri(resource, this.#remoteInfo);
 	}
@@ -103,21 +103,21 @@ export class ExtHostWebview implements vscode.Webview {
 		this.assertNotDisposed();
 		if (this.#html !== value) {
 			this.#html = value;
-			if (this.#shouldRewriteOldResourceUris && !this.#hasCalledAsWebviewUri && /(["'])vscode-resource:([^\s'"]+?)(["'])/i.test(value)) {
+			if (this.#shouldRewriteOldResourceUris && !this.#hasCalledAsWebviewUri && /(["'])zycode-resource:([^\s'"]+?)(["'])/i.test(value)) {
 				this.#hasCalledAsWebviewUri = true;
-				this.#deprecationService.report('Webview vscode-resource: uris', this.#extension,
-					`Please migrate to use the 'webview.asWebviewUri' api instead: https://aka.ms/vscode-webview-use-aswebviewuri`);
+				this.#deprecationService.report('Webview zycode-resource: uris', this.#extension,
+					`Please migrate to use the 'webview.asWebviewUri' api instead: https://aka.ms/zycode-webview-use-aswebviewuri`);
 			}
 			this.#proxy.$setHtml(this.#handle, this.rewriteOldResourceUrlsIfNeeded(value));
 		}
 	}
 
-	public get options(): vscode.WebviewOptions {
+	public get options(): zycode.WebviewOptions {
 		this.assertNotDisposed();
 		return this.#options;
 	}
 
-	public set options(newOptions: vscode.WebviewOptions) {
+	public set options(newOptions: zycode.WebviewOptions) {
 		this.assertNotDisposed();
 
 		if (!objects.equals(this.#options, newOptions)) {
@@ -149,7 +149,7 @@ export class ExtHostWebview implements vscode.Webview {
 		const isRemote = this.#extension.extensionLocation?.scheme === Schemas.vscodeRemote;
 		const remoteAuthority = this.#extension.extensionLocation.scheme === Schemas.vscodeRemote ? this.#extension.extensionLocation.authority : undefined;
 		return value
-			.replace(/(["'])(?:vscode-resource):(\/\/([^\s\/'"]+?)(?=\/))?([^\s'"]+?)(["'])/gi, (_match, startQuote, _1, scheme, path, endQuote) => {
+			.replace(/(["'])(?:zycode-resource):(\/\/([^\s\/'"]+?)(?=\/))?([^\s'"]+?)(["'])/gi, (_match, startQuote, _1, scheme, path, endQuote) => {
 				const uri = URI.from({
 					scheme: scheme || 'file',
 					path: decodeURIComponent(path),
@@ -157,7 +157,7 @@ export class ExtHostWebview implements vscode.Webview {
 				const webviewUri = asWebviewUri(uri, { isRemote, authority: remoteAuthority }).toString();
 				return `${startQuote}${webviewUri}${endQuote}`;
 			})
-			.replace(/(["'])(?:vscode-webview-resource):(\/\/[^\s\/'"]+\/([^\s\/'"]+?)(?=\/))?([^\s'"]+?)(["'])/gi, (_match, startQuote, _1, scheme, path, endQuote) => {
+			.replace(/(["'])(?:zycode-webview-resource):(\/\/[^\s\/'"]+\/([^\s\/'"]+?)(?=\/))?([^\s'"]+?)(["'])/gi, (_match, startQuote, _1, scheme, path, endQuote) => {
 				const uri = URI.from({
 					scheme: scheme || 'file',
 					path: decodeURIComponent(path),
@@ -170,7 +170,7 @@ export class ExtHostWebview implements vscode.Webview {
 
 export function shouldSerializeBuffersForPostMessage(extension: IExtensionDescription): boolean {
 	try {
-		const version = normalizeVersion(parseVersion(extension.engines.vscode));
+		const version = normalizeVersion(parseVersion(extension.engines.zycode));
 		return !!version && version.majorBase >= 1 && version.minorBase >= 57;
 	} catch {
 		return false;
@@ -179,7 +179,7 @@ export function shouldSerializeBuffersForPostMessage(extension: IExtensionDescri
 
 function shouldTryRewritingOldResourceUris(extension: IExtensionDescription): boolean {
 	try {
-		const version = normalizeVersion(parseVersion(extension.engines.vscode));
+		const version = normalizeVersion(parseVersion(extension.engines.zycode));
 		if (!version) {
 			return false;
 		}
@@ -222,7 +222,7 @@ export class ExtHostWebviews implements extHostProtocol.ExtHostWebviewsShape {
 		_handle: extHostProtocol.WebviewHandle,
 		extensionId: string
 	): void {
-		this._logService.warn(`${extensionId} created a webview without a content security policy: https://aka.ms/vscode-webview-missing-csp`);
+		this._logService.warn(`${extensionId} created a webview without a content security policy: https://aka.ms/zycode-webview-missing-csp`);
 	}
 
 	public createNewWebview(handle: string, options: extHostProtocol.IWebviewContentOptions, extension: IExtensionDescription): ExtHostWebview {
@@ -250,7 +250,7 @@ export function toExtensionData(extension: IExtensionDescription): extHostProtoc
 export function serializeWebviewOptions(
 	extension: IExtensionDescription,
 	workspace: IExtHostWorkspace | undefined,
-	options: vscode.WebviewOptions,
+	options: zycode.WebviewOptions,
 ): extHostProtocol.IWebviewContentOptions {
 	return {
 		enableCommandUris: options.enableCommandUris,
@@ -261,7 +261,7 @@ export function serializeWebviewOptions(
 	};
 }
 
-function reviveOptions(options: extHostProtocol.IWebviewContentOptions): vscode.WebviewOptions {
+function reviveOptions(options: extHostProtocol.IWebviewContentOptions): zycode.WebviewOptions {
 	return {
 		enableCommandUris: options.enableCommandUris,
 		enableScripts: options.enableScripts,

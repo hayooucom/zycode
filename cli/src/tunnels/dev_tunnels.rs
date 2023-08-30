@@ -210,8 +210,8 @@ impl ActiveTunnel {
 	}
 }
 
-const VSCODE_CLI_TUNNEL_TAG: &str = "vscode-server-launcher";
-const VSCODE_CLI_FORWARDING_TAG: &str = "vscode-port-forward";
+const VSCODE_CLI_TUNNEL_TAG: &str = "zycode-server-launcher";
+const VSCODE_CLI_FORWARDING_TAG: &str = "zycode-port-forward";
 const MAX_TUNNEL_NAME_LENGTH: usize = 20;
 
 fn get_host_token_from_tunnel(tunnel: &Tunnel) -> String {

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { officeScript, vscodeNotebookCell } from '../configuration/fileSchemes';
 import * as languageModeIds from '../configuration/languageIds';
 import * as typeConverters from '../typeConverters';
@@ -69,7 +69,7 @@ class BufferSynchronizer {
 
 	constructor(
 		private readonly client: ITypeScriptServiceClient,
-		pathNormalizer: (path: vscode.Uri) => string | undefined,
+		pathNormalizer: (path: zycode.Uri) => string | undefined,
 		onCaseInsensitiveFileSystem: boolean
 	) {
 		this._pending = new ResourceMap<BufferOperation>(pathNormalizer, {
@@ -77,7 +77,7 @@ class BufferSynchronizer {
 		});
 	}
 
-	public open(resource: vscode.Uri, args: Proto.OpenRequestArgs) {
+	public open(resource: zycode.Uri, args: Proto.OpenRequestArgs) {
 		if (this.supportsBatching) {
 			this.updatePending(resource, new OpenOperation(args, args.scriptKindName));
 		} else {
@@ -88,7 +88,7 @@ class BufferSynchronizer {
 	/**
 	 * @return Was the buffer open?
 	 */
-	public close(resource: vscode.Uri, filepath: string, scriptKind: ScriptKind | undefined): boolean {
+	public close(resource: zycode.Uri, filepath: string, scriptKind: ScriptKind | undefined): boolean {
 		if (this.supportsBatching) {
 			return this.updatePending(resource, new CloseOperation(filepath, scriptKind));
 		} else {
@@ -98,7 +98,7 @@ class BufferSynchronizer {
 		}
 	}
 
-	public change(resource: vscode.Uri, filepath: string, events: readonly vscode.TextDocumentContentChangeEvent[]) {
+	public change(resource: zycode.Uri, filepath: string, events: readonly zycode.TextDocumentContentChangeEvent[]) {
 		if (!events.length) {
 			return;
 		}
@@ -162,7 +162,7 @@ class BufferSynchronizer {
 		return this.client.apiVersion.gte(API.v340);
 	}
 
-	private updatePending(resource: vscode.Uri, op: BufferOperation): boolean {
+	private updatePending(resource: zycode.Uri, op: BufferOperation): boolean {
 		switch (op.type) {
 			case BufferOperationType.Close: {
 				const existing = this._pending.get(resource);
@@ -191,7 +191,7 @@ class SyncedBuffer {
 	private state = BufferState.Initial;
 
 	constructor(
-		private readonly document: vscode.TextDocument,
+		private readonly document: zycode.TextDocument,
 		public readonly filepath: string,
 		private readonly client: ITypeScriptServiceClient,
 		private readonly synchronizer: BufferSynchronizer,
@@ -220,7 +220,7 @@ class SyncedBuffer {
 		this.state = BufferState.Open;
 	}
 
-	private getProjectRootPath(resource: vscode.Uri): string | undefined {
+	private getProjectRootPath(resource: zycode.Uri): string | undefined {
 		const workspaceRoot = this.client.getWorkspaceRootForResource(resource);
 		if (workspaceRoot) {
 			const tsRoot = this.client.toTsFilePath(workspaceRoot);
@@ -230,7 +230,7 @@ class SyncedBuffer {
 		return resource.scheme === officeScript ? '/' : undefined;
 	}
 
-	public get resource(): vscode.Uri {
+	public get resource(): zycode.Uri {
 		return this.document.uri;
 	}
 
@@ -254,7 +254,7 @@ class SyncedBuffer {
 		return this.synchronizer.close(this.resource, this.filepath, mode2ScriptKind(this.document.languageId));
 	}
 
-	public onContentChanged(events: readonly vscode.TextDocumentContentChangeEvent[]): void {
+	public onContentChanged(events: readonly zycode.TextDocumentContentChangeEvent[]): void {
 		if (this.state !== BufferState.Open) {
 			console.error(`Unexpected buffer state: ${this.state}`);
 		}
@@ -266,7 +266,7 @@ class SyncedBuffer {
 class SyncedBufferMap extends ResourceMap<SyncedBuffer> {
 
 	public getForPath(filePath: string): SyncedBuffer | undefined {
-		return this.get(vscode.Uri.file(filePath));
+		return this.get(zycode.Uri.file(filePath));
 	}
 
 	public get allBuffers(): Iterable<SyncedBuffer> {
@@ -299,7 +299,7 @@ class GetErrRequest {
 	}
 
 	private _done: boolean = false;
-	private readonly _token: vscode.CancellationTokenSource = new vscode.CancellationTokenSource();
+	private readonly _token: zycode.CancellationTokenSource = new zycode.CancellationTokenSource();
 
 	private constructor(
 		private readonly client: ITypeScriptServiceClient,
@@ -361,31 +361,31 @@ class GetErrRequest {
 
 class TabResourceTracker extends Disposable {
 
-	private readonly _onDidChange = this._register(new vscode.EventEmitter<{
-		readonly closed: Iterable<vscode.Uri>;
-		readonly opened: Iterable<vscode.Uri>;
+	private readonly _onDidChange = this._register(new zycode.EventEmitter<{
+		readonly closed: Iterable<zycode.Uri>;
+		readonly opened: Iterable<zycode.Uri>;
 	}>());
 	public readonly onDidChange = this._onDidChange.event;
 
-	private readonly _tabResources: ResourceMap<{ readonly tabs: Set<vscode.Tab> }>;
+	private readonly _tabResources: ResourceMap<{ readonly tabs: Set<zycode.Tab> }>;
 
 	constructor(
-		normalizePath: (resource: vscode.Uri) => string | undefined,
+		normalizePath: (resource: zycode.Uri) => string | undefined,
 		config: {
 			readonly onCaseInsensitiveFileSystem: boolean;
 		},
 	) {
 		super();
 
-		this._tabResources = new ResourceMap<{ readonly tabs: Set<vscode.Tab> }>(normalizePath, config);
+		this._tabResources = new ResourceMap<{ readonly tabs: Set<zycode.Tab> }>(normalizePath, config);
 
-		for (const tabGroup of vscode.window.tabGroups.all) {
+		for (const tabGroup of zycode.window.tabGroups.all) {
 			for (const tab of tabGroup.tabs) {
 				this.add(tab);
 			}
 		}
 
-		this._register(vscode.window.tabGroups.onDidChangeTabs(e => {
+		this._register(zycode.window.tabGroups.onDidChangeTabs(e => {
 			const closed = e.closed.flatMap(tab => this.delete(tab));
 			const opened = e.opened.flatMap(tab => this.add(tab));
 			if (closed.length || opened.length) {
@@ -394,9 +394,9 @@ class TabResourceTracker extends Disposable {
 		}));
 	}
 
-	public has(resource: vscode.Uri): boolean {
+	public has(resource: zycode.Uri): boolean {
 		if (resource.scheme === vscodeNotebookCell) {
-			const notebook = vscode.workspace.notebookDocuments.find(doc =>
+			const notebook = zycode.workspace.notebookDocuments.find(doc =>
 				doc.getCells().some(cell => cell.document.uri.toString() === resource.toString()));
 
 			return !!notebook && this.has(notebook.uri);
@@ -406,8 +406,8 @@ class TabResourceTracker extends Disposable {
 		return !!entry && entry.tabs.size > 0;
 	}
 
-	private add(tab: vscode.Tab): vscode.Uri[] {
-		const addedResources: vscode.Uri[] = [];
+	private add(tab: zycode.Tab): zycode.Uri[] {
+		const addedResources: zycode.Uri[] = [];
 		for (const uri of this.getResourcesForTab(tab)) {
 			const entry = this._tabResources.get(uri);
 			if (entry) {
@@ -420,8 +420,8 @@ class TabResourceTracker extends Disposable {
 		return addedResources;
 	}
 
-	private delete(tab: vscode.Tab): vscode.Uri[] {
-		const closedResources: vscode.Uri[] = [];
+	private delete(tab: zycode.Tab): zycode.Uri[] {
+		const closedResources: zycode.Uri[] = [];
 		for (const uri of this.getResourcesForTab(tab)) {
 			const entry = this._tabResources.get(uri);
 			if (!entry) {
@@ -437,12 +437,12 @@ class TabResourceTracker extends Disposable {
 		return closedResources;
 	}
 
-	private getResourcesForTab(tab: vscode.Tab): vscode.Uri[] {
-		if (tab.input instanceof vscode.TabInputText) {
+	private getResourcesForTab(tab: zycode.Tab): zycode.Uri[] {
+		if (tab.input instanceof zycode.TabInputText) {
 			return [tab.input.uri];
-		} else if (tab.input instanceof vscode.TabInputTextDiff) {
+		} else if (tab.input instanceof zycode.TabInputTextDiff) {
 			return [tab.input.original, tab.input.modified];
-		} else if (tab.input instanceof vscode.TabInputNotebook) {
+		} else if (tab.input instanceof zycode.TabInputNotebook) {
 			return [tab.input.uri];
 		} else {
 			return [];
@@ -479,7 +479,7 @@ export default class BufferSyncSupport extends Disposable {
 
 		this.diagnosticDelayer = new Delayer<any>(300);
 
-		const pathNormalizer = (path: vscode.Uri) => this.client.toTsFilePath(path);
+		const pathNormalizer = (path: zycode.Uri) => this.client.toTsFilePath(path);
 		this.syncedBuffers = new SyncedBufferMap(pathNormalizer, { onCaseInsensitiveFileSystem });
 		this.pendingDiagnostics = new PendingDiagnostics(pathNormalizer, { onCaseInsensitiveFileSystem });
 		this.synchronizer = new BufferSynchronizer(client, pathNormalizer, onCaseInsensitiveFileSystem);
@@ -507,13 +507,13 @@ export default class BufferSyncSupport extends Disposable {
 		}));
 
 		this.updateConfiguration();
-		vscode.workspace.onDidChangeConfiguration(this.updateConfiguration, this, this._disposables);
+		zycode.workspace.onDidChangeConfiguration(this.updateConfiguration, this, this._disposables);
 	}
 
-	private readonly _onDelete = this._register(new vscode.EventEmitter<vscode.Uri>());
+	private readonly _onDelete = this._register(new zycode.EventEmitter<zycode.Uri>());
 	public readonly onDelete = this._onDelete.event;
 
-	private readonly _onWillChange = this._register(new vscode.EventEmitter<vscode.Uri>());
+	private readonly _onWillChange = this._register(new zycode.EventEmitter<zycode.Uri>());
 	public readonly onWillChange = this._onWillChange.event;
 
 	public listen(): void {
@@ -521,10 +521,10 @@ export default class BufferSyncSupport extends Disposable {
 			return;
 		}
 		this.listening = true;
-		vscode.workspace.onDidOpenTextDocument(this.openTextDocument, this, this._disposables);
-		vscode.workspace.onDidCloseTextDocument(this.onDidCloseTextDocument, this, this._disposables);
-		vscode.workspace.onDidChangeTextDocument(this.onDidChangeTextDocument, this, this._disposables);
-		vscode.window.onDidChangeVisibleTextEditors(e => {
+		zycode.workspace.onDidOpenTextDocument(this.openTextDocument, this, this._disposables);
+		zycode.workspace.onDidCloseTextDocument(this.onDidCloseTextDocument, this, this._disposables);
+		zycode.workspace.onDidChangeTextDocument(this.onDidChangeTextDocument, this, this._disposables);
+		zycode.window.onDidChangeVisibleTextEditors(e => {
 			for (const { document } of e) {
 				const syncedBuffer = this.syncedBuffers.get(document.uri);
 				if (syncedBuffer) {
@@ -532,19 +532,19 @@ export default class BufferSyncSupport extends Disposable {
 				}
 			}
 		}, this, this._disposables);
-		vscode.workspace.textDocuments.forEach(this.openTextDocument, this);
+		zycode.workspace.textDocuments.forEach(this.openTextDocument, this);
 	}
 
-	public handles(resource: vscode.Uri): boolean {
+	public handles(resource: zycode.Uri): boolean {
 		return this.syncedBuffers.has(resource);
 	}
 
-	public ensureHasBuffer(resource: vscode.Uri): boolean {
+	public ensureHasBuffer(resource: zycode.Uri): boolean {
 		if (this.syncedBuffers.has(resource)) {
 			return true;
 		}
 
-		const existingDocument = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === resource.toString());
+		const existingDocument = zycode.workspace.textDocuments.find(doc => doc.uri.toString() === resource.toString());
 		if (existingDocument) {
 			return this.openTextDocument(existingDocument);
 		}
@@ -552,7 +552,7 @@ export default class BufferSyncSupport extends Disposable {
 		return false;
 	}
 
-	public toVsCodeResource(resource: vscode.Uri): vscode.Uri {
+	public toVsCodeResource(resource: zycode.Uri): zycode.Uri {
 		const filepath = this.client.toTsFilePath(resource);
 		for (const buffer of this.syncedBuffers.allBuffers) {
 			if (buffer.filepath === filepath) {
@@ -562,12 +562,12 @@ export default class BufferSyncSupport extends Disposable {
 		return resource;
 	}
 
-	public toResource(filePath: string): vscode.Uri {
+	public toResource(filePath: string): zycode.Uri {
 		const buffer = this.syncedBuffers.getForPath(filePath);
 		if (buffer) {
 			return buffer.resource;
 		}
-		return vscode.Uri.file(filePath);
+		return zycode.Uri.file(filePath);
 	}
 
 	public reset(): void {
@@ -583,7 +583,7 @@ export default class BufferSyncSupport extends Disposable {
 		}
 	}
 
-	public openTextDocument(document: vscode.TextDocument): boolean {
+	public openTextDocument(document: zycode.TextDocument): boolean {
 		if (!this.modeIds.has(document.languageId)) {
 			return false;
 		}
@@ -604,7 +604,7 @@ export default class BufferSyncSupport extends Disposable {
 		return true;
 	}
 
-	public closeResource(resource: vscode.Uri): void {
+	public closeResource(resource: zycode.Uri): void {
 		const syncedBuffer = this.syncedBuffers.get(resource);
 		if (!syncedBuffer) {
 			return;
@@ -638,11 +638,11 @@ export default class BufferSyncSupport extends Disposable {
 		this.synchronizer.beforeCommand(command);
 	}
 
-	private onDidCloseTextDocument(document: vscode.TextDocument): void {
+	private onDidCloseTextDocument(document: zycode.TextDocument): void {
 		this.closeResource(document.uri);
 	}
 
-	private onDidChangeTextDocument(e: vscode.TextDocumentChangeEvent): void {
+	private onDidChangeTextDocument(e: zycode.TextDocumentChangeEvent): void {
 		const syncedBuffer = this.syncedBuffers.get(e.document.uri);
 		if (!syncedBuffer) {
 			return;
@@ -670,7 +670,7 @@ export default class BufferSyncSupport extends Disposable {
 		this.triggerDiagnostics();
 	}
 
-	public getErr(resources: readonly vscode.Uri[]): any {
+	public getErr(resources: readonly zycode.Uri[]): any {
 		const handledResources = resources.filter(resource => this.handles(resource));
 		if (!handledResources.length) {
 			return;
@@ -701,7 +701,7 @@ export default class BufferSyncSupport extends Disposable {
 		return true;
 	}
 
-	public hasPendingDiagnostics(resource: vscode.Uri): boolean {
+	public hasPendingDiagnostics(resource: zycode.Uri): boolean {
 		return this.pendingDiagnostics.has(resource);
 	}
 
@@ -737,8 +737,8 @@ export default class BufferSyncSupport extends Disposable {
 	}
 
 	private updateConfiguration() {
-		const jsConfig = vscode.workspace.getConfiguration('javascript', null);
-		const tsConfig = vscode.workspace.getConfiguration('typescript', null);
+		const jsConfig = zycode.workspace.getConfiguration('javascript', null);
+		const tsConfig = zycode.workspace.getConfiguration('typescript', null);
 
 		this._validateJavaScript = jsConfig.get<boolean>('validate.enable', true);
 		this._validateTypeScript = tsConfig.get<boolean>('validate.enable', true);

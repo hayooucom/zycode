@@ -291,7 +291,7 @@ export class WebExtensionsScannerService extends Disposable implements IWebExten
 					continue;
 				}
 			}
-			/* Update preRelease flag in the cache - https://github.com/microsoft/vscode/issues/142831 */
+			/* Update preRelease flag in the cache - https://github.com/microsoft/zycode/issues/142831 */
 			if (webExtension.metadata?.isPreReleaseVersion && !webExtension.metadata?.preRelease) {
 				webExtension.metadata.preRelease = true;
 			}
@@ -747,7 +747,7 @@ export class WebExtensionsScannerService extends Disposable implements IWebExten
 				name,
 				publisher,
 				version: webExtension.version,
-				engines: { vscode: '*' },
+				engines: { zycode: '*' },
 			};
 		}
 

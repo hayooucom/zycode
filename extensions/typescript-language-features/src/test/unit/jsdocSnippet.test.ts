@@ -5,7 +5,7 @@
 
 import * as assert from 'assert';
 import 'mocha';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { templateToSnippet } from '../../languageFeatures/jsDocCompletions';
 import { joinLines } from '../testUtils';
 
@@ -13,7 +13,7 @@ suite('typescript.jsDocSnippet', () => {
 
 	setup(async () => {
 		// the tests assume that typescript features are registered
-		await vscode.extensions.getExtension('vscode.typescript-language-features')!.activate();
+		await zycode.extensions.getExtension('zycode.typescript-language-features')!.activate();
 	});
 
 	test('Should do nothing for single line input', async () => {

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { basename } from 'path';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import * as languageIds from './languageIds';
 
 export const enum DiagnosticLanguage {
@@ -65,10 +65,10 @@ export function isJsConfigOrTsConfigFileName(fileName: string): boolean {
 	return /^[jt]sconfig\.(.+\.)?json$/i.test(basename(fileName));
 }
 
-export function doesResourceLookLikeATypeScriptFile(resource: vscode.Uri): boolean {
+export function doesResourceLookLikeATypeScriptFile(resource: zycode.Uri): boolean {
 	return /\.(tsx?|mts|cts)$/i.test(resource.fsPath);
 }
 
-export function doesResourceLookLikeAJavaScriptFile(resource: vscode.Uri): boolean {
+export function doesResourceLookLikeAJavaScriptFile(resource: zycode.Uri): boolean {
 	return /\.(jsx?|mjs|cjs)$/i.test(resource.fsPath);
 }

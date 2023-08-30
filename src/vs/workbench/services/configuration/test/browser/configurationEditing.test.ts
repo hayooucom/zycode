@@ -47,7 +47,7 @@ import { UserDataProfileService } from 'vs/workbench/services/userDataProfile/co
 import { IUserDataProfileService } from 'vs/workbench/services/userDataProfile/common/userDataProfile';
 import { IBrowserWorkbenchEnvironmentService } from 'vs/workbench/services/environment/browser/environmentService';
 
-const ROOT = URI.file('tests').with({ scheme: 'vscode-tests' });
+const ROOT = URI.file('tests').with({ scheme: 'zycode-tests' });
 
 class ConfigurationCache implements IConfigurationCache {
 	needsCaching(resource: URI): boolean { return false; }

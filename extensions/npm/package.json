@@ -1,12 +1,12 @@
 {
   "name": "npm",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "displayName": "%displayName%",
   "description": "%description%",
   "version": "1.0.1",
   "license": "MIT",
   "engines": {
-    "vscode": "0.10.x"
+    "zycode": "0.10.x"
   },
   "icon": "images/npm_icon.png",
   "categories": [
@@ -341,7 +341,7 @@
     ],
     "terminalQuickFixes": [
         {
-          "id": "ms-vscode.npm-command",
+          "id": "ms-zycode.npm-command",
           "commandLineMatcher": "npm",
           "commandExitResult": "error",
           "outputMatcher": {
@@ -355,6 +355,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

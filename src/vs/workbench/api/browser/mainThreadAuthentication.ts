@@ -17,7 +17,7 @@ import { INotificationService } from 'vs/platform/notification/common/notificati
 import { fromNow } from 'vs/base/common/date';
 import { ActivationKind, IExtensionService } from 'vs/workbench/services/extensions/common/extensions';
 import { ITelemetryService } from 'vs/platform/telemetry/common/telemetry';
-import type { AuthenticationGetSessionOptions } from 'vscode';
+import type { AuthenticationGetSessionOptions } from 'zycode';
 
 interface TrustedExtensionsQuickPickItem {
 	label: string;

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 // @ts-check
 
-import * as vscodeGrammarUpdater from 'vscode-grammar-updater';
+import * as vscodeGrammarUpdater from 'zycode-grammar-updater';
 
 function patchGrammar(grammar) {
 	let patchCount = 0;
@@ -12,7 +12,7 @@ function patchGrammar(grammar) {
 	let visit = function (rule, parent) {
 		if (rule.name === 'source.js' || rule.name === 'source.css') {
 			if (parent.node[0].name !== 'punctuation.definition.string.end.html' && parent.parent && parent.parent.property === 'endCaptures') {
-				rule.name = rule.name + '-ignored-vscode';
+				rule.name = rule.name + '-ignored-zycode';
 				patchCount++;
 			}
 		}

@@ -628,7 +628,7 @@ export class UserDataProfileImportExportService extends Disposable implements IU
 			const view = await this.showProfilePreviewView(IMPORT_PROFILE_PREVIEW_VIEW, importedProfile.name, primaryAction, secondaryAction, false, userDataProfileImportState);
 			const message = new MarkdownString();
 			message.appendMarkdown(localize('preview profile message', "By default, extensions aren't installed when previewing a profile on the web. You can still install them manually before importing the profile. "));
-			message.appendMarkdown(`[${localize('learn more', "Learn more")}](https://aka.ms/vscode-extension-marketplace#_can-i-trust-extensions-from-the-marketplace).`);
+			message.appendMarkdown(`[${localize('learn more', "Learn more")}](https://aka.ms/zycode-extension-marketplace#_can-i-trust-extensions-from-the-marketplace).`);
 			view.setMessage(message);
 
 			const that = this;

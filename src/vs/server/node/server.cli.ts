@@ -89,7 +89,7 @@ const cliStdInFilePath = process.env['VSCODE_STDIN_FILE_PATH'] as string;
 
 export async function main(desc: ProductDescription, args: string[]): Promise<void> {
 	if (!cliPipe && !cliCommand) {
-		console.log('Command is only available in WSL or inside a Visual Studio Code terminal.');
+		console.log('Command is only available in WSL or inside a ZY Studio Code terminal.');
 		return;
 	}
 
@@ -138,13 +138,13 @@ export async function main(desc: ProductDescription, args: string[]): Promise<vo
 	if (parsedArgs['locate-shell-integration-path']) {
 		let file: string;
 		switch (parsedArgs['locate-shell-integration-path']) {
-			// Usage: `[[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path bash)"`
+			// Usage: `[[ "$TERM_PROGRAM" == "zycode" ]] && . "$(code --locate-shell-integration-path bash)"`
 			case 'bash': file = 'shellIntegration-bash.sh'; break;
-			// Usage: `if ($env:TERM_PROGRAM -eq "vscode") { . "$(code --locate-shell-integration-path pwsh)" }`
+			// Usage: `if ($env:TERM_PROGRAM -eq "zycode") { . "$(code --locate-shell-integration-path pwsh)" }`
 			case 'pwsh': file = 'shellIntegration.ps1'; break;
-			// Usage: `[[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"`
+			// Usage: `[[ "$TERM_PROGRAM" == "zycode" ]] && . "$(code --locate-shell-integration-path zsh)"`
 			case 'zsh': file = 'shellIntegration-rc.zsh'; break;
-			// Usage: `string match -q "$TERM_PROGRAM" "vscode"; and . (code --locate-shell-integration-path fish)`
+			// Usage: `string match -q "$TERM_PROGRAM" "zycode"; and . (code --locate-shell-integration-path fish)`
 			case 'fish': file = 'fish_xdg_data/fish/vendor_conf.d/shellIntegration.fish'; break;
 			default: throw new Error('Error using --locate-shell-integration-path: Invalid shell type');
 		}
@@ -458,7 +458,7 @@ function translatePath(input: string, mapFileUri: (input: string) => string, fol
 }
 
 function mapFileToRemoteUri(uri: string): string {
-	return uri.replace(/^file:\/\//, 'vscode-remote://' + cliRemoteAuthority);
+	return uri.replace(/^file:\/\//, 'zycode-remote://' + cliRemoteAuthority);
 }
 
 const [, , productName, version, commit, executableName, ...remainingArgs] = process.argv;

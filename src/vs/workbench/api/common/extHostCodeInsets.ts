@@ -9,14 +9,14 @@ import { IExtensionDescription } from 'vs/platform/extensions/common/extensions'
 import { ExtHostTextEditor } from 'vs/workbench/api/common/extHostTextEditor';
 import { ExtHostEditors } from 'vs/workbench/api/common/extHostTextEditors';
 import { asWebviewUri, webviewGenericCspSource, WebviewRemoteInfo } from 'vs/workbench/contrib/webview/common/webview';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ExtHostEditorInsetsShape, MainThreadEditorInsetsShape } from './extHost.protocol';
 
 export class ExtHostEditorInsets implements ExtHostEditorInsetsShape {
 
 	private _handlePool = 0;
 	private _disposables = new DisposableStore();
-	private _insets = new Map<number, { editor: vscode.TextEditor; inset: vscode.WebviewEditorInset; onDidReceiveMessage: Emitter<any> }>();
+	private _insets = new Map<number, { editor: zycode.TextEditor; inset: zycode.WebviewEditorInset; onDidReceiveMessage: Emitter<any> }>();
 
 	constructor(
 		private readonly _proxy: MainThreadEditorInsetsShape,
@@ -40,7 +40,7 @@ export class ExtHostEditorInsets implements ExtHostEditorInsetsShape {
 		this._disposables.dispose();
 	}
 
-	createWebviewEditorInset(editor: vscode.TextEditor, line: number, height: number, options: vscode.WebviewOptions | undefined, extension: IExtensionDescription): vscode.WebviewEditorInset {
+	createWebviewEditorInset(editor: zycode.TextEditor, line: number, height: number, options: zycode.WebviewOptions | undefined, extension: IExtensionDescription): zycode.WebviewEditorInset {
 
 		let apiEditor: ExtHostTextEditor | undefined;
 		for (const candidate of this._editors.getVisibleTextEditors(true)) {
@@ -58,12 +58,12 @@ export class ExtHostEditorInsets implements ExtHostEditorInsetsShape {
 		const onDidReceiveMessage = new Emitter<any>();
 		const onDidDispose = new Emitter<void>();
 
-		const webview = new class implements vscode.Webview {
+		const webview = new class implements zycode.Webview {
 
 			private _html: string = '';
-			private _options: vscode.WebviewOptions = Object.create(null);
+			private _options: zycode.WebviewOptions = Object.create(null);
 
-			asWebviewUri(resource: vscode.Uri): vscode.Uri {
+			asWebviewUri(resource: zycode.Uri): zycode.Uri {
 				return asWebviewUri(resource, that._remoteInfo);
 			}
 
@@ -71,12 +71,12 @@ export class ExtHostEditorInsets implements ExtHostEditorInsetsShape {
 				return webviewGenericCspSource;
 			}
 
-			set options(value: vscode.WebviewOptions) {
+			set options(value: zycode.WebviewOptions) {
 				this._options = value;
 				that._proxy.$setOptions(handle, value);
 			}
 
-			get options(): vscode.WebviewOptions {
+			get options(): zycode.WebviewOptions {
 				return this._options;
 			}
 
@@ -89,7 +89,7 @@ export class ExtHostEditorInsets implements ExtHostEditorInsetsShape {
 				return this._html;
 			}
 
-			get onDidReceiveMessage(): vscode.Event<any> {
+			get onDidReceiveMessage(): zycode.Event<any> {
 				return onDidReceiveMessage.event;
 			}
 
@@ -98,13 +98,13 @@ export class ExtHostEditorInsets implements ExtHostEditorInsetsShape {
 			}
 		};
 
-		const inset = new class implements vscode.WebviewEditorInset {
+		const inset = new class implements zycode.WebviewEditorInset {
 
-			readonly editor: vscode.TextEditor = editor;
+			readonly editor: zycode.TextEditor = editor;
 			readonly line: number = line;
 			readonly height: number = height;
-			readonly webview: vscode.Webview = webview;
-			readonly onDidDispose: vscode.Event<void> = onDidDispose.event;
+			readonly webview: zycode.Webview = webview;
+			readonly onDidDispose: zycode.Event<void> = onDidDispose.event;
 
 			dispose(): void {
 				if (that._insets.has(handle)) {

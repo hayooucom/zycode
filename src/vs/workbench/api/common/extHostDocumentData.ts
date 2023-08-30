@@ -11,7 +11,7 @@ import { MirrorTextModel } from 'vs/editor/common/model/mirrorTextModel';
 import { ensureValidWordDefinition, getWordAtText } from 'vs/editor/common/core/wordHelper';
 import { MainThreadDocumentsShape } from 'vs/workbench/api/common/extHost.protocol';
 import { EndOfLine, Position, Range } from 'vs/workbench/api/common/extHostTypes';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { equals } from 'vs/base/common/arrays';
 
 const _languageId2WordDefinition = new Map<string, RegExp>();
@@ -29,7 +29,7 @@ function getWordDefinitionFor(languageId: string): RegExp | undefined {
 
 export class ExtHostDocumentData extends MirrorTextModel {
 
-	private _document?: vscode.TextDocument;
+	private _document?: zycode.TextDocument;
 	private _isDisposed: boolean = false;
 
 	constructor(
@@ -37,7 +37,7 @@ export class ExtHostDocumentData extends MirrorTextModel {
 		uri: URI, lines: string[], eol: string, versionId: number,
 		private _languageId: string,
 		private _isDirty: boolean,
-		public readonly notebook?: vscode.NotebookDocument | undefined
+		public readonly notebook?: zycode.NotebookDocument | undefined
 	) {
 		super(uri, lines, eol, versionId);
 	}
@@ -55,7 +55,7 @@ export class ExtHostDocumentData extends MirrorTextModel {
 		return equals(this._lines, lines);
 	}
 
-	get document(): vscode.TextDocument {
+	get document(): zycode.TextDocument {
 		if (!this._document) {
 			const that = this;
 			this._document = {
@@ -70,7 +70,7 @@ export class ExtHostDocumentData extends MirrorTextModel {
 				getText(range?) { return range ? that._getTextInRange(range) : that.getText(); },
 				get eol() { return that._eol === '\n' ? EndOfLine.LF : EndOfLine.CRLF; },
 				get lineCount() { return that._lines.length; },
-				lineAt(lineOrPos: number | vscode.Position) { return that._lineAt(lineOrPos); },
+				lineAt(lineOrPos: number | zycode.Position) { return that._lineAt(lineOrPos); },
 				offsetAt(pos) { return that._offsetAt(pos); },
 				positionAt(offset) { return that._positionAt(offset); },
 				validateRange(ran) { return that._validateRange(ran); },
@@ -98,7 +98,7 @@ export class ExtHostDocumentData extends MirrorTextModel {
 		return this._proxy.$trySaveDocument(this._uri);
 	}
 
-	private _getTextInRange(_range: vscode.Range): string {
+	private _getTextInRange(_range: zycode.Range): string {
 		const range = this._validateRange(_range);
 
 		if (range.isEmpty) {
@@ -123,7 +123,7 @@ export class ExtHostDocumentData extends MirrorTextModel {
 		return resultLines.join(lineEnding);
 	}
 
-	private _lineAt(lineOrPosition: number | vscode.Position): vscode.TextLine {
+	private _lineAt(lineOrPosition: number | zycode.Position): zycode.TextLine {
 
 		let line: number | undefined;
 		if (lineOrPosition instanceof Position) {
@@ -139,13 +139,13 @@ export class ExtHostDocumentData extends MirrorTextModel {
 		return new ExtHostDocumentLine(line, this._lines[line], line === this._lines.length - 1);
 	}
 
-	private _offsetAt(position: vscode.Position): number {
+	private _offsetAt(position: zycode.Position): number {
 		position = this._validatePosition(position);
 		this._ensureLineStarts();
 		return this._lineStarts!.getPrefixSum(position.line - 1) + position.character;
 	}
 
-	private _positionAt(offset: number): vscode.Position {
+	private _positionAt(offset: number): zycode.Position {
 		offset = Math.floor(offset);
 		offset = Math.max(0, offset);
 
@@ -160,7 +160,7 @@ export class ExtHostDocumentData extends MirrorTextModel {
 
 	// ---- range math
 
-	private _validateRange(range: vscode.Range): vscode.Range {
+	private _validateRange(range: zycode.Range): zycode.Range {
 		if (!(range instanceof Range)) {
 			throw new Error('Invalid argument');
 		}
@@ -174,7 +174,7 @@ export class ExtHostDocumentData extends MirrorTextModel {
 		return new Range(start.line, start.character, end.line, end.character);
 	}
 
-	private _validatePosition(position: vscode.Position): vscode.Position {
+	private _validatePosition(position: zycode.Position): zycode.Position {
 		if (!(position instanceof Position)) {
 			throw new Error('Invalid argument');
 		}
@@ -214,7 +214,7 @@ export class ExtHostDocumentData extends MirrorTextModel {
 		return new Position(line, character);
 	}
 
-	private _getWordRangeAtPosition(_position: vscode.Position, regexp?: RegExp): vscode.Range | undefined {
+	private _getWordRangeAtPosition(_position: zycode.Position, regexp?: RegExp): zycode.Range | undefined {
 		const position = this._validatePosition(_position);
 
 		if (!regexp) {
@@ -240,7 +240,7 @@ export class ExtHostDocumentData extends MirrorTextModel {
 	}
 }
 
-export class ExtHostDocumentLine implements vscode.TextLine {
+export class ExtHostDocumentLine implements zycode.TextLine {
 
 	private readonly _line: number;
 	private readonly _text: string;

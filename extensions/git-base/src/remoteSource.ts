@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { QuickPickItem, window, QuickPick, QuickPickItemKind, l10n } from 'vscode';
+import { QuickPickItem, window, QuickPick, QuickPickItemKind, l10n } from 'zycode';
 import { RemoteSourceProvider, RemoteSource, PickRemoteSourceOptions, PickRemoteSourceResult, RemoteSourceAction } from './api/git-base';
 import { Model } from './model';
 import { throttle, debounce } from './decorators';

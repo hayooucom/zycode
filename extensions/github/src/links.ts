@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { API as GitAPI, RefType, Repository } from './typings/git';
 import { getRepositoryFromUrl, repositoryHasGitHubRemote } from './util';
 
-export function isFileInRepo(repository: Repository, file: vscode.Uri): boolean {
+export function isFileInRepo(repository: Repository, file: zycode.Uri): boolean {
 	return file.path.toLowerCase() === repository.rootUri.path.toLowerCase() ||
 		(file.path.toLowerCase().startsWith(repository.rootUri.path.toLowerCase()) &&
 			file.path.substring(repository.rootUri.path.length).startsWith('/'));
 }
 
-export function getRepositoryForFile(gitAPI: GitAPI, file: vscode.Uri): Repository | undefined {
+export function getRepositoryForFile(gitAPI: GitAPI, file: zycode.Uri): Repository | undefined {
 	for (const repository of gitAPI.repositories) {
 		if (isFileInRepo(repository, file)) {
 			return repository;
@@ -29,25 +29,25 @@ enum LinkType {
 
 interface IFilePosition {
 	type: LinkType.File;
-	uri: vscode.Uri;
-	range: vscode.Range | undefined;
+	uri: zycode.Uri;
+	range: zycode.Range | undefined;
 }
 
 interface INotebookPosition {
 	type: LinkType.Notebook;
-	uri: vscode.Uri;
+	uri: zycode.Uri;
 	cellIndex: number;
-	range: vscode.Range | undefined;
+	range: zycode.Range | undefined;
 }
 
 interface EditorLineNumberContext {
-	uri: vscode.Uri;
+	uri: zycode.Uri;
 	lineNumber: number;
 }
-export type LinkContext = vscode.Uri | EditorLineNumberContext | undefined;
+export type LinkContext = zycode.Uri | EditorLineNumberContext | undefined;
 
-function extractContext(context: LinkContext): { fileUri: vscode.Uri | undefined; lineNumber: number | undefined } {
-	if (context instanceof vscode.Uri) {
+function extractContext(context: LinkContext): { fileUri: zycode.Uri | undefined; lineNumber: number | undefined } {
+	if (context instanceof zycode.Uri) {
 		return { fileUri: context, lineNumber: undefined };
 	} else if (context !== undefined && 'lineNumber' in context && 'uri' in context) {
 		return { fileUri: context.uri, lineNumber: context.lineNumber };
@@ -57,17 +57,17 @@ function extractContext(context: LinkContext): { fileUri: vscode.Uri | undefined
 }
 
 function getFileAndPosition(context: LinkContext): IFilePosition | INotebookPosition | undefined {
-	let range: vscode.Range | undefined;
+	let range: zycode.Range | undefined;
 
 	const { fileUri, lineNumber } = extractContext(context);
-	const uri = fileUri ?? vscode.window.activeTextEditor?.document.uri;
+	const uri = fileUri ?? zycode.window.activeTextEditor?.document.uri;
 
 	if (uri) {
-		if (uri.scheme === 'vscode-notebook-cell' && vscode.window.activeNotebookEditor?.notebook.uri.fsPath === uri.fsPath) {
+		if (uri.scheme === 'zycode-notebook-cell' && zycode.window.activeNotebookEditor?.notebook.uri.fsPath === uri.fsPath) {
 			// if the active editor is a notebook editor and the focus is inside any a cell text editor
 			// generate deep link for text selection for the notebook cell.
-			const cell = vscode.window.activeNotebookEditor.notebook.getCells().find(cell => cell.document.uri.fragment === uri?.fragment);
-			const cellIndex = cell?.index ?? vscode.window.activeNotebookEditor.selection.start;
+			const cell = zycode.window.activeNotebookEditor.notebook.getCells().find(cell => cell.document.uri.fragment === uri?.fragment);
+			const cellIndex = cell?.index ?? zycode.window.activeNotebookEditor.selection.start;
 
 			const range = getRangeOrSelection(lineNumber);
 			return { type: LinkType.Notebook, uri, cellIndex, range };
@@ -78,21 +78,21 @@ function getFileAndPosition(context: LinkContext): IFilePosition | INotebookPosi
 		}
 	}
 
-	if (vscode.window.activeNotebookEditor) {
+	if (zycode.window.activeNotebookEditor) {
 		// if the active editor is a notebook editor but the focus is not inside any cell text editor, generate deep link for the cell selection in the notebook document.
-		return { type: LinkType.Notebook, uri: vscode.window.activeNotebookEditor.notebook.uri, cellIndex: vscode.window.activeNotebookEditor.selection.start, range: undefined };
+		return { type: LinkType.Notebook, uri: zycode.window.activeNotebookEditor.notebook.uri, cellIndex: zycode.window.activeNotebookEditor.selection.start, range: undefined };
 	}
 
 	return undefined;
 }
 
 function getRangeOrSelection(lineNumber: number | undefined) {
-	return lineNumber !== undefined && (!vscode.window.activeTextEditor || vscode.window.activeTextEditor.selection.isEmpty || !vscode.window.activeTextEditor.selection.contains(new vscode.Position(lineNumber - 1, 0)))
-		? new vscode.Range(lineNumber - 1, 0, lineNumber - 1, 1)
-		: vscode.window.activeTextEditor?.selection;
+	return lineNumber !== undefined && (!zycode.window.activeTextEditor || zycode.window.activeTextEditor.selection.isEmpty || !zycode.window.activeTextEditor.selection.contains(new zycode.Position(lineNumber - 1, 0)))
+		? new zycode.Range(lineNumber - 1, 0, lineNumber - 1, 1)
+		: zycode.window.activeTextEditor?.selection;
 }
 
-export function rangeString(range: vscode.Range | undefined) {
+export function rangeString(range: zycode.Range | undefined) {
 	if (!range) {
 		return '';
 	}
@@ -103,7 +103,7 @@ export function rangeString(range: vscode.Range | undefined) {
 	return hash;
 }
 
-export function notebookCellRangeString(index: number | undefined, range: vscode.Range | undefined) {
+export function notebookCellRangeString(index: number | undefined, range: zycode.Range | undefined) {
 	if (index === undefined) {
 		return '';
 	}
@@ -187,35 +187,35 @@ export function getBranchLink(url: string, branch: string, hostPrefix: string = 
 }
 
 export function getVscodeDevHost(): string {
-	return `https://${vscode.env.appName.toLowerCase().includes('insiders') ? 'insiders.' : ''}vscode.dev/github`;
+	return `https://${zycode.env.appName.toLowerCase().includes('insiders') ? 'insiders.' : ''}zycode.dev/github`;
 }
 
-export async function ensurePublished(repository: Repository, file: vscode.Uri) {
+export async function ensurePublished(repository: Repository, file: zycode.Uri) {
 	await repository.status();
 
 	if ((repository.state.HEAD?.type === RefType.Head || repository.state.HEAD?.type === RefType.Tag)
 		// If HEAD is not published, make sure it is
 		&& !repository?.state.HEAD?.upstream
 	) {
-		const publishBranch = vscode.l10n.t('Publish Branch & Copy Link');
-		const selection = await vscode.window.showInformationMessage(
-			vscode.l10n.t('The current branch is not published to the remote. Would you like to publish your branch before copying a link?'),
+		const publishBranch = zycode.l10n.t('Publish Branch & Copy Link');
+		const selection = await zycode.window.showInformationMessage(
+			zycode.l10n.t('The current branch is not published to the remote. Would you like to publish your branch before copying a link?'),
 			{ modal: true },
 			publishBranch
 		);
 		if (selection !== publishBranch) {
-			throw new vscode.CancellationError();
+			throw new zycode.CancellationError();
 		}
 
-		await vscode.commands.executeCommand('git.publish');
+		await zycode.commands.executeCommand('git.publish');
 	}
 
 	const uncommittedChanges = [...repository.state.workingTreeChanges, ...repository.state.indexChanges];
 	if (uncommittedChanges.find((c) => c.uri.toString() === file.toString()) && !repository.state.HEAD?.ahead && !repository.state.HEAD?.behind) {
-		const commitChanges = vscode.l10n.t('Commit Changes');
-		const copyAnyway = vscode.l10n.t('Copy Anyway');
-		const selection = await vscode.window.showWarningMessage(
-			vscode.l10n.t('The current file has uncommitted changes. Please commit your changes before copying a link.'),
+		const commitChanges = zycode.l10n.t('Commit Changes');
+		const copyAnyway = zycode.l10n.t('Copy Anyway');
+		const selection = await zycode.window.showWarningMessage(
+			zycode.l10n.t('The current file has uncommitted changes. Please commit your changes before copying a link.'),
 			{ modal: true },
 			commitChanges,
 			copyAnyway
@@ -223,30 +223,30 @@ export async function ensurePublished(repository: Repository, file: vscode.Uri) 
 
 		if (selection !== copyAnyway) {
 			// Focus the SCM view
-			vscode.commands.executeCommand('workbench.view.scm');
-			throw new vscode.CancellationError();
+			zycode.commands.executeCommand('workbench.view.scm');
+			throw new zycode.CancellationError();
 		}
 	} else if (repository.state.HEAD?.ahead) {
-		const pushCommits = vscode.l10n.t('Push Commits & Copy Link');
-		const selection = await vscode.window.showInformationMessage(
-			vscode.l10n.t('The current branch has unpublished commits. Would you like to push your commits before copying a link?'),
+		const pushCommits = zycode.l10n.t('Push Commits & Copy Link');
+		const selection = await zycode.window.showInformationMessage(
+			zycode.l10n.t('The current branch has unpublished commits. Would you like to push your commits before copying a link?'),
 			{ modal: true },
 			pushCommits
 		);
 		if (selection !== pushCommits) {
-			throw new vscode.CancellationError();
+			throw new zycode.CancellationError();
 		}
 
 		await repository.push();
 	} else if (repository.state.HEAD?.behind) {
-		const pull = vscode.l10n.t('Pull Changes & Copy Link');
-		const selection = await vscode.window.showInformationMessage(
-			vscode.l10n.t('The current branch is not up to date. Would you like to pull before copying a link?'),
+		const pull = zycode.l10n.t('Pull Changes & Copy Link');
+		const selection = await zycode.window.showInformationMessage(
+			zycode.l10n.t('The current branch is not up to date. Would you like to pull before copying a link?'),
 			{ modal: true },
 			pull
 		);
 		if (selection !== pull) {
-			throw new vscode.CancellationError();
+			throw new zycode.CancellationError();
 		}
 
 		await repository.pull();

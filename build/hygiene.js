@@ -113,7 +113,7 @@ function hygiene(some, linting = true) {
 				tsconfig: undefined,
 				tsconfigFile: undefined,
 				tsfmtFile: undefined,
-				vscode: undefined,
+				zycode: undefined,
 				vscodeFile: undefined,
 			})
 			.then(
@@ -192,7 +192,7 @@ function hygiene(some, linting = true) {
 			result.pipe(filter(stylelintFilter)).pipe(gulpstylelint(((message, isError) => {
 				if (isError) {
 					console.error(message);
-				errorCount++;
+					errorCount++;
 				} else {
 					console.warn(message);
 				}

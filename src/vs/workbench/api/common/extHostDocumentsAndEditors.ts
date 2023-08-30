@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from 'vs/base/common/assert';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Emitter, Event } from 'vs/base/common/event';
 import { dispose } from 'vs/base/common/lifecycle';
 import { URI } from 'vs/base/common/uri';
@@ -32,7 +32,7 @@ class Reference<T> {
 }
 
 export interface IExtHostModelAddedData extends IModelAddedData {
-	notebook?: vscode.NotebookDocument;
+	notebook?: zycode.NotebookDocument;
 }
 
 export interface IExtHostDocumentsAndEditorsDelta extends IDocumentsAndEditorsDelta {
@@ -50,13 +50,13 @@ export class ExtHostDocumentsAndEditors implements ExtHostDocumentsAndEditorsSha
 
 	private readonly _onDidAddDocuments = new Emitter<readonly ExtHostDocumentData[]>();
 	private readonly _onDidRemoveDocuments = new Emitter<readonly ExtHostDocumentData[]>();
-	private readonly _onDidChangeVisibleTextEditors = new Emitter<readonly vscode.TextEditor[]>();
-	private readonly _onDidChangeActiveTextEditor = new Emitter<vscode.TextEditor | undefined>();
+	private readonly _onDidChangeVisibleTextEditors = new Emitter<readonly zycode.TextEditor[]>();
+	private readonly _onDidChangeActiveTextEditor = new Emitter<zycode.TextEditor | undefined>();
 
 	readonly onDidAddDocuments: Event<readonly ExtHostDocumentData[]> = this._onDidAddDocuments.event;
 	readonly onDidRemoveDocuments: Event<readonly ExtHostDocumentData[]> = this._onDidRemoveDocuments.event;
-	readonly onDidChangeVisibleTextEditors: Event<readonly vscode.TextEditor[]> = this._onDidChangeVisibleTextEditors.event;
-	readonly onDidChangeActiveTextEditor: Event<vscode.TextEditor | undefined> = this._onDidChangeActiveTextEditor.event;
+	readonly onDidChangeVisibleTextEditors: Event<readonly zycode.TextEditor[]> = this._onDidChangeVisibleTextEditors.event;
+	readonly onDidChangeActiveTextEditor: Event<zycode.TextEditor | undefined> = this._onDidChangeActiveTextEditor.event;
 
 	constructor(
 		@IExtHostRpcService private readonly _extHostRpc: IExtHostRpcService,
@@ -182,9 +182,9 @@ export class ExtHostDocumentsAndEditors implements ExtHostDocumentsAndEditorsSha
 		return this._editors.get(id);
 	}
 
-	activeEditor(): vscode.TextEditor | undefined;
+	activeEditor(): zycode.TextEditor | undefined;
 	activeEditor(internal: true): ExtHostTextEditor | undefined;
-	activeEditor(internal?: true): vscode.TextEditor | ExtHostTextEditor | undefined {
+	activeEditor(internal?: true): zycode.TextEditor | ExtHostTextEditor | undefined {
 		if (!this._activeEditorId) {
 			return undefined;
 		}

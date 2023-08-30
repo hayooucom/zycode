@@ -92,7 +92,7 @@ namespace snippetExt {
 	}
 
 	export const snippetsContribution: IJSONSchema = {
-		description: localize('vscode.extension.contributes.snippets', 'Contributes snippets.'),
+		description: localize('zycode.extension.contributes.snippets', 'Contributes snippets.'),
 		type: 'array',
 		defaultSnippets: [{ body: [{ language: '', path: '' }] }],
 		items: {
@@ -100,11 +100,11 @@ namespace snippetExt {
 			defaultSnippets: [{ body: { language: '${1:id}', path: './snippets/${2:id}.json.' } }],
 			properties: {
 				language: {
-					description: localize('vscode.extension.contributes.snippets-language', 'Language identifier for which this snippet is contributed to.'),
+					description: localize('zycode.extension.contributes.snippets-language', 'Language identifier for which this snippet is contributed to.'),
 					type: 'string'
 				},
 				path: {
-					description: localize('vscode.extension.contributes.snippets-path', 'Path of the snippets file. The path is relative to the extension folder and typically starts with \'./snippets/\'.'),
+					description: localize('zycode.extension.contributes.snippets-path', 'Path of the snippets file. The path is relative to the extension folder and typically starts with \'./snippets/\'.'),
 					type: 'string'
 				}
 			}
@@ -428,7 +428,7 @@ export class SnippetsService implements ISnippetsService {
 
 	private async _initWorkspaceFolderSnippets(workspace: IWorkspace, bucket: DisposableStore): Promise<any> {
 		const promises = workspace.folders.map(async folder => {
-			const snippetFolder = folder.toResource('.vscode');
+			const snippetFolder = folder.toResource('.zycode');
 			const value = await this._fileService.exists(snippetFolder);
 			if (value) {
 				this._initFolderSnippets(SnippetSource.Workspace, snippetFolder, bucket);

@@ -6,7 +6,7 @@
 import { Model } from '../model';
 import { GitExtension, Repository, API } from './git';
 import { ApiRepository, ApiImpl } from './api1';
-import { Event, EventEmitter } from 'vscode';
+import { Event, EventEmitter } from 'zycode';
 
 export function deprecated(_target: any, key: string, descriptor: any): void {
 	if (typeof descriptor.value !== 'function') {

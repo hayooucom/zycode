@@ -1818,7 +1818,7 @@ class SCMInputWidget {
 	private _validationTimer: any;
 
 	// This is due to "Setup height change listener on next tick" above
-	// https://github.com/microsoft/vscode/issues/108067
+	// https://github.com/microsoft/zycode/issues/108067
 	private lastLayoutWasTrash = false;
 	private shouldFocusAfterLayout = false;
 

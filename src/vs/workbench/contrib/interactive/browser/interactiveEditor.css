@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 .interactive-editor .input-cell-container:focus-within .input-editor-container .monaco-editor {
-	outline: solid 1px var(--vscode-notebook-focusedCellBorder);
+	outline: solid 1px var(--zycode-notebook-focusedCellBorder);
 }
 
 .interactive-editor .input-cell-container .input-editor-container .monaco-editor {
-	outline: solid 1px var(--vscode-notebook-inactiveFocusedCellBorder);
+	outline: solid 1px var(--zycode-notebook-inactiveFocusedCellBorder);
 }
 
 .interactive-editor .input-cell-container .input-focus-indicator {
@@ -17,5 +17,5 @@
 
 .interactive-editor .input-cell-container .monaco-editor-background,
 .interactive-editor .input-cell-container .margin-view-overlays {
-	background-color: var(--vscode-notebook-cellEditorBackground, --vscode-editor-background);
+	background-color: var(--zycode-notebook-cellEditorBackground, --zycode-editor-background);
 }

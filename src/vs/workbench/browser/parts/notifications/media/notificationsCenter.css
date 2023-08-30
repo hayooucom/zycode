@@ -45,7 +45,7 @@
 }
 
 .monaco-workbench > .notifications-center .notifications-list-container .monaco-list-row[data-last-element="false"] > .notification-list-item {
-	border-bottom: 1px solid var(--vscode-notifications-border);
+	border-bottom: 1px solid var(--zycode-notifications-border);
 }
 
 .monaco-workbench > .notifications-center .notifications-list-container,
@@ -57,13 +57,13 @@
 /* Icons */
 
 .monaco-workbench > .notifications-center .codicon.codicon-error {
-	color: var(--vscode-notificationsErrorIcon-foreground) !important;
+	color: var(--zycode-notificationsErrorIcon-foreground) !important;
 }
 
 .monaco-workbench > .notifications-center .codicon.codicon-warning {
-	color: var(--vscode-notificationsWarningIcon-foreground) !important;
+	color: var(--zycode-notificationsWarningIcon-foreground) !important;
 }
 
 .monaco-workbench > .notifications-center .codicon.codicon-info {
-	color: var(--vscode-notificationsInfoIcon-foreground) !important;
+	color: var(--zycode-notificationsInfoIcon-foreground) !important;
 }

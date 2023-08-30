@@ -11,7 +11,7 @@ flakySuite('IndexedDB', () => {
 	let indexedDB: IndexedDB;
 
 	setup(async () => {
-		indexedDB = await IndexedDB.create('vscode-indexeddb-test', 1, ['test-store']);
+		indexedDB = await IndexedDB.create('zycode-indexeddb-test', 1, ['test-store']);
 		await indexedDB.runInTransaction('test-store', 'readwrite', store => store.clear());
 	});
 

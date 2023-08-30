@@ -39,7 +39,7 @@ class RunCommands extends Action2 {
 									items: {
 										anyOf: [
 											{
-												$ref: 'vscode://schemas/keybindings#/definitions/commandNames'
+												$ref: 'zycode://schemas/keybindings#/definitions/commandNames'
 											},
 											{
 												type: 'string',
@@ -51,7 +51,7 @@ class RunCommands extends Action2 {
 													command: {
 														'anyOf': [
 															{
-																$ref: 'vscode://schemas/keybindings#/definitions/commandNames'
+																$ref: 'zycode://schemas/keybindings#/definitions/commandNames'
 															},
 															{
 																type: 'string'
@@ -59,7 +59,7 @@ class RunCommands extends Action2 {
 														]
 													}
 												},
-												$ref: 'vscode://schemas/keybindings#/definitions/commandsSchemas'
+												$ref: 'zycode://schemas/keybindings#/definitions/commandsSchemas'
 											}
 										]
 									}

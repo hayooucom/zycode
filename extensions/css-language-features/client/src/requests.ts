@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Uri, workspace } from 'vscode';
-import { RequestType, BaseLanguageClient } from 'vscode-languageclient';
+import { Uri, workspace } from 'zycode';
+import { RequestType, BaseLanguageClient } from 'zycode-languageclient';
 import { Runtime } from './cssClient';
 
 export namespace FsContentRequest {

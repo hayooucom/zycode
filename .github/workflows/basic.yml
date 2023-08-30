@@ -127,8 +127,8 @@ jobs:
       - name: Run eslint
         run: yarn eslint
 
-      - name: Run vscode-dts Compile Checks
-        run: yarn vscode-dts-compile-check
+      - name: Run zycode-dts Compile Checks
+        run: yarn zycode-dts-compile-check
 
       - name: Run Trusted Types Checks
         run: yarn tsec-compile-check

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { CancellationToken } from 'vs/base/common/cancellation';
 import { IDisposable, toDisposable } from 'vs/base/common/lifecycle';
 import { ExtensionIdentifier, IExtensionDescription } from 'vs/platform/extensions/common/extensions';
@@ -16,7 +16,7 @@ export class ExtHostChatVariables implements ExtHostChatVariablesShape {
 
 	private static _idPool = 0;
 
-	private readonly _resolver = new Map<number, { extension: ExtensionIdentifier; data: IChatVariableData; resolver: vscode.ChatVariableResolver }>();
+	private readonly _resolver = new Map<number, { extension: ExtensionIdentifier; data: IChatVariableData; resolver: zycode.ChatVariableResolver }>();
 	private readonly _proxy: MainThreadChatVariablesShape;
 
 	constructor(mainContext: IMainContext) {
@@ -39,7 +39,7 @@ export class ExtHostChatVariables implements ExtHostChatVariablesShape {
 		return undefined;
 	}
 
-	registerVariableResolver(extension: IExtensionDescription, name: string, description: string, resolver: vscode.ChatVariableResolver): IDisposable {
+	registerVariableResolver(extension: IExtensionDescription, name: string, description: string, resolver: zycode.ChatVariableResolver): IDisposable {
 		const handle = ExtHostChatVariables._idPool++;
 		this._resolver.set(handle, { extension: extension.identifier, data: { name, description }, resolver: resolver });
 		this._proxy.$registerVariable(handle, { name, description });

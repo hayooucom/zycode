@@ -26,7 +26,7 @@ const fs = require('fs');
 const glob = require('glob');
 const { compileBuildTask } = require('./gulpfile.compile');
 const { compileExtensionsBuildTask, compileExtensionMediaBuildTask } = require('./gulpfile.extensions');
-const { vscodeWebEntryPoints, vscodeWebResourceIncludes, createVSCodeWebFileContentMapper } = require('./gulpfile.vscode.web');
+const { vscodeWebEntryPoints, vscodeWebResourceIncludes, createVSCodeWebFileContentMapper } = require('./gulpfile.zycode.web');
 const cp = require('child_process');
 const log = require('fancy-log');
 
@@ -269,7 +269,7 @@ function packageTask(type, platform, arch, sourceFolderName, destinationFolderNa
 				const manifest = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, extensionPath)).toString());
 				return !isUIExtension(manifest);
 			}).map((extensionPath) => path.basename(path.dirname(extensionPath)))
-			.filter(name => name !== 'vscode-api-tests' && name !== 'vscode-test-resolver'); // Do not ship the test extensions
+			.filter(name => name !== 'zycode-api-tests' && name !== 'zycode-test-resolver'); // Do not ship the test extensions
 		const marketplaceExtensions = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'product.json'), 'utf8')).builtInExtensions
 			.filter(entry => !entry.platforms || new Set(entry.platforms).has(platform))
 			.filter(entry => !entry.clientOnly)
@@ -389,11 +389,11 @@ function tweakProductForServerWeb(product) {
 }
 
 ['reh', 'reh-web'].forEach(type => {
-	const optimizeTask = task.define(`optimize-vscode-${type}`, task.series(
-		util.rimraf(`out-vscode-${type}`),
+	const optimizeTask = task.define(`optimize-zycode-${type}`, task.series(
+		util.rimraf(`out-zycode-${type}`),
 		optimize.optimizeTask(
 			{
-				out: `out-vscode-${type}`,
+				out: `out-zycode-${type}`,
 				amd: {
 					src: 'out-build',
 					entryPoints: (type === 'reh' ? serverEntryPoints : serverWithWebEntryPoints).flat(),
@@ -424,10 +424,10 @@ function tweakProductForServerWeb(product) {
 		)
 	));
 
-	const minifyTask = task.define(`minify-vscode-${type}`, task.series(
+	const minifyTask = task.define(`minify-zycode-${type}`, task.series(
 		optimizeTask,
-		util.rimraf(`out-vscode-${type}-min`),
-		optimize.minifyTask(`out-vscode-${type}`, `https://ticino.blob.core.windows.net/sourcemaps/${commit}/core`)
+		util.rimraf(`out-zycode-${type}-min`),
+		optimize.minifyTask(`out-zycode-${type}`, `https://ticino.blob.core.windows.net/sourcemaps/${commit}/core`)
 	));
 	gulp.task(minifyTask);
 
@@ -437,17 +437,17 @@ function tweakProductForServerWeb(product) {
 		const arch = buildTarget.arch;
 
 		['', 'min'].forEach(minified => {
-			const sourceFolderName = `out-vscode-${type}${dashed(minified)}`;
-			const destinationFolderName = `vscode-${type}${dashed(platform)}${dashed(arch)}`;
+			const sourceFolderName = `out-zycode-${type}${dashed(minified)}`;
+			const destinationFolderName = `zycode-${type}${dashed(platform)}${dashed(arch)}`;
 
-			const serverTaskCI = task.define(`vscode-${type}${dashed(platform)}${dashed(arch)}${dashed(minified)}-ci`, task.series(
+			const serverTaskCI = task.define(`zycode-${type}${dashed(platform)}${dashed(arch)}${dashed(minified)}-ci`, task.series(
 				gulp.task(`node-${platform}-${arch}`),
 				util.rimraf(path.join(BUILD_ROOT, destinationFolderName)),
 				packageTask(type, platform, arch, sourceFolderName, destinationFolderName)
 			));
 			gulp.task(serverTaskCI);
 
-			const serverTask = task.define(`vscode-${type}${dashed(platform)}${dashed(arch)}${dashed(minified)}`, task.series(
+			const serverTask = task.define(`zycode-${type}${dashed(platform)}${dashed(arch)}${dashed(minified)}`, task.series(
 				compileBuildTask,
 				compileExtensionsBuildTask,
 				compileExtensionMediaBuildTask,

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Command } from '../commandManager';
 import { MarkdownPreviewManager } from '../preview/previewManager';
 
@@ -15,7 +15,7 @@ export class CopyImageCommand implements Command {
 	) { }
 
 	public execute(args: { id: string; resource: string }) {
-		const source = vscode.Uri.parse(args.resource);
+		const source = zycode.Uri.parse(args.resource);
 		this._webviewManager.findPreview(source)?.copyImage(args.id);
 	}
 }

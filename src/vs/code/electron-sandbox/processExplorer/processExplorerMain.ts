@@ -243,7 +243,7 @@ class ProcessExplorer {
 		this.applyStyles(data.styles);
 		this.setEventHandlers(data);
 
-		ipcRenderer.on('vscode:pidToNameResponse', (event: unknown, pidToNames: [number, string][]) => {
+		ipcRenderer.on('zycode:pidToNameResponse', (event: unknown, pidToNames: [number, string][]) => {
 			this.mapPidToName = new Map<number, string>();
 
 			for (const [pid, name] of pidToNames) {
@@ -251,7 +251,7 @@ class ProcessExplorer {
 			}
 		});
 
-		ipcRenderer.on('vscode:listProcessesResponse', async (event: unknown, processRoots: MachineProcessInformation[]) => {
+		ipcRenderer.on('zycode:listProcessesResponse', async (event: unknown, processRoots: MachineProcessInformation[]) => {
 			processRoots.forEach((info, index) => {
 				if (isProcessItem(info.rootProcess)) {
 					info.rootProcess.name = index === 0 ? `${this.data.applicationName} main` : 'remote agent';
@@ -269,8 +269,8 @@ class ProcessExplorer {
 		});
 
 		this.lastRequestTime = Date.now();
-		ipcRenderer.send('vscode:pidToNameRequest');
-		ipcRenderer.send('vscode:listProcesses');
+		ipcRenderer.send('zycode:pidToNameRequest');
+		ipcRenderer.send('zycode:listProcesses');
 	}
 
 	private setEventHandlers(data: ProcessExplorerData): void {
@@ -282,7 +282,7 @@ class ProcessExplorer {
 				e.stopPropagation();
 				e.preventDefault();
 
-				ipcRenderer.send('vscode:closeProcessExplorer');
+				ipcRenderer.send('zycode:closeProcessExplorer');
 			}
 
 			// Cmd/Ctrl + zooms in
@@ -391,7 +391,7 @@ class ProcessExplorer {
 			config.port = Number(matches.groups!.port);
 		}
 
-		ipcRenderer.send('vscode:workbenchCommand', { id: 'debug.startFromConfig', from: 'processExplorer', args: [config] });
+		ipcRenderer.send('zycode:workbenchCommand', { id: 'debug.startFromConfig', from: 'processExplorer', args: [config] });
 	}
 
 	private applyStyles(styles: ProcessExplorerStyles): void {
@@ -558,8 +558,8 @@ class ProcessExplorer {
 
 			// Wait at least a second between requests.
 			if (waited > 1000) {
-				ipcRenderer.send('vscode:pidToNameRequest');
-				ipcRenderer.send('vscode:listProcesses');
+				ipcRenderer.send('zycode:pidToNameRequest');
+				ipcRenderer.send('zycode:listProcesses');
 			} else {
 				this.requestProcessList(waited);
 			}

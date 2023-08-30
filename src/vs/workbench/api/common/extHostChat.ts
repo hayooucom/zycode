@@ -15,7 +15,7 @@ import { ILogService } from 'vs/platform/log/common/log';
 import { ExtHostChatShape, IChatRequestDto, IChatResponseDto, IChatDto, IMainContext, MainContext, MainThreadChatShape } from 'vs/workbench/api/common/extHost.protocol';
 import * as typeConvert from 'vs/workbench/api/common/extHostTypeConverters';
 import { IChatFollowup, IChatReplyFollowup, IChatUserActionEvent, ISlashCommand } from 'vs/workbench/contrib/chat/common/chatService';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 
 class ChatProviderWrapper<T> {
 
@@ -32,12 +32,12 @@ class ChatProviderWrapper<T> {
 export class ExtHostChat implements ExtHostChatShape {
 	private static _nextId = 0;
 
-	private readonly _chatProvider = new Map<number, ChatProviderWrapper<vscode.InteractiveSessionProvider>>();
+	private readonly _chatProvider = new Map<number, ChatProviderWrapper<zycode.InteractiveSessionProvider>>();
 
-	private readonly _chatSessions = new Map<number, vscode.InteractiveSession>();
-	// private readonly _providerResponsesByRequestId = new Map<number, { response: vscode.ProviderResult<vscode.InteractiveResponse | vscode.InteractiveResponseForProgress>; sessionId: number }>();
+	private readonly _chatSessions = new Map<number, zycode.InteractiveSession>();
+	// private readonly _providerResponsesByRequestId = new Map<number, { response: zycode.ProviderResult<zycode.InteractiveResponse | zycode.InteractiveResponseForProgress>; sessionId: number }>();
 
-	private readonly _onDidPerformUserAction = new Emitter<vscode.InteractiveSessionUserActionEvent>();
+	private readonly _onDidPerformUserAction = new Emitter<zycode.InteractiveSessionUserActionEvent>();
 	public readonly onDidPerformUserAction = this._onDidPerformUserAction.event;
 
 	private readonly _proxy: MainThreadChatShape;
@@ -51,7 +51,7 @@ export class ExtHostChat implements ExtHostChatShape {
 
 	//#region interactive session
 
-	registerChatProvider(extension: Readonly<IRelaxedExtensionDescription>, id: string, provider: vscode.InteractiveSessionProvider): vscode.Disposable {
+	registerChatProvider(extension: Readonly<IRelaxedExtensionDescription>, id: string, provider: zycode.InteractiveSessionProvider): zycode.Disposable {
 		const wrapper = new ChatProviderWrapper(extension, provider);
 		this._chatProvider.set(wrapper.handle, wrapper);
 		this._proxy.$registerChatProvider(wrapper.handle, id);
@@ -61,7 +61,7 @@ export class ExtHostChat implements ExtHostChatShape {
 		});
 	}
 
-	transferChatSession(session: vscode.InteractiveSession, newWorkspace: vscode.Uri): void {
+	transferChatSession(session: zycode.InteractiveSession, newWorkspace: zycode.Uri): void {
 		const sessionId = Iterable.find(this._chatSessions.keys(), key => this._chatSessions.get(key) === session) ?? 0;
 		if (typeof sessionId !== 'number') {
 			return;
@@ -70,11 +70,11 @@ export class ExtHostChat implements ExtHostChatShape {
 		this._proxy.$transferChatSession(sessionId, newWorkspace);
 	}
 
-	addChatRequest(context: vscode.InteractiveSessionRequestArgs): void {
+	addChatRequest(context: zycode.InteractiveSessionRequestArgs): void {
 		this._proxy.$addRequest(context);
 	}
 
-	sendInteractiveRequestToProvider(providerId: string, message: vscode.InteractiveSessionDynamicRequest): void {
+	sendInteractiveRequestToProvider(providerId: string, message: zycode.InteractiveSessionDynamicRequest): void {
 		this._proxy.$sendRequestToProvider(providerId, message);
 	}
 
@@ -197,7 +197,7 @@ export class ExtHostChat implements ExtHostChatShape {
 			return;
 		}
 
-		const requestObj: vscode.InteractiveRequest = {
+		const requestObj: zycode.InteractiveRequest = {
 			session: realSession,
 			message: typeof request.message === 'string' ? request.message : typeConvert.ChatReplyFollowup.to(request.message),
 			variables: {}
@@ -211,8 +211,8 @@ export class ExtHostChat implements ExtHostChatShape {
 
 		const stopWatch = StopWatch.create(false);
 		let firstProgress: number | undefined;
-		const progressObj: vscode.Progress<vscode.InteractiveProgress> = {
-			report: (progress: vscode.InteractiveProgress) => {
+		const progressObj: zycode.Progress<zycode.InteractiveProgress> = {
+			report: (progress: zycode.InteractiveProgress) => {
 				if (token.isCancellationRequested) {
 					return;
 				}
@@ -241,7 +241,7 @@ export class ExtHostChat implements ExtHostChatShape {
 				}
 			}
 		};
-		let result: vscode.InteractiveResponseForProgress | undefined | null;
+		let result: zycode.InteractiveResponseForProgress | undefined | null;
 		try {
 			result = await entry.provider.provideResponseWithProgress(requestObj, progressObj, token);
 			if (!result) {

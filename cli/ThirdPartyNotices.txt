@@ -6984,7 +6984,7 @@ SOFTWARE.
 ---------------------------------------------------------
 
 russh 6a15199c784c0b6d171a6fec09ed730a5cd1350d
-https://github.com/microsoft/vscode-russh
+https://github.com/microsoft/zycode-russh
 
 Apache License
                            Version 2.0, January 2004
@@ -7192,7 +7192,7 @@ Apache License
 ---------------------------------------------------------
 
 russh-cryptovec 6a15199c784c0b6d171a6fec09ed730a5cd1350d
-https://github.com/microsoft/vscode-russh
+https://github.com/microsoft/zycode-russh
 
 Apache License
                            Version 2.0, January 2004
@@ -7400,7 +7400,7 @@ Apache License
 ---------------------------------------------------------
 
 russh-keys 6a15199c784c0b6d171a6fec09ed730a5cd1350d
-https://github.com/microsoft/vscode-russh
+https://github.com/microsoft/zycode-russh
 
 Apache License
                            Version 2.0, January 2004

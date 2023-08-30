@@ -215,7 +215,7 @@ export class UpdateContribution extends Disposable implements IWorkbenchContribu
 						actions: {
 							primary: [
 								new Action('', nls.localize('learn more', "Learn More"), undefined, undefined, () => {
-									this.openerService.open('https://aka.ms/vscode-windows-setup');
+									this.openerService.open('https://aka.ms/zycode-windows-setup');
 								})
 							]
 						},
@@ -283,7 +283,7 @@ export class UpdateContribution extends Disposable implements IWorkbenchContribu
 			return;
 		}
 
-		error = error.replace(/See https:\/\/github\.com\/Squirrel\/Squirrel\.Mac\/issues\/182 for more information/, 'This might mean the application was put on quarantine by macOS. See [this link](https://github.com/microsoft/vscode/issues/7426#issuecomment-425093469) for more information');
+		error = error.replace(/See https:\/\/github\.com\/Squirrel\/Squirrel\.Mac\/issues\/182 for more information/, 'This might mean the application was put on quarantine by macOS. See [this link](https://github.com/microsoft/zycode/issues/7426#issuecomment-425093469) for more information');
 
 		this.notificationService.notify({
 			severity: Severity.Error,

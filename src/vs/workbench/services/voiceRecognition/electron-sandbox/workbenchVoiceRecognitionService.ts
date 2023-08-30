@@ -75,11 +75,11 @@ class VoiceTranscriptionWorkletNode extends AudioWorkletNode {
 			return;
 		}
 
-		this.port.postMessage('vscode:startVoiceTranscription', [sharedProcessConnection]);
+		this.port.postMessage('zycode:startVoiceTranscription', [sharedProcessConnection]);
 	}
 
 	private stop(): void {
-		this.port.postMessage('vscode:stopVoiceTranscription');
+		this.port.postMessage('zycode:stopVoiceTranscription');
 		this.disconnect();
 	}
 }

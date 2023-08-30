@@ -4,17 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { getNodeFSRequestService } from './nodeFs';
-import { ExtensionContext, extensions, l10n } from 'vscode';
+import { ExtensionContext, extensions, l10n } from 'zycode';
 import { startClient, LanguageClientConstructor } from '../cssClient';
-import { ServerOptions, TransportKind, LanguageClientOptions, LanguageClient, BaseLanguageClient } from 'vscode-languageclient/node';
+import { ServerOptions, TransportKind, LanguageClientOptions, LanguageClient, BaseLanguageClient } from 'zycode-languageclient/node';
 import { TextDecoder } from 'util';
 
 
 let client: BaseLanguageClient | undefined;
 
-// this method is called when vs code is activated
+// this method is called when zy code is activated
 export async function activate(context: ExtensionContext) {
-	const clientMain = extensions.getExtension('vscode.css-language-features')?.packageJSON?.main || '';
+	const clientMain = extensions.getExtension('zycode.css-language-features')?.packageJSON?.main || '';
 
 	const serverMain = `./server/${clientMain.indexOf('/dist/') !== -1 ? 'dist' : 'out'}/node/cssServerMain`;
 	const serverModule = context.asAbsolutePath(serverMain);

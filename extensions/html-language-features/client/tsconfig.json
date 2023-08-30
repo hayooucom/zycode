@@ -5,7 +5,7 @@
 	},
 	"include": [
 		"src/**/*",
-		"../../../src/vscode-dts/vscode.d.ts",
-		"../../../src/vscode-dts/vscode.proposed.extensionsAny.d.ts"
+		"../../../src/zycode-dts/zycode.d.ts",
+		"../../../src/zycode-dts/zycode.proposed.extensionsAny.d.ts"
 	]
 }

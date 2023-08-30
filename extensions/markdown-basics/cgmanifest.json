@@ -31,8 +31,8 @@
 			"component": {
 				"type": "git",
 				"git": {
-					"name": "microsoft/vscode-markdown-tm-grammar",
-					"repositoryUrl": "https://github.com/microsoft/vscode-markdown-tm-grammar",
+					"name": "microsoft/zycode-markdown-tm-grammar",
+					"repositoryUrl": "https://github.com/microsoft/zycode-markdown-tm-grammar",
 					"commitHash": "c635942289ebf40954e69cf3637aac906465ade8"
 				}
 			},

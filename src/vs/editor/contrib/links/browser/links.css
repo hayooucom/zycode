@@ -10,5 +10,5 @@
 
 .monaco-editor .detected-link-active {
 	cursor: pointer;
-	color: var(--vscode-editorLink-activeForeground) !important;
+	color: var(--zycode-editorLink-activeForeground) !important;
 }

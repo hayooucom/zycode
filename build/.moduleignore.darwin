@@ -1,17 +1,17 @@
-@vscode/windows-mutex/index.js
-@vscode/windows-mutex/**/*.node
-@vscode/windows-mutex/*.md
-@vscode/windows-mutex/package.json
+@zycode/windows-mutex/index.js
+@zycode/windows-mutex/**/*.node
+@zycode/windows-mutex/*.md
+@zycode/windows-mutex/package.json
 
-@vscode/windows-process-tree/lib/**
-@vscode/windows-process-tree/**/*.node
-@vscode/windows-process-tree/LICENSE
-@vscode/windows-process-tree/package.json
-@vscode/windows-process-tree/*.md
+@zycode/windows-process-tree/lib/**
+@zycode/windows-process-tree/**/*.node
+@zycode/windows-process-tree/LICENSE
+@zycode/windows-process-tree/package.json
+@zycode/windows-process-tree/*.md
 
-@vscode/windows-registry/dist/**
-@vscode/windows-registry/**/*.node
-@vscode/windows-registry/*.md
-@vscode/windows-registry/*.txt
-@vscode/windows-registry/package.json
-!@vscode/windows-registry/dist/index.d.ts
+@zycode/windows-registry/dist/**
+@zycode/windows-registry/**/*.node
+@zycode/windows-registry/*.md
+@zycode/windows-registry/*.txt
+@zycode/windows-registry/package.json
+!@zycode/windows-registry/dist/index.d.ts

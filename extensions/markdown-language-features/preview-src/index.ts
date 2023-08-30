@@ -20,9 +20,9 @@ const settings = new SettingsManager();
 let documentVersion = 0;
 let documentResource = settings.settings.source;
 
-const vscode = acquireVsCodeApi();
+const zycode = acquireVsCodeApi();
 
-const originalState = vscode.getState() ?? {} as any;
+const originalState = zycode.getState() ?? {} as any;
 const state = {
 	...originalState,
 	...getData<any>('data-state')
@@ -33,9 +33,9 @@ if (typeof originalState.scrollProgress !== 'undefined' && originalState?.resour
 }
 
 // Make sure to sync VS Code state here
-vscode.setState(state);
+zycode.setState(state);
 
-const messaging = createPosterForVsCode(vscode, settings);
+const messaging = createPosterForVsCode(zycode, settings);
 
 window.cspAlerter.setPoster(messaging);
 window.styleLoadingMonitor.setPoster(messaging);
@@ -85,7 +85,7 @@ onceDocumentLoaded(() => {
 					fragment = settings.settings.fragment;
 				}
 				state.fragment = undefined;
-				vscode.setState(state);
+				zycode.setState(state);
 
 				const element = getLineElementForFragment(fragment, documentVersion);
 				if (element) {
@@ -132,7 +132,7 @@ function addImageContexts() {
 	for (const img of images) {
 		img.id = 'image-' + idNumber;
 		idNumber += 1;
-		img.setAttribute('data-vscode-context', JSON.stringify({ webviewSection: 'image', id: img.id, 'preventDefaultContextMenuItems': true, resource: documentResource }));
+		img.setAttribute('data-zycode-context', JSON.stringify({ webviewSection: 'image', id: img.id, 'preventDefaultContextMenuItems': true, resource: documentResource }));
 	}
 }
 
@@ -288,7 +288,7 @@ window.addEventListener('message', async event => {
 
 			++documentVersion;
 
-			window.dispatchEvent(new CustomEvent('vscode.markdown.updateContent'));
+			window.dispatchEvent(new CustomEvent('zycode.markdown.updateContent'));
 			addImageContexts();
 			break;
 		}
@@ -316,7 +316,7 @@ document.addEventListener('dblclick', event => {
 	}
 });
 
-const passThroughLinkSchemes = ['http:', 'https:', 'mailto:', 'vscode:', 'vscode-insiders:'];
+const passThroughLinkSchemes = ['http:', 'https:', 'mailto:', 'zycode:', 'zycode-insiders:'];
 
 document.addEventListener('click', event => {
 	if (!event) {
@@ -368,6 +368,6 @@ window.addEventListener('scroll', throttle(() => {
 
 function updateScrollProgress() {
 	state.scrollProgress = window.scrollY / document.body.clientHeight;
-	vscode.setState(state);
+	zycode.setState(state);
 }
 

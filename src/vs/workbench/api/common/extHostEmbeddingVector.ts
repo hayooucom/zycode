@@ -5,7 +5,7 @@
 
 import { IExtensionDescription } from 'vs/platform/extensions/common/extensions';
 import { ExtHostAiEmbeddingVectorShape, IMainContext, MainContext, MainThreadAiEmbeddingVectorShape } from 'vs/workbench/api/common/extHost.protocol';
-import type { CancellationToken, EmbeddingVectorProvider } from 'vscode';
+import type { CancellationToken, EmbeddingVectorProvider } from 'zycode';
 import { Disposable } from 'vs/workbench/api/common/extHostTypes';
 
 export class ExtHostAiEmbeddingVector implements ExtHostAiEmbeddingVectorShape {

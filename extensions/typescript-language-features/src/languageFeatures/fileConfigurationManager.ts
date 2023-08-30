@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import type * as Proto from '../tsServer/protocol/protocol';
 import { API } from '../tsServer/api';
 import { ITypeScriptServiceClient } from '../typescriptService';
@@ -32,7 +32,7 @@ export default class FileConfigurationManager extends Disposable {
 	) {
 		super();
 		this.formatOptions = new ResourceMap(undefined, { onCaseInsensitiveFileSystem });
-		vscode.workspace.onDidCloseTextDocument(textDocument => {
+		zycode.workspace.onDidCloseTextDocument(textDocument => {
 			// When a document gets closed delete the cached formatting options.
 			// This is necessary since the tsserver now closed a project when its
 			// last file in it closes which drops the stored formatting options
@@ -42,8 +42,8 @@ export default class FileConfigurationManager extends Disposable {
 	}
 
 	public async ensureConfigurationForDocument(
-		document: vscode.TextDocument,
-		token: vscode.CancellationToken
+		document: zycode.TextDocument,
+		token: zycode.CancellationToken
 	): Promise<void> {
 		const formattingOptions = this.getFormattingOptions(document);
 		if (formattingOptions) {
@@ -52,21 +52,21 @@ export default class FileConfigurationManager extends Disposable {
 	}
 
 	private getFormattingOptions(
-		document: vscode.TextDocument
-	): vscode.FormattingOptions | undefined {
-		const editor = vscode.window.visibleTextEditors.find(editor => editor.document.fileName === document.fileName);
+		document: zycode.TextDocument
+	): zycode.FormattingOptions | undefined {
+		const editor = zycode.window.visibleTextEditors.find(editor => editor.document.fileName === document.fileName);
 		return editor
 			? {
 				tabSize: editor.options.tabSize,
 				insertSpaces: editor.options.insertSpaces
-			} as vscode.FormattingOptions
+			} as zycode.FormattingOptions
 			: undefined;
 	}
 
 	public async ensureConfigurationOptions(
-		document: vscode.TextDocument,
-		options: vscode.FormattingOptions,
-		token: vscode.CancellationToken
+		document: zycode.TextDocument,
+		options: zycode.FormattingOptions,
+		token: zycode.CancellationToken
 	): Promise<void> {
 		const file = this.client.toOpenTsFilePath(document);
 		if (!file) {
@@ -101,8 +101,8 @@ export default class FileConfigurationManager extends Disposable {
 	}
 
 	public async setGlobalConfigurationFromDocument(
-		document: vscode.TextDocument,
-		token: vscode.CancellationToken,
+		document: zycode.TextDocument,
+		token: zycode.CancellationToken,
 	): Promise<void> {
 		const formattingOptions = this.getFormattingOptions(document);
 		if (!formattingOptions) {
@@ -121,8 +121,8 @@ export default class FileConfigurationManager extends Disposable {
 	}
 
 	private getFileOptions(
-		document: vscode.TextDocument,
-		options: vscode.FormattingOptions
+		document: zycode.TextDocument,
+		options: zycode.FormattingOptions
 	): FileConfiguration {
 		return {
 			formatOptions: this.getFormatOptions(document, options),
@@ -131,10 +131,10 @@ export default class FileConfigurationManager extends Disposable {
 	}
 
 	private getFormatOptions(
-		document: vscode.TextDocument,
-		options: vscode.FormattingOptions
+		document: zycode.TextDocument,
+		options: zycode.FormattingOptions
 	): Proto.FormatCodeSettings {
-		const config = vscode.workspace.getConfiguration(
+		const config = zycode.workspace.getConfiguration(
 			isTypeScriptDocument(document) ? 'typescript.format' : 'javascript.format',
 			document.uri);
 
@@ -165,12 +165,12 @@ export default class FileConfigurationManager extends Disposable {
 		};
 	}
 
-	private getPreferences(document: vscode.TextDocument): Proto.UserPreferences {
-		const config = vscode.workspace.getConfiguration(
+	private getPreferences(document: zycode.TextDocument): Proto.UserPreferences {
+		const config = zycode.workspace.getConfiguration(
 			isTypeScriptDocument(document) ? 'typescript' : 'javascript',
 			document);
 
-		const preferencesConfig = vscode.workspace.getConfiguration(
+		const preferencesConfig = zycode.workspace.getConfiguration(
 			isTypeScriptDocument(document) ? 'typescript.preferences' : 'javascript.preferences',
 			document);
 
@@ -190,7 +190,7 @@ export default class FileConfigurationManager extends Disposable {
 			includeCompletionsWithSnippetText: true,
 			includeCompletionsWithClassMemberSnippets: config.get<boolean>('suggest.classMemberSnippets.enabled', true),
 			includeCompletionsWithObjectLiteralMethodSnippets: config.get<boolean>('suggest.objectLiteralMethodSnippets.enabled', true),
-			autoImportFileExcludePatterns: this.getAutoImportFileExcludePatternsPreference(preferencesConfig, vscode.workspace.getWorkspaceFolder(document.uri)?.uri),
+			autoImportFileExcludePatterns: this.getAutoImportFileExcludePatternsPreference(preferencesConfig, zycode.workspace.getWorkspaceFolder(document.uri)?.uri),
 			useLabelDetailsInCompletionEntries: true,
 			allowIncompleteCompletions: true,
 			displayPartsForJSDoc: true,
@@ -202,7 +202,7 @@ export default class FileConfigurationManager extends Disposable {
 		return preferences;
 	}
 
-	private getQuoteStylePreference(config: vscode.WorkspaceConfiguration) {
+	private getQuoteStylePreference(config: zycode.WorkspaceConfiguration) {
 		switch (config.get<string>('quoteStyle')) {
 			case 'single': return 'single';
 			case 'double': return 'double';
@@ -210,14 +210,14 @@ export default class FileConfigurationManager extends Disposable {
 		}
 	}
 
-	private getAutoImportFileExcludePatternsPreference(config: vscode.WorkspaceConfiguration, workspaceFolder: vscode.Uri | undefined): string[] | undefined {
+	private getAutoImportFileExcludePatternsPreference(config: zycode.WorkspaceConfiguration, workspaceFolder: zycode.Uri | undefined): string[] | undefined {
 		return workspaceFolder && config.get<string[]>('autoImportFileExcludePatterns')?.map(p => {
 			// Normalization rules: https://github.com/microsoft/TypeScript/pull/49578
 			const slashNormalized = p.replace(/\\/g, '/');
 			const isRelative = /^\.\.?($|\/)/.test(slashNormalized);
 			return path.isAbsolute(p) ? p :
 				p.startsWith('*') ? '/' + slashNormalized :
-					isRelative ? vscode.Uri.joinPath(workspaceFolder, p).fsPath :
+					isRelative ? zycode.Uri.joinPath(workspaceFolder, p).fsPath :
 						'/**/' + slashNormalized;
 		});
 	}
@@ -233,7 +233,7 @@ export class InlayHintSettingNames {
 	static readonly enumMemberValuesEnabled = 'inlayHints.enumMemberValues.enabled';
 }
 
-export function getInlayHintsPreferences(config: vscode.WorkspaceConfiguration) {
+export function getInlayHintsPreferences(config: zycode.WorkspaceConfiguration) {
 	return {
 		includeInlayParameterNameHints: getInlayParameterNameHintsPreference(config),
 		includeInlayParameterNameHintsWhenArgumentMatchesName: !config.get<boolean>(InlayHintSettingNames.parameterNamesSuppressWhenArgumentMatchesName, true),
@@ -246,7 +246,7 @@ export function getInlayHintsPreferences(config: vscode.WorkspaceConfiguration) 
 	} as const;
 }
 
-function getInlayParameterNameHintsPreference(config: vscode.WorkspaceConfiguration) {
+function getInlayParameterNameHintsPreference(config: zycode.WorkspaceConfiguration) {
 	switch (config.get<string>('inlayHints.parameterNames.enabled')) {
 		case 'none': return 'none';
 		case 'literals': return 'literals';
@@ -255,7 +255,7 @@ function getInlayParameterNameHintsPreference(config: vscode.WorkspaceConfigurat
 	}
 }
 
-function getImportModuleSpecifierPreference(config: vscode.WorkspaceConfiguration) {
+function getImportModuleSpecifierPreference(config: zycode.WorkspaceConfiguration) {
 	switch (config.get<string>('importModuleSpecifier')) {
 		case 'project-relative': return 'project-relative';
 		case 'relative': return 'relative';
@@ -264,7 +264,7 @@ function getImportModuleSpecifierPreference(config: vscode.WorkspaceConfiguratio
 	}
 }
 
-function getImportModuleSpecifierEndingPreference(config: vscode.WorkspaceConfiguration) {
+function getImportModuleSpecifierEndingPreference(config: zycode.WorkspaceConfiguration) {
 	switch (config.get<string>('importModuleSpecifierEnding')) {
 		case 'minimal': return 'minimal';
 		case 'index': return 'index';
@@ -273,7 +273,7 @@ function getImportModuleSpecifierEndingPreference(config: vscode.WorkspaceConfig
 	}
 }
 
-function getJsxAttributeCompletionStyle(config: vscode.WorkspaceConfiguration) {
+function getJsxAttributeCompletionStyle(config: zycode.WorkspaceConfiguration) {
 	switch (config.get<string>('jsxAttributeCompletionStyle')) {
 		case 'braces': return 'braces';
 		case 'none': return 'none';

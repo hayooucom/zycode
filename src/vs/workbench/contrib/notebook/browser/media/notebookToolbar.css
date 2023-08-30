@@ -48,7 +48,7 @@
 	outline-width: 1px;
 	outline-style: solid;
 	outline-offset: -1px;
-	outline-color: var(--vscode-focusBorder);
+	outline-color: var(--zycode-focusBorder);
 	opacity: 1;
 }
 
@@ -58,7 +58,7 @@
 }
 
 .monaco-workbench .notebookOverlay .notebook-toolbar-container .monaco-action-bar .action-item:not(.disabled):hover {
-	background-color: var(--vscode-toolbar-hoverBackground);
+	background-color: var(--zycode-toolbar-hoverBackground);
 }
 
 .monaco-workbench .notebookOverlay .notebook-toolbar-container .monaco-action-bar .action-item .action-label {
@@ -90,9 +90,9 @@
 }
 
 .monaco-workbench .notebookOverlay .notebook-toolbar-container .monaco-action-bar:not(.vertical) .action-item.active {
-	background-color: var(--vscode-toolbar-activeBackground);
+	background-color: var(--zycode-toolbar-activeBackground);
 }
 
 .monaco-workbench .notebookOverlay .notebook-toolbar-container .monaco-action-bar .action-item .codicon-notebook-state-error {
-	color: var(--vscode-notebookStatusErrorIcon-foreground);
+	color: var(--zycode-notebookStatusErrorIcon-foreground);
 }

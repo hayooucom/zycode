@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 //@ts-check
 
-import * as vscodeGrammarUpdater from 'vscode-grammar-updater';
+import * as vscodeGrammarUpdater from 'zycode-grammar-updater';
 
 function adaptInjectionScope(grammar) {
 	// we're using the HTML grammar from https://github.com/textmate/html.tmbundle which has moved away from source.js.embedded.html
@@ -29,8 +29,8 @@ function includeDerivativeHtml(grammar) {
 	});
 }
 
-// Workaround for https://github.com/microsoft/vscode/issues/40279
-// and https://github.com/microsoft/vscode-textmate/issues/59
+// Workaround for https://github.com/microsoft/zycode/issues/40279
+// and https://github.com/microsoft/zycode-textmate/issues/59
 function fixBadRegex(grammar) {
 	function fail(msg) {
 		throw new Error(`fixBadRegex callback couldn't patch ${msg}. It may be obsolete`);

@@ -47,7 +47,7 @@ function shouldTransformUri(uri: string): boolean {
 	// In principle, we could convert any URI, but we have concerns
 	// that parsing https URIs might end up decoding escape characters
 	// and result in an unintended transformation
-	return /^(file|vscode-remote):/i.test(uri);
+	return /^(file|zycode-remote):/i.test(uri);
 }
 
 const nativeFetch = fetch.bind(self);
@@ -96,8 +96,8 @@ if ((<any>self).Worker) {
 	Worker = <any>function (stringUrl: string | URL, options?: WorkerOptions) {
 		if (/^file:/i.test(stringUrl.toString())) {
 			stringUrl = FileAccess.uriToBrowserUri(URI.parse(stringUrl.toString())).toString(true);
-		} else if (/^vscode-remote:/i.test(stringUrl.toString())) {
-			// Supporting transformation of vscode-remote URIs requires an async call to the main thread,
+		} else if (/^zycode-remote:/i.test(stringUrl.toString())) {
+			// Supporting transformation of zycode-remote URIs requires an async call to the main thread,
 			// but we cannot do this call from within the embedded Worker, and the only way out would be
 			// to use templating instead of a function in the web api (`resourceUriProvider`)
 			throw new Error(`Creating workers from remote extensions is currently not supported.`);
@@ -109,7 +109,7 @@ if ((<any>self).Worker) {
 		const bootstrapFnSource = (function bootstrapFn(workerUrl: string) {
 			function asWorkerBrowserUrl(url: string | URL | TrustedScriptURL): any {
 				if (typeof url === 'string' || url instanceof URL) {
-					return String(url).replace(/^file:\/\//i, 'vscode-file://vscode-app');
+					return String(url).replace(/^file:\/\//i, 'zycode-file://zycode-app');
 				}
 				return url;
 			}
@@ -226,12 +226,12 @@ function connectToRenderer(protocol: IMessagePassingProtocol): Promise<IRenderer
 let onTerminate = (reason: string) => nativeClose();
 
 interface IInitMessage {
-	readonly type: 'vscode.init';
+	readonly type: 'zycode.init';
 	readonly data: ReadonlyMap<string, MessagePort>;
 }
 
 function isInitMessage(a: any): a is IInitMessage {
-	return !!a && typeof a === 'object' && a.type === 'vscode.init' && a.data instanceof Map;
+	return !!a && typeof a === 'object' && a.type === 'zycode.init' && a.data instanceof Map;
 }
 
 export function create(): { onmessage: (message: any) => void } {

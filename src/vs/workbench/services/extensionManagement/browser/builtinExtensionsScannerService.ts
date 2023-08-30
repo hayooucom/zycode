@@ -55,7 +55,7 @@ export class BuiltinExtensionsScannerService implements IBuiltinExtensionsScanne
 					bundledExtensions = [/*BUILD->INSERT_BUILTIN_EXTENSIONS*/];
 				} else {
 					// Find builtin extensions by checking for DOM
-					const builtinExtensionsElement = document.getElementById('vscode-workbench-builtin-extensions');
+					const builtinExtensionsElement = document.getElementById('zycode-workbench-builtin-extensions');
 					const builtinExtensionsElementAttribute = builtinExtensionsElement ? builtinExtensionsElement.getAttribute('data-settings') : undefined;
 					if (builtinExtensionsElementAttribute) {
 						try {

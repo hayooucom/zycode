@@ -115,8 +115,8 @@ export interface ISandboxContext {
 	resolveConfiguration(): Promise<ISandboxConfiguration>;
 }
 
-export const ipcRenderer: IpcRenderer = globals.vscode.ipcRenderer;
-export const ipcMessagePort: IpcMessagePort = globals.vscode.ipcMessagePort;
-export const webFrame: WebFrame = globals.vscode.webFrame;
-export const process: ISandboxNodeProcess = globals.vscode.process;
-export const context: ISandboxContext = globals.vscode.context;
+export const ipcRenderer: IpcRenderer = globals.zycode.ipcRenderer;
+export const ipcMessagePort: IpcMessagePort = globals.zycode.ipcMessagePort;
+export const webFrame: WebFrame = globals.zycode.webFrame;
+export const process: ISandboxNodeProcess = globals.zycode.process;
+export const context: ISandboxContext = globals.zycode.context;

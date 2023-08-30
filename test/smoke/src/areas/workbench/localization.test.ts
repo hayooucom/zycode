@@ -16,7 +16,7 @@ export function setup(logger: Logger) {
 			const app = this.app as Application;
 
 			await app.workbench.extensions.openExtensionsViewlet();
-			await app.workbench.extensions.installExtension('ms-ceintl.vscode-language-pack-de', false);
+			await app.workbench.extensions.installExtension('ms-ceintl.zycode-language-pack-de', false);
 			await app.restart({ extraArgs: ['--locale=DE'] });
 
 			const result = await app.workbench.localization.getLocalizedStrings();

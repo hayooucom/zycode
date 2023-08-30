@@ -103,7 +103,7 @@ class ValidatedIpcMain implements Event.NodeEventEmitter {
 	}
 
 	private validateEvent(channel: string, event: IpcMainEvent | IpcMainInvokeEvent): boolean {
-		if (!channel || !channel.startsWith('vscode:')) {
+		if (!channel || !channel.startsWith('zycode:')) {
 			onUnexpectedError(`Refused to handle ipcMain event for channel '${channel}' because the channel is unknown.`);
 			return false; // unexpected channel
 		}
@@ -111,7 +111,7 @@ class ValidatedIpcMain implements Event.NodeEventEmitter {
 		const sender = event.senderFrame;
 
 		const url = sender.url;
-		// `url` can be `undefined` when running tests from playwright https://github.com/microsoft/vscode/issues/147301
+		// `url` can be `undefined` when running tests from playwright https://github.com/microsoft/zycode/issues/147301
 		// and `url` can be `about:blank` when reloading the window
 		// from performance tab of devtools https://github.com/electron/electron/issues/39427.
 		// It is fine to skip the checks in these cases.
@@ -127,7 +127,7 @@ class ValidatedIpcMain implements Event.NodeEventEmitter {
 			return false; // unexpected URL
 		}
 
-		if (host !== 'vscode-app') {
+		if (host !== 'zycode-app') {
 			onUnexpectedError(`Refused to handle ipcMain event for channel '${channel}' because of a bad origin of '${host}'.`);
 			return false; // unexpected sender
 		}

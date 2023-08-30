@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Disposable, Event, ProviderResult, Uri } from 'vscode';
-export { ProviderResult } from 'vscode';
+import { Disposable, Event, ProviderResult, Uri } from 'zycode';
+export { ProviderResult } from 'zycode';
 
 export interface API {
 	pickRemoteSource(options: PickRemoteSourceOptions): Promise<string | PickRemoteSourceResult | undefined>;

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ActivationFunction, OutputItem, RendererContext } from 'vscode-notebook-renderer';
+import type { ActivationFunction, OutputItem, RendererContext } from 'zycode-notebook-renderer';
 import { createOutputContent, appendOutput, scrollableClass } from './textHelper';
 import { HtmlRenderingHook, IDisposable, IRichRenderContext, JavaScriptRenderingHook, OutputWithAppend, RenderOptions } from './rendererTypes';
 import { ttPolicy } from './htmlHelper';
@@ -37,7 +37,7 @@ function renderImage(outputInfo: OutputItem, element: HTMLElement): IDisposable 
 	if (alt) {
 		image.alt = alt;
 	}
-	image.setAttribute('data-vscode-context', JSON.stringify({ webviewSection: 'image', outputId: outputInfo.id, 'preventDefaultContextMenuItems': true }));
+	image.setAttribute('data-zycode-context', JSON.stringify({ webviewSection: 'image', outputId: outputInfo.id, 'preventDefaultContextMenuItems': true }));
 	const display = document.createElement('div');
 	display.classList.add('display');
 	display.appendChild(image);
@@ -388,7 +388,7 @@ export const activate: ActivationFunction<void> = (ctx) => {
 		max-height: var(--notebook-cell-output-max-height);
 	}
 	#container div.output .scrollable.scrollbar-visible {
-		border-color: var(--vscode-editorWidget-border);
+		border-color: var(--zycode-editorWidget-border);
 	}
 	#container div.output .scrollable.scrollbar-visible:focus {
 		border-color: var(--theme-input-focus-border-color);
@@ -405,7 +405,7 @@ export const activate: ActivationFunction<void> = (ctx) => {
 		cursor: pointer;
 	}
 	#container div.output .scrollable.more-above {
-		box-shadow: var(--vscode-scrollbar-shadow) 0 6px 6px -6px inset
+		box-shadow: var(--zycode-scrollbar-shadow) 0 6px 6px -6px inset
 	}
 	.output-plaintext .code-bold,
 	.output-stream .code-bold,

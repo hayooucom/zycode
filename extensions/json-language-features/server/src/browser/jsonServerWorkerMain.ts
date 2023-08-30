@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as l10n from '@vscode/l10n';
+import * as l10n from '@zycode/l10n';
 
 let initialized = false;
 const pendingMessages: any[] = [];

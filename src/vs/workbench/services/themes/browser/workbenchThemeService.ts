@@ -47,9 +47,9 @@ import { ILanguageService } from 'vs/editor/common/languages/language';
 const PERSISTED_OS_COLOR_SCHEME = 'osColorScheme';
 const PERSISTED_OS_COLOR_SCHEME_SCOPE = StorageScope.APPLICATION; // the OS scheme depends on settings in the OS
 
-const defaultThemeExtensionId = 'vscode-theme-defaults';
+const defaultThemeExtensionId = 'zycode-theme-defaults';
 
-const DEFAULT_FILE_ICON_THEME_ID = 'vscode.vscode-theme-seti-vs-seti';
+const DEFAULT_FILE_ICON_THEME_ID = 'zycode.zycode-theme-seti-vs-seti';
 const fileIconsEnabledClass = 'file-icons-enabled';
 
 const colorThemeRulesClassName = 'contributedColorTheme';

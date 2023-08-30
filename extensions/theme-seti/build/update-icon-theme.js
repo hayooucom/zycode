@@ -54,7 +54,7 @@ const ignoreExtAssociation = {
 	"properties": true
 };
 
-const FROM_DISK = true; // set to true to take content from a repo checked out next to the vscode repo
+const FROM_DISK = true; // set to true to take content from a repo checked out next to the zycode repo
 
 let font, fontMappingsFile, fileAssociationFile, colorsFile;
 if (!FROM_DISK) {

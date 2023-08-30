@@ -16,7 +16,7 @@ import { ContiguousMultilineTokensBuilder } from 'vs/editor/common/tokens/contig
 import { LineTokens } from 'vs/editor/common/tokens/lineTokens';
 import { TextMateTokenizationSupport } from 'vs/workbench/services/textMate/browser/tokenizationSupport/textMateTokenizationSupport';
 import { TokenizationSupportWithLineLimit } from 'vs/workbench/services/textMate/browser/tokenizationSupport/tokenizationSupportWithLineLimit';
-import type { StackDiff, StateStack, diffStateStacksRefEq } from 'vscode-textmate';
+import type { StackDiff, StateStack, diffStateStacksRefEq } from 'zycode-textmate';
 import { ICreateGrammarResult } from 'vs/workbench/services/textMate/common/TMGrammarFactory';
 import { StateDeltas } from 'vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker';
 
@@ -113,7 +113,7 @@ export class TextMateWorkerTokenizer extends MirrorTextModel {
 		}
 
 		if (!this._diffStateStacksRefEqFn) {
-			const { diffStateStacksRefEq } = await importAMDNodeModule<typeof import('vscode-textmate')>('vscode-textmate', 'release/main.js');
+			const { diffStateStacksRefEq } = await importAMDNodeModule<typeof import('zycode-textmate')>('zycode-textmate', 'release/main.js');
 			this._diffStateStacksRefEqFn = diffStateStacksRefEq;
 		}
 

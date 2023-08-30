@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 .post-edit-widget {
-	box-shadow: 0 0 8px 2px var(--vscode-widget-shadow);
-	border: 1px solid var(--vscode-widget-border, transparent);
+	box-shadow: 0 0 8px 2px var(--zycode-widget-shadow);
+	border: 1px solid var(--zycode-widget-border, transparent);
 	border-radius: 4px;
-	background-color: var(--vscode-editorWidget-background);
+	background-color: var(--zycode-editorWidget-background);
 	overflow: hidden;
 }
 
@@ -18,7 +18,7 @@
 }
 
 .post-edit-widget .monaco-button:hover {
-	background-color: var(--vscode-button-secondaryHoverBackground) !important;
+	background-color: var(--zycode-button-secondaryHoverBackground) !important;
 }
 
 .post-edit-widget .monaco-button .codicon {

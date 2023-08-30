@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 'use strict';
-import { workspace, Uri } from 'vscode';
+import { workspace, Uri } from 'zycode';
 import { getExtensionContext } from './main';
 import { TextDecoder } from 'util';
 

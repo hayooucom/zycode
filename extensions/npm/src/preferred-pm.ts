@@ -7,7 +7,7 @@ import findWorkspaceRoot = require('../node_modules/find-yarn-workspace-root');
 import * as findUp from 'find-up';
 import * as path from 'path';
 import * as whichPM from 'which-pm';
-import { Uri, workspace } from 'vscode';
+import { Uri, workspace } from 'zycode';
 
 interface PreferredProperties {
 	isPreferred: boolean;

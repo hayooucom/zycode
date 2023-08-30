@@ -4,17 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ExtHostTestItemEvent, InvalidTestItemError } from 'vs/workbench/contrib/testing/common/testItemCollection';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 export interface IExtHostTestItemApi {
 	controllerId: string;
-	parent?: vscode.TestItem;
+	parent?: zycode.TestItem;
 	listener?: (evt: ExtHostTestItemEvent) => void;
 }
 
-const eventPrivateApis = new WeakMap<vscode.TestItem, IExtHostTestItemApi>();
+const eventPrivateApis = new WeakMap<zycode.TestItem, IExtHostTestItemApi>();
 
-export const createPrivateApiFor = (impl: vscode.TestItem, controllerId: string) => {
+export const createPrivateApiFor = (impl: zycode.TestItem, controllerId: string) => {
 	const api: IExtHostTestItemApi = { controllerId };
 	eventPrivateApis.set(impl, api);
 	return api;
@@ -25,7 +25,7 @@ export const createPrivateApiFor = (impl: vscode.TestItem, controllerId: string)
  * is a managed object, but we keep a weakmap to avoid exposing any of the
  * internals to extensions.
  */
-export const getPrivateApiFor = (impl: vscode.TestItem) => {
+export const getPrivateApiFor = (impl: zycode.TestItem) => {
 	const api = eventPrivateApis.get(impl);
 	if (!api) {
 		throw new InvalidTestItemError(impl?.id || '<unknown>');

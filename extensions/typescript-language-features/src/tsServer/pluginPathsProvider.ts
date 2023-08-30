@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as path from 'path';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { RelativeWorkspacePathResolver } from '../utils/relativePathResolver';
 import { TypeScriptServiceConfiguration } from '../configuration/configuration';
 
@@ -36,7 +36,7 @@ export class TypeScriptPluginPathsProvider {
 			return [workspacePath];
 		}
 
-		return (vscode.workspace.workspaceFolders || [])
+		return (zycode.workspace.workspaceFolders || [])
 			.map(workspaceFolder => path.join(workspaceFolder.uri.fsPath, pluginPath));
 	}
 }

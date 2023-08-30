@@ -6,7 +6,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as cp from 'child_process';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 
 type AutoDetect = 'on' | 'off';
@@ -69,17 +69,17 @@ function isTestTask(name: string): boolean {
 	return false;
 }
 
-let _channel: vscode.OutputChannel;
-function getOutputChannel(): vscode.OutputChannel {
+let _channel: zycode.OutputChannel;
+function getOutputChannel(): zycode.OutputChannel {
 	if (!_channel) {
-		_channel = vscode.window.createOutputChannel('Gulp Auto Detection');
+		_channel = zycode.window.createOutputChannel('Gulp Auto Detection');
 	}
 	return _channel;
 }
 
 function showError() {
-	vscode.window.showWarningMessage(vscode.l10n.t("Problem finding gulp tasks. See the output for more information."),
-		vscode.l10n.t("Go to output")).then((choice) => {
+	zycode.window.showWarningMessage(zycode.l10n.t("Problem finding gulp tasks. See the output for more information."),
+		zycode.l10n.t("Go to output")).then((choice) => {
 			if (choice !== undefined) {
 				_channel.show(true);
 			}
@@ -106,38 +106,38 @@ async function findGulpCommand(rootPath: string): Promise<string> {
 	return 'gulp';
 }
 
-interface GulpTaskDefinition extends vscode.TaskDefinition {
+interface GulpTaskDefinition extends zycode.TaskDefinition {
 	task: string;
 	file?: string;
 }
 
 class FolderDetector {
 
-	private fileWatcher: vscode.FileSystemWatcher | undefined;
-	private promise: Thenable<vscode.Task[]> | undefined;
+	private fileWatcher: zycode.FileSystemWatcher | undefined;
+	private promise: Thenable<zycode.Task[]> | undefined;
 
 	constructor(
-		private _workspaceFolder: vscode.WorkspaceFolder,
+		private _workspaceFolder: zycode.WorkspaceFolder,
 		private _gulpCommand: Promise<string>) {
 	}
 
-	public get workspaceFolder(): vscode.WorkspaceFolder {
+	public get workspaceFolder(): zycode.WorkspaceFolder {
 		return this._workspaceFolder;
 	}
 
 	public isEnabled(): boolean {
-		return vscode.workspace.getConfiguration('gulp', this._workspaceFolder.uri).get<AutoDetect>('autoDetect') === 'on';
+		return zycode.workspace.getConfiguration('gulp', this._workspaceFolder.uri).get<AutoDetect>('autoDetect') === 'on';
 	}
 
 	public start(): void {
 		const pattern = path.join(this._workspaceFolder.uri.fsPath, '{node_modules,gulpfile{.babel.js,.esm.js,.js,.mjs,.cjs,.ts}}');
-		this.fileWatcher = vscode.workspace.createFileSystemWatcher(pattern);
+		this.fileWatcher = zycode.workspace.createFileSystemWatcher(pattern);
 		this.fileWatcher.onDidChange(() => this.promise = undefined);
 		this.fileWatcher.onDidCreate(() => this.promise = undefined);
 		this.fileWatcher.onDidDelete(() => this.promise = undefined);
 	}
 
-	public async getTasks(): Promise<vscode.Task[]> {
+	public async getTasks(): Promise<zycode.Task[]> {
 		if (!this.isEnabled()) {
 			return [];
 		}
@@ -149,12 +149,12 @@ class FolderDetector {
 		return this.promise;
 	}
 
-	public async getTask(_task: vscode.Task): Promise<vscode.Task | undefined> {
+	public async getTask(_task: zycode.Task): Promise<zycode.Task | undefined> {
 		const gulpTask = (<any>_task.definition).task;
 		if (gulpTask) {
 			const kind: GulpTaskDefinition = (<any>_task.definition);
-			const options: vscode.ShellExecutionOptions = { cwd: this.workspaceFolder.uri.fsPath };
-			const task = new vscode.Task(kind, this.workspaceFolder, gulpTask, 'gulp', new vscode.ShellExecution(await this._gulpCommand, [gulpTask], options));
+			const options: zycode.ShellExecutionOptions = { cwd: this.workspaceFolder.uri.fsPath };
+			const task = new zycode.Task(kind, this.workspaceFolder, gulpTask, 'gulp', new zycode.ShellExecution(await this._gulpCommand, [gulpTask], options));
 			return task;
 		}
 		return undefined;
@@ -200,9 +200,9 @@ class FolderDetector {
 		return false;
 	}
 
-	private async computeTasks(): Promise<vscode.Task[]> {
+	private async computeTasks(): Promise<zycode.Task[]> {
 		const rootPath = this._workspaceFolder.uri.scheme === 'file' ? this._workspaceFolder.uri.fsPath : undefined;
-		const emptyTasks: vscode.Task[] = [];
+		const emptyTasks: zycode.Task[] = [];
 		if (!rootPath) {
 			return emptyTasks;
 		}
@@ -223,7 +223,7 @@ class FolderDetector {
 					showError();
 				}
 			}
-			const result: vscode.Task[] = [];
+			const result: zycode.Task[] = [];
 			if (stdout) {
 				const lines = stdout.split(/\r{0,1}\n/);
 				for (const line of lines) {
@@ -234,14 +234,14 @@ class FolderDetector {
 						type: 'gulp',
 						task: line
 					};
-					const options: vscode.ShellExecutionOptions = { cwd: this.workspaceFolder.uri.fsPath };
-					const task = new vscode.Task(kind, this.workspaceFolder, line, 'gulp', new vscode.ShellExecution(await this._gulpCommand, [line], options));
+					const options: zycode.ShellExecutionOptions = { cwd: this.workspaceFolder.uri.fsPath };
+					const task = new zycode.Task(kind, this.workspaceFolder, line, 'gulp', new zycode.ShellExecution(await this._gulpCommand, [line], options));
 					result.push(task);
 					const lowerCaseLine = line.toLowerCase();
 					if (isBuildTask(lowerCaseLine)) {
-						task.group = vscode.TaskGroup.Build;
+						task.group = zycode.TaskGroup.Build;
 					} else if (isTestTask(lowerCaseLine)) {
-						task.group = vscode.TaskGroup.Test;
+						task.group = zycode.TaskGroup.Test;
 					}
 				}
 			}
@@ -254,7 +254,7 @@ class FolderDetector {
 			if (err.stdout) {
 				channel.appendLine(err.stdout);
 			}
-			channel.appendLine(vscode.l10n.t("Auto detecting gulp for folder {0} failed with error: {1}', this.workspaceFolder.name, err.error ? err.error.toString() : 'unknown"));
+			channel.appendLine(zycode.l10n.t("Auto detecting gulp for folder {0} failed with error: {1}', this.workspaceFolder.name, err.error ? err.error.toString() : 'unknown"));
 			showError();
 			return emptyTasks;
 		}
@@ -270,19 +270,19 @@ class FolderDetector {
 
 class TaskDetector {
 
-	private taskProvider: vscode.Disposable | undefined;
+	private taskProvider: zycode.Disposable | undefined;
 	private detectors: Map<string, FolderDetector> = new Map();
 
 	constructor() {
 	}
 
 	public start(): void {
-		const folders = vscode.workspace.workspaceFolders;
+		const folders = zycode.workspace.workspaceFolders;
 		if (folders) {
 			this.updateWorkspaceFolders(folders, []);
 		}
-		vscode.workspace.onDidChangeWorkspaceFolders((event) => this.updateWorkspaceFolders(event.added, event.removed));
-		vscode.workspace.onDidChangeConfiguration(this.updateConfiguration, this);
+		zycode.workspace.onDidChangeWorkspaceFolders((event) => this.updateWorkspaceFolders(event.added, event.removed));
+		zycode.workspace.onDidChangeConfiguration(this.updateConfiguration, this);
 	}
 
 	public dispose(): void {
@@ -293,7 +293,7 @@ class TaskDetector {
 		this.detectors.clear();
 	}
 
-	private updateWorkspaceFolders(added: readonly vscode.WorkspaceFolder[], removed: readonly vscode.WorkspaceFolder[]): void {
+	private updateWorkspaceFolders(added: readonly zycode.WorkspaceFolder[], removed: readonly zycode.WorkspaceFolder[]): void {
 		for (const remove of removed) {
 			const detector = this.detectors.get(remove.uri.toString());
 			if (detector) {
@@ -316,7 +316,7 @@ class TaskDetector {
 			detector.dispose();
 			this.detectors.delete(detector.workspaceFolder.uri.toString());
 		}
-		const folders = vscode.workspace.workspaceFolders;
+		const folders = zycode.workspace.workspaceFolders;
 		if (folders) {
 			for (const folder of folders) {
 				if (!this.detectors.has(folder.uri.toString())) {
@@ -334,11 +334,11 @@ class TaskDetector {
 	private updateProvider(): void {
 		if (!this.taskProvider && this.detectors.size > 0) {
 			const thisCapture = this;
-			this.taskProvider = vscode.tasks.registerTaskProvider('gulp', {
-				provideTasks(): Promise<vscode.Task[]> {
+			this.taskProvider = zycode.tasks.registerTaskProvider('gulp', {
+				provideTasks(): Promise<zycode.Task[]> {
 					return thisCapture.getTasks();
 				},
-				resolveTask(_task: vscode.Task): Promise<vscode.Task | undefined> {
+				resolveTask(_task: zycode.Task): Promise<zycode.Task | undefined> {
 					return thisCapture.getTask(_task);
 				}
 			});
@@ -349,22 +349,22 @@ class TaskDetector {
 		}
 	}
 
-	public getTasks(): Promise<vscode.Task[]> {
+	public getTasks(): Promise<zycode.Task[]> {
 		return this.computeTasks();
 	}
 
-	private computeTasks(): Promise<vscode.Task[]> {
+	private computeTasks(): Promise<zycode.Task[]> {
 		if (this.detectors.size === 0) {
 			return Promise.resolve([]);
 		} else if (this.detectors.size === 1) {
 			return this.detectors.values().next().value.getTasks();
 		} else {
-			const promises: Promise<vscode.Task[]>[] = [];
+			const promises: Promise<zycode.Task[]>[] = [];
 			for (const detector of this.detectors.values()) {
 				promises.push(detector.getTasks().then((value) => value, () => []));
 			}
 			return Promise.all(promises).then((values) => {
-				const result: vscode.Task[] = [];
+				const result: zycode.Task[] = [];
 				for (const tasks of values) {
 					if (tasks && tasks.length > 0) {
 						result.push(...tasks);
@@ -375,13 +375,13 @@ class TaskDetector {
 		}
 	}
 
-	public async getTask(task: vscode.Task): Promise<vscode.Task | undefined> {
+	public async getTask(task: zycode.Task): Promise<zycode.Task | undefined> {
 		if (this.detectors.size === 0) {
 			return undefined;
 		} else if (this.detectors.size === 1) {
 			return this.detectors.values().next().value.getTask(task);
 		} else {
-			if ((task.scope === vscode.TaskScope.Workspace) || (task.scope === vscode.TaskScope.Global)) {
+			if ((task.scope === zycode.TaskScope.Workspace) || (task.scope === zycode.TaskScope.Global)) {
 				// Not supported, we don't have enough info to create the task.
 				return undefined;
 			} else if (task.scope) {
@@ -396,7 +396,7 @@ class TaskDetector {
 }
 
 let detector: TaskDetector;
-export function activate(_context: vscode.ExtensionContext): void {
+export function activate(_context: zycode.ExtensionContext): void {
 	detector = new TaskDetector();
 	detector.start();
 }

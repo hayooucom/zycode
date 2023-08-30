@@ -5,7 +5,7 @@
 
 import { URI, UriComponents } from 'vs/base/common/uri';
 import { MainContext, IMainContext, ExtHostFileSystemShape, MainThreadFileSystemShape, IFileChangeDto } from './extHost.protocol';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as files from 'vs/platform/files/common/files';
 import { IDisposable, toDisposable } from 'vs/base/common/lifecycle';
 import { FileChangeType } from 'vs/workbench/api/common/extHostTypes';
@@ -87,10 +87,10 @@ class FsLinkProvider {
 		}
 	}
 
-	provideDocumentLinks(document: vscode.TextDocument): vscode.ProviderResult<vscode.DocumentLink[]> {
+	provideDocumentLinks(document: zycode.TextDocument): zycode.ProviderResult<zycode.DocumentLink[]> {
 		this._initStateMachine();
 
-		const result: vscode.DocumentLink[] = [];
+		const result: zycode.DocumentLink[] = [];
 		const links = LinkComputer.computeLinks({
 			getLineContent(lineNumber: number): string {
 				return document.lineAt(lineNumber - 1).text;
@@ -114,7 +114,7 @@ export class ExtHostFileSystem implements ExtHostFileSystemShape {
 
 	private readonly _proxy: MainThreadFileSystemShape;
 	private readonly _linkProvider = new FsLinkProvider();
-	private readonly _fsProvider = new Map<number, vscode.FileSystemProvider>();
+	private readonly _fsProvider = new Map<number, zycode.FileSystemProvider>();
 	private readonly _registeredSchemes = new Set<string>();
 	private readonly _watches = new Map<number, IDisposable>();
 
@@ -129,7 +129,7 @@ export class ExtHostFileSystem implements ExtHostFileSystemShape {
 		this._linkProviderRegistration?.dispose();
 	}
 
-	registerFileSystemProvider(extension: IExtensionDescription, scheme: string, provider: vscode.FileSystemProvider, options: { isCaseSensitive?: boolean; isReadonly?: boolean | vscode.MarkdownString } = {}) {
+	registerFileSystemProvider(extension: IExtensionDescription, scheme: string, provider: zycode.FileSystemProvider, options: { isCaseSensitive?: boolean; isReadonly?: boolean | zycode.MarkdownString } = {}) {
 
 		// validate the given provider is complete
 		ExtHostFileSystem._validateFileSystemProvider(provider);
@@ -219,7 +219,7 @@ export class ExtHostFileSystem implements ExtHostFileSystemShape {
 		});
 	}
 
-	private static _validateFileSystemProvider(provider: vscode.FileSystemProvider) {
+	private static _validateFileSystemProvider(provider: zycode.FileSystemProvider) {
 		if (!provider) {
 			throw new Error('MISSING provider');
 		}
@@ -249,7 +249,7 @@ export class ExtHostFileSystem implements ExtHostFileSystemShape {
 		}
 	}
 
-	private static _asIStat(stat: vscode.FileStat): files.IStat {
+	private static _asIStat(stat: zycode.FileStat): files.IStat {
 		const { type, ctime, mtime, size, permissions } = stat;
 		return { type, ctime, mtime, size, permissions };
 	}
@@ -338,7 +338,7 @@ export class ExtHostFileSystem implements ExtHostFileSystemShape {
 		return Promise.resolve(provider.write(fd, pos, data.buffer, 0, data.byteLength));
 	}
 
-	private _getFsProvider(handle: number): vscode.FileSystemProvider {
+	private _getFsProvider(handle: number): zycode.FileSystemProvider {
 		const provider = this._fsProvider.get(handle);
 		if (!provider) {
 			const err = new Error();

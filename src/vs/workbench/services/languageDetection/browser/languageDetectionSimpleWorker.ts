@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ModelOperations, ModelResult } from '@vscode/vscode-languagedetection';
+import type { ModelOperations, ModelResult } from '@zycode/zycode-languagedetection';
 import { StopWatch } from 'vs/base/common/stopwatch';
 import { IRequestHandler } from 'vs/base/common/worker/simpleWorker';
 import { EditorSimpleWorker } from 'vs/editor/common/services/editorSimpleWorker';
@@ -137,7 +137,7 @@ export class LanguageDetectionSimpleWorker extends EditorSimpleWorker {
 		}
 
 		const uri: string = await this._host.fhr('getIndexJsUri', []);
-		const { ModelOperations } = await import(uri) as typeof import('@vscode/vscode-languagedetection');
+		const { ModelOperations } = await import(uri) as typeof import('@zycode/zycode-languagedetection');
 		this._modelOperations = new ModelOperations({
 			modelJsonLoaderFunc: async () => {
 				const response = await fetch(await this._host.fhr('getModelJsonUri', []));

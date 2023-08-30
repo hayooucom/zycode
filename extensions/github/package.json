@@ -2,11 +2,11 @@
   "name": "github",
   "displayName": "%displayName%",
   "description": "%description%",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "license": "MIT",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.41.0"
+    "zycode": "^1.41.0"
   },
   "aiKey": "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255",
   "icon": "images/icon.png",
@@ -17,7 +17,7 @@
     "*"
   ],
   "extensionDependencies": [
-    "vscode.git-base"
+    "zycode.git-base"
   ],
   "main": "./out/extension.js",
   "capabilities": {
@@ -40,19 +40,19 @@
       },
       {
         "command": "github.copyVscodeDevLink",
-        "title": "Copy vscode.dev Link"
+        "title": "Copy zycode.dev Link"
       },
       {
         "command": "github.copyVscodeDevLinkFile",
-        "title": "Copy vscode.dev Link"
+        "title": "Copy zycode.dev Link"
       },
       {
         "command": "github.copyVscodeDevLinkWithoutRange",
-        "title": "Copy vscode.dev Link"
+        "title": "Copy zycode.dev Link"
       },
       {
         "command": "github.openOnVscodeDev",
-        "title": "Open in vscode.dev",
+        "title": "Open in zycode.dev",
         "icon": "$(globe)"
       }
     ],
@@ -60,7 +60,7 @@
       {
         "command": "github.openOnVscodeDev",
         "when": "github.hasGitHubRepo",
-        "qualifiedName": "Continue Working in vscode.dev",
+        "qualifiedName": "Continue Working in zycode.dev",
         "category": "Remote Repositories",
         "remoteGroup": "virtualfs_44_vscode-vfs_2_web@2"
       }
@@ -174,7 +174,7 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "zycode:prepublish": "npm run compile",
     "compile": "gulp compile-extension:github",
     "watch": "gulp watch-extension:github"
   },
@@ -183,13 +183,13 @@
     "@octokit/graphql-schema": "14.4.0",
     "@octokit/rest": "19.0.4",
     "tunnel": "^0.0.6",
-    "@vscode/extension-telemetry": "^0.8.4"
+    "@zycode/extension-telemetry": "^0.8.4"
   },
   "devDependencies": {
     "@types/node": "18.x"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

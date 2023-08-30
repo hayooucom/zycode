@@ -4,18 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { getNodeFileFS } from './nodeFs';
-import { Disposable, ExtensionContext, l10n } from 'vscode';
+import { Disposable, ExtensionContext, l10n } from 'zycode';
 import { startClient, LanguageClientConstructor, AsyncDisposable } from '../htmlClient';
-import { ServerOptions, TransportKind, LanguageClientOptions, LanguageClient } from 'vscode-languageclient/node';
+import { ServerOptions, TransportKind, LanguageClientOptions, LanguageClient } from 'zycode-languageclient/node';
 import { TextDecoder } from 'util';
 import * as fs from 'fs';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import TelemetryReporter from '@zycode/extension-telemetry';
 
 
 let telemetry: TelemetryReporter | undefined;
 let client: AsyncDisposable | undefined;
 
-// this method is called when vs code is activated
+// this method is called when zy code is activated
 export async function activate(context: ExtensionContext) {
 
 	const clientPackageJSON = getPackageInfo(context);

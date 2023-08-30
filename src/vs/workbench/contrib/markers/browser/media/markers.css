@@ -27,11 +27,11 @@
 }
 
 .markers-panel  .markers-panel-container .codicon.codicon-light-bulb {
-	color:  var(--vscode-editorLightBulb-foreground);
+	color:  var(--zycode-editorLightBulb-foreground);
 }
 
 .markers-panel  .markers-panel-container .codicon.codicon-lightbulb-autofix {
-	color:  var(--vscode-editorLightBulbAutoFix-foreground);
+	color:  var(--zycode-editorLightBulbAutoFix-foreground);
 }
 
 .markers-panel .markers-panel-container .tree-container.hidden {

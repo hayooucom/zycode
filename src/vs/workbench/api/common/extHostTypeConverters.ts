@@ -42,7 +42,7 @@ import { TestId, TestPosition } from 'vs/workbench/contrib/testing/common/testId
 import { CoverageDetails, DetailType, ICoveredCount, IFileCoverage, ISerializedTestResults, ITestErrorMessage, ITestItem, ITestTag, TestMessageType, TestResultItem, denamespaceTestTag, namespaceTestTag } from 'vs/workbench/contrib/testing/common/testTypes';
 import { EditorGroupColumn } from 'vs/workbench/services/editor/common/editorGroupColumn';
 import { ACTIVE_GROUP, SIDE_GROUP } from 'vs/workbench/services/editor/common/editorService';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as types from './extHostTypes';
 import * as chatProvider from 'vs/workbench/contrib/chat/common/chatProvider';
 import { IChatRequestVariableValue } from 'vs/workbench/contrib/chat/common/chatVariables';
@@ -50,8 +50,8 @@ import { IChatRequestVariableValue } from 'vs/workbench/contrib/chat/common/chat
 export namespace Command {
 
 	export interface ICommandsConverter {
-		fromInternal(command: extHostProtocol.ICommandDto): vscode.Command | undefined;
-		toInternal(command: vscode.Command | undefined, disposables: DisposableStore): extHostProtocol.ICommandDto | undefined;
+		fromInternal(command: extHostProtocol.ICommandDto): zycode.Command | undefined;
+		toInternal(command: zycode.Command | undefined, disposables: DisposableStore): extHostProtocol.ICommandDto | undefined;
 	}
 }
 
@@ -133,18 +133,18 @@ export namespace Position {
 	export function to(position: IPosition): types.Position {
 		return new types.Position(position.lineNumber - 1, position.column - 1);
 	}
-	export function from(position: types.Position | vscode.Position): IPosition {
+	export function from(position: types.Position | zycode.Position): IPosition {
 		return { lineNumber: position.line + 1, column: position.character + 1 };
 	}
 }
 
 export namespace DocumentSelector {
 
-	export function from(value: vscode.DocumentSelector, uriTransformer?: IURITransformer, extension?: IExtensionDescription): extHostProtocol.IDocumentFilterDto[] {
+	export function from(value: zycode.DocumentSelector, uriTransformer?: IURITransformer, extension?: IExtensionDescription): extHostProtocol.IDocumentFilterDto[] {
 		return coalesce(asArray(value).map(sel => _doTransformDocumentSelector(sel, uriTransformer, extension)));
 	}
 
-	function _doTransformDocumentSelector(selector: string | vscode.DocumentFilter, uriTransformer: IURITransformer | undefined, extension: IExtensionDescription | undefined): extHostProtocol.IDocumentFilterDto | undefined {
+	function _doTransformDocumentSelector(selector: string | zycode.DocumentFilter, uriTransformer: IURITransformer | undefined, extension: IExtensionDescription | undefined): extHostProtocol.IDocumentFilterDto | undefined {
 		if (typeof selector === 'string') {
 			return {
 				$serialized: true,
@@ -177,7 +177,7 @@ export namespace DocumentSelector {
 }
 
 export namespace DiagnosticTag {
-	export function from(value: vscode.DiagnosticTag): MarkerTag | undefined {
+	export function from(value: zycode.DiagnosticTag): MarkerTag | undefined {
 		switch (value) {
 			case types.DiagnosticTag.Unnecessary:
 				return MarkerTag.Unnecessary;
@@ -186,7 +186,7 @@ export namespace DiagnosticTag {
 		}
 		return undefined;
 	}
-	export function to(value: MarkerTag): vscode.DiagnosticTag | undefined {
+	export function to(value: MarkerTag): zycode.DiagnosticTag | undefined {
 		switch (value) {
 			case MarkerTag.Unnecessary:
 				return types.DiagnosticTag.Unnecessary;
@@ -199,7 +199,7 @@ export namespace DiagnosticTag {
 }
 
 export namespace Diagnostic {
-	export function from(value: vscode.Diagnostic): IMarkerData {
+	export function from(value: zycode.Diagnostic): IMarkerData {
 		let code: string | { value: string; target: URI } | undefined;
 
 		if (value.code) {
@@ -224,7 +224,7 @@ export namespace Diagnostic {
 		};
 	}
 
-	export function to(value: IMarkerData): vscode.Diagnostic {
+	export function to(value: IMarkerData): zycode.Diagnostic {
 		const res = new types.Diagnostic(Range.to(value), value.message, DiagnosticSeverity.to(value.severity));
 		res.source = value.source;
 		res.code = isString(value.code) ? value.code : value.code?.value;
@@ -235,7 +235,7 @@ export namespace Diagnostic {
 }
 
 export namespace DiagnosticRelatedInformation {
-	export function from(value: vscode.DiagnosticRelatedInformation): IRelatedInformation {
+	export function from(value: zycode.DiagnosticRelatedInformation): IRelatedInformation {
 		return {
 			...Range.from(value.location.range),
 			message: value.message,
@@ -279,7 +279,7 @@ export namespace DiagnosticSeverity {
 }
 
 export namespace ViewColumn {
-	export function from(column?: vscode.ViewColumn): EditorGroupColumn {
+	export function from(column?: zycode.ViewColumn): EditorGroupColumn {
 		if (typeof column === 'number' && column >= types.ViewColumn.One) {
 			return column - 1; // adjust zero index (ViewColumn.ONE => 0)
 		}
@@ -291,7 +291,7 @@ export namespace ViewColumn {
 		return ACTIVE_GROUP; // default is always the active group
 	}
 
-	export function to(position: EditorGroupColumn): vscode.ViewColumn {
+	export function to(position: EditorGroupColumn): zycode.ViewColumn {
 		if (typeof position === 'number' && position >= 0) {
 			return position + 1; // adjust to index (ViewColumn.ONE => 1)
 		}
@@ -300,11 +300,11 @@ export namespace ViewColumn {
 	}
 }
 
-function isDecorationOptions(something: any): something is vscode.DecorationOptions {
+function isDecorationOptions(something: any): something is zycode.DecorationOptions {
 	return (typeof something.range !== 'undefined');
 }
 
-export function isDecorationOptionsArr(something: vscode.Range[] | vscode.DecorationOptions[]): something is vscode.DecorationOptions[] {
+export function isDecorationOptionsArr(something: zycode.Range[] | zycode.DecorationOptions[]): something is zycode.DecorationOptions[] {
 	if (something.length === 0) {
 		return true;
 	}
@@ -313,7 +313,7 @@ export function isDecorationOptionsArr(something: vscode.Range[] | vscode.Decora
 
 export namespace MarkdownString {
 
-	export function fromMany(markup: (vscode.MarkdownString | vscode.MarkedString)[]): htmlContent.IMarkdownString[] {
+	export function fromMany(markup: (zycode.MarkdownString | zycode.MarkedString)[]): htmlContent.IMarkdownString[] {
 		return markup.map(MarkdownString.from);
 	}
 
@@ -328,7 +328,7 @@ export namespace MarkdownString {
 			&& typeof (<Codeblock>thing).value === 'string';
 	}
 
-	export function from(markup: vscode.MarkdownString | vscode.MarkedString): htmlContent.IMarkdownString {
+	export function from(markup: zycode.MarkdownString | zycode.MarkedString): htmlContent.IMarkdownString {
 		let res: htmlContent.IMarkdownString;
 		if (isCodeblock(markup)) {
 			const { language, value } = markup;
@@ -396,7 +396,7 @@ export namespace MarkdownString {
 		return JSON.stringify(data);
 	}
 
-	export function to(value: htmlContent.IMarkdownString): vscode.MarkdownString {
+	export function to(value: htmlContent.IMarkdownString): zycode.MarkdownString {
 		const result = new types.MarkdownString(value.value, value.supportThemeIcons);
 		result.isTrusted = value.isTrusted;
 		result.supportHtml = value.supportHtml;
@@ -404,7 +404,7 @@ export namespace MarkdownString {
 		return result;
 	}
 
-	export function fromStrict(value: string | vscode.MarkdownString | undefined | null): undefined | string | htmlContent.IMarkdownString {
+	export function fromStrict(value: string | zycode.MarkdownString | undefined | null): undefined | string | htmlContent.IMarkdownString {
 		if (!value) {
 			return undefined;
 		}
@@ -412,7 +412,7 @@ export namespace MarkdownString {
 	}
 }
 
-export function fromRangeOrRangeWithMessage(ranges: vscode.Range[] | vscode.DecorationOptions[]): IDecorationOptions[] {
+export function fromRangeOrRangeWithMessage(ranges: zycode.Range[] | zycode.DecorationOptions[]): IDecorationOptions[] {
 	if (isDecorationOptionsArr(ranges)) {
 		return ranges.map((r): IDecorationOptions => {
 			return {
@@ -444,7 +444,7 @@ export function pathOrURIToURI(value: string | URI): URI {
 }
 
 export namespace ThemableDecorationAttachmentRenderOptions {
-	export function from(options: vscode.ThemableDecorationAttachmentRenderOptions): IContentDecorationRenderOptions {
+	export function from(options: zycode.ThemableDecorationAttachmentRenderOptions): IContentDecorationRenderOptions {
 		if (typeof options === 'undefined') {
 			return options;
 		}
@@ -466,7 +466,7 @@ export namespace ThemableDecorationAttachmentRenderOptions {
 }
 
 export namespace ThemableDecorationRenderOptions {
-	export function from(options: vscode.ThemableDecorationRenderOptions): IThemeDecorationRenderOptions {
+	export function from(options: zycode.ThemableDecorationRenderOptions): IThemeDecorationRenderOptions {
 		if (typeof options === 'undefined') {
 			return options;
 		}
@@ -517,7 +517,7 @@ export namespace DecorationRangeBehavior {
 }
 
 export namespace DecorationRenderOptions {
-	export function from(options: vscode.DecorationRenderOptions): IDecorationRenderOptions {
+	export function from(options: zycode.DecorationRenderOptions): IDecorationRenderOptions {
 		return {
 			isWholeLine: options.isWholeLine,
 			rangeBehavior: options.rangeBehavior ? DecorationRangeBehavior.from(options.rangeBehavior) : undefined,
@@ -554,7 +554,7 @@ export namespace DecorationRenderOptions {
 
 export namespace TextEdit {
 
-	export function from(edit: vscode.TextEdit): languages.TextEdit {
+	export function from(edit: zycode.TextEdit): languages.TextEdit {
 		return <languages.TextEdit>{
 			text: edit.newText,
 			eol: edit.newEol && EndOfLine.from(edit.newEol),
@@ -576,7 +576,7 @@ export namespace WorkspaceEdit {
 		getNotebookDocumentVersion(uri: URI): number | undefined;
 	}
 
-	export function from(value: vscode.WorkspaceEdit, versionInfo?: IVersionInformationProvider): extHostProtocol.IWorkspaceEditDto {
+	export function from(value: zycode.WorkspaceEdit, versionInfo?: IVersionInformationProvider): extHostProtocol.IWorkspaceEditDto {
 		const result: extHostProtocol.IWorkspaceEditDto = {
 			edits: []
 		};
@@ -734,11 +734,11 @@ export namespace SymbolKind {
 	_fromMapping[types.SymbolKind.Operator] = languages.SymbolKind.Operator;
 	_fromMapping[types.SymbolKind.TypeParameter] = languages.SymbolKind.TypeParameter;
 
-	export function from(kind: vscode.SymbolKind): languages.SymbolKind {
+	export function from(kind: zycode.SymbolKind): languages.SymbolKind {
 		return typeof _fromMapping[kind] === 'number' ? _fromMapping[kind] : languages.SymbolKind.Property;
 	}
 
-	export function to(kind: languages.SymbolKind): vscode.SymbolKind {
+	export function to(kind: languages.SymbolKind): zycode.SymbolKind {
 		for (const k in _fromMapping) {
 			if (_fromMapping[k] === kind) {
 				return Number(k);
@@ -764,7 +764,7 @@ export namespace SymbolTag {
 }
 
 export namespace WorkspaceSymbol {
-	export function from(info: vscode.SymbolInformation): search.IWorkspaceSymbol {
+	export function from(info: zycode.SymbolInformation): search.IWorkspaceSymbol {
 		return <search.IWorkspaceSymbol>{
 			name: info.name,
 			kind: SymbolKind.from(info.kind),
@@ -786,7 +786,7 @@ export namespace WorkspaceSymbol {
 }
 
 export namespace DocumentSymbol {
-	export function from(info: vscode.DocumentSymbol): languages.DocumentSymbol {
+	export function from(info: zycode.DocumentSymbol): languages.DocumentSymbol {
 		const result: languages.DocumentSymbol = {
 			name: info.name || '!!MISSING: name!!',
 			detail: info.detail,
@@ -800,7 +800,7 @@ export namespace DocumentSymbol {
 		}
 		return result;
 	}
-	export function to(info: languages.DocumentSymbol): vscode.DocumentSymbol {
+	export function to(info: languages.DocumentSymbol): zycode.DocumentSymbol {
 		const result = new types.DocumentSymbol(
 			info.name,
 			info.detail,
@@ -836,7 +836,7 @@ export namespace CallHierarchyItem {
 		return result;
 	}
 
-	export function from(item: vscode.CallHierarchyItem, sessionId?: string, itemId?: string): extHostProtocol.ICallHierarchyItemDto {
+	export function from(item: zycode.CallHierarchyItem, sessionId?: string, itemId?: string): extHostProtocol.ICallHierarchyItemDto {
 
 		sessionId = sessionId ?? (<types.CallHierarchyItem>item)._sessionId;
 		itemId = itemId ?? (<types.CallHierarchyItem>item)._itemId;
@@ -881,7 +881,7 @@ export namespace CallHierarchyOutgoingCall {
 
 
 export namespace location {
-	export function from(value: vscode.Location): languages.Location {
+	export function from(value: zycode.Location): languages.Location {
 		return {
 			range: value.range && Range.from(value.range),
 			uri: value.uri
@@ -894,9 +894,9 @@ export namespace location {
 }
 
 export namespace DefinitionLink {
-	export function from(value: vscode.Location | vscode.DefinitionLink): languages.LocationLink {
-		const definitionLink = <vscode.DefinitionLink>value;
-		const location = <vscode.Location>value;
+	export function from(value: zycode.Location | zycode.DefinitionLink): languages.LocationLink {
+		const definitionLink = <zycode.DefinitionLink>value;
+		const location = <zycode.Location>value;
 		return {
 			originSelectionRange: definitionLink.originSelectionRange
 				? Range.from(definitionLink.originSelectionRange)
@@ -908,7 +908,7 @@ export namespace DefinitionLink {
 				: undefined,
 		};
 	}
-	export function to(value: extHostProtocol.ILocationLinkDto): vscode.LocationLink {
+	export function to(value: extHostProtocol.ILocationLinkDto): zycode.LocationLink {
 		return {
 			targetUri: URI.revive(value.uri),
 			targetRange: Range.to(value.range),
@@ -923,7 +923,7 @@ export namespace DefinitionLink {
 }
 
 export namespace Hover {
-	export function from(hover: vscode.Hover): languages.Hover {
+	export function from(hover: zycode.Hover): languages.Hover {
 		return <languages.Hover>{
 			range: Range.from(hover.range),
 			contents: MarkdownString.fromMany(hover.contents)
@@ -936,7 +936,7 @@ export namespace Hover {
 }
 
 export namespace EvaluatableExpression {
-	export function from(expression: vscode.EvaluatableExpression): languages.EvaluatableExpression {
+	export function from(expression: zycode.EvaluatableExpression): languages.EvaluatableExpression {
 		return <languages.EvaluatableExpression>{
 			range: Range.from(expression.range),
 			expression: expression.expression
@@ -949,7 +949,7 @@ export namespace EvaluatableExpression {
 }
 
 export namespace InlineValue {
-	export function from(inlineValue: vscode.InlineValue): languages.InlineValue {
+	export function from(inlineValue: zycode.InlineValue): languages.InlineValue {
 		if (inlineValue instanceof types.InlineValueText) {
 			return <languages.InlineValueText>{
 				type: 'text',
@@ -974,21 +974,21 @@ export namespace InlineValue {
 		}
 	}
 
-	export function to(inlineValue: languages.InlineValue): vscode.InlineValue {
+	export function to(inlineValue: languages.InlineValue): zycode.InlineValue {
 		switch (inlineValue.type) {
 			case 'text':
-				return <vscode.InlineValueText>{
+				return <zycode.InlineValueText>{
 					range: Range.to(inlineValue.range),
 					text: inlineValue.text
 				};
 			case 'variable':
-				return <vscode.InlineValueVariableLookup>{
+				return <zycode.InlineValueVariableLookup>{
 					range: Range.to(inlineValue.range),
 					variableName: inlineValue.variableName,
 					caseSensitiveLookup: inlineValue.caseSensitiveLookup
 				};
 			case 'expression':
-				return <vscode.InlineValueEvaluatableExpression>{
+				return <zycode.InlineValueEvaluatableExpression>{
 					range: Range.to(inlineValue.range),
 					expression: inlineValue.expression
 				};
@@ -997,7 +997,7 @@ export namespace InlineValue {
 }
 
 export namespace InlineValueContext {
-	export function from(inlineValueContext: vscode.InlineValueContext): extHostProtocol.IInlineValueContextDto {
+	export function from(inlineValueContext: zycode.InlineValueContext): extHostProtocol.IInlineValueContextDto {
 		return <extHostProtocol.IInlineValueContextDto>{
 			frameId: inlineValueContext.frameId,
 			stoppedLocation: Range.from(inlineValueContext.stoppedLocation)
@@ -1010,7 +1010,7 @@ export namespace InlineValueContext {
 }
 
 export namespace DocumentHighlight {
-	export function from(documentHighlight: vscode.DocumentHighlight): languages.DocumentHighlight {
+	export function from(documentHighlight: zycode.DocumentHighlight): languages.DocumentHighlight {
 		return {
 			range: Range.from(documentHighlight.range),
 			kind: documentHighlight.kind
@@ -1230,7 +1230,7 @@ export namespace SignatureHelp {
 
 export namespace InlayHint {
 
-	export function to(converter: Command.ICommandsConverter, hint: languages.InlayHint): vscode.InlayHint {
+	export function to(converter: Command.ICommandsConverter, hint: languages.InlayHint): zycode.InlayHint {
 		const res = new types.InlayHint(
 			Position.to(hint.position),
 			typeof hint.label === 'string' ? hint.label : hint.label.map(InlayHintLabelPart.to.bind(undefined, converter)),
@@ -1262,17 +1262,17 @@ export namespace InlayHintLabelPart {
 }
 
 export namespace InlayHintKind {
-	export function from(kind: vscode.InlayHintKind): languages.InlayHintKind {
+	export function from(kind: zycode.InlayHintKind): languages.InlayHintKind {
 		return kind;
 	}
-	export function to(kind: languages.InlayHintKind): vscode.InlayHintKind {
+	export function to(kind: languages.InlayHintKind): zycode.InlayHintKind {
 		return kind;
 	}
 }
 
 export namespace DocumentLink {
 
-	export function from(link: vscode.DocumentLink): languages.ILink {
+	export function from(link: zycode.DocumentLink): languages.ILink {
 		return {
 			range: Range.from(link.range),
 			url: link.target,
@@ -1280,7 +1280,7 @@ export namespace DocumentLink {
 		};
 	}
 
-	export function to(link: languages.ILink): vscode.DocumentLink {
+	export function to(link: languages.ILink): zycode.DocumentLink {
 		let target: URI | undefined = undefined;
 		if (link.url) {
 			try {
@@ -1305,7 +1305,7 @@ export namespace ColorPresentation {
 		return cp;
 	}
 
-	export function from(colorPresentation: vscode.ColorPresentation): languages.IColorPresentation {
+	export function from(colorPresentation: zycode.ColorPresentation): languages.IColorPresentation {
 		return {
 			label: colorPresentation.label,
 			textEdit: colorPresentation.textEdit ? TextEdit.from(colorPresentation.textEdit) : undefined,
@@ -1325,18 +1325,18 @@ export namespace Color {
 
 
 export namespace SelectionRange {
-	export function from(obj: vscode.SelectionRange): languages.SelectionRange {
+	export function from(obj: zycode.SelectionRange): languages.SelectionRange {
 		return { range: Range.from(obj.range) };
 	}
 
-	export function to(obj: languages.SelectionRange): vscode.SelectionRange {
+	export function to(obj: languages.SelectionRange): zycode.SelectionRange {
 		return new types.SelectionRange(Range.to(obj.range));
 	}
 }
 
 export namespace TextDocumentSaveReason {
 
-	export function to(reason: SaveReason): vscode.TextDocumentSaveReason {
+	export function to(reason: SaveReason): zycode.TextDocumentSaveReason {
 		switch (reason) {
 			case SaveReason.AUTO:
 				return types.TextDocumentSaveReason.AfterDelay;
@@ -1350,7 +1350,7 @@ export namespace TextDocumentSaveReason {
 }
 
 export namespace TextEditorLineNumbersStyle {
-	export function from(style: vscode.TextEditorLineNumbersStyle): RenderLineNumbersType {
+	export function from(style: zycode.TextEditorLineNumbersStyle): RenderLineNumbersType {
 		switch (style) {
 			case types.TextEditorLineNumbersStyle.Off:
 				return RenderLineNumbersType.Off;
@@ -1361,7 +1361,7 @@ export namespace TextEditorLineNumbersStyle {
 				return RenderLineNumbersType.On;
 		}
 	}
-	export function to(style: RenderLineNumbersType): vscode.TextEditorLineNumbersStyle {
+	export function to(style: RenderLineNumbersType): zycode.TextEditorLineNumbersStyle {
 		switch (style) {
 			case RenderLineNumbersType.Off:
 				return types.TextEditorLineNumbersStyle.Off;
@@ -1376,7 +1376,7 @@ export namespace TextEditorLineNumbersStyle {
 
 export namespace EndOfLine {
 
-	export function from(eol: vscode.EndOfLine): EndOfLineSequence | undefined {
+	export function from(eol: zycode.EndOfLine): EndOfLineSequence | undefined {
 		if (eol === types.EndOfLine.CRLF) {
 			return EndOfLineSequence.CRLF;
 		} else if (eol === types.EndOfLine.LF) {
@@ -1385,7 +1385,7 @@ export namespace EndOfLine {
 		return undefined;
 	}
 
-	export function to(eol: EndOfLineSequence): vscode.EndOfLine | undefined {
+	export function to(eol: EndOfLineSequence): zycode.EndOfLine | undefined {
 		if (eol === EndOfLineSequence.CRLF) {
 			return types.EndOfLine.CRLF;
 		} else if (eol === EndOfLineSequence.LF) {
@@ -1396,7 +1396,7 @@ export namespace EndOfLine {
 }
 
 export namespace ProgressLocation {
-	export function from(loc: vscode.ProgressLocation | { viewId: string }): MainProgressLocation | string {
+	export function from(loc: zycode.ProgressLocation | { viewId: string }): MainProgressLocation | string {
 		if (typeof loc === 'object') {
 			return loc.viewId;
 		}
@@ -1411,15 +1411,15 @@ export namespace ProgressLocation {
 }
 
 export namespace FoldingRange {
-	export function from(r: vscode.FoldingRange): languages.FoldingRange {
+	export function from(r: zycode.FoldingRange): languages.FoldingRange {
 		const range: languages.FoldingRange = { start: r.start + 1, end: r.end + 1 };
 		if (r.kind) {
 			range.kind = FoldingRangeKind.from(r.kind);
 		}
 		return range;
 	}
-	export function to(r: languages.FoldingRange): vscode.FoldingRange {
-		const range: vscode.FoldingRange = { start: r.start - 1, end: r.end - 1 };
+	export function to(r: languages.FoldingRange): zycode.FoldingRange {
+		const range: zycode.FoldingRange = { start: r.start - 1, end: r.end - 1 };
 		if (r.kind) {
 			range.kind = FoldingRangeKind.to(r.kind);
 		}
@@ -1428,7 +1428,7 @@ export namespace FoldingRange {
 }
 
 export namespace FoldingRangeKind {
-	export function from(kind: vscode.FoldingRangeKind | undefined): languages.FoldingRangeKind | undefined {
+	export function from(kind: zycode.FoldingRangeKind | undefined): languages.FoldingRangeKind | undefined {
 		if (kind) {
 			switch (kind) {
 				case types.FoldingRangeKind.Comment:
@@ -1441,7 +1441,7 @@ export namespace FoldingRangeKind {
 		}
 		return undefined;
 	}
-	export function to(kind: languages.FoldingRangeKind | undefined): vscode.FoldingRangeKind | undefined {
+	export function to(kind: languages.FoldingRangeKind | undefined): zycode.FoldingRangeKind | undefined {
 		if (kind) {
 			switch (kind.value) {
 				case languages.FoldingRangeKind.Comment.value:
@@ -1456,7 +1456,7 @@ export namespace FoldingRangeKind {
 	}
 }
 
-export interface TextEditorOpenOptions extends vscode.TextDocumentShowOptions {
+export interface TextEditorOpenOptions extends zycode.TextDocumentShowOptions {
 	background?: boolean;
 	override?: boolean;
 }
@@ -1481,11 +1481,11 @@ export namespace TextEditorOpenOptions {
 
 export namespace GlobPattern {
 
-	export function from(pattern: vscode.GlobPattern): string | extHostProtocol.IRelativePatternDto;
+	export function from(pattern: zycode.GlobPattern): string | extHostProtocol.IRelativePatternDto;
 	export function from(pattern: undefined): undefined;
 	export function from(pattern: null): null;
-	export function from(pattern: vscode.GlobPattern | undefined | null): string | extHostProtocol.IRelativePatternDto | undefined | null;
-	export function from(pattern: vscode.GlobPattern | undefined | null): string | extHostProtocol.IRelativePatternDto | undefined | null {
+	export function from(pattern: zycode.GlobPattern | undefined | null): string | extHostProtocol.IRelativePatternDto | undefined | null;
+	export function from(pattern: zycode.GlobPattern | undefined | null): string | extHostProtocol.IRelativePatternDto | undefined | null {
 		if (pattern instanceof types.RelativePattern) {
 			return pattern.toJSON();
 		}
@@ -1495,10 +1495,10 @@ export namespace GlobPattern {
 		}
 
 		// This is slightly bogus because we declare this method to accept
-		// `vscode.GlobPattern` which can be `vscode.RelativePattern` class,
-		// but given we cannot enforce classes from our vscode.d.ts, we have
+		// `zycode.GlobPattern` which can be `zycode.RelativePattern` class,
+		// but given we cannot enforce classes from our zycode.d.ts, we have
 		// to probe for objects too
-		// Refs: https://github.com/microsoft/vscode/issues/140771
+		// Refs: https://github.com/microsoft/zycode/issues/140771
 		if (isRelativePatternShape(pattern) || isLegacyRelativePatternShape(pattern)) {
 			return new types.RelativePattern(pattern.baseUri ?? pattern.base, pattern.pattern).toJSON();
 		}
@@ -1519,7 +1519,7 @@ export namespace GlobPattern {
 
 		// Before 1.64.x, `RelativePattern` did not have any `baseUri: Uri`
 		// property. To preserve backwards compatibility with older extensions
-		// we allow this old format when creating the `vscode.RelativePattern`.
+		// we allow this old format when creating the `zycode.RelativePattern`.
 
 		const rp = obj as { base: string; pattern: string } | undefined | null;
 		if (!rp) {
@@ -1529,7 +1529,7 @@ export namespace GlobPattern {
 		return typeof rp.base === 'string' && typeof rp.pattern === 'string';
 	}
 
-	export function to(pattern: string | extHostProtocol.IRelativePatternDto): vscode.GlobPattern {
+	export function to(pattern: string | extHostProtocol.IRelativePatternDto): zycode.GlobPattern {
 		if (typeof pattern === 'string') {
 			return pattern;
 		}
@@ -1541,9 +1541,9 @@ export namespace GlobPattern {
 export namespace LanguageSelector {
 
 	export function from(selector: undefined): undefined;
-	export function from(selector: vscode.DocumentSelector): languageSelector.LanguageSelector;
-	export function from(selector: vscode.DocumentSelector | undefined): languageSelector.LanguageSelector | undefined;
-	export function from(selector: vscode.DocumentSelector | undefined): languageSelector.LanguageSelector | undefined {
+	export function from(selector: zycode.DocumentSelector): languageSelector.LanguageSelector;
+	export function from(selector: zycode.DocumentSelector | undefined): languageSelector.LanguageSelector | undefined;
+	export function from(selector: zycode.DocumentSelector | undefined): languageSelector.LanguageSelector | undefined {
 		if (!selector) {
 			return undefined;
 		} else if (Array.isArray(selector)) {
@@ -1551,7 +1551,7 @@ export namespace LanguageSelector {
 		} else if (typeof selector === 'string') {
 			return selector;
 		} else {
-			const filter = selector as vscode.DocumentFilter; // TODO: microsoft/TypeScript#42768
+			const filter = selector as zycode.DocumentFilter; // TODO: microsoft/TypeScript#42768
 			return <languageSelector.LanguageFilter>{
 				language: filter.language,
 				scheme: filter.scheme,
@@ -1565,7 +1565,7 @@ export namespace LanguageSelector {
 
 export namespace MappedEditsContext {
 
-	export function is(v: unknown): v is vscode.MappedEditsContext {
+	export function is(v: unknown): v is zycode.MappedEditsContext {
 		return (!!v &&
 			typeof v === 'object' &&
 			'selections' in v &&
@@ -1576,7 +1576,7 @@ export namespace MappedEditsContext {
 			v.related.every(e => e && typeof e === 'object' && URI.isUri(e.uri) && e.range instanceof types.Range));
 	}
 
-	export function from(extContext: vscode.MappedEditsContext): languages.MappedEditsContext {
+	export function from(extContext: zycode.MappedEditsContext): languages.MappedEditsContext {
 		return {
 			selections: extContext.selections.map(s => Selection.from(s)),
 			related: extContext.related.map(r => ({
@@ -1589,7 +1589,7 @@ export namespace MappedEditsContext {
 
 export namespace NotebookRange {
 
-	export function from(range: vscode.NotebookRange): ICellRange {
+	export function from(range: zycode.NotebookRange): ICellRange {
 		return { start: range.start, end: range.end };
 	}
 
@@ -1599,7 +1599,7 @@ export namespace NotebookRange {
 }
 
 export namespace NotebookCellExecutionSummary {
-	export function to(data: notebooks.NotebookCellInternalMetadata): vscode.NotebookCellExecutionSummary {
+	export function to(data: notebooks.NotebookCellInternalMetadata): zycode.NotebookCellExecutionSummary {
 		return {
 			timing: typeof data.runStartTime === 'number' && typeof data.runEndTime === 'number' ? { startTime: data.runStartTime, endTime: data.runEndTime } : undefined,
 			executionOrder: data.executionOrder,
@@ -1607,7 +1607,7 @@ export namespace NotebookCellExecutionSummary {
 		};
 	}
 
-	export function from(data: vscode.NotebookCellExecutionSummary): Partial<notebooks.NotebookCellInternalMetadata> {
+	export function from(data: zycode.NotebookCellExecutionSummary): Partial<notebooks.NotebookCellInternalMetadata> {
 		return {
 			lastRunSuccess: data.success,
 			runStartTime: data.timing?.startTime,
@@ -1618,7 +1618,7 @@ export namespace NotebookCellExecutionSummary {
 }
 
 export namespace NotebookCellExecutionState {
-	export function to(state: notebooks.NotebookCellExecutionState): vscode.NotebookCellExecutionState | undefined {
+	export function to(state: notebooks.NotebookCellExecutionState): zycode.NotebookCellExecutionState | undefined {
 		if (state === notebooks.NotebookCellExecutionState.Unconfirmed) {
 			return types.NotebookCellExecutionState.Pending;
 		} else if (state === notebooks.NotebookCellExecutionState.Pending) {
@@ -1633,7 +1633,7 @@ export namespace NotebookCellExecutionState {
 }
 
 export namespace NotebookCellKind {
-	export function from(data: vscode.NotebookCellKind): notebooks.CellKind {
+	export function from(data: zycode.NotebookCellKind): notebooks.CellKind {
 		switch (data) {
 			case types.NotebookCellKind.Markup:
 				return notebooks.CellKind.Markup;
@@ -1643,7 +1643,7 @@ export namespace NotebookCellKind {
 		}
 	}
 
-	export function to(data: notebooks.CellKind): vscode.NotebookCellKind {
+	export function to(data: notebooks.CellKind): zycode.NotebookCellKind {
 		switch (data) {
 			case notebooks.CellKind.Markup:
 				return types.NotebookCellKind.Markup;
@@ -1656,7 +1656,7 @@ export namespace NotebookCellKind {
 
 export namespace NotebookData {
 
-	export function from(data: vscode.NotebookData): extHostProtocol.NotebookDataDto {
+	export function from(data: zycode.NotebookData): extHostProtocol.NotebookDataDto {
 		const res: extHostProtocol.NotebookDataDto = {
 			metadata: data.metadata ?? Object.create(null),
 			cells: [],
@@ -1668,7 +1668,7 @@ export namespace NotebookData {
 		return res;
 	}
 
-	export function to(data: extHostProtocol.NotebookDataDto): vscode.NotebookData {
+	export function to(data: extHostProtocol.NotebookDataDto): zycode.NotebookData {
 		const res = new types.NotebookData(
 			data.cells.map(NotebookCellData.to),
 		);
@@ -1681,7 +1681,7 @@ export namespace NotebookData {
 
 export namespace NotebookCellData {
 
-	export function from(data: vscode.NotebookCellData): extHostProtocol.NotebookCellDataDto {
+	export function from(data: zycode.NotebookCellData): extHostProtocol.NotebookCellDataDto {
 		return {
 			cellKind: NotebookCellKind.from(data.kind),
 			language: data.languageId,
@@ -1693,7 +1693,7 @@ export namespace NotebookCellData {
 		};
 	}
 
-	export function to(data: extHostProtocol.NotebookCellDataDto): vscode.NotebookCellData {
+	export function to(data: extHostProtocol.NotebookCellDataDto): zycode.NotebookCellData {
 		return new types.NotebookCellData(
 			NotebookCellKind.to(data.cellKind),
 			data.source,
@@ -1720,7 +1720,7 @@ export namespace NotebookCellOutputItem {
 }
 
 export namespace NotebookCellOutput {
-	export function from(output: vscode.NotebookCellOutput): extHostProtocol.NotebookOutputDto {
+	export function from(output: zycode.NotebookCellOutput): extHostProtocol.NotebookOutputDto {
 		return {
 			outputId: output.id,
 			items: output.items.map(NotebookCellOutputItem.from),
@@ -1728,7 +1728,7 @@ export namespace NotebookCellOutput {
 		};
 	}
 
-	export function to(output: extHostProtocol.NotebookOutputDto): vscode.NotebookCellOutput {
+	export function to(output: extHostProtocol.NotebookOutputDto): zycode.NotebookCellOutput {
 		const items = output.items.map(NotebookCellOutputItem.to);
 		return new types.NotebookCellOutput(items, output.outputId, output.metadata);
 	}
@@ -1736,11 +1736,11 @@ export namespace NotebookCellOutput {
 
 
 export namespace NotebookExclusiveDocumentPattern {
-	export function from(pattern: { include: vscode.GlobPattern | undefined; exclude: vscode.GlobPattern | undefined }): { include: string | extHostProtocol.IRelativePatternDto | undefined; exclude: string | extHostProtocol.IRelativePatternDto | undefined };
-	export function from(pattern: vscode.GlobPattern): string | extHostProtocol.IRelativePatternDto;
+	export function from(pattern: { include: zycode.GlobPattern | undefined; exclude: zycode.GlobPattern | undefined }): { include: string | extHostProtocol.IRelativePatternDto | undefined; exclude: string | extHostProtocol.IRelativePatternDto | undefined };
+	export function from(pattern: zycode.GlobPattern): string | extHostProtocol.IRelativePatternDto;
 	export function from(pattern: undefined): undefined;
-	export function from(pattern: { include: vscode.GlobPattern | undefined | null; exclude: vscode.GlobPattern | undefined } | vscode.GlobPattern | undefined): string | extHostProtocol.IRelativePatternDto | { include: string | extHostProtocol.IRelativePatternDto | undefined; exclude: string | extHostProtocol.IRelativePatternDto | undefined } | undefined;
-	export function from(pattern: { include: vscode.GlobPattern | undefined | null; exclude: vscode.GlobPattern | undefined } | vscode.GlobPattern | undefined): string | extHostProtocol.IRelativePatternDto | { include: string | extHostProtocol.IRelativePatternDto | undefined; exclude: string | extHostProtocol.IRelativePatternDto | undefined } | undefined {
+	export function from(pattern: { include: zycode.GlobPattern | undefined | null; exclude: zycode.GlobPattern | undefined } | zycode.GlobPattern | undefined): string | extHostProtocol.IRelativePatternDto | { include: string | extHostProtocol.IRelativePatternDto | undefined; exclude: string | extHostProtocol.IRelativePatternDto | undefined } | undefined;
+	export function from(pattern: { include: zycode.GlobPattern | undefined | null; exclude: zycode.GlobPattern | undefined } | zycode.GlobPattern | undefined): string | extHostProtocol.IRelativePatternDto | { include: string | extHostProtocol.IRelativePatternDto | undefined; exclude: string | extHostProtocol.IRelativePatternDto | undefined } | undefined {
 		if (isExclusivePattern(pattern)) {
 			return {
 				include: GlobPattern.from(pattern.include) ?? undefined,
@@ -1751,7 +1751,7 @@ export namespace NotebookExclusiveDocumentPattern {
 		return GlobPattern.from(pattern) ?? undefined;
 	}
 
-	export function to(pattern: string | extHostProtocol.IRelativePatternDto | { include: string | extHostProtocol.IRelativePatternDto; exclude: string | extHostProtocol.IRelativePatternDto }): { include: vscode.GlobPattern; exclude: vscode.GlobPattern } | vscode.GlobPattern {
+	export function to(pattern: string | extHostProtocol.IRelativePatternDto | { include: string | extHostProtocol.IRelativePatternDto; exclude: string | extHostProtocol.IRelativePatternDto }): { include: zycode.GlobPattern; exclude: zycode.GlobPattern } | zycode.GlobPattern {
 		if (isExclusivePattern(pattern)) {
 			return {
 				include: GlobPattern.to(pattern.include),
@@ -1772,7 +1772,7 @@ export namespace NotebookExclusiveDocumentPattern {
 }
 
 export namespace NotebookStatusBarItem {
-	export function from(item: vscode.NotebookCellStatusBarItem, commandsConverter: Command.ICommandsConverter, disposables: DisposableStore): notebooks.INotebookCellStatusBarItem {
+	export function from(item: zycode.NotebookCellStatusBarItem, commandsConverter: Command.ICommandsConverter, disposables: DisposableStore): notebooks.INotebookCellStatusBarItem {
 		const command = typeof item.command === 'string' ? { title: '', command: item.command } : item.command;
 		return {
 			alignment: item.alignment === types.NotebookCellStatusBarAlignment.Left ? notebooks.CellStatusbarAlignment.Left : notebooks.CellStatusbarAlignment.Right,
@@ -1786,7 +1786,7 @@ export namespace NotebookStatusBarItem {
 }
 
 export namespace NotebookKernelSourceAction {
-	export function from(item: vscode.NotebookKernelSourceAction, commandsConverter: Command.ICommandsConverter, disposables: DisposableStore): notebooks.INotebookKernelSourceAction {
+	export function from(item: zycode.NotebookKernelSourceAction, commandsConverter: Command.ICommandsConverter, disposables: DisposableStore): notebooks.INotebookKernelSourceAction {
 		const command = typeof item.command === 'string' ? { title: '', command: item.command } : item.command;
 
 		return {
@@ -1800,7 +1800,7 @@ export namespace NotebookKernelSourceAction {
 }
 
 export namespace NotebookDocumentContentOptions {
-	export function from(options: vscode.NotebookDocumentContentOptions | undefined): notebooks.TransientOptions {
+	export function from(options: zycode.NotebookDocumentContentOptions | undefined): notebooks.TransientOptions {
 		return {
 			transientOutputs: options?.transientOutputs ?? false,
 			transientCellMetadata: options?.transientCellMetadata ?? {},
@@ -1811,20 +1811,20 @@ export namespace NotebookDocumentContentOptions {
 }
 
 export namespace NotebookRendererScript {
-	export function from(preload: vscode.NotebookRendererScript): { uri: UriComponents; provides: readonly string[] } {
+	export function from(preload: zycode.NotebookRendererScript): { uri: UriComponents; provides: readonly string[] } {
 		return {
 			uri: preload.uri,
 			provides: preload.provides
 		};
 	}
 
-	export function to(preload: { uri: UriComponents; provides: readonly string[] }): vscode.NotebookRendererScript {
+	export function to(preload: { uri: UriComponents; provides: readonly string[] }): zycode.NotebookRendererScript {
 		return new types.NotebookRendererScript(URI.revive(preload.uri), preload.provides);
 	}
 }
 
 export namespace TestMessage {
-	export function from(message: vscode.TestMessage2): ITestErrorMessage.Serialized {
+	export function from(message: zycode.TestMessage2): ITestErrorMessage.Serialized {
 		return {
 			message: MarkdownString.fromStrict(message.message) || '',
 			type: TestMessageType.Error,
@@ -1835,7 +1835,7 @@ export namespace TestMessage {
 		};
 	}
 
-	export function to(item: ITestErrorMessage.Serialized): vscode.TestMessage2 {
+	export function to(item: ITestErrorMessage.Serialized): zycode.TestMessage2 {
 		const message = new types.TestMessage(typeof item.message === 'string' ? item.message : MarkdownString.to(item.message));
 		message.actualOutput = item.actual;
 		message.expectedOutput = item.expected;
@@ -1852,9 +1852,9 @@ export namespace TestTag {
 }
 
 export namespace TestItem {
-	export type Raw = vscode.TestItem;
+	export type Raw = zycode.TestItem;
 
-	export function from(item: vscode.TestItem): ITestItem {
+	export function from(item: zycode.TestItem): ITestItem {
 		const ctrlId = getPrivateApiFor(item).controllerId;
 		return {
 			extId: TestId.fromExtHostTestItem(item, ctrlId).toString(),
@@ -1869,7 +1869,7 @@ export namespace TestItem {
 		};
 	}
 
-	export function toPlain(item: ITestItem.Serialized): vscode.TestItem {
+	export function toPlain(item: ITestItem.Serialized): zycode.TestItem {
 		return {
 			parent: undefined,
 			error: undefined,
@@ -1899,17 +1899,17 @@ export namespace TestItem {
 }
 
 export namespace TestTag {
-	export function from(tag: vscode.TestTag): ITestTag {
+	export function from(tag: zycode.TestTag): ITestTag {
 		return { id: tag.id };
 	}
 
-	export function to(tag: ITestTag): vscode.TestTag {
+	export function to(tag: ITestTag): zycode.TestTag {
 		return new types.TestTag(tag.id);
 	}
 }
 
 export namespace TestResults {
-	const convertTestResultItem = (item: TestResultItem.Serialized, byInternalId: Map<string, TestResultItem.Serialized>): vscode.TestResultSnapshot => {
+	const convertTestResultItem = (item: TestResultItem.Serialized, byInternalId: Map<string, TestResultItem.Serialized>): zycode.TestResultSnapshot => {
 		const children: TestResultItem.Serialized[] = [];
 		for (const [id, item] of byInternalId) {
 			if (TestId.compare(item.item.extId, id) === TestPosition.IsChild) {
@@ -1918,7 +1918,7 @@ export namespace TestResults {
 			}
 		}
 
-		const snapshot: vscode.TestResultSnapshot = ({
+		const snapshot: zycode.TestResultSnapshot = ({
 			...TestItem.toPlain(item.item),
 			parent: undefined,
 			taskStates: item.tasks.map(t => ({
@@ -1938,7 +1938,7 @@ export namespace TestResults {
 		return snapshot;
 	};
 
-	export function to(serialized: ISerializedTestResults): vscode.TestRunResult {
+	export function to(serialized: ISerializedTestResults): zycode.TestRunResult {
 		const roots: TestResultItem.Serialized[] = [];
 		const byInternalId = new Map<string, TestResultItem.Serialized>();
 		for (const item of serialized.items) {
@@ -1957,15 +1957,15 @@ export namespace TestResults {
 }
 
 export namespace TestCoverage {
-	function fromCoveredCount(count: vscode.CoveredCount): ICoveredCount {
+	function fromCoveredCount(count: zycode.CoveredCount): ICoveredCount {
 		return { covered: count.covered, total: count.covered };
 	}
 
-	function fromLocation(location: vscode.Range | vscode.Position) {
+	function fromLocation(location: zycode.Range | zycode.Position) {
 		return 'line' in location ? Position.from(location) : Range.from(location);
 	}
 
-	export function fromDetailed(coverage: vscode.DetailedCoverage): CoverageDetails {
+	export function fromDetailed(coverage: zycode.DetailedCoverage): CoverageDetails {
 		if ('branches' in coverage) {
 			return {
 				count: coverage.executionCount,
@@ -1984,7 +1984,7 @@ export namespace TestCoverage {
 		}
 	}
 
-	export function fromFile(coverage: vscode.FileCoverage): IFileCoverage {
+	export function fromFile(coverage: zycode.FileCoverage): IFileCoverage {
 		return {
 			uri: coverage.uri,
 			statement: fromCoveredCount(coverage.statementCoverage),
@@ -2026,7 +2026,7 @@ export namespace TypeHierarchyItem {
 		return result;
 	}
 
-	export function from(item: vscode.TypeHierarchyItem, sessionId?: string, itemId?: string): extHostProtocol.ITypeHierarchyItemDto {
+	export function from(item: zycode.TypeHierarchyItem, sessionId?: string, itemId?: string): extHostProtocol.ITypeHierarchyItemDto {
 
 		sessionId = sessionId ?? (<types.TypeHierarchyItem>item)._sessionId;
 		itemId = itemId ?? (<types.TypeHierarchyItem>item)._itemId;
@@ -2050,7 +2050,7 @@ export namespace TypeHierarchyItem {
 }
 
 export namespace ViewBadge {
-	export function from(badge: vscode.ViewBadge | undefined): IViewBadge | undefined {
+	export function from(badge: zycode.ViewBadge | undefined): IViewBadge | undefined {
 		if (!badge) {
 			return undefined;
 		}
@@ -2077,7 +2077,7 @@ export namespace DataTransferItem {
 		return new types.InternalDataTransferItem(item.asString);
 	}
 
-	export async function from(mime: string, item: vscode.DataTransferItem | IDataTransferItem): Promise<extHostProtocol.DataTransferItemDTO> {
+	export async function from(mime: string, item: zycode.DataTransferItem | IDataTransferItem): Promise<extHostProtocol.DataTransferItemDTO> {
 		const stringValue = await item.asString();
 
 		if (mime === Mimes.uriList) {
@@ -2130,7 +2130,7 @@ export namespace DataTransfer {
 		return new types.DataTransfer(init);
 	}
 
-	export async function from(dataTransfer: Iterable<readonly [string, vscode.DataTransferItem | IDataTransferItem]>): Promise<extHostProtocol.DataTransferDTO> {
+	export async function from(dataTransfer: Iterable<readonly [string, zycode.DataTransferItem | IDataTransferItem]>): Promise<extHostProtocol.DataTransferDTO> {
 		const newDTO: extHostProtocol.DataTransferDTO = { items: [] };
 
 		const promises: Promise<any>[] = [];
@@ -2147,7 +2147,7 @@ export namespace DataTransfer {
 }
 
 export namespace ChatReplyFollowup {
-	export function to(followup: IChatReplyFollowup): vscode.InteractiveSessionReplyFollowup {
+	export function to(followup: IChatReplyFollowup): zycode.InteractiveSessionReplyFollowup {
 		return {
 			message: followup.message,
 			metadata: followup.metadata,
@@ -2156,7 +2156,7 @@ export namespace ChatReplyFollowup {
 		};
 	}
 
-	export function from(followup: vscode.InteractiveSessionReplyFollowup): IChatReplyFollowup {
+	export function from(followup: zycode.InteractiveSessionReplyFollowup): IChatReplyFollowup {
 		return {
 			kind: 'reply',
 			message: followup.message,
@@ -2168,7 +2168,7 @@ export namespace ChatReplyFollowup {
 }
 
 export namespace ChatFollowup {
-	export function from(followup: string | vscode.InteractiveSessionFollowup): IChatFollowup {
+	export function from(followup: string | zycode.InteractiveSessionFollowup): IChatFollowup {
 		if (typeof followup === 'string') {
 			return <IChatReplyFollowup>{ title: followup, message: followup, kind: 'reply' };
 		} else if ('commandId' in followup) {
@@ -2186,14 +2186,14 @@ export namespace ChatFollowup {
 }
 
 export namespace ChatMessage {
-	export function to(message: chatProvider.IChatMessage): vscode.ChatMessage {
+	export function to(message: chatProvider.IChatMessage): zycode.ChatMessage {
 		const res = new types.ChatMessage(ChatMessageRole.to(message.role), message.content);
 		res.name = message.name;
 		return res;
 	}
 
 
-	export function from(message: vscode.ChatMessage): chatProvider.IChatMessage {
+	export function from(message: zycode.ChatMessage): chatProvider.IChatMessage {
 		return {
 			role: ChatMessageRole.from(message.role),
 			content: message.content,
@@ -2205,7 +2205,7 @@ export namespace ChatMessage {
 
 export namespace ChatMessageRole {
 
-	export function to(role: chatProvider.ChatMessageRole): vscode.ChatMessageRole {
+	export function to(role: chatProvider.ChatMessageRole): zycode.ChatMessageRole {
 		switch (role) {
 			case chatProvider.ChatMessageRole.System: return types.ChatMessageRole.System;
 			case chatProvider.ChatMessageRole.User: return types.ChatMessageRole.User;
@@ -2214,7 +2214,7 @@ export namespace ChatMessageRole {
 		}
 	}
 
-	export function from(role: vscode.ChatMessageRole): chatProvider.ChatMessageRole {
+	export function from(role: zycode.ChatMessageRole): chatProvider.ChatMessageRole {
 		switch (role) {
 			case types.ChatMessageRole.System: return chatProvider.ChatMessageRole.System;
 			case types.ChatMessageRole.Assistant: return chatProvider.ChatMessageRole.Assistant;
@@ -2227,7 +2227,7 @@ export namespace ChatMessageRole {
 }
 
 export namespace ChatVariable {
-	export function to(variable: IChatRequestVariableValue): vscode.ChatVariableValue {
+	export function to(variable: IChatRequestVariableValue): zycode.ChatVariableValue {
 		return {
 			level: ChatVariableLevel.to(variable.level),
 			value: variable.value,
@@ -2235,7 +2235,7 @@ export namespace ChatVariable {
 		};
 	}
 
-	export function from(variable: vscode.ChatVariableValue): IChatRequestVariableValue {
+	export function from(variable: zycode.ChatVariableValue): IChatRequestVariableValue {
 		return {
 			level: ChatVariableLevel.from(variable.level),
 			value: variable.value,
@@ -2247,7 +2247,7 @@ export namespace ChatVariable {
 export namespace ChatVariableLevel {
 
 
-	export function to(level: 'short' | 'medium' | 'full'): vscode.ChatVariableLevel {
+	export function to(level: 'short' | 'medium' | 'full'): zycode.ChatVariableLevel {
 		switch (level) {
 			case 'short': return types.ChatVariableLevel.Short;
 			case 'medium': return types.ChatVariableLevel.Medium;
@@ -2256,7 +2256,7 @@ export namespace ChatVariableLevel {
 				return types.ChatVariableLevel.Full;
 		}
 	}
-	export function from(level: vscode.ChatVariableLevel): 'short' | 'medium' | 'full' {
+	export function from(level: zycode.ChatVariableLevel): 'short' | 'medium' | 'full' {
 		switch (level) {
 			case types.ChatVariableLevel.Short: return 'short';
 			case types.ChatVariableLevel.Medium: return 'medium';
@@ -2269,7 +2269,7 @@ export namespace ChatVariableLevel {
 
 
 export namespace TerminalQuickFix {
-	export function from(quickFix: vscode.TerminalQuickFixExecuteTerminalCommand | vscode.TerminalQuickFixOpener | vscode.Command, converter: Command.ICommandsConverter, disposables: DisposableStore): extHostProtocol.ITerminalQuickFixExecuteTerminalCommandDto | extHostProtocol.ITerminalQuickFixOpenerDto | extHostProtocol.ICommandDto | undefined {
+	export function from(quickFix: zycode.TerminalQuickFixExecuteTerminalCommand | zycode.TerminalQuickFixOpener | zycode.Command, converter: Command.ICommandsConverter, disposables: DisposableStore): extHostProtocol.ITerminalQuickFixExecuteTerminalCommandDto | extHostProtocol.ITerminalQuickFixOpenerDto | extHostProtocol.ICommandDto | undefined {
 		if ('terminalCommand' in quickFix) {
 			return { terminalCommand: quickFix.terminalCommand };
 		}

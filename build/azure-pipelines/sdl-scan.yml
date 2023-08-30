@@ -5,7 +5,7 @@ parameters:
   - name: NPM_REGISTRY
     displayName: "Custom NPM Registry"
     type: string
-    default: "https://pkgs.dev.azure.com/monacotools/Monaco/_packaging/vscode/npm/registry/"
+    default: "https://pkgs.dev.azure.com/monacotools/Monaco/_packaging/zycode/npm/registry/"
   - name: SCAN_WINDOWS
     displayName: "Scan Windows"
     type: boolean
@@ -23,7 +23,7 @@ variables:
   - name: SCAN_LINUX
     value: ${{ eq(parameters.SCAN_LINUX, true) }}
   - name: VSCODE_MIXIN_REPO
-    value: microsoft/vscode-distro
+    value: microsoft/zycode-distro
   - name: skipComponentGovernanceDetection
     value: true
   - name: NPM_ARCH
@@ -59,8 +59,8 @@ stages:
           - task: AzureKeyVault@1
             displayName: "Azure Key Vault: Get Secrets"
             inputs:
-              azureSubscription: "vscode-builds-subscription"
-              KeyVaultName: vscode-build-secrets
+              azureSubscription: "zycode-builds-subscription"
+              KeyVaultName: zycode-build-secrets
               SecretsFilter: "github-distro-mixin-password"
 
           - powershell: |
@@ -137,7 +137,7 @@ stages:
             displayName: CodeQL Finalize
             condition: eq(variables['Codeql.enabled'], 'True')
 
-          - powershell: yarn gulp "vscode-symbols-win32-$(VSCODE_ARCH)"
+          - powershell: yarn gulp "zycode-symbols-win32-$(VSCODE_ARCH)"
             env:
               GITHUB_TOKEN: "$(github-distro-mixin-password)"
             displayName: Download Symbols
@@ -186,8 +186,8 @@ stages:
           - task: AzureKeyVault@1
             displayName: "Azure Key Vault: Get Secrets"
             inputs:
-              azureSubscription: "vscode-builds-subscription"
-              KeyVaultName: vscode-build-secrets
+              azureSubscription: "zycode-builds-subscription"
+              KeyVaultName: zycode-build-secrets
               SecretsFilter: "github-distro-mixin-password"
 
           - script: |
@@ -228,7 +228,7 @@ stages:
               export npm_config_arch=$(NPM_ARCH)
 
               if [ -z "$CC" ] || [ -z "$CXX" ]; then
-                # Download clang based on chromium revision used by vscode
+                # Download clang based on chromium revision used by zycode
                 curl -s https://raw.githubusercontent.com/chromium/chromium/96.0.4664.110/tools/clang/scripts/update.py | python - --output-dir=$PWD/.build/CR_Clang --host-os=linux
                 # Download libcxx headers and objects from upstream electron releases
                 DEBUG=libcxx-fetcher \
@@ -273,7 +273,7 @@ stages:
             env:
               VSCODE_QUALITY: stable
 
-          - script: yarn gulp vscode-symbols-linux-$(VSCODE_ARCH)
+          - script: yarn gulp zycode-symbols-linux-$(VSCODE_ARCH)
             env:
               GITHUB_TOKEN: "$(github-distro-mixin-password)"
             displayName: Build

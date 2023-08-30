@@ -219,7 +219,7 @@ export class NativeLocalProcessExtensionHost implements IExtensionHost {
 
 		const opts: IExtensionHostProcessOptions = {
 			responseWindowId: this._environmentService.window.id,
-			responseChannel: 'vscode:startExtensionHostMessagePortResult',
+			responseChannel: 'zycode:startExtensionHostMessagePortResult',
 			responseNonce: generateUuid(),
 			env,
 			// We only detach the extension host on windows. Linux and Mac orphan by default
@@ -248,7 +248,7 @@ export class NativeLocalProcessExtensionHost implements IExtensionHost {
 			opts.execArgv.unshift('--prof');
 		}
 
-		// Refs https://github.com/microsoft/vscode/issues/189805
+		// Refs https://github.com/microsoft/zycode/issues/189805
 		opts.execArgv.unshift('--dns-result-order=ipv4first');
 
 		// Catch all output coming from the extension host process

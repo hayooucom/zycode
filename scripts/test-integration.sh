@@ -55,19 +55,19 @@ fi
 echo
 echo "### API tests (folder)"
 echo
-"$INTEGRATION_TEST_ELECTRON_PATH" $LINUX_EXTRA_ARGS $ROOT/extensions/vscode-api-tests/testWorkspace --enable-proposed-api=vscode.vscode-api-tests --extensionDevelopmentPath=$ROOT/extensions/vscode-api-tests --extensionTestsPath=$ROOT/extensions/vscode-api-tests/out/singlefolder-tests $API_TESTS_EXTRA_ARGS
+"$INTEGRATION_TEST_ELECTRON_PATH" $LINUX_EXTRA_ARGS $ROOT/extensions/zycode-api-tests/testWorkspace --enable-proposed-api=zycode.zycode-api-tests --extensionDevelopmentPath=$ROOT/extensions/zycode-api-tests --extensionTestsPath=$ROOT/extensions/zycode-api-tests/out/singlefolder-tests $API_TESTS_EXTRA_ARGS
 kill_app
 
 echo
 echo "### API tests (workspace)"
 echo
-"$INTEGRATION_TEST_ELECTRON_PATH" $LINUX_EXTRA_ARGS $ROOT/extensions/vscode-api-tests/testworkspace.code-workspace --enable-proposed-api=vscode.vscode-api-tests --extensionDevelopmentPath=$ROOT/extensions/vscode-api-tests --extensionTestsPath=$ROOT/extensions/vscode-api-tests/out/workspace-tests $API_TESTS_EXTRA_ARGS
+"$INTEGRATION_TEST_ELECTRON_PATH" $LINUX_EXTRA_ARGS $ROOT/extensions/zycode-api-tests/testworkspace.code-workspace --enable-proposed-api=zycode.zycode-api-tests --extensionDevelopmentPath=$ROOT/extensions/zycode-api-tests --extensionTestsPath=$ROOT/extensions/zycode-api-tests/out/workspace-tests $API_TESTS_EXTRA_ARGS
 kill_app
 
 echo
 echo "### Colorize tests"
 echo
-"$INTEGRATION_TEST_ELECTRON_PATH" $LINUX_EXTRA_ARGS $ROOT/extensions/vscode-colorize-tests/test --extensionDevelopmentPath=$ROOT/extensions/vscode-colorize-tests --extensionTestsPath=$ROOT/extensions/vscode-colorize-tests/out $API_TESTS_EXTRA_ARGS
+"$INTEGRATION_TEST_ELECTRON_PATH" $LINUX_EXTRA_ARGS $ROOT/extensions/zycode-colorize-tests/test --extensionDevelopmentPath=$ROOT/extensions/zycode-colorize-tests --extensionTestsPath=$ROOT/extensions/zycode-colorize-tests/out $API_TESTS_EXTRA_ARGS
 kill_app
 
 echo

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Node, HtmlNode, Rule, Property, Stylesheet } from 'EmmetFlatNode';
 import { getEmmetHelper, getFlatNode, getHtmlFlatNode, getMappingForIncludedLanguages, validate, getEmmetConfiguration, isStyleSheet, getEmmetMode, parsePartialStylesheet, isStyleAttribute, getEmbeddedCssNodeIfAny, allowedMimeTypesInScriptTag, toLSTextDocument, isOffsetInsideOpenOrCloseTag } from './util';
 import { getRootNode as parseDocument } from './parseDocument';
@@ -14,7 +14,7 @@ const hexColorRegex = /^#[\da-fA-F]{0,6}$/;
 interface ExpandAbbreviationInput {
 	syntax: string;
 	abbreviation: string;
-	rangeToReplace: vscode.Range;
+	rangeToReplace: zycode.Range;
 	textToWrap?: string[];
 	filter?: string;
 	indent?: string;
@@ -22,8 +22,8 @@ interface ExpandAbbreviationInput {
 }
 
 interface PreviewRangesWithContent {
-	previewRange: vscode.Range;
-	originalRange: vscode.Range;
+	previewRange: zycode.Range;
+	originalRange: zycode.Range;
 	originalContent: string;
 	textToWrapInPreview: string[];
 	baseIndent: string;
@@ -34,7 +34,7 @@ export async function wrapWithAbbreviation(args: any): Promise<boolean> {
 		return false;
 	}
 
-	const editor = vscode.window.activeTextEditor!;
+	const editor = zycode.window.activeTextEditor!;
 	const document = editor.document;
 
 	args = args || {};
@@ -48,7 +48,7 @@ export async function wrapWithAbbreviation(args: any): Promise<boolean> {
 	const helper = getEmmetHelper();
 
 	const operationRanges = Array.from(editor.selections).sort((a, b) => a.start.compareTo(b.start)).map(selection => {
-		let rangeToReplace: vscode.Range = selection;
+		let rangeToReplace: zycode.Range = selection;
 		// wrap around the node if the selection falls inside its open or close tag
 		{
 			let { start, end } = rangeToReplace;
@@ -71,12 +71,12 @@ export async function wrapWithAbbreviation(args: any): Promise<boolean> {
 				end = nodeEndPosition.isAfter(end) ? nodeEndPosition : end;
 			}
 
-			rangeToReplace = new vscode.Range(start, end);
+			rangeToReplace = new zycode.Range(start, end);
 		}
 		// in case of multi-line, exclude last empty line from rangeToReplace
 		if (!rangeToReplace.isSingleLine && rangeToReplace.end.character === 0) {
 			const previousLine = rangeToReplace.end.line - 1;
-			rangeToReplace = new vscode.Range(rangeToReplace.start, document.lineAt(previousLine).range.end);
+			rangeToReplace = new zycode.Range(rangeToReplace.start, document.lineAt(previousLine).range.end);
 		}
 		// wrap line the cursor is on
 		if (rangeToReplace.isEmpty) {
@@ -86,7 +86,7 @@ export async function wrapWithAbbreviation(args: any): Promise<boolean> {
 		// ignore whitespace on the first line
 		const firstLineOfRange = document.lineAt(rangeToReplace.start);
 		if (!firstLineOfRange.isEmptyOrWhitespace && firstLineOfRange.firstNonWhitespaceCharacterIndex > rangeToReplace.start.character) {
-			rangeToReplace = rangeToReplace.with(new vscode.Position(rangeToReplace.start.line, firstLineOfRange.firstNonWhitespaceCharacterIndex));
+			rangeToReplace = rangeToReplace.with(new zycode.Position(rangeToReplace.start.line, firstLineOfRange.firstNonWhitespaceCharacterIndex));
 		}
 
 		return rangeToReplace;
@@ -98,13 +98,13 @@ export async function wrapWithAbbreviation(args: any): Promise<boolean> {
 			mergedRanges.push(range);
 		}
 		return mergedRanges;
-	}, [] as vscode.Range[]);
+	}, [] as zycode.Range[]);
 
 	// Backup orginal selections and update selections
-	// Also helps with https://github.com/microsoft/vscode/issues/113930 by avoiding `editor.linkedEditing`
+	// Also helps with https://github.com/microsoft/zycode/issues/113930 by avoiding `editor.linkedEditing`
 	// execution if selection is inside an open or close tag
 	const oldSelections = editor.selections;
-	editor.selections = operationRanges.map(range => new vscode.Selection(range.start, range.end));
+	editor.selections = operationRanges.map(range => new zycode.Selection(range.start, range.end));
 
 	// Fetch general information for the succesive expansions. i.e. the ranges to replace and its contents
 	const rangesToReplace: PreviewRangesWithContent[] = operationRanges.map(rangeToReplace => {
@@ -145,8 +145,8 @@ export async function wrapWithAbbreviation(args: any): Promise<boolean> {
 	}
 
 	function applyPreview(expandAbbrList: ExpandAbbreviationInput[]): Thenable<boolean> {
-		let lastOldPreviewRange = new vscode.Range(0, 0, 0, 0);
-		let lastNewPreviewRange = new vscode.Range(0, 0, 0, 0);
+		let lastOldPreviewRange = new zycode.Range(0, 0, 0, 0);
+		let lastNewPreviewRange = new zycode.Range(0, 0, 0, 0);
 		let totalNewLinesInserted = 0;
 
 		return editor.edit(builder => {
@@ -194,7 +194,7 @@ export async function wrapWithAbbreviation(args: any): Promise<boolean> {
 				}
 
 				lastOldPreviewRange = rangesToReplace[i].previewRange;
-				lastNewPreviewRange = new vscode.Range(newPreviewLineStart, newPreviewStart, newPreviewLineEnd, newPreviewEnd);
+				lastNewPreviewRange = new zycode.Range(newPreviewLineStart, newPreviewStart, newPreviewLineEnd, newPreviewEnd);
 				rangesToReplace[i].previewRange = lastNewPreviewRange;
 				totalNewLinesInserted += newLinesInserted;
 			}
@@ -248,10 +248,10 @@ export async function wrapWithAbbreviation(args: any): Promise<boolean> {
 		return '';
 	}
 
-	const prompt = vscode.l10n.t("Enter Abbreviation");
+	const prompt = zycode.l10n.t("Enter Abbreviation");
 	const inputAbbreviation = (args && args['abbreviation'])
 		? (args['abbreviation'] as string)
-		: await vscode.window.showInputBox({ prompt, validateInput: inputChanged });
+		: await zycode.window.showInputBox({ prompt, validateInput: inputChanged });
 
 	const changesWereMade = await makeChanges(inputAbbreviation, false);
 	if (!changesWereMade) {
@@ -262,23 +262,23 @@ export async function wrapWithAbbreviation(args: any): Promise<boolean> {
 }
 
 export function expandEmmetAbbreviation(args: any): Thenable<boolean | undefined> {
-	if (!validate() || !vscode.window.activeTextEditor) {
+	if (!validate() || !zycode.window.activeTextEditor) {
 		return fallbackTab();
 	}
 
 	/**
 	 * Short circuit the parsing. If previous character is space, do not expand.
 	 */
-	if (vscode.window.activeTextEditor.selections.length === 1 &&
-		vscode.window.activeTextEditor.selection.isEmpty
+	if (zycode.window.activeTextEditor.selections.length === 1 &&
+		zycode.window.activeTextEditor.selection.isEmpty
 	) {
-		const anchor = vscode.window.activeTextEditor.selection.anchor;
+		const anchor = zycode.window.activeTextEditor.selection.anchor;
 		if (anchor.character === 0) {
 			return fallbackTab();
 		}
 
 		const prevPositionAnchor = anchor.translate(0, -1);
-		const prevText = vscode.window.activeTextEditor.document.getText(new vscode.Range(prevPositionAnchor, anchor));
+		const prevText = zycode.window.activeTextEditor.document.getText(new zycode.Range(prevPositionAnchor, anchor));
 		if (prevText === ' ' || prevText === '\t') {
 			return fallbackTab();
 		}
@@ -286,10 +286,10 @@ export function expandEmmetAbbreviation(args: any): Thenable<boolean | undefined
 
 	args = args || {};
 	if (!args['language']) {
-		args['language'] = vscode.window.activeTextEditor.document.languageId;
+		args['language'] = zycode.window.activeTextEditor.document.languageId;
 	} else {
-		const excludedLanguages = vscode.workspace.getConfiguration('emmet')['excludeLanguages'] ? vscode.workspace.getConfiguration('emmet')['excludeLanguages'] : [];
-		if (excludedLanguages.includes(vscode.window.activeTextEditor.document.languageId)) {
+		const excludedLanguages = zycode.workspace.getConfiguration('emmet')['excludeLanguages'] ? zycode.workspace.getConfiguration('emmet')['excludeLanguages'] : [];
+		if (excludedLanguages.includes(zycode.window.activeTextEditor.document.languageId)) {
 			return fallbackTab();
 		}
 	}
@@ -298,10 +298,10 @@ export function expandEmmetAbbreviation(args: any): Thenable<boolean | undefined
 		return fallbackTab();
 	}
 
-	const editor = vscode.window.activeTextEditor;
+	const editor = zycode.window.activeTextEditor;
 
 	// When tabbed on a non empty selection, do not treat it as an emmet abbreviation, and fallback to tab instead
-	if (vscode.workspace.getConfiguration('emmet')['triggerExpansionOnTab'] === true && editor.selections.find(x => !x.isEmpty)) {
+	if (zycode.workspace.getConfiguration('emmet')['triggerExpansionOnTab'] === true && editor.selections.find(x => !x.isEmpty)) {
 		return fallbackTab();
 	}
 
@@ -310,9 +310,9 @@ export function expandEmmetAbbreviation(args: any): Thenable<boolean | undefined
 	let allAbbreviationsSame: boolean = true;
 	const helper = getEmmetHelper();
 
-	const getAbbreviation = (document: vscode.TextDocument, selection: vscode.Selection, position: vscode.Position, syntax: string): [vscode.Range | null, string, string | undefined] => {
+	const getAbbreviation = (document: zycode.TextDocument, selection: zycode.Selection, position: zycode.Position, syntax: string): [zycode.Range | null, string, string | undefined] => {
 		position = document.validatePosition(position);
-		let rangeToReplace: vscode.Range = selection;
+		let rangeToReplace: zycode.Range = selection;
 		let abbr = document.getText(rangeToReplace);
 		if (!rangeToReplace.isEmpty) {
 			const extractedResults = helper.extractAbbreviationFromText(abbr, syntax);
@@ -331,7 +331,7 @@ export function expandEmmetAbbreviation(args: any): Thenable<boolean | undefined
 			const matches = textTillPosition.match(/<(\w+)$/);
 			if (matches) {
 				abbr = matches[1];
-				rangeToReplace = new vscode.Range(position.translate(0, -(abbr.length + 1)), position);
+				rangeToReplace = new zycode.Range(position.translate(0, -(abbr.length + 1)), position);
 				return [rangeToReplace, abbr, ''];
 			}
 		}
@@ -341,7 +341,7 @@ export function expandEmmetAbbreviation(args: any): Thenable<boolean | undefined
 		}
 
 		const { abbreviationRange, abbreviation, filter } = extractedResults;
-		return [new vscode.Range(abbreviationRange.start.line, abbreviationRange.start.character, abbreviationRange.end.line, abbreviationRange.end.character), abbreviation, filter];
+		return [new zycode.Range(abbreviationRange.start.line, abbreviationRange.start.character, abbreviationRange.end.line, abbreviationRange.end.character), abbreviation, filter];
 	};
 
 	const selectionsInReverseOrder = editor.selections.slice(0);
@@ -357,7 +357,7 @@ export function expandEmmetAbbreviation(args: any): Thenable<boolean | undefined
 			return rootNode;
 		}
 
-		const usePartialParsing = vscode.workspace.getConfiguration('emmet')['optimizeStylesheetParsing'] === true;
+		const usePartialParsing = zycode.workspace.getConfiguration('emmet')['optimizeStylesheetParsing'] === true;
 		if (editor.selections.length === 1 && isStyleSheet(editor.document.languageId) && usePartialParsing && editor.document.lineCount > 1000) {
 			rootNode = parsePartialStylesheet(editor.document, editor.selection.isReversed ? editor.selection.anchor : editor.selection.active);
 		} else {
@@ -377,7 +377,7 @@ export function expandEmmetAbbreviation(args: any): Thenable<boolean | undefined
 			return;
 		}
 		if (isStyleSheet(syntax) && abbreviation.endsWith(':')) {
-			// Fix for https://github.com/Microsoft/vscode/issues/1623
+			// Fix for https://github.com/Microsoft/zycode/issues/1623
 			return;
 		}
 
@@ -418,8 +418,8 @@ export function expandEmmetAbbreviation(args: any): Thenable<boolean | undefined
 }
 
 function fallbackTab(): Thenable<boolean | undefined> {
-	if (vscode.workspace.getConfiguration('emmet')['triggerExpansionOnTab'] === true) {
-		return vscode.commands.executeCommand('tab');
+	if (zycode.workspace.getConfiguration('emmet')['triggerExpansionOnTab'] === true) {
+		return zycode.commands.executeCommand('tab');
 	}
 	return Promise.resolve(true);
 }
@@ -433,7 +433,7 @@ function fallbackTab(): Thenable<boolean | undefined> {
  * @param position position to validate
  * @param abbreviationRange The range of the abbreviation for which given position is being validated
  */
-export function isValidLocationForEmmetAbbreviation(document: vscode.TextDocument, rootNode: Node | undefined, currentNode: Node | undefined, syntax: string, offset: number, abbreviationRange: vscode.Range): boolean {
+export function isValidLocationForEmmetAbbreviation(document: zycode.TextDocument, rootNode: Node | undefined, currentNode: Node | undefined, syntax: string, offset: number, abbreviationRange: zycode.Range): boolean {
 	if (isStyleSheet(syntax)) {
 		const stylesheet = <Stylesheet>rootNode;
 		if (stylesheet && (stylesheet.comments || []).some(x => offset >= x.start && offset <= x.end)) {
@@ -445,15 +445,15 @@ export function isValidLocationForEmmetAbbreviation(document: vscode.TextDocumen
 		}
 
 		// Get the abbreviation right now
-		// Fixes https://github.com/microsoft/vscode/issues/74505
+		// Fixes https://github.com/microsoft/zycode/issues/74505
 		// Stylesheet abbreviations starting with @ should bring up suggestions
 		// even at outer-most level
-		const abbreviation = document.getText(new vscode.Range(abbreviationRange.start.line, abbreviationRange.start.character, abbreviationRange.end.line, abbreviationRange.end.character));
+		const abbreviation = document.getText(new zycode.Range(abbreviationRange.start.line, abbreviationRange.start.character, abbreviationRange.end.line, abbreviationRange.end.character));
 		if (abbreviation.startsWith('@')) {
 			return true;
 		}
 
-		// Fix for https://github.com/microsoft/vscode/issues/34162
+		// Fix for https://github.com/microsoft/zycode/issues/34162
 		// Other than sass, stylus, we can make use of the terminator tokens to validate position
 		if (syntax !== 'sass' && syntax !== 'stylus' && currentNode.type === 'property') {
 			// Fix for upstream issue https://github.com/emmetio/css-parser/issues/3
@@ -495,7 +495,7 @@ export function isValidLocationForEmmetAbbreviation(document: vscode.TextDocumen
 			return true;
 		}
 
-		// Workaround for https://github.com/microsoft/vscode/30188
+		// Workaround for https://github.com/microsoft/zycode/30188
 		// The line above the rule selector is considered as part of the selector by the css-parser
 		// But we should assume it is a valid location for css properties under the parent rule
 		if (currentCssNode.parent
@@ -538,13 +538,13 @@ export function isValidLocationForEmmetAbbreviation(document: vscode.TextDocumen
 			return false;
 		}
 
-		// Fix for https://github.com/microsoft/vscode/issues/28829
+		// Fix for https://github.com/microsoft/zycode/issues/28829
 		if (!currentHtmlNode.open || !currentHtmlNode.close ||
 			!(currentHtmlNode.open.end <= offset && offset <= currentHtmlNode.close.start)) {
 			return false;
 		}
 
-		// Fix for https://github.com/microsoft/vscode/issues/35128
+		// Fix for https://github.com/microsoft/zycode/issues/35128
 		// Find the position up till where we will backtrack looking for unescaped < or >
 		// to decide if current position is valid for emmet expansion
 		start = currentHtmlNode.open.end;
@@ -558,7 +558,7 @@ export function isValidLocationForEmmetAbbreviation(document: vscode.TextDocumen
 		}
 	}
 	const startPos = document.positionAt(start);
-	let textToBackTrack = document.getText(new vscode.Range(startPos.line, startPos.character, abbreviationRange.start.line, abbreviationRange.start.character));
+	let textToBackTrack = document.getText(new zycode.Range(startPos.line, startPos.character, abbreviationRange.start.line, abbreviationRange.start.character));
 
 	// Worse case scenario is when cursor is inside a big chunk of text which needs to backtracked
 	// Backtrack only 500 offsets to ensure we dont waste time doing this
@@ -588,7 +588,7 @@ export function isValidLocationForEmmetAbbreviation(document: vscode.TextDocumen
 			i--;
 			continue;
 		}
-		// Fix for https://github.com/microsoft/vscode/issues/55411
+		// Fix for https://github.com/microsoft/zycode/issues/55411
 		// A space is not a valid character right after < in a tag name.
 		if (/\s/.test(char) && textToBackTrack[i] === startAngle) {
 			i--;
@@ -622,7 +622,7 @@ export function isValidLocationForEmmetAbbreviation(document: vscode.TextDocumen
  *
  * @returns false if no snippet can be inserted.
  */
-async function expandAbbreviationInRange(editor: vscode.TextEditor, expandAbbrList: ExpandAbbreviationInput[], insertSameSnippet: boolean): Promise<boolean> {
+async function expandAbbreviationInRange(editor: zycode.TextEditor, expandAbbrList: ExpandAbbreviationInput[], insertSameSnippet: boolean): Promise<boolean> {
 	if (!expandAbbrList || expandAbbrList.length === 0) {
 		return false;
 	}
@@ -636,7 +636,7 @@ async function expandAbbreviationInRange(editor: vscode.TextEditor, expandAbbrLi
 		for (const expandAbbrInput of expandAbbrList) {
 			const expandedText = expandAbbr(expandAbbrInput);
 			if (expandedText) {
-				await editor.insertSnippet(new vscode.SnippetString(expandedText), expandAbbrInput.rangeToReplace, { undoStopBefore: false, undoStopAfter: false });
+				await editor.insertSnippet(new zycode.SnippetString(expandedText), expandAbbrInput.rangeToReplace, { undoStopBefore: false, undoStopAfter: false });
 				insertedSnippetsCount++;
 			}
 		}
@@ -650,7 +650,7 @@ async function expandAbbreviationInRange(editor: vscode.TextEditor, expandAbbrLi
 	const expandedText = expandAbbr(anyExpandAbbrInput);
 	const allRanges = expandAbbrList.map(value => value.rangeToReplace);
 	if (expandedText) {
-		return editor.insertSnippet(new vscode.SnippetString(expandedText), allRanges);
+		return editor.insertSnippet(new zycode.SnippetString(expandedText), allRanges);
 	}
 	return false;
 }
@@ -673,7 +673,7 @@ function expandAbbr(input: ExpandAbbreviationInput): string | undefined {
 		expandOptions['text'] = input.textToWrap;
 
 		if (expandOptions.options) {
-			// Below fixes https://github.com/microsoft/vscode/issues/29898
+			// Below fixes https://github.com/microsoft/zycode/issues/29898
 			// With this, Emmet formats inline elements as block elements
 			// ensuring the wrapped multi line text does not get merged to a single line
 			if (!input.rangeToReplace.isSingleLine) {
@@ -693,7 +693,7 @@ function expandAbbr(input: ExpandAbbreviationInput): string | undefined {
 	try {
 		expandedText = helper.expandAbbreviation(input.abbreviation, expandOptions);
 	} catch (e) {
-		void vscode.window.showErrorMessage('Failed to expand abbreviation');
+		void zycode.window.showErrorMessage('Failed to expand abbreviation');
 	}
 
 	return expandedText;
@@ -703,7 +703,7 @@ export function getSyntaxFromArgs(args: { [x: string]: string }): string | undef
 	const mappedModes = getMappingForIncludedLanguages();
 	const language: string = args['language'];
 	const parentMode: string = args['parentMode'];
-	const excludedLanguages = vscode.workspace.getConfiguration('emmet')['excludeLanguages'] ? vscode.workspace.getConfiguration('emmet')['excludeLanguages'] : [];
+	const excludedLanguages = zycode.workspace.getConfiguration('emmet')['excludeLanguages'] ? zycode.workspace.getConfiguration('emmet')['excludeLanguages'] : [];
 	if (excludedLanguages.includes(language)) {
 		return;
 	}

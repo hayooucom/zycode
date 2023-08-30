@@ -475,7 +475,7 @@ export class XtermTerminal extends DisposableStore implements IXtermTerminal, ID
 
 	private _updateFindColors(searchOptions: ISearchOptions): void {
 		const theme = this._themeService.getColorTheme();
-		// Theme color names align with monaco/vscode whereas xterm.js has some different naming.
+		// Theme color names align with monaco/zycode whereas xterm.js has some different naming.
 		// The mapping is as follows:
 		// - findMatch -> activeMatch
 		// - findMatchHighlight -> match

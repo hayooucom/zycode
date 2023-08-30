@@ -7,7 +7,7 @@
 
 (function () {
 	// @ts-ignore
-	const vscode = acquireVsCodeApi();
+	const zycode = acquireVsCodeApi();
 
 	function getSettings() {
 		const element = document.getElementById('settings');
@@ -65,7 +65,7 @@
 
 	document.querySelector('.open-file-link')?.addEventListener('click', (e) => {
 		e.preventDefault();
-		vscode.postMessage({
+		zycode.postMessage({
 			type: 'reopen-as-text',
 		});
 	});

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 export interface PackageInfo {
 	name: string;
@@ -11,7 +11,7 @@ export interface PackageInfo {
 	aiKey: string;
 }
 
-export function getPackageInfo(context: vscode.ExtensionContext) {
+export function getPackageInfo(context: zycode.ExtensionContext) {
 	const packageJSON = context.extension.packageJSON;
 	if (packageJSON && typeof packageJSON === 'object') {
 		return {

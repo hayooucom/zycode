@@ -6,61 +6,61 @@
 import { WebviewStyles } from 'vs/workbench/contrib/webview/browser/webview';
 
 const mapping: ReadonlyMap<string, string> = new Map([
-	['theme-font-family', 'vscode-font-family'],
-	['theme-font-weight', 'vscode-font-weight'],
-	['theme-font-size', 'vscode-font-size'],
-	['theme-code-font-family', 'vscode-editor-font-family'],
-	['theme-code-font-weight', 'vscode-editor-font-weight'],
-	['theme-code-font-size', 'vscode-editor-font-size'],
-	['theme-scrollbar-background', 'vscode-scrollbarSlider-background'],
-	['theme-scrollbar-hover-background', 'vscode-scrollbarSlider-hoverBackground'],
-	['theme-scrollbar-active-background', 'vscode-scrollbarSlider-activeBackground'],
-	['theme-quote-background', 'vscode-textBlockQuote-background'],
-	['theme-quote-border', 'vscode-textBlockQuote-border'],
-	['theme-code-foreground', 'vscode-textPreformat-foreground'],
+	['theme-font-family', 'zycode-font-family'],
+	['theme-font-weight', 'zycode-font-weight'],
+	['theme-font-size', 'zycode-font-size'],
+	['theme-code-font-family', 'zycode-editor-font-family'],
+	['theme-code-font-weight', 'zycode-editor-font-weight'],
+	['theme-code-font-size', 'zycode-editor-font-size'],
+	['theme-scrollbar-background', 'zycode-scrollbarSlider-background'],
+	['theme-scrollbar-hover-background', 'zycode-scrollbarSlider-hoverBackground'],
+	['theme-scrollbar-active-background', 'zycode-scrollbarSlider-activeBackground'],
+	['theme-quote-background', 'zycode-textBlockQuote-background'],
+	['theme-quote-border', 'zycode-textBlockQuote-border'],
+	['theme-code-foreground', 'zycode-textPreformat-foreground'],
 	// Editor
-	['theme-background', 'vscode-editor-background'],
-	['theme-foreground', 'vscode-editor-foreground'],
-	['theme-ui-foreground', 'vscode-foreground'],
-	['theme-link', 'vscode-textLink-foreground'],
-	['theme-link-active', 'vscode-textLink-activeForeground'],
+	['theme-background', 'zycode-editor-background'],
+	['theme-foreground', 'zycode-editor-foreground'],
+	['theme-ui-foreground', 'zycode-foreground'],
+	['theme-link', 'zycode-textLink-foreground'],
+	['theme-link-active', 'zycode-textLink-activeForeground'],
 	// Buttons
-	['theme-button-background', 'vscode-button-background'],
-	['theme-button-hover-background', 'vscode-button-hoverBackground'],
-	['theme-button-foreground', 'vscode-button-foreground'],
-	['theme-button-secondary-background', 'vscode-button-secondaryBackground'],
-	['theme-button-secondary-hover-background', 'vscode-button-secondaryHoverBackground'],
-	['theme-button-secondary-foreground', 'vscode-button-secondaryForeground'],
-	['theme-button-hover-foreground', 'vscode-button-foreground'],
-	['theme-button-focus-foreground', 'vscode-button-foreground'],
-	['theme-button-secondary-hover-foreground', 'vscode-button-secondaryForeground'],
-	['theme-button-secondary-focus-foreground', 'vscode-button-secondaryForeground'],
+	['theme-button-background', 'zycode-button-background'],
+	['theme-button-hover-background', 'zycode-button-hoverBackground'],
+	['theme-button-foreground', 'zycode-button-foreground'],
+	['theme-button-secondary-background', 'zycode-button-secondaryBackground'],
+	['theme-button-secondary-hover-background', 'zycode-button-secondaryHoverBackground'],
+	['theme-button-secondary-foreground', 'zycode-button-secondaryForeground'],
+	['theme-button-hover-foreground', 'zycode-button-foreground'],
+	['theme-button-focus-foreground', 'zycode-button-foreground'],
+	['theme-button-secondary-hover-foreground', 'zycode-button-secondaryForeground'],
+	['theme-button-secondary-focus-foreground', 'zycode-button-secondaryForeground'],
 	// Inputs
-	['theme-input-background', 'vscode-input-background'],
-	['theme-input-foreground', 'vscode-input-foreground'],
-	['theme-input-placeholder-foreground', 'vscode-input-placeholderForeground'],
-	['theme-input-focus-border-color', 'vscode-focusBorder'],
+	['theme-input-background', 'zycode-input-background'],
+	['theme-input-foreground', 'zycode-input-foreground'],
+	['theme-input-placeholder-foreground', 'zycode-input-placeholderForeground'],
+	['theme-input-focus-border-color', 'zycode-focusBorder'],
 	// Menus
-	['theme-menu-background', 'vscode-menu-background'],
-	['theme-menu-foreground', 'vscode-menu-foreground'],
-	['theme-menu-hover-background', 'vscode-menu-selectionBackground'],
-	['theme-menu-focus-background', 'vscode-menu-selectionBackground'],
-	['theme-menu-hover-foreground', 'vscode-menu-selectionForeground'],
-	['theme-menu-focus-foreground', 'vscode-menu-selectionForeground'],
+	['theme-menu-background', 'zycode-menu-background'],
+	['theme-menu-foreground', 'zycode-menu-foreground'],
+	['theme-menu-hover-background', 'zycode-menu-selectionBackground'],
+	['theme-menu-focus-background', 'zycode-menu-selectionBackground'],
+	['theme-menu-hover-foreground', 'zycode-menu-selectionForeground'],
+	['theme-menu-focus-foreground', 'zycode-menu-selectionForeground'],
 	// Errors
-	['theme-error-background', 'vscode-inputValidation-errorBackground'],
-	['theme-error-foreground', 'vscode-foreground'],
-	['theme-warning-background', 'vscode-inputValidation-warningBackground'],
-	['theme-warning-foreground', 'vscode-foreground'],
-	['theme-info-background', 'vscode-inputValidation-infoBackground'],
-	['theme-info-foreground', 'vscode-foreground'],
+	['theme-error-background', 'zycode-inputValidation-errorBackground'],
+	['theme-error-foreground', 'zycode-foreground'],
+	['theme-warning-background', 'zycode-inputValidation-warningBackground'],
+	['theme-warning-foreground', 'zycode-foreground'],
+	['theme-info-background', 'zycode-inputValidation-infoBackground'],
+	['theme-info-foreground', 'zycode-foreground'],
 	// Notebook:
-	['theme-notebook-output-background', 'vscode-notebook-outputContainerBackgroundColor'],
-	['theme-notebook-output-border', 'vscode-notebook-outputContainerBorderColor'],
-	['theme-notebook-cell-selected-background', 'vscode-notebook-selectedCellBackground'],
-	['theme-notebook-symbol-highlight-background', 'vscode-notebook-symbolHighlightBackground'],
-	['theme-notebook-diff-removed-background', 'vscode-diffEditor-removedTextBackground'],
-	['theme-notebook-diff-inserted-background', 'vscode-diffEditor-insertedTextBackground'],
+	['theme-notebook-output-background', 'zycode-notebook-outputContainerBackgroundColor'],
+	['theme-notebook-output-border', 'zycode-notebook-outputContainerBorderColor'],
+	['theme-notebook-cell-selected-background', 'zycode-notebook-selectedCellBackground'],
+	['theme-notebook-symbol-highlight-background', 'zycode-notebook-symbolHighlightBackground'],
+	['theme-notebook-diff-removed-background', 'zycode-diffEditor-removedTextBackground'],
+	['theme-notebook-diff-inserted-background', 'zycode-diffEditor-insertedTextBackground'],
 ]);
 
 const constants: Readonly<WebviewStyles> = {
@@ -71,9 +71,9 @@ const constants: Readonly<WebviewStyles> = {
 };
 
 /**
- * Transforms base vscode theme variables into generic variables for notebook
+ * Transforms base zycode theme variables into generic variables for notebook
  * renderers.
- * @see https://github.com/microsoft/vscode/issues/107985 for context
+ * @see https://github.com/microsoft/zycode/issues/107985 for context
  * @deprecated
  */
 export const transformWebviewThemeVars = (s: Readonly<WebviewStyles>): WebviewStyles => {

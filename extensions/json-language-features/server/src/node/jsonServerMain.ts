@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { createConnection, Connection, Disposable } from 'vscode-languageserver/node';
+import { createConnection, Connection, Disposable } from 'zycode-languageserver/node';
 import { formatError } from '../utils/runner';
 import { RequestService, RuntimeEnvironment, startServer } from '../jsonServer';
 
 import { xhr, XHRResponse, configure as configureHttpRequests, getErrorStatusDescription } from 'request-light';
-import { URI as Uri } from 'vscode-uri';
+import { URI as Uri } from 'zycode-uri';
 import * as fs from 'fs';
 
 // Create a connection for the server.

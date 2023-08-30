@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { LanguageClient, LanguageClientOptions } from 'vscode-languageclient/browser';
+import * as zycode from 'zycode';
+import { LanguageClient, LanguageClientOptions } from 'zycode-languageclient/browser';
 import { MdLanguageClient, startClient } from './client/client';
 import { activateShared } from './extension.shared';
 import { VsCodeOutputLogger } from './logging';
@@ -12,7 +12,7 @@ import { IMdParser, MarkdownItEngine } from './markdownEngine';
 import { getMarkdownExtensionContributions } from './markdownExtensions';
 import { githubSlugifier } from './slugify';
 
-export async function activate(context: vscode.ExtensionContext) {
+export async function activate(context: zycode.ExtensionContext) {
 	const contributions = getMarkdownExtensionContributions(context);
 	context.subscriptions.push(contributions);
 
@@ -26,11 +26,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	activateShared(context, client, engine, logger, contributions);
 }
 
-function startServer(context: vscode.ExtensionContext, parser: IMdParser): Promise<MdLanguageClient> {
-	const serverMain = vscode.Uri.joinPath(context.extensionUri, 'server/dist/browser/workerMain.js');
+function startServer(context: zycode.ExtensionContext, parser: IMdParser): Promise<MdLanguageClient> {
+	const serverMain = zycode.Uri.joinPath(context.extensionUri, 'server/dist/browser/workerMain.js');
 
 	const worker = new Worker(serverMain.toString());
-	worker.postMessage({ i10lLocation: vscode.l10n.uri?.toString() ?? '' });
+	worker.postMessage({ i10lLocation: zycode.l10n.uri?.toString() ?? '' });
 
 	return startClient((id: string, name: string, clientOptions: LanguageClientOptions) => {
 		return new LanguageClient(id, name, clientOptions, worker);

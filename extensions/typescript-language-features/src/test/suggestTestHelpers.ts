@@ -4,21 +4,21 @@
  *--------------------------------------------------------------------------------------------*/
 
 import 'mocha';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { onChangedDocument, retryUntilDocumentChanges, wait } from './testUtils';
 
-export async function acceptFirstSuggestion(uri: vscode.Uri, _disposables: vscode.Disposable[]) {
+export async function acceptFirstSuggestion(uri: zycode.Uri, _disposables: zycode.Disposable[]) {
 	return retryUntilDocumentChanges(uri, { retries: 10, timeout: 0 }, _disposables, async () => {
-		await vscode.commands.executeCommand('editor.action.triggerSuggest');
+		await zycode.commands.executeCommand('editor.action.triggerSuggest');
 		await wait(1000);
-		await vscode.commands.executeCommand('acceptSelectedSuggestion');
+		await zycode.commands.executeCommand('acceptSelectedSuggestion');
 	});
 }
 
-export async function typeCommitCharacter(uri: vscode.Uri, character: string, _disposables: vscode.Disposable[]) {
+export async function typeCommitCharacter(uri: zycode.Uri, character: string, _disposables: zycode.Disposable[]) {
 	const didChangeDocument = onChangedDocument(uri, _disposables);
-	await vscode.commands.executeCommand('editor.action.triggerSuggest');
+	await zycode.commands.executeCommand('editor.action.triggerSuggest');
 	await wait(3000); // Give time for suggestions to show
-	await vscode.commands.executeCommand('type', { text: character });
+	await zycode.commands.executeCommand('type', { text: character });
 	return await didChangeDocument;
 }

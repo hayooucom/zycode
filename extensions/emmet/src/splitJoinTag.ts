@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { validate, getEmmetMode, getEmmetConfiguration, getHtmlFlatNode, offsetRangeToVsRange } from './util';
 import { HtmlNode as HtmlFlatNode } from 'EmmetFlatNode';
 import { getRootNode } from './parseDocument';
 
 export function splitJoinTag() {
-	if (!validate(false) || !vscode.window.activeTextEditor) {
+	if (!validate(false) || !zycode.window.activeTextEditor) {
 		return;
 	}
 
-	const editor = vscode.window.activeTextEditor;
+	const editor = zycode.window.activeTextEditor;
 	const document = editor.document;
 	const rootNode = <HtmlFlatNode>getRootNode(editor.document, true);
 	if (!rootNode) {
@@ -33,8 +33,8 @@ export function splitJoinTag() {
 	});
 }
 
-function getRangesToReplace(document: vscode.TextDocument, nodeToUpdate: HtmlFlatNode): vscode.TextEdit {
-	let rangeToReplace: vscode.Range;
+function getRangesToReplace(document: zycode.TextDocument, nodeToUpdate: HtmlFlatNode): zycode.TextEdit {
+	let rangeToReplace: zycode.Range;
 	let textToReplaceWith: string;
 
 	if (!nodeToUpdate.open || !nodeToUpdate.close) {
@@ -61,5 +61,5 @@ function getRangesToReplace(document: vscode.TextDocument, nodeToUpdate: HtmlFla
 		}
 	}
 
-	return new vscode.TextEdit(rangeToReplace, textToReplaceWith);
+	return new zycode.TextEdit(rangeToReplace, textToReplaceWith);
 }

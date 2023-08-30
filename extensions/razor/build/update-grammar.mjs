@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 // @ts-check
 
-import * as vscodeGrammarUpdater from 'vscode-grammar-updater';
+import * as vscodeGrammarUpdater from 'zycode-grammar-updater';
 
 function patchGrammar(grammar) {
 	grammar.scopeName = 'text.html.cshtml';

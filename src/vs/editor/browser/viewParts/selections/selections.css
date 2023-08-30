@@ -12,11 +12,11 @@
 }
 
 .monaco-editor .focused .selected-text {
-	background-color: var(--vscode-editor-selectionBackground);
+	background-color: var(--zycode-editor-selectionBackground);
 }
 
 .monaco-editor .selected-text {
-	background-color: var(--vscode-editor-inactiveSelectionBackground);
+	background-color: var(--zycode-editor-inactiveSelectionBackground);
 }
 
 .monaco-editor			.top-left-radius		{ border-top-left-radius: 3px; }

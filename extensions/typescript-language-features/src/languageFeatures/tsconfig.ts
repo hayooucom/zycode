@@ -5,8 +5,8 @@
 
 import * as jsonc from 'jsonc-parser';
 import { posix } from 'path';
-import * as vscode from 'vscode';
-import { Utils } from 'vscode-uri';
+import * as zycode from 'zycode';
+import { Utils } from 'zycode-uri';
 import { coalesce } from '../utils/arrays';
 import { exists, looksLikeAbsoluteWindowsPath } from '../utils/fs';
 
@@ -18,17 +18,17 @@ function mapChildren<R>(node: jsonc.Node | undefined, f: (x: jsonc.Node) => R): 
 
 const openExtendsLinkCommandId = '_typescript.openExtendsLink';
 type OpenExtendsLinkCommandArgs = {
-	readonly resourceUri: vscode.Uri;
+	readonly resourceUri: zycode.Uri;
 	readonly extendsValue: string;
 };
 
 
-class TsconfigLinkProvider implements vscode.DocumentLinkProvider {
+class TsconfigLinkProvider implements zycode.DocumentLinkProvider {
 
 	public provideDocumentLinks(
-		document: vscode.TextDocument,
-		_token: vscode.CancellationToken
-	): vscode.DocumentLink[] {
+		document: zycode.TextDocument,
+		_token: zycode.CancellationToken
+	): zycode.DocumentLink[] {
 		const root = jsonc.parseTree(document.getText());
 		if (!root) {
 			return [];
@@ -41,12 +41,12 @@ class TsconfigLinkProvider implements vscode.DocumentLinkProvider {
 		]);
 	}
 
-	private getExtendsLink(document: vscode.TextDocument, root: jsonc.Node): vscode.DocumentLink | undefined {
+	private getExtendsLink(document: zycode.TextDocument, root: jsonc.Node): zycode.DocumentLink | undefined {
 		const node = jsonc.findNodeAtLocation(root, ['extends']);
 		return node && this.tryCreateTsConfigLink(document, node);
 	}
 
-	private getReferencesLinks(document: vscode.TextDocument, root: jsonc.Node) {
+	private getReferencesLinks(document: zycode.TextDocument, root: jsonc.Node) {
 		return mapChildren(
 			jsonc.findNodeAtLocation(root, ['references']),
 			child => {
@@ -55,7 +55,7 @@ class TsconfigLinkProvider implements vscode.DocumentLinkProvider {
 			});
 	}
 
-	private tryCreateTsConfigLink(document: vscode.TextDocument, node: jsonc.Node): vscode.DocumentLink | undefined {
+	private tryCreateTsConfigLink(document: zycode.TextDocument, node: jsonc.Node): zycode.DocumentLink | undefined {
 		if (!this.isPathValue(node)) {
 			return undefined;
 		}
@@ -65,25 +65,25 @@ class TsconfigLinkProvider implements vscode.DocumentLinkProvider {
 			extendsValue: node.value
 		};
 
-		const link = new vscode.DocumentLink(
+		const link = new zycode.DocumentLink(
 			this.getRange(document, node),
-			vscode.Uri.parse(`command:${openExtendsLinkCommandId}?${JSON.stringify(args)}`));
-		link.tooltip = vscode.l10n.t("Follow link");
+			zycode.Uri.parse(`command:${openExtendsLinkCommandId}?${JSON.stringify(args)}`));
+		link.tooltip = zycode.l10n.t("Follow link");
 		return link;
 	}
 
-	private getFilesLinks(document: vscode.TextDocument, root: jsonc.Node) {
+	private getFilesLinks(document: zycode.TextDocument, root: jsonc.Node) {
 		return mapChildren(
 			jsonc.findNodeAtLocation(root, ['files']),
 			child => this.pathNodeToLink(document, child));
 	}
 
 	private pathNodeToLink(
-		document: vscode.TextDocument,
+		document: zycode.TextDocument,
 		node: jsonc.Node | undefined
-	): vscode.DocumentLink | undefined {
+	): zycode.DocumentLink | undefined {
 		return this.isPathValue(node)
-			? new vscode.DocumentLink(this.getRange(document, node), this.getFileTarget(document, node))
+			? new zycode.DocumentLink(this.getRange(document, node), this.getFileTarget(document, node))
 			: undefined;
 	}
 
@@ -94,38 +94,38 @@ class TsconfigLinkProvider implements vscode.DocumentLinkProvider {
 			&& !(node.value as string).includes('*'); // don't treat globs as links.
 	}
 
-	private getFileTarget(document: vscode.TextDocument, node: jsonc.Node): vscode.Uri {
-		return vscode.Uri.joinPath(Utils.dirname(document.uri), node.value);
+	private getFileTarget(document: zycode.TextDocument, node: jsonc.Node): zycode.Uri {
+		return zycode.Uri.joinPath(Utils.dirname(document.uri), node.value);
 	}
 
-	private getRange(document: vscode.TextDocument, node: jsonc.Node) {
+	private getRange(document: zycode.TextDocument, node: jsonc.Node) {
 		const offset = node.offset;
 		const start = document.positionAt(offset + 1);
 		const end = document.positionAt(offset + (node.length - 1));
-		return new vscode.Range(start, end);
+		return new zycode.Range(start, end);
 	}
 }
 
-async function resolveNodeModulesPath(baseDirUri: vscode.Uri, pathCandidates: string[]): Promise<vscode.Uri | undefined> {
+async function resolveNodeModulesPath(baseDirUri: zycode.Uri, pathCandidates: string[]): Promise<zycode.Uri | undefined> {
 	let currentUri = baseDirUri;
 	const baseCandidate = pathCandidates[0];
 	const sepIndex = baseCandidate.startsWith('@') ? 2 : 1;
 	const moduleBasePath = baseCandidate.split(posix.sep).slice(0, sepIndex).join(posix.sep);
 	while (true) {
-		const moduleAbsoluteUrl = vscode.Uri.joinPath(currentUri, 'node_modules', moduleBasePath);
-		let moduleStat: vscode.FileStat | undefined;
+		const moduleAbsoluteUrl = zycode.Uri.joinPath(currentUri, 'node_modules', moduleBasePath);
+		let moduleStat: zycode.FileStat | undefined;
 		try {
-			moduleStat = await vscode.workspace.fs.stat(moduleAbsoluteUrl);
+			moduleStat = await zycode.workspace.fs.stat(moduleAbsoluteUrl);
 		} catch (err) {
 			// noop
 		}
 
-		if (moduleStat && (moduleStat.type & vscode.FileType.Directory)) {
+		if (moduleStat && (moduleStat.type & zycode.FileType.Directory)) {
 			for (const uriCandidate of pathCandidates
 				.map((relativePath) => relativePath.split(posix.sep).slice(sepIndex).join(posix.sep))
 				// skip empty paths within module
 				.filter(Boolean)
-				.map((relativeModulePath) => vscode.Uri.joinPath(moduleAbsoluteUrl, relativeModulePath))
+				.map((relativeModulePath) => zycode.Uri.joinPath(moduleAbsoluteUrl, relativeModulePath))
 			) {
 				if (await exists(uriCandidate)) {
 					return uriCandidate;
@@ -135,7 +135,7 @@ async function resolveNodeModulesPath(baseDirUri: vscode.Uri, pathCandidates: st
 		}
 
 		const oldUri = currentUri;
-		currentUri = vscode.Uri.joinPath(currentUri, '..');
+		currentUri = zycode.Uri.joinPath(currentUri, '..');
 
 		// Can't go next. Reached the system root
 		if (oldUri.path === currentUri.path) {
@@ -148,8 +148,8 @@ async function resolveNodeModulesPath(baseDirUri: vscode.Uri, pathCandidates: st
 /**
 * @returns Returns undefined in case of lack of result while trying to resolve from node_modules
 */
-async function getTsconfigPath(baseDirUri: vscode.Uri, pathValue: string): Promise<vscode.Uri | undefined> {
-	async function resolve(absolutePath: vscode.Uri): Promise<vscode.Uri> {
+async function getTsconfigPath(baseDirUri: zycode.Uri, pathValue: string): Promise<zycode.Uri | undefined> {
+	async function resolve(absolutePath: zycode.Uri): Promise<zycode.Uri> {
 		if (absolutePath.path.endsWith('.json') || await exists(absolutePath)) {
 			return absolutePath;
 		}
@@ -160,11 +160,11 @@ async function getTsconfigPath(baseDirUri: vscode.Uri, pathValue: string): Promi
 
 	const isRelativePath = ['./', '../'].some(str => pathValue.startsWith(str));
 	if (isRelativePath) {
-		return resolve(vscode.Uri.joinPath(baseDirUri, pathValue));
+		return resolve(zycode.Uri.joinPath(baseDirUri, pathValue));
 	}
 
 	if (pathValue.startsWith('/') || looksLikeAbsoluteWindowsPath(pathValue)) {
-		return resolve(vscode.Uri.file(pathValue));
+		return resolve(zycode.Uri.file(pathValue));
 	}
 
 	// Otherwise resolve like a module
@@ -178,27 +178,27 @@ async function getTsconfigPath(baseDirUri: vscode.Uri, pathValue: string): Promi
 }
 
 export function register() {
-	const patterns: vscode.GlobPattern[] = [
+	const patterns: zycode.GlobPattern[] = [
 		'**/[jt]sconfig.json',
 		'**/[jt]sconfig.*.json',
 	];
 
 	const languages = ['json', 'jsonc'];
 
-	const selector: vscode.DocumentSelector =
-		languages.map(language => patterns.map((pattern): vscode.DocumentFilter => ({ language, pattern })))
+	const selector: zycode.DocumentSelector =
+		languages.map(language => patterns.map((pattern): zycode.DocumentFilter => ({ language, pattern })))
 			.flat();
 
-	return vscode.Disposable.from(
-		vscode.commands.registerCommand(openExtendsLinkCommandId, async ({ resourceUri, extendsValue, }: OpenExtendsLinkCommandArgs) => {
-			const tsconfigPath = await getTsconfigPath(Utils.dirname(vscode.Uri.from(resourceUri)), extendsValue);
+	return zycode.Disposable.from(
+		zycode.commands.registerCommand(openExtendsLinkCommandId, async ({ resourceUri, extendsValue, }: OpenExtendsLinkCommandArgs) => {
+			const tsconfigPath = await getTsconfigPath(Utils.dirname(zycode.Uri.from(resourceUri)), extendsValue);
 			if (tsconfigPath === undefined) {
-				vscode.window.showErrorMessage(vscode.l10n.t("Failed to resolve {0} as module", extendsValue));
+				zycode.window.showErrorMessage(zycode.l10n.t("Failed to resolve {0} as module", extendsValue));
 				return;
 			}
 			// Will suggest to create a .json variant if it doesn't exist yet (but only for relative paths)
-			await vscode.commands.executeCommand('vscode.open', tsconfigPath);
+			await zycode.commands.executeCommand('zycode.open', tsconfigPath);
 		}),
-		vscode.languages.registerDocumentLinkProvider(selector, new TsconfigLinkProvider()),
+		zycode.languages.registerDocumentLinkProvider(selector, new TsconfigLinkProvider()),
 	);
 }

@@ -120,7 +120,7 @@ export interface TextSearchQuery {
 
 /**
  * A file glob pattern to match file paths against.
- * TODO@roblou - merge this with the GlobPattern docs/definition in vscode.d.ts.
+ * TODO@roblou - merge this with the GlobPattern docs/definition in zycode.d.ts.
  * @see [GlobPattern](#GlobPattern)
  */
 export type GlobString = string;
@@ -146,25 +146,25 @@ export interface SearchOptions {
 
 	/**
 	 * Whether external files that exclude files, like .gitignore, should be respected.
-	 * See the vscode setting `"search.useIgnoreFiles"`.
+	 * See the zycode setting `"search.useIgnoreFiles"`.
 	 */
 	useIgnoreFiles: boolean;
 
 	/**
 	 * Whether symlinks should be followed while searching.
-	 * See the vscode setting `"search.followSymlinks"`.
+	 * See the zycode setting `"search.followSymlinks"`.
 	 */
 	followSymlinks: boolean;
 
 	/**
 	 * Whether global files that exclude files, like .gitignore, should be respected.
-	 * See the vscode setting `"search.useGlobalIgnoreFiles"`.
+	 * See the zycode setting `"search.useGlobalIgnoreFiles"`.
 	 */
 	useGlobalIgnoreFiles: boolean;
 
 	/**
 	 * Whether files in parent directories that exclude files, like .gitignore, should be respected.
-	 * See the vscode setting `"search.useParentIgnoreFiles"`.
+	 * See the zycode setting `"search.useParentIgnoreFiles"`.
 	 */
 	useParentIgnoreFiles: boolean;
 }
@@ -207,7 +207,7 @@ export interface TextSearchOptions extends SearchOptions {
 
 	/**
 	 * Interpret files using this encoding.
-	 * See the vscode setting `"files.encoding"`
+	 * See the zycode setting `"files.encoding"`
 	 */
 	encoding?: string;
 
@@ -415,31 +415,31 @@ export interface FindTextInFilesOptions {
 
 	/**
 	 * Whether external files that exclude files, like .gitignore, should be respected.
-	 * See the vscode setting `"search.useIgnoreFiles"`.
+	 * See the zycode setting `"search.useIgnoreFiles"`.
 	 */
 	useIgnoreFiles?: boolean;
 
 	/**
 	 * Whether global files that exclude files, like .gitignore, should be respected.
-	 * See the vscode setting `"search.useGlobalIgnoreFiles"`.
+	 * See the zycode setting `"search.useGlobalIgnoreFiles"`.
 	 */
 	useGlobalIgnoreFiles?: boolean;
 
 	/**
 	 * Whether files in parent directories that exclude files, like .gitignore, should be respected.
-	 * See the vscode setting `"search.useParentIgnoreFiles"`.
+	 * See the zycode setting `"search.useParentIgnoreFiles"`.
 	 */
 	useParentIgnoreFiles: boolean;
 
 	/**
 	 * Whether symlinks should be followed while searching.
-	 * See the vscode setting `"search.followSymlinks"`.
+	 * See the zycode setting `"search.followSymlinks"`.
 	 */
 	followSymlinks?: boolean;
 
 	/**
 	 * Interpret files using this encoding.
-	 * See the vscode setting `"files.encoding"`
+	 * See the zycode setting `"files.encoding"`
 	 */
 	encoding?: string;
 

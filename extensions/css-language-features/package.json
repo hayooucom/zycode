@@ -3,10 +3,10 @@
   "displayName": "%displayName%",
   "description": "%description%",
   "version": "1.0.0",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.77.0"
+    "zycode": "^1.77.0"
   },
   "icon": "icons/css.png",
   "activationEvents": [
@@ -27,7 +27,7 @@
     "compile": "npx gulp compile-extension:css-language-features-client compile-extension:css-language-features-server",
     "watch": "npx gulp watch-extension:css-language-features-client watch-extension:css-language-features-server",
     "test": "node ../../node_modules/mocha/bin/mocha",
-    "install-client-next": "yarn add vscode-languageclient@next"
+    "install-client-next": "yarn add zycode-languageclient@next"
   },
   "categories": [
     "Programming Languages"
@@ -985,7 +985,7 @@
     "jsonValidation": [
       {
         "fileMatch": "*.css-data.json",
-        "url": "https://raw.githubusercontent.com/microsoft/vscode-css-languageservice/master/docs/customData.schema.json"
+        "url": "https://raw.githubusercontent.com/microsoft/zycode-css-languageservice/master/docs/customData.schema.json"
       },
       {
         "fileMatch": "package.json",
@@ -994,14 +994,14 @@
     ]
   },
   "dependencies": {
-    "vscode-languageclient": "^8.2.0-next.3",
-    "vscode-uri": "^3.0.7"
+    "zycode-languageclient": "^8.2.0-next.3",
+    "zycode-uri": "^3.0.7"
   },
   "devDependencies": {
     "@types/node": "18.x"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

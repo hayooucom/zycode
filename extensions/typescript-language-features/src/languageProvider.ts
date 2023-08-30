@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { basename, extname } from 'path';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { CommandManager } from './commands/commandManager';
 import { DocumentSelector } from './configuration/documentSelector';
 import * as fileSchemes from './configuration/fileSchemes';
@@ -32,18 +32,18 @@ export default class LanguageProvider extends Disposable {
 		private readonly telemetryReporter: TelemetryReporter,
 		private readonly typingsStatus: TypingsStatus,
 		private readonly fileConfigurationManager: FileConfigurationManager,
-		private readonly onCompletionAccepted: (item: vscode.CompletionItem) => void,
+		private readonly onCompletionAccepted: (item: zycode.CompletionItem) => void,
 	) {
 		super();
-		vscode.workspace.onDidChangeConfiguration(this.configurationChanged, this, this._disposables);
+		zycode.workspace.onDidChangeConfiguration(this.configurationChanged, this, this._disposables);
 		this.configurationChanged();
 
 		client.onReady(() => this.registerProviders());
 	}
 
 	private get documentSelector(): DocumentSelector {
-		const semantic: vscode.DocumentFilter[] = [];
-		const syntax: vscode.DocumentFilter[] = [];
+		const semantic: zycode.DocumentFilter[] = [];
+		const syntax: zycode.DocumentFilter[] = [];
 		for (const language of this.description.languageIds) {
 			syntax.push({ language });
 			for (const scheme of fileSchemes.getSemanticSupportedSchemes()) {
@@ -92,21 +92,21 @@ export default class LanguageProvider extends Disposable {
 	}
 
 	private configurationChanged(): void {
-		const config = vscode.workspace.getConfiguration(this.id, null);
+		const config = zycode.workspace.getConfiguration(this.id, null);
 		this.updateValidate(config.get(validateSetting, true));
 		this.updateSuggestionDiagnostics(config.get(suggestionSetting, true));
 	}
 
-	public handlesUri(resource: vscode.Uri): boolean {
+	public handlesUri(resource: zycode.Uri): boolean {
 		const ext = extname(resource.path).slice(1).toLowerCase();
 		return this.description.standardFileExtensions.includes(ext) || this.handlesConfigFile(resource);
 	}
 
-	public handlesDocument(doc: vscode.TextDocument): boolean {
+	public handlesDocument(doc: zycode.TextDocument): boolean {
 		return this.description.languageIds.includes(doc.languageId) || this.handlesConfigFile(doc.uri);
 	}
 
-	private handlesConfigFile(resource: vscode.Uri) {
+	private handlesConfigFile(resource: zycode.Uri) {
 		const base = basename(resource.fsPath);
 		return !!base && (!!this.description.configFilePattern && this.description.configFilePattern.test(base));
 	}
@@ -135,7 +135,7 @@ export default class LanguageProvider extends Disposable {
 		this.client.bufferSyncSupport.requestAllDiagnostics();
 	}
 
-	public diagnosticsReceived(diagnosticsKind: DiagnosticKind, file: vscode.Uri, diagnostics: (vscode.Diagnostic & { reportUnnecessary: any; reportDeprecated: any })[]): void {
+	public diagnosticsReceived(diagnosticsKind: DiagnosticKind, file: zycode.Uri, diagnostics: (zycode.Diagnostic & { reportUnnecessary: any; reportDeprecated: any })[]): void {
 		if (diagnosticsKind !== DiagnosticKind.Syntax && !this.client.hasCapabilityForResource(file, ClientCapability.Semantic)) {
 			return;
 		}
@@ -144,18 +144,18 @@ export default class LanguageProvider extends Disposable {
 			return;
 		}
 
-		const config = vscode.workspace.getConfiguration(this.id, file);
+		const config = zycode.workspace.getConfiguration(this.id, file);
 		const reportUnnecessary = config.get<boolean>('showUnused', true);
 		const reportDeprecated = config.get<boolean>('showDeprecated', true);
 		this.client.diagnosticsManager.updateDiagnostics(file, this._diagnosticLanguage, diagnosticsKind, diagnostics.filter(diag => {
 			// Don't bother reporting diagnostics we know will not be rendered
 			if (!reportUnnecessary) {
-				if (diag.reportUnnecessary && diag.severity === vscode.DiagnosticSeverity.Hint) {
+				if (diag.reportUnnecessary && diag.severity === zycode.DiagnosticSeverity.Hint) {
 					return false;
 				}
 			}
 			if (!reportDeprecated) {
-				if (diag.reportDeprecated && diag.severity === vscode.DiagnosticSeverity.Hint) {
+				if (diag.reportDeprecated && diag.severity === zycode.DiagnosticSeverity.Hint) {
 					return false;
 				}
 			}
@@ -163,7 +163,7 @@ export default class LanguageProvider extends Disposable {
 		}));
 	}
 
-	public configFileDiagnosticsReceived(file: vscode.Uri, diagnostics: vscode.Diagnostic[]): void {
+	public configFileDiagnosticsReceived(file: zycode.Uri, diagnostics: zycode.Diagnostic[]): void {
 		this.client.diagnosticsManager.configFileDiagnosticsReceived(file, diagnostics);
 	}
 

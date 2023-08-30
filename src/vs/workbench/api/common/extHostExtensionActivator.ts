@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as errors from 'vs/base/common/errors';
 import { IDisposable } from 'vs/base/common/lifecycle';
 import { ExtensionDescriptionRegistry } from 'vs/workbench/services/extensions/common/extensionDescriptionRegistry';
@@ -16,7 +16,7 @@ import { Barrier } from 'vs/base/common/async';
  * Represents the source code (module) of an extension.
  */
 export interface IExtensionModule {
-	activate?(ctx: vscode.ExtensionContext): Promise<IExtensionAPI>;
+	activate?(ctx: zycode.ExtensionContext): Promise<IExtensionAPI>;
 	deactivate?(): void;
 }
 

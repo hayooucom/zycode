@@ -86,7 +86,7 @@ suite('Extension Version Validator', () => {
 	test('isValidVersion', () => {
 		function testIsValidVersion(version: string, desiredVersion: string, expectedResult: boolean): void {
 			const actual = isValidVersion(version, productVersion, desiredVersion);
-			assert.strictEqual(actual, expectedResult, 'extension - vscode: ' + version + ', desiredVersion: ' + desiredVersion + ' should be ' + expectedResult);
+			assert.strictEqual(actual, expectedResult, 'extension - zycode: ' + version + ', desiredVersion: ' + desiredVersion + ' should be ' + expectedResult);
 		}
 
 		testIsValidVersion('0.10.0-dev', 'x.x.x', true);
@@ -214,7 +214,7 @@ suite('Extension Version Validator', () => {
 				publisher: 'test',
 				version: '0.0.0',
 				engines: {
-					vscode: desiredVersion
+					zycode: desiredVersion
 				},
 				main: hasMain ? 'something' : undefined
 			};
@@ -413,7 +413,7 @@ suite('Extension Version Validator', () => {
 			publisher: 'test',
 			version: '0.0.0',
 			engines: {
-				vscode: '^1.45.0'
+				zycode: '^1.45.0'
 			},
 			browser: 'something'
 		};

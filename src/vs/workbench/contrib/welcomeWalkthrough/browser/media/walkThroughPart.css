@@ -103,8 +103,8 @@
 	margin: 0 7px 0 5px;
 	padding: 0 16px 0 10px;
 	border-left: 5px solid;
-	background: var(--vscode-textBlockQuote-background);
-	border-color: var(--vscode-textBlockQuote-border);
+	background: var(--zycode-textBlockQuote-background);
+	border-color: var(--zycode-textBlockQuote-border);
 }
 
 .monaco-workbench .part.editor > .content .walkThroughContent .monaco-tokenized-source {
@@ -138,28 +138,28 @@
 }
 
 .monaco-workbench .part.editor > .content .walkThroughContent a[href] {
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 }
 
 .monaco-workbench .part.editor > .content .walkThroughContent a:hover,
 .monaco-workbench .part.editor > .content .walkThroughContent a[href]:active {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 }
 
 .monaco-workbench .part.editor > .content .walkThroughContent a[href]:focus {
-	outline-color: var(--vscode-focusBorder);
+	outline-color: var(--zycode-focusBorder);
 }
 
 .monaco-workbench .part.editor > .content .walkThroughContent code,
 .monaco-workbench .part.editor > .content .walkThroughContent .shortcut {
-	color: var(--vscode-textPreformat-foreground);
+	color: var(--zycode-textPreformat-foreground);
 }
 
 .monaco-workbench .part.editor > .content .walkThroughContent .monaco-editor {
-	border-color: var(--vscode-contrastBorder);
+	border-color: var(--zycode-contrastBorder);
 }
 
 .monaco-workbench .part.editor>.content .walkThroughContent .monaco-editor-background,
 .monaco-workbench .part.editor>.content .walkThroughContent .margin-view-overlays {
-	background: var(--vscode-walkThrough-embeddedEditorBackground);
+	background: var(--zycode-walkThrough-embeddedEditorBackground);
 }

@@ -176,7 +176,7 @@ export class CodeApplication extends Disposable {
 				return callback(allowedPermissionsInWebview.has(permission));
 			}
 
-			if (details.isMainFrame && details.securityOrigin === 'vscode-file://vscode-app/') {
+			if (details.isMainFrame && details.securityOrigin === 'zycode-file://zycode-app/') {
 				return callback(allowedPermissionsInMainFrame.has(permission));
 			}
 
@@ -188,7 +188,7 @@ export class CodeApplication extends Disposable {
 				return allowedPermissionsInWebview.has(permission);
 			}
 
-			if (details.isMainFrame && details.securityOrigin === 'vscode-file://vscode-app/') {
+			if (details.isMainFrame && details.securityOrigin === 'zycode-file://zycode-app/') {
 				return allowedPermissionsInMainFrame.has(permission);
 			}
 
@@ -259,14 +259,14 @@ export class CodeApplication extends Disposable {
 			const uri = URI.parse(details.url);
 			if (uri.scheme === Schemas.vscodeWebview) {
 				if (!isAllowedWebviewRequest(uri, details)) {
-					this.logService.error('Blocked vscode-webview request', details.url);
+					this.logService.error('Blocked zycode-webview request', details.url);
 					return callback({ cancel: true });
 				}
 			}
 
 			if (uri.scheme === Schemas.vscodeFileResource) {
 				if (!isAllowedVsCodeFileRequest(details)) {
-					this.logService.error('Blocked vscode-file request', details.url);
+					this.logService.error('Blocked zycode-file request', details.url);
 					return callback({ cancel: true });
 				}
 			}
@@ -283,7 +283,7 @@ export class CodeApplication extends Disposable {
 		});
 
 		// Configure SVG header content type properly
-		// https://github.com/microsoft/vscode/issues/97564
+		// https://github.com/microsoft/zycode/issues/97564
 		session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 			const responseHeaders = details.responseHeaders as Record<string, (string) | (string[])>;
 			const contentTypes = (responseHeaders['content-type'] || responseHeaders['Content-Type']);
@@ -299,7 +299,7 @@ export class CodeApplication extends Disposable {
 				}
 
 				// remote extension schemes have the following format
-				// http://127.0.0.1:<port>/vscode-remote-resource?path=
+				// http://127.0.0.1:<port>/zycode-remote-resource?path=
 				if (!uri.path.endsWith(Schemas.vscodeRemoteResource) && contentTypes.some(contentType => contentType.toLowerCase().includes('image/svg'))) {
 					return callback({ cancel: !isSvgRequestFromSafeContext(details) });
 				}
@@ -325,7 +325,7 @@ export class CodeApplication extends Disposable {
 			// Make sure to partition Chrome's code cache folder
 			// in the same way as our code cache path to help
 			// invalidate caches that we know are invalid
-			// (https://github.com/microsoft/vscode/issues/120655)
+			// (https://github.com/microsoft/zycode/issues/120655)
 			defaultSession.setCodeCachePath(join(this.environmentMainService.codeCachePath, 'chrome'));
 		}
 
@@ -363,7 +363,7 @@ export class CodeApplication extends Disposable {
 
 		// Accessibility change event
 		app.on('accessibility-support-changed', (event, accessibilitySupportEnabled) => {
-			this.windowsMainService?.sendToAll('vscode:accessibilitySupportChanged', accessibilitySupportEnabled);
+			this.windowsMainService?.sendToAll('zycode:accessibilitySupportChanged', accessibilitySupportEnabled);
 		});
 
 		// macOS dock activate
@@ -433,7 +433,7 @@ export class CodeApplication extends Disposable {
 
 		//#region Bootstrap IPC Handlers
 
-		validatedIpcMain.handle('vscode:fetchShellEnv', event => {
+		validatedIpcMain.handle('zycode:fetchShellEnv', event => {
 
 			// Prefer to use the args and env from the target window
 			// when resolving the shell env. It is possible that
@@ -458,28 +458,28 @@ export class CodeApplication extends Disposable {
 			return this.resolveShellEnvironment(args, env, false);
 		});
 
-		validatedIpcMain.handle('vscode:writeNlsFile', (event, path: unknown, data: unknown) => {
+		validatedIpcMain.handle('zycode:writeNlsFile', (event, path: unknown, data: unknown) => {
 			const uri = this.validateNlsPath([path]);
 			if (!uri || typeof data !== 'string') {
-				throw new Error('Invalid operation (vscode:writeNlsFile)');
+				throw new Error('Invalid operation (zycode:writeNlsFile)');
 			}
 
 			return this.fileService.writeFile(uri, VSBuffer.fromString(data));
 		});
 
-		validatedIpcMain.handle('vscode:readNlsFile', async (event, ...paths: unknown[]) => {
+		validatedIpcMain.handle('zycode:readNlsFile', async (event, ...paths: unknown[]) => {
 			const uri = this.validateNlsPath(paths);
 			if (!uri) {
-				throw new Error('Invalid operation (vscode:readNlsFile)');
+				throw new Error('Invalid operation (zycode:readNlsFile)');
 			}
 
 			return (await this.fileService.readFile(uri)).value.toString();
 		});
 
-		validatedIpcMain.on('vscode:toggleDevTools', event => event.sender.toggleDevTools());
-		validatedIpcMain.on('vscode:openDevTools', event => event.sender.openDevTools());
+		validatedIpcMain.on('zycode:toggleDevTools', event => event.sender.toggleDevTools());
+		validatedIpcMain.on('zycode:openDevTools', event => event.sender.openDevTools());
 
-		validatedIpcMain.on('vscode:reloadWindow', event => event.sender.reload());
+		validatedIpcMain.on('zycode:reloadWindow', event => event.sender.reload());
 
 		//#endregion
 	}
@@ -514,7 +514,7 @@ export class CodeApplication extends Disposable {
 			};
 
 			// handle on client side
-			this.windowsMainService?.sendToFocused('vscode:reportError', JSON.stringify(friendlyError));
+			this.windowsMainService?.sendToFocused('zycode:reportError', JSON.stringify(friendlyError));
 		}
 
 		this.logService.error(`[uncaught exception in main]: ${error}`);
@@ -542,7 +542,7 @@ export class CodeApplication extends Disposable {
 		// "com.microsoft.", which breaks native tabs for VS Code when using this
 		// identifier (from the official build).
 		// Explicitly opt out of the patch here before creating any windows.
-		// See: https://github.com/microsoft/vscode/issues/35361#issuecomment-399794085
+		// See: https://github.com/microsoft/zycode/issues/35361#issuecomment-399794085
 		try {
 			if (isMacintosh && this.configurationService.getValue('window.nativeTabs') === true && !systemPreferences.getUserDefault('NSUseImprovedLayoutPass', 'boolean')) {
 				systemPreferences.setUserDefault('NSUseImprovedLayoutPass', 'boolean', true as any);
@@ -587,7 +587,7 @@ export class CodeApplication extends Disposable {
 		// Setup Protocol URL Handlers
 		const initialProtocolUrls = appInstantiationService.invokeFunction(accessor => this.setupProtocolUrlHandlers(accessor, mainProcessElectronServer));
 
-		// Setup vscode-remote-resource protocol handler.
+		// Setup zycode-remote-resource protocol handler.
 		this.setupManagedRemoteResourceUrlHandler(mainProcessElectronServer);
 
 		// Signal phase: ready - before opening first window
@@ -767,8 +767,8 @@ export class CodeApplication extends Disposable {
 		else if (uri.authority === Schemas.vscodeRemote) {
 
 			// Example conversion:
-			// From: vscode://vscode-remote/wsl+ubuntu/mnt/c/GitDevelopment/monaco
-			//   To: vscode-remote://wsl+ubuntu/mnt/c/GitDevelopment/monaco
+			// From: zycode://zycode-remote/wsl+ubuntu/mnt/c/GitDevelopment/monaco
+			//   To: zycode-remote://wsl+ubuntu/mnt/c/GitDevelopment/monaco
 
 			const secondSlash = uri.path.indexOf(posix.sep, 1 /* skip over the leading slash */);
 			if (secondSlash !== -1) {
@@ -795,7 +795,7 @@ export class CodeApplication extends Disposable {
 	private async handleProtocolUrl(windowsMainService: IWindowsMainService, urlService: IURLService, uri: URI, options?: IOpenURLOptions): Promise<boolean> {
 		this.logService.trace('app#handleProtocolUrl():', uri.toString(true), options);
 
-		// Support 'workspace' URLs (https://github.com/microsoft/vscode/issues/124263)
+		// Support 'workspace' URLs (https://github.com/microsoft/zycode/issues/124263)
 		if (uri.scheme === this.productService.urlProtocol && uri.path === 'workspace') {
 			uri = uri.with({
 				authority: 'file',
@@ -1281,7 +1281,7 @@ export class CodeApplication extends Disposable {
 		// Remote Authorities
 		protocol.registerHttpProtocol(Schemas.vscodeRemoteResource, (request, callback) => {
 			callback({
-				url: request.url.replace(/^vscode-remote-resource:/, 'http:'),
+				url: request.url.replace(/^zycode-remote-resource:/, 'http:'),
 				method: request.method
 			});
 		});
@@ -1296,7 +1296,7 @@ export class CodeApplication extends Disposable {
 		this.updateCrashReporterEnablement();
 
 		if (isMacintosh && app.runningUnderARM64Translation) {
-			this.windowsMainService?.sendToFocused('vscode:showTranslatedBuildWarning');
+			this.windowsMainService?.sendToFocused('zycode:showTranslatedBuildWarning');
 		}
 
 	}
@@ -1305,7 +1305,7 @@ export class CodeApplication extends Disposable {
 		const win32MutexName = this.productService.win32MutexName;
 		if (isWindows && win32MutexName) {
 			try {
-				const WindowsMutex = await import('@vscode/windows-mutex');
+				const WindowsMutex = await import('@zycode/windows-mutex');
 				const mutex = new WindowsMutex.Mutex(win32MutexName);
 				once(this.lifecycleMainService.onWillShutdown)(() => mutex.release());
 			} catch (error) {
@@ -1320,7 +1320,7 @@ export class CodeApplication extends Disposable {
 		} catch (error) {
 			const errorMessage = toErrorMessage(error);
 			if (notifyOnError) {
-				this.windowsMainService?.sendToFocused('vscode:showResolveShellEnvError', errorMessage);
+				this.windowsMainService?.sendToFocused('zycode:showResolveShellEnvError', errorMessage);
 			} else {
 				this.logService.error(errorMessage);
 			}

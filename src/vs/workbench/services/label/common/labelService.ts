@@ -31,7 +31,7 @@ import { firstOrDefault } from 'vs/base/common/arrays';
 const resourceLabelFormattersExtPoint = ExtensionsRegistry.registerExtensionPoint<ResourceLabelFormatter[]>({
 	extensionPoint: 'resourceLabelFormatters',
 	jsonSchema: {
-		description: localize('vscode.extension.contributes.resourceLabelFormatters', 'Contributes resource label formatting rules.'),
+		description: localize('zycode.extension.contributes.resourceLabelFormatters', 'Contributes resource label formatting rules.'),
 		type: 'array',
 		items: {
 			type: 'object',
@@ -39,35 +39,35 @@ const resourceLabelFormattersExtPoint = ExtensionsRegistry.registerExtensionPoin
 			properties: {
 				scheme: {
 					type: 'string',
-					description: localize('vscode.extension.contributes.resourceLabelFormatters.scheme', 'URI scheme on which to match the formatter on. For example "file". Simple glob patterns are supported.'),
+					description: localize('zycode.extension.contributes.resourceLabelFormatters.scheme', 'URI scheme on which to match the formatter on. For example "file". Simple glob patterns are supported.'),
 				},
 				authority: {
 					type: 'string',
-					description: localize('vscode.extension.contributes.resourceLabelFormatters.authority', 'URI authority on which to match the formatter on. Simple glob patterns are supported.'),
+					description: localize('zycode.extension.contributes.resourceLabelFormatters.authority', 'URI authority on which to match the formatter on. Simple glob patterns are supported.'),
 				},
 				formatting: {
-					description: localize('vscode.extension.contributes.resourceLabelFormatters.formatting', "Rules for formatting uri resource labels."),
+					description: localize('zycode.extension.contributes.resourceLabelFormatters.formatting', "Rules for formatting uri resource labels."),
 					type: 'object',
 					properties: {
 						label: {
 							type: 'string',
-							description: localize('vscode.extension.contributes.resourceLabelFormatters.label', "Label rules to display. For example: myLabel:/${path}. ${path}, ${scheme}, ${authority} and ${authoritySuffix} are supported as variables.")
+							description: localize('zycode.extension.contributes.resourceLabelFormatters.label', "Label rules to display. For example: myLabel:/${path}. ${path}, ${scheme}, ${authority} and ${authoritySuffix} are supported as variables.")
 						},
 						separator: {
 							type: 'string',
-							description: localize('vscode.extension.contributes.resourceLabelFormatters.separator', "Separator to be used in the uri label display. '/' or '\' as an example.")
+							description: localize('zycode.extension.contributes.resourceLabelFormatters.separator', "Separator to be used in the uri label display. '/' or '\' as an example.")
 						},
 						stripPathStartingSeparator: {
 							type: 'boolean',
-							description: localize('vscode.extension.contributes.resourceLabelFormatters.stripPathStartingSeparator', "Controls whether `${path}` substitutions should have starting separator characters stripped.")
+							description: localize('zycode.extension.contributes.resourceLabelFormatters.stripPathStartingSeparator', "Controls whether `${path}` substitutions should have starting separator characters stripped.")
 						},
 						tildify: {
 							type: 'boolean',
-							description: localize('vscode.extension.contributes.resourceLabelFormatters.tildify', "Controls if the start of the uri label should be tildified when possible.")
+							description: localize('zycode.extension.contributes.resourceLabelFormatters.tildify', "Controls if the start of the uri label should be tildified when possible.")
 						},
 						workspaceSuffix: {
 							type: 'string',
-							description: localize('vscode.extension.contributes.resourceLabelFormatters.formatting.workspaceSuffix', "Suffix appended to the workspace label.")
+							description: localize('zycode.extension.contributes.resourceLabelFormatters.formatting.workspaceSuffix', "Suffix appended to the workspace label.")
 						}
 					}
 				}
@@ -219,7 +219,7 @@ export class LabelService extends Disposable implements ILabelService {
 		const label = this.doGetUriLabel(resource, formatting, options);
 
 		// Without formatting we still need to support the separator
-		// as provided in options (https://github.com/microsoft/vscode/issues/130019)
+		// as provided in options (https://github.com/microsoft/zycode/issues/130019)
 		if (!formatting && options.separator) {
 			return label.replace(sepRegexp, options.separator);
 		}

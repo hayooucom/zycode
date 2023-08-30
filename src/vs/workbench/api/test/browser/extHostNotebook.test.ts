@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from 'assert';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { ExtHostDocumentsAndEditors } from 'vs/workbench/api/common/extHostDocumentsAndEditors';
 import { TestRPCProtocol } from 'vs/workbench/api/test/common/testRPCProtocol';
 import { DisposableStore } from 'vs/base/common/lifecycle';
@@ -64,7 +64,7 @@ suite('NotebookCell#Document', function () {
 		}), extHostDocumentsAndEditors, extHostDocuments, extHostConsumerFileSystem);
 		extHostNotebookDocuments = new ExtHostNotebookDocuments(extHostNotebooks);
 
-		const reg = extHostNotebooks.registerNotebookSerializer(nullExtensionDescription, 'test', new class extends mock<vscode.NotebookSerializer>() { });
+		const reg = extHostNotebooks.registerNotebookSerializer(nullExtensionDescription, 'test', new class extends mock<zycode.NotebookSerializer>() { });
 		extHostNotebooks.$acceptDocumentAndEditorsDelta(new SerializableObjectWithBuffers({
 			addedDocuments: [{
 				uri: notebookUri,
@@ -105,7 +105,7 @@ suite('NotebookCell#Document', function () {
 	});
 
 
-	test('cell document is vscode.TextDocument', async function () {
+	test('cell document is zycode.TextDocument', async function () {
 
 		assert.strictEqual(notebook.apiNotebook.cellCount, 2);
 
@@ -141,7 +141,7 @@ suite('NotebookCell#Document', function () {
 		assert.deepStrictEqual(removedCellUris.sort(), cellUris.sort());
 	});
 
-	test('cell document is vscode.TextDocument after changing it', async function () {
+	test('cell document is zycode.TextDocument after changing it', async function () {
 
 		const p = new Promise<void>((resolve, reject) => {
 
@@ -201,7 +201,7 @@ suite('NotebookCell#Document', function () {
 
 	test('cell document stays open when notebook is still open', async function () {
 
-		const docs: vscode.TextDocument[] = [];
+		const docs: zycode.TextDocument[] = [];
 		const addData: IModelAddedData[] = [];
 		for (const cell of notebook.apiNotebook.getCells()) {
 			const doc = extHostDocuments.getDocument(cell.document.uri);

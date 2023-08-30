@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import 'mocha';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { acceptFirstSuggestion, typeCommitCharacter } from '../../test/suggestTestHelpers';
 import { Config, VsCodeConfiguration, assertEditorContents, createTestEditor, enumerateConfig, joinLines, updateConfig } from '../../test/testUtils';
 import { disposeAll } from '../../utils/dispose';
 
-const testDocumentUri = vscode.Uri.parse('untitled:test.ts');
+const testDocumentUri = zycode.Uri.parse('untitled:test.ts');
 
 const insertModes = Object.freeze(['insert', 'replace']);
 
@@ -24,12 +24,12 @@ suite.skip('TypeScript Completions', () => {
 		[Config.typescriptQuoteStyle]: 'double',
 	});
 
-	const _disposables: vscode.Disposable[] = [];
+	const _disposables: zycode.Disposable[] = [];
 	let oldConfig: { [key: string]: any } = {};
 
 	setup(async () => {
 		// the tests assume that typescript features are registered
-		await vscode.extensions.getExtension('vscode.typescript-language-features')!.activate();
+		await zycode.extensions.getExtension('zycode.typescript-language-features')!.activate();
 
 		// Save off config and apply defaults
 		oldConfig = await updateConfig(testDocumentUri, configDefaults);
@@ -41,7 +41,7 @@ suite.skip('TypeScript Completions', () => {
 		// Restore config
 		await updateConfig(testDocumentUri, oldConfig);
 
-		return vscode.commands.executeCommand('workbench.action.closeAllEditors');
+		return zycode.commands.executeCommand('workbench.action.closeAllEditors');
 	});
 
 	test('Basic var completion', async () => {
@@ -134,7 +134,7 @@ suite.skip('TypeScript Completions', () => {
 				));
 
 			disposeAll(_disposables);
-			await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+			await zycode.commands.executeCommand('workbench.action.closeAllEditors');
 		}
 	});
 

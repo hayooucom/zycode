@@ -16,7 +16,7 @@
 	 * @returns {true | never}
 	 */
 	function validateIPC(channel) {
-		if (!channel || !channel.startsWith('vscode:')) {
+		if (!channel || !channel.startsWith('zycode:')) {
 			throw new Error(`Unsupported event IPC channel '${channel}'`);
 		}
 
@@ -50,9 +50,9 @@
 
 	/** @type {Promise<ISandboxConfiguration>} */
 	const resolveConfiguration = (async () => {
-		const windowConfigIpcChannel = parseArgv('vscode-window-config');
+		const windowConfigIpcChannel = parseArgv('zycode-window-config');
 		if (!windowConfigIpcChannel) {
-			throw new Error('Preload: did not find expected vscode-window-config in renderer process arguments list.');
+			throw new Error('Preload: did not find expected zycode-window-config in renderer process arguments list.');
 		}
 
 		try {
@@ -68,14 +68,14 @@
 				// window DOM elements to avoid UI flicker. We always
 				// have to set the zoom level from within the window
 				// because Chrome has it's own way of remembering zoom
-				// settings per origin (if vscode-file:// is used) and
+				// settings per origin (if zycode-file:// is used) and
 				// we want to ensure that the user configuration wins.
 				webFrame.setZoomLevel(configuration.zoomLevel ?? 0);
 
 				return configuration;
 			}
 		} catch (error) {
-			throw new Error(`Preload: unable to fetch vscode-window-config: ${error}`);
+			throw new Error(`Preload: unable to fetch zycode-window-config: ${error}`);
 		}
 	})();
 
@@ -97,7 +97,7 @@
 		// `shellEnv` from the main side
 		const [userEnv, shellEnv] = await Promise.all([
 			(async () => (await resolveConfiguration).userEnv)(),
-			ipcRenderer.invoke('vscode:fetchShellEnv')
+			ipcRenderer.invoke('zycode:fetchShellEnv')
 		]);
 
 		return { ...process.env, ...shellEnv, ...userEnv };
@@ -325,12 +325,12 @@
 	// add to the DOM global.
 	if (process.contextIsolated) {
 		try {
-			contextBridge.exposeInMainWorld('vscode', globals);
+			contextBridge.exposeInMainWorld('zycode', globals);
 		} catch (error) {
 			console.error(error);
 		}
 	} else {
 		// @ts-ignore
-		window.vscode = globals;
+		window.zycode = globals;
 	}
 }());

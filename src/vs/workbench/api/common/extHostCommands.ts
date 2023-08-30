@@ -13,7 +13,7 @@ import { cloneAndChange } from 'vs/base/common/objects';
 import { MainContext, MainThreadCommandsShape, ExtHostCommandsShape, ICommandDto, ICommandHandlerDescriptionDto, MainThreadTelemetryShape } from './extHost.protocol';
 import { isNonEmptyArray } from 'vs/base/common/arrays';
 import * as languages from 'vs/editor/common/languages';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ILogService } from 'vs/platform/log/common/log';
 import { revive } from 'vs/base/common/marshalling';
 import { IRange, Range } from 'vs/editor/common/core/range';
@@ -90,7 +90,7 @@ export class ExtHostCommands implements ExtHostCommandsShape {
 			{
 				processArgument(arg) {
 					return cloneAndChange(arg, function (obj) {
-						// Reverse of https://github.com/microsoft/vscode/blob/1f28c5fc681f4c01226460b6d1c7e91b8acb4a5b/src/vs/workbench/api/node/extHostCommands.ts#L112-L127
+						// Reverse of https://github.com/microsoft/zycode/blob/1f28c5fc681f4c01226460b6d1c7e91b8acb4a5b/src/vs/workbench/api/node/extHostCommands.ts#L112-L127
 						if (Range.isIRange(obj)) {
 							return extHostTypeConverter.Range.to(obj);
 						}
@@ -343,7 +343,7 @@ export const IExtHostCommands = createDecorator<IExtHostCommands>('IExtHostComma
 export class CommandsConverter implements extHostTypeConverter.Command.ICommandsConverter {
 
 	readonly delegatingCommandId: string = `__vsc${Date.now().toString(36)}`;
-	private readonly _cache = new Map<string, vscode.Command>();
+	private readonly _cache = new Map<string, zycode.Command>();
 	private _cachIdPool = 0;
 
 	// --- conversion between internal and api commands
@@ -355,9 +355,9 @@ export class CommandsConverter implements extHostTypeConverter.Command.ICommands
 		this._commands.registerCommand(true, this.delegatingCommandId, this._executeConvertedCommand, this);
 	}
 
-	toInternal(command: vscode.Command, disposables: DisposableStore): ICommandDto;
-	toInternal(command: vscode.Command | undefined, disposables: DisposableStore): ICommandDto | undefined;
-	toInternal(command: vscode.Command | undefined, disposables: DisposableStore): ICommandDto | undefined {
+	toInternal(command: zycode.Command, disposables: DisposableStore): ICommandDto;
+	toInternal(command: zycode.Command | undefined, disposables: DisposableStore): ICommandDto | undefined;
+	toInternal(command: zycode.Command | undefined, disposables: DisposableStore): ICommandDto | undefined {
 
 		if (!command) {
 			return undefined;
@@ -404,7 +404,7 @@ export class CommandsConverter implements extHostTypeConverter.Command.ICommands
 		return result;
 	}
 
-	fromInternal(command: ICommandDto): vscode.Command | undefined {
+	fromInternal(command: ICommandDto): zycode.Command | undefined {
 
 		if (typeof command.$ident === 'string') {
 			return this._cache.get(command.$ident);
@@ -419,7 +419,7 @@ export class CommandsConverter implements extHostTypeConverter.Command.ICommands
 	}
 
 
-	getActualCommand(...args: any[]): vscode.Command | undefined {
+	getActualCommand(...args: any[]): zycode.Command | undefined {
 		return this._cache.get(args[0]);
 	}
 

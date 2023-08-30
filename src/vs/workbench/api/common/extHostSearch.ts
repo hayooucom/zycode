@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IDisposable, toDisposable } from 'vs/base/common/lifecycle';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ExtHostSearchShape, MainThreadSearchShape, MainContext } from '../common/extHost.protocol';
 import { createDecorator } from 'vs/platform/instantiation/common/instantiation';
 import { FileSearchManager } from 'vs/workbench/services/search/common/fileSearchManager';
@@ -16,8 +16,8 @@ import { URI, UriComponents } from 'vs/base/common/uri';
 import { TextSearchManager } from 'vs/workbench/services/search/common/textSearchManager';
 
 export interface IExtHostSearch extends ExtHostSearchShape {
-	registerTextSearchProvider(scheme: string, provider: vscode.TextSearchProvider): IDisposable;
-	registerFileSearchProvider(scheme: string, provider: vscode.FileSearchProvider): IDisposable;
+	registerTextSearchProvider(scheme: string, provider: zycode.TextSearchProvider): IDisposable;
+	registerFileSearchProvider(scheme: string, provider: zycode.FileSearchProvider): IDisposable;
 }
 
 export const IExtHostSearch = createDecorator<IExtHostSearch>('IExtHostSearch');
@@ -27,9 +27,9 @@ export class ExtHostSearch implements ExtHostSearchShape {
 	protected readonly _proxy: MainThreadSearchShape = this.extHostRpc.getProxy(MainContext.MainThreadSearch);
 	protected _handlePool: number = 0;
 
-	private readonly _textSearchProvider = new Map<number, vscode.TextSearchProvider>();
+	private readonly _textSearchProvider = new Map<number, zycode.TextSearchProvider>();
 	private readonly _textSearchUsedSchemes = new Set<string>();
-	private readonly _fileSearchProvider = new Map<number, vscode.FileSearchProvider>();
+	private readonly _fileSearchProvider = new Map<number, zycode.FileSearchProvider>();
 	private readonly _fileSearchUsedSchemes = new Set<string>();
 
 	private readonly _fileSearchManager = new FileSearchManager();
@@ -44,7 +44,7 @@ export class ExtHostSearch implements ExtHostSearchShape {
 		return this._uriTransformer.transformOutgoingScheme(scheme);
 	}
 
-	registerTextSearchProvider(scheme: string, provider: vscode.TextSearchProvider): IDisposable {
+	registerTextSearchProvider(scheme: string, provider: zycode.TextSearchProvider): IDisposable {
 		if (this._textSearchUsedSchemes.has(scheme)) {
 			throw new Error(`a text search provider for the scheme '${scheme}' is already registered`);
 		}
@@ -60,7 +60,7 @@ export class ExtHostSearch implements ExtHostSearchShape {
 		});
 	}
 
-	registerFileSearchProvider(scheme: string, provider: vscode.FileSearchProvider): IDisposable {
+	registerFileSearchProvider(scheme: string, provider: zycode.FileSearchProvider): IDisposable {
 		if (this._fileSearchUsedSchemes.has(scheme)) {
 			throw new Error(`a file search provider for the scheme '${scheme}' is already registered`);
 		}
@@ -76,7 +76,7 @@ export class ExtHostSearch implements ExtHostSearchShape {
 		});
 	}
 
-	$provideFileSearchResults(handle: number, session: number, rawQuery: IRawFileQuery, token: vscode.CancellationToken): Promise<ISearchCompleteStats> {
+	$provideFileSearchResults(handle: number, session: number, rawQuery: IRawFileQuery, token: zycode.CancellationToken): Promise<ISearchCompleteStats> {
 		const query = reviveQuery(rawQuery);
 		const provider = this._fileSearchProvider.get(handle);
 		if (provider) {
@@ -94,7 +94,7 @@ export class ExtHostSearch implements ExtHostSearchShape {
 		return Promise.resolve(undefined);
 	}
 
-	$provideTextSearchResults(handle: number, session: number, rawQuery: IRawTextQuery, token: vscode.CancellationToken): Promise<ISearchCompleteStats> {
+	$provideTextSearchResults(handle: number, session: number, rawQuery: IRawTextQuery, token: zycode.CancellationToken): Promise<ISearchCompleteStats> {
 		const provider = this._textSearchProvider.get(handle);
 		if (!provider || !provider.provideTextSearchResults) {
 			throw new Error(`Unknown provider ${handle}`);
@@ -107,7 +107,7 @@ export class ExtHostSearch implements ExtHostSearchShape {
 
 	$enableExtensionHostSearch(): void { }
 
-	protected createTextSearchManager(query: ITextQuery, provider: vscode.TextSearchProvider): TextSearchManager {
+	protected createTextSearchManager(query: ITextQuery, provider: zycode.TextSearchProvider): TextSearchManager {
 		return new TextSearchManager(query, provider, {
 			readdir: resource => Promise.resolve([]), // TODO@rob implement
 			toCanonicalName: encoding => encoding

@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { FileSystemProvider } from '../requests';
-import { URI as Uri } from 'vscode-uri';
+import { URI as Uri } from 'zycode-uri';
 
 import * as fs from 'fs';
-import { FileType } from 'vscode-css-languageservice';
+import { FileType } from 'zycode-css-languageservice';
 
 export function getNodeFileFS(): FileSystemProvider {
 	function ensureFileUri(location: string) {

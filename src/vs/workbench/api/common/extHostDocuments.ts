@@ -11,7 +11,7 @@ import { ExtHostDocumentsShape, IMainContext, MainContext, MainThreadDocumentsSh
 import { ExtHostDocumentData, setWordDefinitionFor } from 'vs/workbench/api/common/extHostDocumentData';
 import { ExtHostDocumentsAndEditors } from 'vs/workbench/api/common/extHostDocumentsAndEditors';
 import * as TypeConverters from 'vs/workbench/api/common/extHostTypeConverters';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { assertIsDefined } from 'vs/base/common/types';
 import { deepFreeze } from 'vs/base/common/objects';
 import { TextDocumentChangeReason } from 'vs/workbench/api/common/extHostTypes';
@@ -19,15 +19,15 @@ import { onUnexpectedExternalError } from 'vs/base/common/errors';
 
 export class ExtHostDocuments implements ExtHostDocumentsShape {
 
-	private readonly _onDidAddDocument = new Emitter<vscode.TextDocument>({ onListenerError: onUnexpectedExternalError });
-	private readonly _onDidRemoveDocument = new Emitter<vscode.TextDocument>({ onListenerError: onUnexpectedExternalError });
-	private readonly _onDidChangeDocument = new Emitter<vscode.TextDocumentChangeEvent>({ onListenerError: onUnexpectedExternalError });
-	private readonly _onDidSaveDocument = new Emitter<vscode.TextDocument>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidAddDocument = new Emitter<zycode.TextDocument>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidRemoveDocument = new Emitter<zycode.TextDocument>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidChangeDocument = new Emitter<zycode.TextDocumentChangeEvent>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidSaveDocument = new Emitter<zycode.TextDocument>({ onListenerError: onUnexpectedExternalError });
 
-	readonly onDidAddDocument: Event<vscode.TextDocument> = this._onDidAddDocument.event;
-	readonly onDidRemoveDocument: Event<vscode.TextDocument> = this._onDidRemoveDocument.event;
-	readonly onDidChangeDocument: Event<vscode.TextDocumentChangeEvent> = this._onDidChangeDocument.event;
-	readonly onDidSaveDocument: Event<vscode.TextDocument> = this._onDidSaveDocument.event;
+	readonly onDidAddDocument: Event<zycode.TextDocument> = this._onDidAddDocument.event;
+	readonly onDidRemoveDocument: Event<zycode.TextDocument> = this._onDidRemoveDocument.event;
+	readonly onDidChangeDocument: Event<zycode.TextDocumentChangeEvent> = this._onDidChangeDocument.event;
+	readonly onDidSaveDocument: Event<zycode.TextDocument> = this._onDidSaveDocument.event;
 
 	private readonly _toDispose = new DisposableStore();
 	private _proxy: MainThreadDocumentsShape;
@@ -58,7 +58,7 @@ export class ExtHostDocuments implements ExtHostDocumentsShape {
 		return [...this._documentsAndEditors.allDocuments()];
 	}
 
-	public getDocumentData(resource: vscode.Uri): ExtHostDocumentData | undefined {
+	public getDocumentData(resource: zycode.Uri): ExtHostDocumentData | undefined {
 		if (!resource) {
 			return undefined;
 		}
@@ -69,7 +69,7 @@ export class ExtHostDocuments implements ExtHostDocumentsShape {
 		return undefined;
 	}
 
-	public getDocument(resource: vscode.Uri): vscode.TextDocument {
+	public getDocument(resource: zycode.Uri): zycode.TextDocument {
 		const data = this.getDocumentData(resource);
 		if (!data?.document) {
 			throw new Error(`Unable to retrieve document from URI '${resource}'`);
@@ -150,7 +150,7 @@ export class ExtHostDocuments implements ExtHostDocumentsShape {
 		data._acceptIsDirty(isDirty);
 		data.onEvents(events);
 
-		let reason: vscode.TextDocumentChangeReason | undefined = undefined;
+		let reason: zycode.TextDocumentChangeReason | undefined = undefined;
 		if (events.isUndoing) {
 			reason = TextDocumentChangeReason.Undo;
 		} else if (events.isRedoing) {

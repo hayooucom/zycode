@@ -10,7 +10,7 @@
 	],
 	"instanceUrl": "https://devdiv.visualstudio.com/defaultcollection",
 	"projectName": "DevDiv",
-	"areaPath": "DevDiv\\VS Code (compliance tracking only)\\Visual Studio Code Client",
+	"areaPath": "DevDiv\\VS Code (compliance tracking only)\\ZY Studio Code Client",
 	"notifyAlways": true,
 	"template": "TFSDEVDIV",
 	"tools": [

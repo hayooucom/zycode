@@ -3,27 +3,27 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Disposable } from './dispose';
 
 
 export interface ShowOptions {
 	readonly preserveFocus?: boolean;
-	readonly viewColumn?: vscode.ViewColumn;
+	readonly viewColumn?: zycode.ViewColumn;
 }
 
 export class SimpleBrowserView extends Disposable {
 
 	public static readonly viewType = 'simpleBrowser.view';
-	private static readonly title = vscode.l10n.t("Simple Browser");
+	private static readonly title = zycode.l10n.t("Simple Browser");
 
-	private static getWebviewLocalResourceRoots(extensionUri: vscode.Uri): readonly vscode.Uri[] {
+	private static getWebviewLocalResourceRoots(extensionUri: zycode.Uri): readonly zycode.Uri[] {
 		return [
-			vscode.Uri.joinPath(extensionUri, 'media')
+			zycode.Uri.joinPath(extensionUri, 'media')
 		];
 	}
 
-	private static getWebviewOptions(extensionUri: vscode.Uri): vscode.WebviewOptions {
+	private static getWebviewOptions(extensionUri: zycode.Uri): zycode.WebviewOptions {
 		return {
 			enableScripts: true,
 			enableForms: true,
@@ -31,18 +31,18 @@ export class SimpleBrowserView extends Disposable {
 		};
 	}
 
-	private readonly _webviewPanel: vscode.WebviewPanel;
+	private readonly _webviewPanel: zycode.WebviewPanel;
 
-	private readonly _onDidDispose = this._register(new vscode.EventEmitter<void>());
+	private readonly _onDidDispose = this._register(new zycode.EventEmitter<void>());
 	public readonly onDispose = this._onDidDispose.event;
 
 	public static create(
-		extensionUri: vscode.Uri,
+		extensionUri: zycode.Uri,
 		url: string,
 		showOptions?: ShowOptions
 	): SimpleBrowserView {
-		const webview = vscode.window.createWebviewPanel(SimpleBrowserView.viewType, SimpleBrowserView.title, {
-			viewColumn: showOptions?.viewColumn ?? vscode.ViewColumn.Active,
+		const webview = zycode.window.createWebviewPanel(SimpleBrowserView.viewType, SimpleBrowserView.title, {
+			viewColumn: showOptions?.viewColumn ?? zycode.ViewColumn.Active,
 			preserveFocus: showOptions?.preserveFocus
 		}, {
 			retainContextWhenHidden: true,
@@ -52,17 +52,17 @@ export class SimpleBrowserView extends Disposable {
 	}
 
 	public static restore(
-		extensionUri: vscode.Uri,
+		extensionUri: zycode.Uri,
 		url: string,
-		webviewPanel: vscode.WebviewPanel,
+		webviewPanel: zycode.WebviewPanel,
 	): SimpleBrowserView {
 		return new SimpleBrowserView(extensionUri, url, webviewPanel);
 	}
 
 	private constructor(
-		private readonly extensionUri: vscode.Uri,
+		private readonly extensionUri: zycode.Uri,
 		url: string,
-		webviewPanel: vscode.WebviewPanel,
+		webviewPanel: zycode.WebviewPanel,
 	) {
 		super();
 
@@ -73,8 +73,8 @@ export class SimpleBrowserView extends Disposable {
 			switch (e.type) {
 				case 'openExternal':
 					try {
-						const url = vscode.Uri.parse(e.url);
-						vscode.env.openExternal(url);
+						const url = zycode.Uri.parse(e.url);
+						zycode.env.openExternal(url);
 					} catch {
 						// Noop
 					}
@@ -86,9 +86,9 @@ export class SimpleBrowserView extends Disposable {
 			this.dispose();
 		}));
 
-		this._register(vscode.workspace.onDidChangeConfiguration(e => {
+		this._register(zycode.workspace.onDidChangeConfiguration(e => {
 			if (e.affectsConfiguration('simpleBrowser.focusLockIndicator.enabled')) {
-				const configuration = vscode.workspace.getConfiguration('simpleBrowser');
+				const configuration = zycode.workspace.getConfiguration('simpleBrowser');
 				this._webviewPanel.webview.postMessage({
 					type: 'didChangeFocusLockIndicatorEnabled',
 					focusLockEnabled: configuration.get<boolean>('focusLockIndicator.enabled', true)
@@ -110,7 +110,7 @@ export class SimpleBrowserView extends Disposable {
 	}
 
 	private getHtml(url: string) {
-		const configuration = vscode.workspace.getConfiguration('simpleBrowser');
+		const configuration = zycode.workspace.getConfiguration('simpleBrowser');
 
 		const nonce = getNonce();
 
@@ -143,15 +143,15 @@ export class SimpleBrowserView extends Disposable {
 				<header class="header">
 					<nav class="controls">
 						<button
-							title="${vscode.l10n.t("Back")}"
+							title="${zycode.l10n.t("Back")}"
 							class="back-button icon"><i class="codicon codicon-arrow-left"></i></button>
 
 						<button
-							title="${vscode.l10n.t("Forward")}"
+							title="${zycode.l10n.t("Forward")}"
 							class="forward-button icon"><i class="codicon codicon-arrow-right"></i></button>
 
 						<button
-							title="${vscode.l10n.t("Reload")}"
+							title="${zycode.l10n.t("Reload")}"
 							class="reload-button icon"><i class="codicon codicon-refresh"></i></button>
 					</nav>
 
@@ -159,12 +159,12 @@ export class SimpleBrowserView extends Disposable {
 
 					<nav class="controls">
 						<button
-							title="${vscode.l10n.t("Open in browser")}"
+							title="${zycode.l10n.t("Open in browser")}"
 							class="open-external-button icon"><i class="codicon codicon-link-external"></i></button>
 					</nav>
 				</header>
 				<div class="content">
-					<div class="iframe-focused-alert">${vscode.l10n.t("Focus Lock")}</div>
+					<div class="iframe-focused-alert">${zycode.l10n.t("Focus Lock")}</div>
 					<iframe sandbox="allow-scripts allow-forms allow-same-origin allow-downloads"></iframe>
 				</div>
 
@@ -173,12 +173,12 @@ export class SimpleBrowserView extends Disposable {
 			</html>`;
 	}
 
-	private extensionResourceUrl(...parts: string[]): vscode.Uri {
-		return this._webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, ...parts));
+	private extensionResourceUrl(...parts: string[]): zycode.Uri {
+		return this._webviewPanel.webview.asWebviewUri(zycode.Uri.joinPath(this.extensionUri, ...parts));
 	}
 }
 
-function escapeAttribute(value: string | vscode.Uri): string {
+function escapeAttribute(value: string | zycode.Uri): string {
 	return value.toString().replace(/"/g, '&quot;');
 }
 

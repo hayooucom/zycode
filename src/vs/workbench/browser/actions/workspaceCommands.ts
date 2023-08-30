@@ -122,7 +122,7 @@ CommandsRegistry.registerCommand(PICK_WORKSPACE_FOLDER_COMMAND_ID, async functio
 
 		return {
 			label,
-			description: description !== label ? description : undefined, // https://github.com/microsoft/vscode/issues/183418
+			description: description !== label ? description : undefined, // https://github.com/microsoft/zycode/issues/183418
 			folder,
 			iconClasses: getIconClasses(modelService, languageService, folder.uri, FileKind.ROOT_FOLDER)
 		};
@@ -163,7 +163,7 @@ interface IOpenFolderAPICommandOptions {
 }
 
 CommandsRegistry.registerCommand({
-	id: 'vscode.openFolder',
+	id: 'zycode.openFolder',
 	handler: (accessor: ServicesAccessor, uriComponents?: UriComponents, arg?: boolean | IOpenFolderAPICommandOptions) => {
 		const commandService = accessor.get(ICommandService);
 
@@ -230,7 +230,7 @@ interface INewWindowAPICommandOptions {
 }
 
 CommandsRegistry.registerCommand({
-	id: 'vscode.newWindow',
+	id: 'zycode.newWindow',
 	handler: (accessor: ServicesAccessor, options?: INewWindowAPICommandOptions) => {
 		const commandService = accessor.get(ICommandService);
 
@@ -262,7 +262,7 @@ CommandsRegistry.registerCommand('_workbench.removeFromRecentlyOpened', function
 });
 
 CommandsRegistry.registerCommand({
-	id: 'vscode.removeFromRecentlyOpened',
+	id: 'zycode.removeFromRecentlyOpened',
 	handler: (accessor: ServicesAccessor, path: string | URI): Promise<any> => {
 		const workspacesService = accessor.get(IWorkspacesService);
 

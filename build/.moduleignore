@@ -12,39 +12,39 @@ fsevents/src/**
 fsevents/test/**
 !fsevents/**/*.node
 
-@vscode/spdlog/binding.gyp
-@vscode/spdlog/build/**
-@vscode/spdlog/deps/**
-@vscode/spdlog/src/**
-@vscode/spdlog/test/**
-@vscode/spdlog/*.yml
-!@vscode/spdlog/build/Release/*.node
+@zycode/spdlog/binding.gyp
+@zycode/spdlog/build/**
+@zycode/spdlog/deps/**
+@zycode/spdlog/src/**
+@zycode/spdlog/test/**
+@zycode/spdlog/*.yml
+!@zycode/spdlog/build/Release/*.node
 
-@vscode/sqlite3/binding.gyp
-@vscode/sqlite3/benchmark/**
-@vscode/sqlite3/cloudformation/**
-@vscode/sqlite3/deps/**
-@vscode/sqlite3/test/**
-@vscode/sqlite3/build/**
-@vscode/sqlite3/src/**
-!@vscode/sqlite3/build/Release/*.node
+@zycode/sqlite3/binding.gyp
+@zycode/sqlite3/benchmark/**
+@zycode/sqlite3/cloudformation/**
+@zycode/sqlite3/deps/**
+@zycode/sqlite3/test/**
+@zycode/sqlite3/build/**
+@zycode/sqlite3/src/**
+!@zycode/sqlite3/build/Release/*.node
 
-@vscode/windows-mutex/binding.gyp
-@vscode/windows-mutex/build/**
-@vscode/windows-mutex/src/**
-!@vscode/windows-mutex/**/*.node
+@zycode/windows-mutex/binding.gyp
+@zycode/windows-mutex/build/**
+@zycode/windows-mutex/src/**
+!@zycode/windows-mutex/**/*.node
 
-@vscode/windows-process-tree/binding.gyp
-@vscode/windows-process-tree/build/**
-@vscode/windows-process-tree/src/**
-@vscode/windows-process-tree/tsconfig.json
-@vscode/windows-process-tree/tslint.json
-!@vscode/windows-process-tree/**/*.node
+@zycode/windows-process-tree/binding.gyp
+@zycode/windows-process-tree/build/**
+@zycode/windows-process-tree/src/**
+@zycode/windows-process-tree/tsconfig.json
+@zycode/windows-process-tree/tslint.json
+!@zycode/windows-process-tree/**/*.node
 
-@vscode/windows-registry/binding.gyp
-@vscode/windows-registry/src/**
-@vscode/windows-registry/build/**
-!@vscode/windows-registry/build/Release/*.node
+@zycode/windows-registry/binding.gyp
+@zycode/windows-registry/src/**
+@zycode/windows-registry/build/**
+!@zycode/windows-registry/build/Release/*.node
 
 native-keymap/binding.gyp
 native-keymap/build/**
@@ -114,17 +114,17 @@ vsda/SECURITY.md
 vsda/targets
 !vsda/build/Release/vsda.node
 
-@vscode/policy-watcher/build/**
-@vscode/policy-watcher/.husky/**
-@vscode/policy-watcher/src/**
-@vscode/policy-watcher/binding.gyp
-@vscode/policy-watcher/README.md
-@vscode/policy-watcher/index.d.ts
-!@vscode/policy-watcher/build/Release/vscode-policy-watcher.node
+@zycode/policy-watcher/build/**
+@zycode/policy-watcher/.husky/**
+@zycode/policy-watcher/src/**
+@zycode/policy-watcher/binding.gyp
+@zycode/policy-watcher/README.md
+@zycode/policy-watcher/index.d.ts
+!@zycode/policy-watcher/build/Release/zycode-policy-watcher.node
 
-@vscode/windows-ca-certs/**/*
-!@vscode/windows-ca-certs/package.json
-!@vscode/windows-ca-certs/**/*.node
+@zycode/windows-ca-certs/**/*
+!@zycode/windows-ca-certs/package.json
+!@zycode/windows-ca-certs/**/*.node
 
 node-addon-api/**/*
 prebuild-install/**/*
@@ -161,7 +161,7 @@ jschardet/dist/jschardet.js
 
 es6-promise/lib/**
 
-vscode-textmate/webpack.config.js
+zycode-textmate/webpack.config.js
 
 zone.js/dist/**
 !zone.js/dist/zone-node.js

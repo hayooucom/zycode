@@ -85,16 +85,16 @@
 		defaultStyles.id = '_defaultStyles';
 		defaultStyles.textContent = `
 			html {
-				scrollbar-color: var(--vscode-scrollbarSlider-background) var(--vscode-editor-background);
+				scrollbar-color: var(--zycode-scrollbarSlider-background) var(--zycode-editor-background);
 			}
 
 			body {
 				overscroll-behavior-x: none;
 				background-color: transparent;
-				color: var(--vscode-editor-foreground);
-				font-family: var(--vscode-font-family);
-				font-weight: var(--vscode-font-weight);
-				font-size: var(--vscode-font-size);
+				color: var(--zycode-editor-foreground);
+				font-family: var(--zycode-font-family);
+				font-weight: var(--zycode-font-weight);
+				font-size: var(--zycode-font-size);
 				margin: 0;
 				padding: 0 20px;
 			}
@@ -105,11 +105,11 @@
 			}
 
 			a, a code {
-				color: var(--vscode-textLink-foreground);
+				color: var(--zycode-textLink-foreground);
 			}
 
 			a:hover {
-				color: var(--vscode-textLink-activeForeground);
+				color: var(--zycode-textLink-activeForeground);
 			}
 
 			a:focus,
@@ -121,23 +121,23 @@
 			}
 
 			code {
-				color: var(--vscode-textPreformat-foreground);
+				color: var(--zycode-textPreformat-foreground);
 			}
 
 			blockquote {
-				background: var(--vscode-textBlockQuote-background);
-				border-color: var(--vscode-textBlockQuote-border);
+				background: var(--zycode-textBlockQuote-background);
+				border-color: var(--zycode-textBlockQuote-border);
 			}
 
 			kbd {
-				background-color: var(--vscode-keybindingLabel-background);
-				color: var(--vscode-keybindingLabel-foreground);
+				background-color: var(--zycode-keybindingLabel-background);
+				color: var(--zycode-keybindingLabel-foreground);
 				border-style: solid;
 				border-width: 1px;
 				border-radius: 3px;
-				border-color: var(--vscode-keybindingLabel-border);
-				border-bottom-color: var(--vscode-keybindingLabel-bottomBorder);
-				box-shadow: inset 0 -1px 0 var(--vscode-widget-shadow);
+				border-color: var(--zycode-keybindingLabel-border);
+				border-bottom-color: var(--zycode-keybindingLabel-bottomBorder);
+				box-shadow: inset 0 -1px 0 var(--zycode-widget-shadow);
 				vertical-align: middle;
 				padding: 1px 3px;
 			}
@@ -148,23 +148,23 @@
 			}
 
 			::-webkit-scrollbar-corner {
-				background-color: var(--vscode-editor-background);
+				background-color: var(--zycode-editor-background);
 			}
 
 			::-webkit-scrollbar-thumb {
-				background-color: var(--vscode-scrollbarSlider-background);
+				background-color: var(--zycode-scrollbarSlider-background);
 			}
 			::-webkit-scrollbar-thumb:hover {
-				background-color: var(--vscode-scrollbarSlider-hoverBackground);
+				background-color: var(--zycode-scrollbarSlider-hoverBackground);
 			}
 			::-webkit-scrollbar-thumb:active {
-				background-color: var(--vscode-scrollbarSlider-activeBackground);
+				background-color: var(--zycode-scrollbarSlider-activeBackground);
 			}
 			::highlight(find-highlight) {
-				background-color: var(--vscode-editor-findMatchHighlightBackground);
+				background-color: var(--zycode-editor-findMatchHighlightBackground);
 			}
 			::highlight(current-find-highlight) {
-				background-color: var(--vscode-editor-findMatchBackground);
+				background-color: var(--zycode-editor-findMatchBackground);
 			}`;
 
 		/**
@@ -221,7 +221,7 @@
 				return reject(new Error('Service Workers are not enabled. Webviews will not work. Try disabling private/incognito mode.'));
 			}
 
-			const swPath = encodeURI(`service-worker.js?v=${expectedWorkerVersion}&vscode-resource-base-authority=${searchParams.get('vscode-resource-base-authority')}&remoteAuthority=${searchParams.get('remoteAuthority') ?? ''}`);
+			const swPath = encodeURI(`service-worker.js?v=${expectedWorkerVersion}&zycode-resource-base-authority=${searchParams.get('zycode-resource-base-authority')}&remoteAuthority=${searchParams.get('remoteAuthority') ?? ''}`);
 			navigator.serviceWorker.register(swPath)
 				.then(async registration => {
 					/**
@@ -477,26 +477,26 @@
 			}
 
 			if (body) {
-				body.classList.remove('vscode-light', 'vscode-dark', 'vscode-high-contrast', 'vscode-high-contrast-light', 'vscode-reduce-motion', 'vscode-using-screen-reader');
+				body.classList.remove('zycode-light', 'zycode-dark', 'zycode-high-contrast', 'zycode-high-contrast-light', 'zycode-reduce-motion', 'zycode-using-screen-reader');
 
 				if (initData.activeTheme) {
 					body.classList.add(initData.activeTheme);
-					if (initData.activeTheme === 'vscode-high-contrast-light') {
+					if (initData.activeTheme === 'zycode-high-contrast-light') {
 						// backwards compatibility
-						body.classList.add('vscode-high-contrast');
+						body.classList.add('zycode-high-contrast');
 					}
 				}
 
 				if (initData.reduceMotion) {
-					body.classList.add('vscode-reduce-motion');
+					body.classList.add('zycode-reduce-motion');
 				}
 
 				if (initData.screenReader) {
-					body.classList.add('vscode-using-screen-reader');
+					body.classList.add('zycode-using-screen-reader');
 				}
 
 				body.dataset.vscodeThemeKind = initData.activeTheme;
-				/** @deprecated data-vscode-theme-name will be removed, use data-vscode-theme-id instead */
+				/** @deprecated data-zycode-theme-name will be removed, use data-zycode-theme-id instead */
 				body.dataset.vscodeThemeName = initData.themeLabel || '';
 				body.dataset.vscodeThemeId = initData.themeId || '';
 			}
@@ -509,7 +509,7 @@
 					const property = documentStyle[i];
 
 					// Don't remove properties that the webview might have added separately
-					if (property && property.startsWith('--vscode-')) {
+					if (property && property.startsWith('--zycode-')) {
 						documentStyle.removeProperty(property);
 					}
 				}
@@ -836,7 +836,7 @@
 					// Attempt to rewrite CSPs that hardcode old-style resource endpoint
 					const cspContent = csp.getAttribute('content');
 					if (cspContent) {
-						const newCsp = cspContent.replace(/(vscode-webview-resource|vscode-resource):(?=(\s|;|$))/g, data.cspSource);
+						const newCsp = cspContent.replace(/(zycode-webview-resource|zycode-resource):(?=(\s|;|$))/g, data.cspSource);
 						csp.setAttribute('content', newCsp);
 					}
 				} catch (e) {
@@ -978,7 +978,7 @@
 				// into it to get around this.
 				const fakeUrlParams = new URLSearchParams({ id: ID });
 				if (globalThis.crossOriginIsolated) {
-					fakeUrlParams.set('vscode-coi', '3'); /*COOP+COEP*/
+					fakeUrlParams.set('zycode-coi', '3'); /*COOP+COEP*/
 				}
 				newFrame.src = `./fake.html?${fakeUrlParams.toString()}`;
 
@@ -1034,7 +1034,7 @@
 				 */
 				const onLoad = (contentDocument, contentWindow) => {
 					if (contentDocument && contentDocument.body) {
-						// Workaround for https://github.com/microsoft/vscode/issues/12865
+						// Workaround for https://github.com/microsoft/zycode/issues/12865
 						// check new scrollY and reset if necessary
 						setInitialScrollPosition(contentDocument.body, contentWindow);
 					}
@@ -1115,7 +1115,7 @@
 							}
 
 							// Search self/ancestors for the closest context data attribute
-							el = el.closest('[data-vscode-context]');
+							el = el.closest('[data-zycode-context]');
 							if (!el) {
 								break;
 							}
@@ -1123,7 +1123,7 @@
 							try {
 								context = { ...JSON.parse(el.dataset.vscodeContext), ...context };
 							} catch (e) {
-								console.error(`Error parsing 'data-vscode-context' as json`, el, e);
+								console.error(`Error parsing 'data-zycode-context' as json`, el, e);
 							}
 
 							el = el.parentElement;
@@ -1143,11 +1143,11 @@
 				}
 			});
 
-			// propagate vscode-context-menu-visible class
+			// propagate zycode-context-menu-visible class
 			hostMessaging.onMessage('set-context-menu-visible', (_event, data) => {
 				const target = getActiveFrame();
 				if (target && target.contentDocument) {
-					target.contentDocument.body.classList.toggle('vscode-context-menu-visible', data.visible);
+					target.contentDocument.body.classList.toggle('zycode-context-menu-visible', data.visible);
 				}
 			});
 

@@ -50,7 +50,7 @@ import { IExtHostWindow } from 'vs/workbench/api/common/extHostWindow';
 import { IExtHostWorkspace } from 'vs/workbench/api/common/extHostWorkspace';
 import { ProxyIdentifier } from 'vs/workbench/services/extensions/common/proxyIdentifier';
 import { ExtensionDescriptionRegistry } from 'vs/workbench/services/extensions/common/extensionDescriptionRegistry';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ExtensionIdentifierSet, IExtensionDescription } from 'vs/platform/extensions/common/extensions';
 import { ExtHostEditorInsets } from 'vs/workbench/api/common/extHostCodeInsets';
 import { ExtHostLabelService } from 'vs/workbench/api/common/extHostLabelService';
@@ -115,7 +115,7 @@ export interface IExtensionRegistries {
 }
 
 export interface IExtensionApiFactory {
-	(extension: IExtensionDescription, extensionInfo: IExtensionRegistries, configProvider: ExtHostConfigProvider): typeof vscode;
+	(extension: IExtensionDescription, extensionInfo: IExtensionRegistries, configProvider: ExtHostConfigProvider): typeof zycode;
 }
 
 /**
@@ -229,7 +229,7 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 	// Register API-ish commands
 	ExtHostApiCommands.register(extHostCommands);
 
-	return function (extension: IExtensionDescription, extensionInfo: IExtensionRegistries, configProvider: ExtHostConfigProvider): typeof vscode {
+	return function (extension: IExtensionDescription, extensionInfo: IExtensionRegistries, configProvider: ExtHostConfigProvider): typeof zycode {
 
 		// Check document selectors for being overly generic. Technically this isn't a problem but
 		// in practice many extensions say they support `fooLang` but need fs-access to do so. Those
@@ -244,13 +244,13 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 					done = true;
 				}
 			}
-			return function perform(selector: vscode.DocumentSelector): vscode.DocumentSelector {
+			return function perform(selector: zycode.DocumentSelector): zycode.DocumentSelector {
 				if (Array.isArray(selector)) {
 					selector.forEach(perform);
 				} else if (typeof selector === 'string') {
 					informOnce();
 				} else {
-					const filter = selector as vscode.DocumentFilter; // TODO: microsoft/TypeScript#42768
+					const filter = selector as zycode.DocumentFilter; // TODO: microsoft/TypeScript#42768
 					if (typeof filter.scheme === 'undefined') {
 						informOnce();
 					}
@@ -262,8 +262,8 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			};
 		})();
 
-		const authentication: typeof vscode.authentication = {
-			getSession(providerId: string, scopes: readonly string[], options?: vscode.AuthenticationGetSessionOptions) {
+		const authentication: typeof zycode.authentication = {
+			getSession(providerId: string, scopes: readonly string[], options?: zycode.AuthenticationGetSessionOptions) {
 				return extHostAuthentication.getSession(extension, providerId, scopes, options as any);
 			},
 			getSessions(providerId: string, scopes: readonly string[]) {
@@ -275,20 +275,20 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 				checkProposedApiEnabled(extension, 'authSession');
 				return !!(await extHostAuthentication.getSession(extension, providerId, scopes, { silent: true } as any));
 			},
-			get onDidChangeSessions(): Event<vscode.AuthenticationSessionsChangeEvent> {
+			get onDidChangeSessions(): Event<zycode.AuthenticationSessionsChangeEvent> {
 				return extHostAuthentication.onDidChangeSessions;
 			},
-			registerAuthenticationProvider(id: string, label: string, provider: vscode.AuthenticationProvider, options?: vscode.AuthenticationProviderOptions): vscode.Disposable {
+			registerAuthenticationProvider(id: string, label: string, provider: zycode.AuthenticationProvider, options?: zycode.AuthenticationProviderOptions): zycode.Disposable {
 				return extHostAuthentication.registerAuthenticationProvider(id, label, provider, options);
 			}
 		};
 
 		// namespace: commands
-		const commands: typeof vscode.commands = {
-			registerCommand(id: string, command: <T>(...args: any[]) => T | Thenable<T>, thisArgs?: any): vscode.Disposable {
+		const commands: typeof zycode.commands = {
+			registerCommand(id: string, command: <T>(...args: any[]) => T | Thenable<T>, thisArgs?: any): zycode.Disposable {
 				return extHostCommands.registerCommand(true, id, command, thisArgs, undefined, extension);
 			},
-			registerTextEditorCommand(id: string, callback: (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, ...args: any[]) => void, thisArg?: any): vscode.Disposable {
+			registerTextEditorCommand(id: string, callback: (textEditor: zycode.TextEditor, edit: zycode.TextEditorEdit, ...args: any[]) => void, thisArg?: any): zycode.Disposable {
 				return extHostCommands.registerCommand(true, id, (...args: any[]): any => {
 					const activeTextEditor = extHostEditors.getActiveTextEditor();
 					if (!activeTextEditor) {
@@ -296,7 +296,7 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 						return undefined;
 					}
 
-					return activeTextEditor.edit((edit: vscode.TextEditorEdit) => {
+					return activeTextEditor.edit((edit: zycode.TextEditorEdit) => {
 						callback.apply(thisArg, [activeTextEditor, edit, ...args]);
 
 					}).then((result) => {
@@ -308,7 +308,7 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 					});
 				}, undefined, undefined, extension);
 			},
-			registerDiffInformationCommand: (id: string, callback: (diff: vscode.LineChange[], ...args: any[]) => any, thisArg?: any): vscode.Disposable => {
+			registerDiffInformationCommand: (id: string, callback: (diff: zycode.LineChange[], ...args: any[]) => any, thisArg?: any): zycode.Disposable => {
 				checkProposedApiEnabled(extension, 'diffCommand');
 				return extHostCommands.registerCommand(true, id, async (...args: any[]): Promise<any> => {
 					const activeTextEditor = extHostDocumentsAndEditors.activeEditor(true);
@@ -330,7 +330,7 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 		};
 
 		// namespace: env
-		const env: typeof vscode.env = {
+		const env: typeof zycode.env = {
 			get machineId() { return initData.telemetryInfo.machineId; },
 			get sessionId() { return initData.telemetryInfo.sessionId; },
 			get language() { return initData.environment.appLanguage; },
@@ -338,7 +338,7 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			get appRoot() { return initData.environment.appRoot?.fsPath ?? ''; },
 			get appHost() { return initData.environment.appHost; },
 			get uriScheme() { return initData.environment.appUriScheme; },
-			get clipboard(): vscode.Clipboard { return extHostClipboard.value; },
+			get clipboard(): zycode.Clipboard { return extHostClipboard.value; },
 			get shell() {
 				return extHostTerminalService.getDefaultShell(false);
 			},
@@ -352,18 +352,18 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			get onDidChangeTelemetryEnabled(): Event<boolean> {
 				return extHostTelemetry.onDidChangeTelemetryEnabled;
 			},
-			get telemetryConfiguration(): vscode.TelemetryConfiguration {
+			get telemetryConfiguration(): zycode.TelemetryConfiguration {
 				checkProposedApiEnabled(extension, 'telemetry');
 				return extHostTelemetry.getTelemetryDetails();
 			},
-			get onDidChangeTelemetryConfiguration(): Event<vscode.TelemetryConfiguration> {
+			get onDidChangeTelemetryConfiguration(): Event<zycode.TelemetryConfiguration> {
 				checkProposedApiEnabled(extension, 'telemetry');
 				return extHostTelemetry.onDidChangeTelemetryConfiguration;
 			},
 			get isNewAppInstall() {
 				return isNewAppInstall(initData.telemetryInfo.firstSessionDate);
 			},
-			createTelemetryLogger(sender: vscode.TelemetrySender, options?: vscode.TelemetryLoggerOptions): vscode.TelemetryLogger {
+			createTelemetryLogger(sender: zycode.TelemetrySender, options?: zycode.TelemetryLoggerOptions): zycode.TelemetryLogger {
 				ExtHostTelemetryLogger.validateSender(sender);
 				return extHostTelemetry.instantiateLogger(extension, sender, options);
 			},
@@ -404,7 +404,7 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			get onDidChangeLogLevel() {
 				return extHostLogService.onDidChangeLogLevel;
 			},
-			registerIssueUriRequestHandler(handler: vscode.IssueUriRequestHandler) {
+			registerIssueUriRequestHandler(handler: zycode.IssueUriRequestHandler) {
 				checkProposedApiEnabled(extension, 'handleIssueUri');
 				return extHostIssueReporter.registerIssueUriRequestHandler(extension, handler);
 			},
@@ -423,8 +423,8 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 		}
 
 		// namespace: tests
-		const tests: typeof vscode.tests = {
-			createTestController(provider, label, refreshHandler?: (token: vscode.CancellationToken) => Thenable<void> | void) {
+		const tests: typeof zycode.tests = {
+			createTestController(provider, label, refreshHandler?: (token: zycode.CancellationToken) => Thenable<void> | void) {
 				return extHostTesting.createTestController(extension, provider, label, refreshHandler);
 			},
 			createTestObserver() {
@@ -450,8 +450,8 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			? extHostTypes.ExtensionKind.Workspace
 			: extHostTypes.ExtensionKind.UI;
 
-		const extensions: typeof vscode.extensions = {
-			getExtension(extensionId: string, includeFromDifferentExtensionHosts?: boolean): vscode.Extension<any> | undefined {
+		const extensions: typeof zycode.extensions = {
+			getExtension(extensionId: string, includeFromDifferentExtensionHosts?: boolean): zycode.Extension<any> | undefined {
 				if (!isProposedApiEnabled(extension, 'extensionsAny')) {
 					includeFromDifferentExtensionHosts = false;
 				}
@@ -467,17 +467,17 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 				}
 				return undefined;
 			},
-			get all(): vscode.Extension<any>[] {
-				const result: vscode.Extension<any>[] = [];
+			get all(): zycode.Extension<any>[] {
+				const result: zycode.Extension<any>[] = [];
 				for (const desc of extensionInfo.mine.getAllExtensionDescriptions()) {
 					result.push(new Extension(extensionService, extension.identifier, desc, extensionKind, false));
 				}
 				return result;
 			},
-			get allAcrossExtensionHosts(): vscode.Extension<any>[] {
+			get allAcrossExtensionHosts(): zycode.Extension<any>[] {
 				checkProposedApiEnabled(extension, 'extensionsAny');
 				const local = new ExtensionIdentifierSet(extensionInfo.mine.getAllExtensionDescriptions().map(desc => desc.identifier));
-				const result: vscode.Extension<any>[] = [];
+				const result: zycode.Extension<any>[] = [];
 				for (const desc of extensionInfo.all.getAllExtensionDescriptions()) {
 					const isFromDifferentExtensionHost = !local.has(desc.identifier);
 					result.push(new Extension(extensionService, extension.identifier, desc, extensionKind /* TODO@alexdima THIS IS WRONG */, isFromDifferentExtensionHost));
@@ -493,100 +493,100 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 		};
 
 		// namespace: languages
-		const languages: typeof vscode.languages = {
-			createDiagnosticCollection(name?: string): vscode.DiagnosticCollection {
+		const languages: typeof zycode.languages = {
+			createDiagnosticCollection(name?: string): zycode.DiagnosticCollection {
 				return extHostDiagnostics.createDiagnosticCollection(extension.identifier, name);
 			},
 			get onDidChangeDiagnostics() {
 				return extHostDiagnostics.onDidChangeDiagnostics;
 			},
-			getDiagnostics: (resource?: vscode.Uri) => {
+			getDiagnostics: (resource?: zycode.Uri) => {
 				return <any>extHostDiagnostics.getDiagnostics(resource);
 			},
 			getLanguages(): Thenable<string[]> {
 				return extHostLanguages.getLanguages();
 			},
-			setTextDocumentLanguage(document: vscode.TextDocument, languageId: string): Thenable<vscode.TextDocument> {
+			setTextDocumentLanguage(document: zycode.TextDocument, languageId: string): Thenable<zycode.TextDocument> {
 				return extHostLanguages.changeLanguage(document.uri, languageId);
 			},
-			match(selector: vscode.DocumentSelector, document: vscode.TextDocument): number {
+			match(selector: zycode.DocumentSelector, document: zycode.TextDocument): number {
 				const notebook = extHostDocuments.getDocumentData(document.uri)?.notebook;
 				return score(typeConverters.LanguageSelector.from(selector), document.uri, document.languageId, true, notebook?.uri, notebook?.notebookType);
 			},
-			registerCodeActionsProvider(selector: vscode.DocumentSelector, provider: vscode.CodeActionProvider, metadata?: vscode.CodeActionProviderMetadata): vscode.Disposable {
+			registerCodeActionsProvider(selector: zycode.DocumentSelector, provider: zycode.CodeActionProvider, metadata?: zycode.CodeActionProviderMetadata): zycode.Disposable {
 				return extHostLanguageFeatures.registerCodeActionProvider(extension, checkSelector(selector), provider, metadata);
 			},
-			registerDocumentPasteEditProvider(selector: vscode.DocumentSelector, provider: vscode.DocumentPasteEditProvider, metadata: vscode.DocumentPasteProviderMetadata): vscode.Disposable {
+			registerDocumentPasteEditProvider(selector: zycode.DocumentSelector, provider: zycode.DocumentPasteEditProvider, metadata: zycode.DocumentPasteProviderMetadata): zycode.Disposable {
 				checkProposedApiEnabled(extension, 'documentPaste');
 				return extHostLanguageFeatures.registerDocumentPasteEditProvider(extension, checkSelector(selector), provider, metadata);
 			},
-			registerCodeLensProvider(selector: vscode.DocumentSelector, provider: vscode.CodeLensProvider): vscode.Disposable {
+			registerCodeLensProvider(selector: zycode.DocumentSelector, provider: zycode.CodeLensProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerCodeLensProvider(extension, checkSelector(selector), provider);
 			},
-			registerDefinitionProvider(selector: vscode.DocumentSelector, provider: vscode.DefinitionProvider): vscode.Disposable {
+			registerDefinitionProvider(selector: zycode.DocumentSelector, provider: zycode.DefinitionProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerDefinitionProvider(extension, checkSelector(selector), provider);
 			},
-			registerDeclarationProvider(selector: vscode.DocumentSelector, provider: vscode.DeclarationProvider): vscode.Disposable {
+			registerDeclarationProvider(selector: zycode.DocumentSelector, provider: zycode.DeclarationProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerDeclarationProvider(extension, checkSelector(selector), provider);
 			},
-			registerImplementationProvider(selector: vscode.DocumentSelector, provider: vscode.ImplementationProvider): vscode.Disposable {
+			registerImplementationProvider(selector: zycode.DocumentSelector, provider: zycode.ImplementationProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerImplementationProvider(extension, checkSelector(selector), provider);
 			},
-			registerTypeDefinitionProvider(selector: vscode.DocumentSelector, provider: vscode.TypeDefinitionProvider): vscode.Disposable {
+			registerTypeDefinitionProvider(selector: zycode.DocumentSelector, provider: zycode.TypeDefinitionProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerTypeDefinitionProvider(extension, checkSelector(selector), provider);
 			},
-			registerHoverProvider(selector: vscode.DocumentSelector, provider: vscode.HoverProvider): vscode.Disposable {
+			registerHoverProvider(selector: zycode.DocumentSelector, provider: zycode.HoverProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerHoverProvider(extension, checkSelector(selector), provider, extension.identifier);
 			},
-			registerEvaluatableExpressionProvider(selector: vscode.DocumentSelector, provider: vscode.EvaluatableExpressionProvider): vscode.Disposable {
+			registerEvaluatableExpressionProvider(selector: zycode.DocumentSelector, provider: zycode.EvaluatableExpressionProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerEvaluatableExpressionProvider(extension, checkSelector(selector), provider, extension.identifier);
 			},
-			registerInlineValuesProvider(selector: vscode.DocumentSelector, provider: vscode.InlineValuesProvider): vscode.Disposable {
+			registerInlineValuesProvider(selector: zycode.DocumentSelector, provider: zycode.InlineValuesProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerInlineValuesProvider(extension, checkSelector(selector), provider, extension.identifier);
 			},
-			registerDocumentHighlightProvider(selector: vscode.DocumentSelector, provider: vscode.DocumentHighlightProvider): vscode.Disposable {
+			registerDocumentHighlightProvider(selector: zycode.DocumentSelector, provider: zycode.DocumentHighlightProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerDocumentHighlightProvider(extension, checkSelector(selector), provider);
 			},
-			registerLinkedEditingRangeProvider(selector: vscode.DocumentSelector, provider: vscode.LinkedEditingRangeProvider): vscode.Disposable {
+			registerLinkedEditingRangeProvider(selector: zycode.DocumentSelector, provider: zycode.LinkedEditingRangeProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerLinkedEditingRangeProvider(extension, checkSelector(selector), provider);
 			},
-			registerReferenceProvider(selector: vscode.DocumentSelector, provider: vscode.ReferenceProvider): vscode.Disposable {
+			registerReferenceProvider(selector: zycode.DocumentSelector, provider: zycode.ReferenceProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerReferenceProvider(extension, checkSelector(selector), provider);
 			},
-			registerRenameProvider(selector: vscode.DocumentSelector, provider: vscode.RenameProvider): vscode.Disposable {
+			registerRenameProvider(selector: zycode.DocumentSelector, provider: zycode.RenameProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerRenameProvider(extension, checkSelector(selector), provider);
 			},
-			registerDocumentSymbolProvider(selector: vscode.DocumentSelector, provider: vscode.DocumentSymbolProvider, metadata?: vscode.DocumentSymbolProviderMetadata): vscode.Disposable {
+			registerDocumentSymbolProvider(selector: zycode.DocumentSelector, provider: zycode.DocumentSymbolProvider, metadata?: zycode.DocumentSymbolProviderMetadata): zycode.Disposable {
 				return extHostLanguageFeatures.registerDocumentSymbolProvider(extension, checkSelector(selector), provider, metadata);
 			},
-			registerWorkspaceSymbolProvider(provider: vscode.WorkspaceSymbolProvider): vscode.Disposable {
+			registerWorkspaceSymbolProvider(provider: zycode.WorkspaceSymbolProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerWorkspaceSymbolProvider(extension, provider);
 			},
-			registerDocumentFormattingEditProvider(selector: vscode.DocumentSelector, provider: vscode.DocumentFormattingEditProvider): vscode.Disposable {
+			registerDocumentFormattingEditProvider(selector: zycode.DocumentSelector, provider: zycode.DocumentFormattingEditProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerDocumentFormattingEditProvider(extension, checkSelector(selector), provider);
 			},
-			registerDocumentRangeFormattingEditProvider(selector: vscode.DocumentSelector, provider: vscode.DocumentRangeFormattingEditProvider): vscode.Disposable {
+			registerDocumentRangeFormattingEditProvider(selector: zycode.DocumentSelector, provider: zycode.DocumentRangeFormattingEditProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerDocumentRangeFormattingEditProvider(extension, checkSelector(selector), provider);
 			},
-			registerOnTypeFormattingEditProvider(selector: vscode.DocumentSelector, provider: vscode.OnTypeFormattingEditProvider, firstTriggerCharacter: string, ...moreTriggerCharacters: string[]): vscode.Disposable {
+			registerOnTypeFormattingEditProvider(selector: zycode.DocumentSelector, provider: zycode.OnTypeFormattingEditProvider, firstTriggerCharacter: string, ...moreTriggerCharacters: string[]): zycode.Disposable {
 				return extHostLanguageFeatures.registerOnTypeFormattingEditProvider(extension, checkSelector(selector), provider, [firstTriggerCharacter].concat(moreTriggerCharacters));
 			},
-			registerDocumentSemanticTokensProvider(selector: vscode.DocumentSelector, provider: vscode.DocumentSemanticTokensProvider, legend: vscode.SemanticTokensLegend): vscode.Disposable {
+			registerDocumentSemanticTokensProvider(selector: zycode.DocumentSelector, provider: zycode.DocumentSemanticTokensProvider, legend: zycode.SemanticTokensLegend): zycode.Disposable {
 				return extHostLanguageFeatures.registerDocumentSemanticTokensProvider(extension, checkSelector(selector), provider, legend);
 			},
-			registerDocumentRangeSemanticTokensProvider(selector: vscode.DocumentSelector, provider: vscode.DocumentRangeSemanticTokensProvider, legend: vscode.SemanticTokensLegend): vscode.Disposable {
+			registerDocumentRangeSemanticTokensProvider(selector: zycode.DocumentSelector, provider: zycode.DocumentRangeSemanticTokensProvider, legend: zycode.SemanticTokensLegend): zycode.Disposable {
 				return extHostLanguageFeatures.registerDocumentRangeSemanticTokensProvider(extension, checkSelector(selector), provider, legend);
 			},
-			registerSignatureHelpProvider(selector: vscode.DocumentSelector, provider: vscode.SignatureHelpProvider, firstItem?: string | vscode.SignatureHelpProviderMetadata, ...remaining: string[]): vscode.Disposable {
+			registerSignatureHelpProvider(selector: zycode.DocumentSelector, provider: zycode.SignatureHelpProvider, firstItem?: string | zycode.SignatureHelpProviderMetadata, ...remaining: string[]): zycode.Disposable {
 				if (typeof firstItem === 'object') {
 					return extHostLanguageFeatures.registerSignatureHelpProvider(extension, checkSelector(selector), provider, firstItem);
 				}
 				return extHostLanguageFeatures.registerSignatureHelpProvider(extension, checkSelector(selector), provider, typeof firstItem === 'undefined' ? [] : [firstItem, ...remaining]);
 			},
-			registerCompletionItemProvider(selector: vscode.DocumentSelector, provider: vscode.CompletionItemProvider, ...triggerCharacters: string[]): vscode.Disposable {
+			registerCompletionItemProvider(selector: zycode.DocumentSelector, provider: zycode.CompletionItemProvider, ...triggerCharacters: string[]): zycode.Disposable {
 				return extHostLanguageFeatures.registerCompletionItemProvider(extension, checkSelector(selector), provider, triggerCharacters);
 			},
-			registerInlineCompletionItemProvider(selector: vscode.DocumentSelector, provider: vscode.InlineCompletionItemProvider, metadata?: vscode.InlineCompletionItemProviderMetadata): vscode.Disposable {
+			registerInlineCompletionItemProvider(selector: zycode.DocumentSelector, provider: zycode.InlineCompletionItemProvider, metadata?: zycode.InlineCompletionItemProviderMetadata): zycode.Disposable {
 				if (provider.handleDidShowCompletionItem) {
 					checkProposedApiEnabled(extension, 'inlineCompletionsAdditions');
 				}
@@ -598,44 +598,44 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 				}
 				return extHostLanguageFeatures.registerInlineCompletionsProvider(extension, checkSelector(selector), provider, metadata);
 			},
-			registerDocumentLinkProvider(selector: vscode.DocumentSelector, provider: vscode.DocumentLinkProvider): vscode.Disposable {
+			registerDocumentLinkProvider(selector: zycode.DocumentSelector, provider: zycode.DocumentLinkProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerDocumentLinkProvider(extension, checkSelector(selector), provider);
 			},
-			registerColorProvider(selector: vscode.DocumentSelector, provider: vscode.DocumentColorProvider): vscode.Disposable {
+			registerColorProvider(selector: zycode.DocumentSelector, provider: zycode.DocumentColorProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerColorProvider(extension, checkSelector(selector), provider);
 			},
-			registerFoldingRangeProvider(selector: vscode.DocumentSelector, provider: vscode.FoldingRangeProvider): vscode.Disposable {
+			registerFoldingRangeProvider(selector: zycode.DocumentSelector, provider: zycode.FoldingRangeProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerFoldingRangeProvider(extension, checkSelector(selector), provider);
 			},
-			registerSelectionRangeProvider(selector: vscode.DocumentSelector, provider: vscode.SelectionRangeProvider): vscode.Disposable {
+			registerSelectionRangeProvider(selector: zycode.DocumentSelector, provider: zycode.SelectionRangeProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerSelectionRangeProvider(extension, selector, provider);
 			},
-			registerCallHierarchyProvider(selector: vscode.DocumentSelector, provider: vscode.CallHierarchyProvider): vscode.Disposable {
+			registerCallHierarchyProvider(selector: zycode.DocumentSelector, provider: zycode.CallHierarchyProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerCallHierarchyProvider(extension, selector, provider);
 			},
-			registerTypeHierarchyProvider(selector: vscode.DocumentSelector, provider: vscode.TypeHierarchyProvider): vscode.Disposable {
+			registerTypeHierarchyProvider(selector: zycode.DocumentSelector, provider: zycode.TypeHierarchyProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerTypeHierarchyProvider(extension, selector, provider);
 			},
-			setLanguageConfiguration: (language: string, configuration: vscode.LanguageConfiguration): vscode.Disposable => {
+			setLanguageConfiguration: (language: string, configuration: zycode.LanguageConfiguration): zycode.Disposable => {
 				return extHostLanguageFeatures.setLanguageConfiguration(extension, language, configuration);
 			},
-			getTokenInformationAtPosition(doc: vscode.TextDocument, pos: vscode.Position) {
+			getTokenInformationAtPosition(doc: zycode.TextDocument, pos: zycode.Position) {
 				checkProposedApiEnabled(extension, 'tokenInformation');
 				return extHostLanguages.tokenAtPosition(doc, pos);
 			},
-			registerInlayHintsProvider(selector: vscode.DocumentSelector, provider: vscode.InlayHintsProvider): vscode.Disposable {
+			registerInlayHintsProvider(selector: zycode.DocumentSelector, provider: zycode.InlayHintsProvider): zycode.Disposable {
 				return extHostLanguageFeatures.registerInlayHintsProvider(extension, selector, provider);
 			},
-			createLanguageStatusItem(id: string, selector: vscode.DocumentSelector): vscode.LanguageStatusItem {
+			createLanguageStatusItem(id: string, selector: zycode.DocumentSelector): zycode.LanguageStatusItem {
 				return extHostLanguages.createLanguageStatusItem(extension, id, selector);
 			},
-			registerDocumentDropEditProvider(selector: vscode.DocumentSelector, provider: vscode.DocumentDropEditProvider, metadata?: vscode.DocumentDropEditProviderMetadata): vscode.Disposable {
+			registerDocumentDropEditProvider(selector: zycode.DocumentSelector, provider: zycode.DocumentDropEditProvider, metadata?: zycode.DocumentDropEditProviderMetadata): zycode.Disposable {
 				return extHostLanguageFeatures.registerDocumentOnDropEditProvider(extension, selector, provider, isProposedApiEnabled(extension, 'dropMetadata') ? metadata : undefined);
 			}
 		};
 
 		// namespace: window
-		const window: typeof vscode.window = {
+		const window: typeof zycode.window = {
 			get activeTextEditor() {
 				return extHostEditors.getActiveTextEditor();
 			},
@@ -648,14 +648,14 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			get terminals() {
 				return extHostTerminalService.terminals;
 			},
-			async showTextDocument(documentOrUri: vscode.TextDocument | vscode.Uri, columnOrOptions?: vscode.ViewColumn | vscode.TextDocumentShowOptions, preserveFocus?: boolean): Promise<vscode.TextEditor> {
+			async showTextDocument(documentOrUri: zycode.TextDocument | zycode.Uri, columnOrOptions?: zycode.ViewColumn | zycode.TextDocumentShowOptions, preserveFocus?: boolean): Promise<zycode.TextEditor> {
 				const document = await (URI.isUri(documentOrUri)
 					? Promise.resolve(workspace.openTextDocument(documentOrUri))
-					: Promise.resolve(<vscode.TextDocument>documentOrUri));
+					: Promise.resolve(<zycode.TextDocument>documentOrUri));
 
 				return extHostEditors.showTextDocument(document, columnOrOptions, preserveFocus);
 			},
-			createTextEditorDecorationType(options: vscode.DecorationRenderOptions): vscode.TextEditorDecorationType {
+			createTextEditorDecorationType(options: zycode.DecorationRenderOptions): zycode.TextEditorDecorationType {
 				return extHostEditors.createTextEditorDecorationType(extension, options);
 			},
 			onDidChangeActiveTextEditor(listener, thisArg?, disposables?) {
@@ -664,13 +664,13 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			onDidChangeVisibleTextEditors(listener, thisArg, disposables) {
 				return extHostEditors.onDidChangeVisibleTextEditors(listener, thisArg, disposables);
 			},
-			onDidChangeTextEditorSelection(listener: (e: vscode.TextEditorSelectionChangeEvent) => any, thisArgs?: any, disposables?: extHostTypes.Disposable[]) {
+			onDidChangeTextEditorSelection(listener: (e: zycode.TextEditorSelectionChangeEvent) => any, thisArgs?: any, disposables?: extHostTypes.Disposable[]) {
 				return extHostEditors.onDidChangeTextEditorSelection(listener, thisArgs, disposables);
 			},
-			onDidChangeTextEditorOptions(listener: (e: vscode.TextEditorOptionsChangeEvent) => any, thisArgs?: any, disposables?: extHostTypes.Disposable[]) {
+			onDidChangeTextEditorOptions(listener: (e: zycode.TextEditorOptionsChangeEvent) => any, thisArgs?: any, disposables?: extHostTypes.Disposable[]) {
 				return extHostEditors.onDidChangeTextEditorOptions(listener, thisArgs, disposables);
 			},
-			onDidChangeTextEditorVisibleRanges(listener: (e: vscode.TextEditorVisibleRangesChangeEvent) => any, thisArgs?: any, disposables?: extHostTypes.Disposable[]) {
+			onDidChangeTextEditorVisibleRanges(listener: (e: zycode.TextEditorVisibleRangesChangeEvent) => any, thisArgs?: any, disposables?: extHostTypes.Disposable[]) {
 				return extHostEditors.onDidChangeTextEditorVisibleRanges(listener, thisArgs, disposables);
 			},
 			onDidChangeTextEditorViewColumn(listener, thisArg?, disposables?) {
@@ -706,22 +706,22 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			onDidChangeWindowState(listener, thisArg?, disposables?) {
 				return extHostWindow.onDidChangeWindowState(listener, thisArg, disposables);
 			},
-			showInformationMessage(message: string, ...rest: Array<vscode.MessageOptions | string | vscode.MessageItem>) {
-				return <Thenable<any>>extHostMessageService.showMessage(extension, Severity.Info, message, rest[0], <Array<string | vscode.MessageItem>>rest.slice(1));
+			showInformationMessage(message: string, ...rest: Array<zycode.MessageOptions | string | zycode.MessageItem>) {
+				return <Thenable<any>>extHostMessageService.showMessage(extension, Severity.Info, message, rest[0], <Array<string | zycode.MessageItem>>rest.slice(1));
 			},
-			showWarningMessage(message: string, ...rest: Array<vscode.MessageOptions | string | vscode.MessageItem>) {
-				return <Thenable<any>>extHostMessageService.showMessage(extension, Severity.Warning, message, rest[0], <Array<string | vscode.MessageItem>>rest.slice(1));
+			showWarningMessage(message: string, ...rest: Array<zycode.MessageOptions | string | zycode.MessageItem>) {
+				return <Thenable<any>>extHostMessageService.showMessage(extension, Severity.Warning, message, rest[0], <Array<string | zycode.MessageItem>>rest.slice(1));
 			},
-			showErrorMessage(message: string, ...rest: Array<vscode.MessageOptions | string | vscode.MessageItem>) {
-				return <Thenable<any>>extHostMessageService.showMessage(extension, Severity.Error, message, rest[0], <Array<string | vscode.MessageItem>>rest.slice(1));
+			showErrorMessage(message: string, ...rest: Array<zycode.MessageOptions | string | zycode.MessageItem>) {
+				return <Thenable<any>>extHostMessageService.showMessage(extension, Severity.Error, message, rest[0], <Array<string | zycode.MessageItem>>rest.slice(1));
 			},
-			showQuickPick(items: any, options?: vscode.QuickPickOptions, token?: vscode.CancellationToken): any {
+			showQuickPick(items: any, options?: zycode.QuickPickOptions, token?: zycode.CancellationToken): any {
 				return extHostQuickOpen.showQuickPick(extension, items, options, token);
 			},
-			showWorkspaceFolderPick(options?: vscode.WorkspaceFolderPickOptions) {
+			showWorkspaceFolderPick(options?: zycode.WorkspaceFolderPickOptions) {
 				return extHostQuickOpen.showWorkspaceFolderPick(options);
 			},
-			showInputBox(options?: vscode.InputBoxOptions, token?: vscode.CancellationToken) {
+			showInputBox(options?: zycode.InputBoxOptions, token?: zycode.CancellationToken) {
 				return extHostQuickOpen.showInput(options, token);
 			},
 			showOpenDialog(options) {
@@ -730,7 +730,7 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			showSaveDialog(options) {
 				return extHostDialogs.showSaveDialog(options);
 			},
-			createStatusBarItem(alignmentOrId?: vscode.StatusBarAlignment | string, priorityOrAlignment?: number | vscode.StatusBarAlignment, priorityArg?: number): vscode.StatusBarItem {
+			createStatusBarItem(alignmentOrId?: zycode.StatusBarAlignment | string, priorityOrAlignment?: number | zycode.StatusBarAlignment, priorityArg?: number): zycode.StatusBarItem {
 				let id: string | undefined;
 				let alignment: number | undefined;
 				let priority: number | undefined;
@@ -746,29 +746,29 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 
 				return extHostStatusBar.createStatusBarEntry(extension, id, alignment, priority);
 			},
-			setStatusBarMessage(text: string, timeoutOrThenable?: number | Thenable<any>): vscode.Disposable {
+			setStatusBarMessage(text: string, timeoutOrThenable?: number | Thenable<any>): zycode.Disposable {
 				return extHostStatusBar.setStatusBarMessage(text, timeoutOrThenable);
 			},
-			withScmProgress<R>(task: (progress: vscode.Progress<number>) => Thenable<R>) {
+			withScmProgress<R>(task: (progress: zycode.Progress<number>) => Thenable<R>) {
 				extHostApiDeprecation.report('window.withScmProgress', extension,
 					`Use 'withProgress' instead.`);
 
 				return extHostProgress.withProgress(extension, { location: extHostTypes.ProgressLocation.SourceControl }, (progress, token) => task({ report(n: number) { /*noop*/ } }));
 			},
-			withProgress<R>(options: vscode.ProgressOptions, task: (progress: vscode.Progress<{ message?: string; worked?: number }>, token: vscode.CancellationToken) => Thenable<R>) {
+			withProgress<R>(options: zycode.ProgressOptions, task: (progress: zycode.Progress<{ message?: string; worked?: number }>, token: zycode.CancellationToken) => Thenable<R>) {
 				return extHostProgress.withProgress(extension, options, task);
 			},
 			createOutputChannel(name: string, options: string | { log: true } | undefined): any {
 				return extHostOutputService.createOutputChannel(name, options, extension);
 			},
-			createWebviewPanel(viewType: string, title: string, showOptions: vscode.ViewColumn | { viewColumn: vscode.ViewColumn; preserveFocus?: boolean }, options?: vscode.WebviewPanelOptions & vscode.WebviewOptions): vscode.WebviewPanel {
+			createWebviewPanel(viewType: string, title: string, showOptions: zycode.ViewColumn | { viewColumn: zycode.ViewColumn; preserveFocus?: boolean }, options?: zycode.WebviewPanelOptions & zycode.WebviewOptions): zycode.WebviewPanel {
 				return extHostWebviewPanels.createWebviewPanel(extension, viewType, title, showOptions, options);
 			},
-			createWebviewTextEditorInset(editor: vscode.TextEditor, line: number, height: number, options?: vscode.WebviewOptions): vscode.WebviewEditorInset {
+			createWebviewTextEditorInset(editor: zycode.TextEditor, line: number, height: number, options?: zycode.WebviewOptions): zycode.WebviewEditorInset {
 				checkProposedApiEnabled(extension, 'editorInsets');
 				return extHostEditorInsets.createWebviewEditorInset(editor, line, height, options, extension);
 			},
-			createTerminal(nameOrOptions?: vscode.TerminalOptions | vscode.ExtensionTerminalOptions | string, shellPath?: string, shellArgs?: readonly string[] | string): vscode.Terminal {
+			createTerminal(nameOrOptions?: zycode.TerminalOptions | zycode.ExtensionTerminalOptions | string, shellPath?: string, shellArgs?: readonly string[] | string): zycode.Terminal {
 				if (typeof nameOrOptions === 'object') {
 					if ('pty' in nameOrOptions) {
 						return extHostTerminalService.createExtensionTerminal(nameOrOptions);
@@ -777,54 +777,54 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 				}
 				return extHostTerminalService.createTerminal(nameOrOptions, shellPath, shellArgs);
 			},
-			registerTerminalLinkProvider(provider: vscode.TerminalLinkProvider): vscode.Disposable {
+			registerTerminalLinkProvider(provider: zycode.TerminalLinkProvider): zycode.Disposable {
 				return extHostTerminalService.registerLinkProvider(provider);
 			},
-			registerTerminalProfileProvider(id: string, provider: vscode.TerminalProfileProvider): vscode.Disposable {
+			registerTerminalProfileProvider(id: string, provider: zycode.TerminalProfileProvider): zycode.Disposable {
 				return extHostTerminalService.registerProfileProvider(extension, id, provider);
 			},
-			registerTerminalQuickFixProvider(id: string, provider: vscode.TerminalQuickFixProvider): vscode.Disposable {
+			registerTerminalQuickFixProvider(id: string, provider: zycode.TerminalQuickFixProvider): zycode.Disposable {
 				checkProposedApiEnabled(extension, 'terminalQuickFixProvider');
 				return extHostTerminalService.registerTerminalQuickFixProvider(id, extension.identifier.value, provider);
 			},
-			registerTreeDataProvider(viewId: string, treeDataProvider: vscode.TreeDataProvider<any>): vscode.Disposable {
+			registerTreeDataProvider(viewId: string, treeDataProvider: zycode.TreeDataProvider<any>): zycode.Disposable {
 				return extHostTreeViews.registerTreeDataProvider(viewId, treeDataProvider, extension);
 			},
-			createTreeView(viewId: string, options: { treeDataProvider: vscode.TreeDataProvider<any> }): vscode.TreeView<any> {
+			createTreeView(viewId: string, options: { treeDataProvider: zycode.TreeDataProvider<any> }): zycode.TreeView<any> {
 				return extHostTreeViews.createTreeView(viewId, options, extension);
 			},
-			registerWebviewPanelSerializer: (viewType: string, serializer: vscode.WebviewPanelSerializer) => {
+			registerWebviewPanelSerializer: (viewType: string, serializer: zycode.WebviewPanelSerializer) => {
 				return extHostWebviewPanels.registerWebviewPanelSerializer(extension, viewType, serializer);
 			},
-			registerCustomEditorProvider: (viewType: string, provider: vscode.CustomTextEditorProvider | vscode.CustomReadonlyEditorProvider, options: { webviewOptions?: vscode.WebviewPanelOptions; supportsMultipleEditorsPerDocument?: boolean } = {}) => {
+			registerCustomEditorProvider: (viewType: string, provider: zycode.CustomTextEditorProvider | zycode.CustomReadonlyEditorProvider, options: { webviewOptions?: zycode.WebviewPanelOptions; supportsMultipleEditorsPerDocument?: boolean } = {}) => {
 				return extHostCustomEditors.registerCustomEditorProvider(extension, viewType, provider, options);
 			},
-			registerFileDecorationProvider(provider: vscode.FileDecorationProvider) {
+			registerFileDecorationProvider(provider: zycode.FileDecorationProvider) {
 				return extHostDecorations.registerFileDecorationProvider(provider, extension);
 			},
-			registerUriHandler(handler: vscode.UriHandler) {
+			registerUriHandler(handler: zycode.UriHandler) {
 				return extHostUrls.registerUriHandler(extension, handler);
 			},
-			createQuickPick<T extends vscode.QuickPickItem>(): vscode.QuickPick<T> {
+			createQuickPick<T extends zycode.QuickPickItem>(): zycode.QuickPick<T> {
 				return extHostQuickOpen.createQuickPick(extension);
 			},
-			createInputBox(): vscode.InputBox {
+			createInputBox(): zycode.InputBox {
 				return extHostQuickOpen.createInputBox(extension);
 			},
-			get activeColorTheme(): vscode.ColorTheme {
+			get activeColorTheme(): zycode.ColorTheme {
 				return extHostTheming.activeColorTheme;
 			},
 			onDidChangeActiveColorTheme(listener, thisArg?, disposables?) {
 				return extHostTheming.onDidChangeActiveColorTheme(listener, thisArg, disposables);
 			},
-			registerWebviewViewProvider(viewId: string, provider: vscode.WebviewViewProvider, options?: {
+			registerWebviewViewProvider(viewId: string, provider: zycode.WebviewViewProvider, options?: {
 				webviewOptions?: {
 					retainContextWhenHidden?: boolean;
 				};
 			}) {
 				return extHostWebviewViews.registerWebviewViewProvider(extension, viewId, provider, options?.webviewOptions);
 			},
-			get activeNotebookEditor(): vscode.NotebookEditor | undefined {
+			get activeNotebookEditor(): zycode.NotebookEditor | undefined {
 				return extHostNotebook.activeNotebookEditor;
 			},
 			onDidChangeActiveNotebookEditor(listener, thisArgs?, disposables?) {
@@ -845,22 +845,22 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			showNotebookDocument(document, options?) {
 				return extHostNotebook.showNotebookDocument(document, options);
 			},
-			registerExternalUriOpener(id: string, opener: vscode.ExternalUriOpener, metadata: vscode.ExternalUriOpenerMetadata) {
+			registerExternalUriOpener(id: string, opener: zycode.ExternalUriOpener, metadata: zycode.ExternalUriOpenerMetadata) {
 				checkProposedApiEnabled(extension, 'externalUriOpener');
 				return extHostUriOpeners.registerExternalUriOpener(extension.identifier, id, opener, metadata);
 			},
-			registerProfileContentHandler(id: string, handler: vscode.ProfileContentHandler) {
+			registerProfileContentHandler(id: string, handler: zycode.ProfileContentHandler) {
 				checkProposedApiEnabled(extension, 'profileContentHandlers');
 				return extHostProfileContentHandlers.registrProfileContentHandler(extension, id, handler);
 			},
-			registerQuickDiffProvider(selector: vscode.DocumentSelector, quickDiffProvider: vscode.QuickDiffProvider, label: string, rootUri?: vscode.Uri): vscode.Disposable {
+			registerQuickDiffProvider(selector: zycode.DocumentSelector, quickDiffProvider: zycode.QuickDiffProvider, label: string, rootUri?: zycode.Uri): zycode.Disposable {
 				checkProposedApiEnabled(extension, 'quickDiffProvider');
 				return extHostQuickDiff.registerQuickDiffProvider(checkSelector(selector), quickDiffProvider, label, rootUri);
 			},
-			get tabGroups(): vscode.TabGroups {
+			get tabGroups(): zycode.TabGroups {
 				return extHostEditorTabs.tabGroups;
 			},
-			registerShareProvider(selector: vscode.DocumentSelector, provider: vscode.ShareProvider): vscode.Disposable {
+			registerShareProvider(selector: zycode.DocumentSelector, provider: zycode.ShareProvider): zycode.Disposable {
 				checkProposedApiEnabled(extension, 'shareProvider');
 				return extHostShare.registerShareProvider(checkSelector(selector), provider);
 			}
@@ -868,10 +868,10 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 
 		// namespace: workspace
 
-		const workspace: typeof vscode.workspace = {
+		const workspace: typeof zycode.workspace = {
 			get rootPath() {
 				extHostApiDeprecation.report('workspace.rootPath', extension,
-					`Please use 'workspace.workspaceFolders' instead. More details: https://aka.ms/vscode-eliminating-rootpath`);
+					`Please use 'workspace.workspaceFolders' instead. More details: https://aka.ms/zycode-eliminating-rootpath`);
 
 				return extHostWorkspace.getPath();
 			},
@@ -909,18 +909,18 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 				// Note, undefined/null have different meanings on "exclude"
 				return extHostWorkspace.findFiles(include, exclude, maxResults, extension.identifier, token);
 			},
-			findTextInFiles: (query: vscode.TextSearchQuery, optionsOrCallback: vscode.FindTextInFilesOptions | ((result: vscode.TextSearchResult) => void), callbackOrToken?: vscode.CancellationToken | ((result: vscode.TextSearchResult) => void), token?: vscode.CancellationToken) => {
+			findTextInFiles: (query: zycode.TextSearchQuery, optionsOrCallback: zycode.FindTextInFilesOptions | ((result: zycode.TextSearchResult) => void), callbackOrToken?: zycode.CancellationToken | ((result: zycode.TextSearchResult) => void), token?: zycode.CancellationToken) => {
 				checkProposedApiEnabled(extension, 'findTextInFiles');
-				let options: vscode.FindTextInFilesOptions;
-				let callback: (result: vscode.TextSearchResult) => void;
+				let options: zycode.FindTextInFilesOptions;
+				let callback: (result: zycode.TextSearchResult) => void;
 
 				if (typeof optionsOrCallback === 'object') {
 					options = optionsOrCallback;
-					callback = callbackOrToken as (result: vscode.TextSearchResult) => void;
+					callback = callbackOrToken as (result: zycode.TextSearchResult) => void;
 				} else {
 					options = {};
 					callback = optionsOrCallback;
-					token = callbackOrToken as vscode.CancellationToken;
+					token = callbackOrToken as zycode.CancellationToken;
 				}
 
 				return extHostWorkspace.findTextInFiles(query, options || {}, callback, extension.identifier, token);
@@ -936,10 +936,10 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			saveAll: (includeUntitled?) => {
 				return extHostWorkspace.saveAll(includeUntitled);
 			},
-			applyEdit(edit: vscode.WorkspaceEdit, metadata?: vscode.WorkspaceEditMetadata): Thenable<boolean> {
+			applyEdit(edit: zycode.WorkspaceEdit, metadata?: zycode.WorkspaceEditMetadata): Thenable<boolean> {
 				return extHostBulkEdits.applyWorkspaceEdit(edit, extension, metadata);
 			},
-			createFileSystemWatcher: (pattern, ignoreCreate, ignoreChange, ignoreDelete): vscode.FileSystemWatcher => {
+			createFileSystemWatcher: (pattern, ignoreCreate, ignoreChange, ignoreDelete): zycode.FileSystemWatcher => {
 				return extHostFileSystemEvent.createFileSystemWatcher(extHostWorkspace, extension, pattern, ignoreCreate, ignoreChange, ignoreDelete);
 			},
 			get textDocuments() {
@@ -948,7 +948,7 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			set textDocuments(value) {
 				throw errors.readonly();
 			},
-			openTextDocument(uriOrFileNameOrOptions?: vscode.Uri | string | { language?: string; content?: string }) {
+			openTextDocument(uriOrFileNameOrOptions?: zycode.Uri | string | { language?: string; content?: string }) {
 				let uriPromise: Thenable<URI>;
 
 				const options = uriOrFileNameOrOptions as { language?: string; content?: string };
@@ -983,10 +983,10 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			onWillSaveTextDocument: (listener, thisArgs?, disposables?) => {
 				return extHostDocumentSaveParticipant.getOnWillSaveTextDocumentEvent(extension)(listener, thisArgs, disposables);
 			},
-			get notebookDocuments(): vscode.NotebookDocument[] {
+			get notebookDocuments(): zycode.NotebookDocument[] {
 				return extHostNotebook.notebookDocuments.map(d => d.apiNotebook);
 			},
-			async openNotebookDocument(uriOrType?: URI | string, content?: vscode.NotebookData) {
+			async openNotebookDocument(uriOrType?: URI | string, content?: zycode.NotebookData) {
 				let uri: URI;
 				if (URI.isUri(uriOrType)) {
 					uri = uriOrType;
@@ -1007,26 +1007,26 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			onWillSaveNotebookDocument(listener, thisArg, disposables) {
 				return extHostNotebookDocumentSaveParticipant.getOnWillSaveNotebookDocumentEvent(extension)(listener, thisArg, disposables);
 			},
-			get onDidOpenNotebookDocument(): Event<vscode.NotebookDocument> {
+			get onDidOpenNotebookDocument(): Event<zycode.NotebookDocument> {
 				return extHostNotebook.onDidOpenNotebookDocument;
 			},
-			get onDidCloseNotebookDocument(): Event<vscode.NotebookDocument> {
+			get onDidCloseNotebookDocument(): Event<zycode.NotebookDocument> {
 				return extHostNotebook.onDidCloseNotebookDocument;
 			},
-			registerNotebookSerializer(viewType: string, serializer: vscode.NotebookSerializer, options?: vscode.NotebookDocumentContentOptions, registration?: vscode.NotebookRegistrationData) {
+			registerNotebookSerializer(viewType: string, serializer: zycode.NotebookSerializer, options?: zycode.NotebookDocumentContentOptions, registration?: zycode.NotebookRegistrationData) {
 				return extHostNotebook.registerNotebookSerializer(extension, viewType, serializer, options, isProposedApiEnabled(extension, 'notebookLiveShare') ? registration : undefined);
 			},
 			onDidChangeConfiguration: (listener: (_: any) => any, thisArgs?: any, disposables?: extHostTypes.Disposable[]) => {
 				return configProvider.onDidChangeConfiguration(listener, thisArgs, disposables);
 			},
-			getConfiguration(section?: string, scope?: vscode.ConfigurationScope | null): vscode.WorkspaceConfiguration {
+			getConfiguration(section?: string, scope?: zycode.ConfigurationScope | null): zycode.WorkspaceConfiguration {
 				scope = arguments.length === 1 ? undefined : scope;
 				return configProvider.getConfiguration(section, scope, extension);
 			},
-			registerTextDocumentContentProvider(scheme: string, provider: vscode.TextDocumentContentProvider) {
+			registerTextDocumentContentProvider(scheme: string, provider: zycode.TextDocumentContentProvider) {
 				return extHostDocumentContentProviders.registerTextDocumentContentProvider(scheme, provider);
 			},
-			registerTaskProvider: (type: string, provider: vscode.TaskProvider) => {
+			registerTaskProvider: (type: string, provider: zycode.TaskProvider) => {
 				extHostApiDeprecation.report('window.registerTaskProvider', extension,
 					`Use the corresponding function on the 'tasks' namespace instead`);
 
@@ -1041,19 +1041,19 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			get fs() {
 				return extHostConsumerFileSystem.value;
 			},
-			registerFileSearchProvider: (scheme: string, provider: vscode.FileSearchProvider) => {
+			registerFileSearchProvider: (scheme: string, provider: zycode.FileSearchProvider) => {
 				checkProposedApiEnabled(extension, 'fileSearchProvider');
 				return extHostSearch.registerFileSearchProvider(scheme, provider);
 			},
-			registerTextSearchProvider: (scheme: string, provider: vscode.TextSearchProvider) => {
+			registerTextSearchProvider: (scheme: string, provider: zycode.TextSearchProvider) => {
 				checkProposedApiEnabled(extension, 'textSearchProvider');
 				return extHostSearch.registerTextSearchProvider(scheme, provider);
 			},
-			registerRemoteAuthorityResolver: (authorityPrefix: string, resolver: vscode.RemoteAuthorityResolver) => {
+			registerRemoteAuthorityResolver: (authorityPrefix: string, resolver: zycode.RemoteAuthorityResolver) => {
 				checkProposedApiEnabled(extension, 'resolvers');
 				return extensionService.registerRemoteAuthorityResolver(authorityPrefix, resolver);
 			},
-			registerResourceLabelFormatter: (formatter: vscode.ResourceLabelFormatter) => {
+			registerResourceLabelFormatter: (formatter: zycode.ResourceLabelFormatter) => {
 				checkProposedApiEnabled(extension, 'resolvers');
 				return extHostLabelService.$registerResourceLabelFormatter(formatter);
 			},
@@ -1070,16 +1070,16 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 			onDidRenameFiles: (listener, thisArg, disposables) => {
 				return extHostFileSystemEvent.onDidRenameFile(listener, thisArg, disposables);
 			},
-			onWillCreateFiles: (listener: (e: vscode.FileWillCreateEvent) => any, thisArg?: any, disposables?: vscode.Disposable[]) => {
+			onWillCreateFiles: (listener: (e: zycode.FileWillCreateEvent) => any, thisArg?: any, disposables?: zycode.Disposable[]) => {
 				return extHostFileSystemEvent.getOnWillCreateFileEvent(extension)(listener, thisArg, disposables);
 			},
-			onWillDeleteFiles: (listener: (e: vscode.FileWillDeleteEvent) => any, thisArg?: any, disposables?: vscode.Disposable[]) => {
+			onWillDeleteFiles: (listener: (e: zycode.FileWillDeleteEvent) => any, thisArg?: any, disposables?: zycode.Disposable[]) => {
 				return extHostFileSystemEvent.getOnWillDeleteFileEvent(extension)(listener, thisArg, disposables);
 			},
-			onWillRenameFiles: (listener: (e: vscode.FileWillRenameEvent) => any, thisArg?: any, disposables?: vscode.Disposable[]) => {
+			onWillRenameFiles: (listener: (e: zycode.FileWillRenameEvent) => any, thisArg?: any, disposables?: zycode.Disposable[]) => {
 				return extHostFileSystemEvent.getOnWillRenameFileEvent(extension)(listener, thisArg, disposables);
 			},
-			openTunnel: (forward: vscode.TunnelOptions) => {
+			openTunnel: (forward: zycode.TunnelOptions) => {
 				checkProposedApiEnabled(extension, 'tunnels');
 				return extHostTunnelService.openTunnel(extension, forward).then(value => {
 					if (!value) {
@@ -1096,29 +1096,29 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 				checkProposedApiEnabled(extension, 'tunnels');
 				return extHostTunnelService.onDidChangeTunnels(listener, thisArg, disposables);
 			},
-			registerPortAttributesProvider: (portSelector: vscode.PortAttributesSelector, provider: vscode.PortAttributesProvider) => {
+			registerPortAttributesProvider: (portSelector: zycode.PortAttributesSelector, provider: zycode.PortAttributesProvider) => {
 				checkProposedApiEnabled(extension, 'portsAttributes');
 				return extHostTunnelService.registerPortsAttributesProvider(portSelector, provider);
 			},
-			registerTunnelProvider: (tunnelProvider: vscode.TunnelProvider, information: vscode.TunnelInformation) => {
+			registerTunnelProvider: (tunnelProvider: zycode.TunnelProvider, information: zycode.TunnelInformation) => {
 				checkProposedApiEnabled(extension, 'tunnelFactory');
 				return extHostTunnelService.registerTunnelProvider(tunnelProvider, information);
 			},
-			registerTimelineProvider: (scheme: string | string[], provider: vscode.TimelineProvider) => {
+			registerTimelineProvider: (scheme: string | string[], provider: zycode.TimelineProvider) => {
 				checkProposedApiEnabled(extension, 'timeline');
 				return extHostTimeline.registerTimelineProvider(scheme, provider, extension.identifier, extHostCommands.converter);
 			},
 			get isTrusted() {
 				return extHostWorkspace.trusted;
 			},
-			requestWorkspaceTrust: (options?: vscode.WorkspaceTrustRequestOptions) => {
+			requestWorkspaceTrust: (options?: zycode.WorkspaceTrustRequestOptions) => {
 				checkProposedApiEnabled(extension, 'workspaceTrust');
 				return extHostWorkspace.requestWorkspaceTrust(options);
 			},
 			onDidGrantWorkspaceTrust: (listener, thisArgs?, disposables?) => {
 				return extHostWorkspace.onDidGrantWorkspaceTrust(listener, thisArgs, disposables);
 			},
-			registerEditSessionIdentityProvider: (scheme: string, provider: vscode.EditSessionIdentityProvider) => {
+			registerEditSessionIdentityProvider: (scheme: string, provider: zycode.EditSessionIdentityProvider) => {
 				checkProposedApiEnabled(extension, 'editSessionIdentityProvider');
 				return extHostWorkspace.registerEditSessionIdentityProvider(scheme, provider);
 			},
@@ -1126,38 +1126,38 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 				checkProposedApiEnabled(extension, 'editSessionIdentityProvider');
 				return extHostWorkspace.getOnWillCreateEditSessionIdentityEvent(extension)(listener, thisArgs, disposables);
 			},
-			registerCanonicalUriProvider: (scheme: string, provider: vscode.CanonicalUriProvider) => {
+			registerCanonicalUriProvider: (scheme: string, provider: zycode.CanonicalUriProvider) => {
 				checkProposedApiEnabled(extension, 'canonicalUriProvider');
 				return extHostWorkspace.registerCanonicalUriProvider(scheme, provider);
 			},
-			getCanonicalUri: (uri: vscode.Uri, options: vscode.CanonicalUriRequestOptions, token: vscode.CancellationToken) => {
+			getCanonicalUri: (uri: zycode.Uri, options: zycode.CanonicalUriRequestOptions, token: zycode.CancellationToken) => {
 				checkProposedApiEnabled(extension, 'canonicalUriProvider');
 				return extHostWorkspace.provideCanonicalUri(uri, options, token);
 			}
 		};
 
 		// namespace: scm
-		const scm: typeof vscode.scm = {
+		const scm: typeof zycode.scm = {
 			get inputBox() {
 				extHostApiDeprecation.report('scm.inputBox', extension,
 					`Use 'SourceControl.inputBox' instead`);
 
 				return extHostSCM.getLastInputBox(extension)!; // Strict null override - Deprecated api
 			},
-			createSourceControl(id: string, label: string, rootUri?: vscode.Uri) {
+			createSourceControl(id: string, label: string, rootUri?: zycode.Uri) {
 				return extHostSCM.createSourceControl(extension, id, label, rootUri);
 			}
 		};
 
 		// namespace: comments
-		const comments: typeof vscode.comments = {
+		const comments: typeof zycode.comments = {
 			createCommentController(id: string, label: string) {
 				return extHostComment.createCommentController(extension, id, label);
 			}
 		};
 
 		// namespace: debug
-		const debug: typeof vscode.debug = {
+		const debug: typeof zycode.debug = {
 			get activeDebugSession() {
 				return extHostDebugService.activeDebugSession;
 			},
@@ -1189,46 +1189,46 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 				checkProposedApiEnabled(extension, 'debugFocus');
 				return extHostDebugService.onDidChangeStackFrameFocus(listener, thisArg, disposables);
 			},
-			registerDebugConfigurationProvider(debugType: string, provider: vscode.DebugConfigurationProvider, triggerKind?: vscode.DebugConfigurationProviderTriggerKind) {
+			registerDebugConfigurationProvider(debugType: string, provider: zycode.DebugConfigurationProvider, triggerKind?: zycode.DebugConfigurationProviderTriggerKind) {
 				return extHostDebugService.registerDebugConfigurationProvider(debugType, provider, triggerKind || DebugConfigurationProviderTriggerKind.Initial);
 			},
-			registerDebugAdapterDescriptorFactory(debugType: string, factory: vscode.DebugAdapterDescriptorFactory) {
+			registerDebugAdapterDescriptorFactory(debugType: string, factory: zycode.DebugAdapterDescriptorFactory) {
 				return extHostDebugService.registerDebugAdapterDescriptorFactory(extension, debugType, factory);
 			},
-			registerDebugAdapterTrackerFactory(debugType: string, factory: vscode.DebugAdapterTrackerFactory) {
+			registerDebugAdapterTrackerFactory(debugType: string, factory: zycode.DebugAdapterTrackerFactory) {
 				return extHostDebugService.registerDebugAdapterTrackerFactory(debugType, factory);
 			},
-			startDebugging(folder: vscode.WorkspaceFolder | undefined, nameOrConfig: string | vscode.DebugConfiguration, parentSessionOrOptions?: vscode.DebugSession | vscode.DebugSessionOptions) {
+			startDebugging(folder: zycode.WorkspaceFolder | undefined, nameOrConfig: string | zycode.DebugConfiguration, parentSessionOrOptions?: zycode.DebugSession | zycode.DebugSessionOptions) {
 				if (!parentSessionOrOptions || (typeof parentSessionOrOptions === 'object' && 'configuration' in parentSessionOrOptions)) {
 					return extHostDebugService.startDebugging(folder, nameOrConfig, { parentSession: parentSessionOrOptions });
 				}
 				return extHostDebugService.startDebugging(folder, nameOrConfig, parentSessionOrOptions || {});
 			},
-			stopDebugging(session?: vscode.DebugSession) {
+			stopDebugging(session?: zycode.DebugSession) {
 				return extHostDebugService.stopDebugging(session);
 			},
-			addBreakpoints(breakpoints: readonly vscode.Breakpoint[]) {
+			addBreakpoints(breakpoints: readonly zycode.Breakpoint[]) {
 				return extHostDebugService.addBreakpoints(breakpoints);
 			},
-			removeBreakpoints(breakpoints: readonly vscode.Breakpoint[]) {
+			removeBreakpoints(breakpoints: readonly zycode.Breakpoint[]) {
 				return extHostDebugService.removeBreakpoints(breakpoints);
 			},
-			asDebugSourceUri(source: vscode.DebugProtocolSource, session?: vscode.DebugSession): vscode.Uri {
+			asDebugSourceUri(source: zycode.DebugProtocolSource, session?: zycode.DebugSession): zycode.Uri {
 				return extHostDebugService.asDebugSourceUri(source, session);
 			}
 		};
 
-		const tasks: typeof vscode.tasks = {
-			registerTaskProvider: (type: string, provider: vscode.TaskProvider) => {
+		const tasks: typeof zycode.tasks = {
+			registerTaskProvider: (type: string, provider: zycode.TaskProvider) => {
 				return extHostTask.registerTaskProvider(extension, type, provider);
 			},
-			fetchTasks: (filter?: vscode.TaskFilter): Thenable<vscode.Task[]> => {
+			fetchTasks: (filter?: zycode.TaskFilter): Thenable<zycode.Task[]> => {
 				return extHostTask.fetchTasks(filter);
 			},
-			executeTask: (task: vscode.Task): Thenable<vscode.TaskExecution> => {
+			executeTask: (task: zycode.Task): Thenable<zycode.TaskExecution> => {
 				return extHostTask.executeTask(extension, task);
 			},
-			get taskExecutions(): vscode.TaskExecution[] {
+			get taskExecutions(): zycode.TaskExecution[] {
 				return extHostTask.taskExecutions;
 			},
 			onDidStartTask: (listeners, thisArgs?, disposables?) => {
@@ -1246,11 +1246,11 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 		};
 
 		// namespace: notebook
-		const notebooks: typeof vscode.notebooks = {
-			createNotebookController(id: string, notebookType: string, label: string, handler?, rendererScripts?: vscode.NotebookRendererScript[]) {
+		const notebooks: typeof zycode.notebooks = {
+			createNotebookController(id: string, notebookType: string, label: string, handler?, rendererScripts?: zycode.NotebookRendererScript[]) {
 				return extHostNotebookKernels.createNotebookController(extension, id, notebookType, label, handler, isProposedApiEnabled(extension, 'notebookMessaging') ? rendererScripts : undefined);
 			},
-			registerNotebookCellStatusBarItemProvider: (notebookType: string, provider: vscode.NotebookCellStatusBarItemProvider) => {
+			registerNotebookCellStatusBarItemProvider: (notebookType: string, provider: zycode.NotebookCellStatusBarItemProvider) => {
 				return extHostNotebook.registerNotebookCellStatusBarItemProvider(extension, notebookType, provider);
 			},
 			createRendererMessaging(rendererId) {
@@ -1260,7 +1260,7 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 				checkProposedApiEnabled(extension, 'notebookKernelSource');
 				return extHostNotebookKernels.createNotebookControllerDetectionTask(extension, notebookType);
 			},
-			registerKernelSourceActionProvider(notebookType: string, provider: vscode.NotebookKernelSourceActionProvider) {
+			registerKernelSourceActionProvider(notebookType: string, provider: zycode.NotebookKernelSourceActionProvider) {
 				checkProposedApiEnabled(extension, 'notebookKernelSource');
 				return extHostNotebookKernels.registerKernelSourceActionProvider(extension, notebookType, provider);
 			},
@@ -1271,7 +1271,7 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 		};
 
 		// namespace: l10n
-		const l10n: typeof vscode.l10n = {
+		const l10n: typeof zycode.l10n = {
 			t(...params: [message: string, ...args: Array<string | number | boolean>] | [message: string, args: Record<string, any>] | [{ message: string; args?: Array<string | number | boolean> | Record<string, any>; comment: string | string[] }]): string {
 				if (typeof params[0] === 'string') {
 					const key = params.shift() as string;
@@ -1293,24 +1293,24 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 		};
 
 		// namespace: interactive
-		const interactive: typeof vscode.interactive = {
+		const interactive: typeof zycode.interactive = {
 			// IMPORTANT
 			// this needs to be updated whenever the API proposal changes
 			_version: 1,
 
-			registerInteractiveEditorSessionProvider(provider: vscode.InteractiveEditorSessionProvider) {
+			registerInteractiveEditorSessionProvider(provider: zycode.InteractiveEditorSessionProvider) {
 				checkProposedApiEnabled(extension, 'interactive');
 				return extHostInteractiveEditor.registerProvider(extension, provider);
 			},
-			registerInteractiveSessionProvider(id: string, provider: vscode.InteractiveSessionProvider) {
+			registerInteractiveSessionProvider(id: string, provider: zycode.InteractiveSessionProvider) {
 				checkProposedApiEnabled(extension, 'interactive');
 				return extHostChat.registerChatProvider(extension, id, provider);
 			},
-			addInteractiveRequest(context: vscode.InteractiveSessionRequestArgs) {
+			addInteractiveRequest(context: zycode.InteractiveSessionRequestArgs) {
 				checkProposedApiEnabled(extension, 'interactive');
 				return extHostChat.addChatRequest(context);
 			},
-			sendInteractiveRequestToProvider(providerId: string, message: vscode.InteractiveSessionDynamicRequest) {
+			sendInteractiveRequestToProvider(providerId: string, message: zycode.InteractiveSessionDynamicRequest) {
 				checkProposedApiEnabled(extension, 'interactive');
 				return extHostChat.sendInteractiveRequestToProvider(providerId, message);
 			},
@@ -1318,35 +1318,35 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 				checkProposedApiEnabled(extension, 'interactiveUserActions');
 				return extHostChat.onDidPerformUserAction;
 			},
-			transferChatSession(session: vscode.InteractiveSession, toWorkspace: vscode.Uri) {
+			transferChatSession(session: zycode.InteractiveSession, toWorkspace: zycode.Uri) {
 				checkProposedApiEnabled(extension, 'interactive');
 				return extHostChat.transferChatSession(session, toWorkspace);
 			}
 		};
 
 		// namespace: ai
-		const ai: typeof vscode.ai = {
-			getRelatedInformation(query: string, types: vscode.RelatedInformationType[]): Thenable<vscode.RelatedInformationResult[]> {
+		const ai: typeof zycode.ai = {
+			getRelatedInformation(query: string, types: zycode.RelatedInformationType[]): Thenable<zycode.RelatedInformationResult[]> {
 				checkProposedApiEnabled(extension, 'aiRelatedInformation');
 				return extHostAiRelatedInformation.getRelatedInformation(extension, query, types);
 			},
-			registerRelatedInformationProvider(type: vscode.RelatedInformationType, provider: vscode.RelatedInformationProvider) {
+			registerRelatedInformationProvider(type: zycode.RelatedInformationType, provider: zycode.RelatedInformationProvider) {
 				checkProposedApiEnabled(extension, 'aiRelatedInformation');
 				return extHostAiRelatedInformation.registerRelatedInformationProvider(extension, type, provider);
 			},
-			registerEmbeddingVectorProvider(model: string, provider: vscode.EmbeddingVectorProvider) {
+			registerEmbeddingVectorProvider(model: string, provider: zycode.EmbeddingVectorProvider) {
 				checkProposedApiEnabled(extension, 'aiRelatedInformation');
 				return extHostAiEmbeddingVector.registerEmbeddingVectorProvider(extension, model, provider);
 			}
 		};
 
 		// namespace: llm
-		const chat: typeof vscode.chat = {
-			registerChatResponseProvider(id: string, provider: vscode.ChatResponseProvider, metadata: vscode.ChatResponseProviderMetadata) {
+		const chat: typeof zycode.chat = {
+			registerChatResponseProvider(id: string, provider: zycode.ChatResponseProvider, metadata: zycode.ChatResponseProviderMetadata) {
 				checkProposedApiEnabled(extension, 'chatProvider');
 				return extHostChatProvider.registerProvider(extension.identifier, id, provider, metadata);
 			},
-			registerSlashCommand(name: string, command: vscode.SlashCommand, metadata?: vscode.SlashCommandMetadata) {
+			registerSlashCommand(name: string, command: zycode.SlashCommand, metadata?: zycode.SlashCommandMetadata) {
 				checkProposedApiEnabled(extension, 'chatSlashCommands');
 				return extHostChatSlashCommands.registerCommand(extension.identifier, name, command, metadata ?? { description: '' });
 			},
@@ -1354,17 +1354,17 @@ export function createApiFactoryAndRegisterActors(accessor: ServicesAccessor): I
 				checkProposedApiEnabled(extension, 'chatRequestAccess');
 				return extHostChatProvider.requestChatResponseProvider(extension.identifier, id);
 			},
-			registerVariable(name: string, description: string, resolver: vscode.ChatVariableResolver) {
+			registerVariable(name: string, description: string, resolver: zycode.ChatVariableResolver) {
 				checkProposedApiEnabled(extension, 'chatVariables');
 				return extHostChatVariables.registerVariableResolver(extension, name, description, resolver);
 			},
-			registerMappedEditsProvider(selector: vscode.DocumentSelector, provider: vscode.MappedEditsProvider) {
+			registerMappedEditsProvider(selector: zycode.DocumentSelector, provider: zycode.MappedEditsProvider) {
 				checkProposedApiEnabled(extension, 'mappedEditsProvider');
 				return extHostLanguageFeatures.registerMappedEditsProvider(extension, selector, provider);
 			}
 		};
 
-		return <typeof vscode>{
+		return <typeof zycode>{
 			version: initData.version,
 			// namespaces
 			ai,

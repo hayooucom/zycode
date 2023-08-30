@@ -1,13 +1,13 @@
 {
   "name": "jake",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "description": "%description%",
   "displayName": "%displayName%",
   "icon": "images/cowboy_hat.png",
   "version": "1.0.0",
   "license": "MIT",
   "engines": {
-    "vscode": "*"
+    "zycode": "*"
   },
   "categories": [
     "Other"
@@ -70,6 +70,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

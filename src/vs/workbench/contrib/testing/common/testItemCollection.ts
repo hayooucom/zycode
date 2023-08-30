@@ -618,7 +618,7 @@ export class TestItemCollection<T extends ITestItemLike> extends Disposable {
 	}
 }
 
-/** Implementation of vscode.TestItemCollection */
+/** Implementation of zycode.TestItemCollection */
 export interface ITestItemChildren<T extends ITestItemLike> extends Iterable<[string, T]> {
 	readonly size: number;
 	replace(items: readonly T[]): void;

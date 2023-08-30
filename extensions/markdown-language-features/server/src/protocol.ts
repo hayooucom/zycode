@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { FileRename, RequestType } from 'vscode-languageserver';
-import type * as lsp from 'vscode-languageserver-types';
-import type * as md from 'vscode-markdown-languageservice';
+import { FileRename, RequestType } from 'zycode-languageserver';
+import type * as lsp from 'zycode-languageserver-types';
+import type * as md from 'zycode-markdown-languageservice';
 
 //#region From server
 export const parse = new RequestType<{ uri: string }, md.Token[], any>('markdown/parse');

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { window, TextEditor } from 'vscode';
+import { window, TextEditor } from 'zycode';
 import { getCssPropertyFromRule, getCssPropertyFromDocument, offsetRangeToVsRange } from './util';
 import { Property, Rule } from 'EmmetFlatNode';
 

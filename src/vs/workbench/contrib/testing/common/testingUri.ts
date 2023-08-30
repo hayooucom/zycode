@@ -6,7 +6,7 @@
 import { assertNever } from 'vs/base/common/assert';
 import { URI } from 'vs/base/common/uri';
 
-export const TEST_DATA_SCHEME = 'vscode-test-data';
+export const TEST_DATA_SCHEME = 'zycode-test-data';
 
 export const enum TestUriType {
 	/** All console output for a task */

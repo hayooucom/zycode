@@ -249,7 +249,7 @@ suite('WorkingCopyBackupService', () => {
 
 		test('should correctly hash the identifier for custom scheme URIs', () => {
 			const uri = URI.from({
-				scheme: 'vscode-custom',
+				scheme: 'zycode-custom',
 				path: 'somePath'
 			});
 
@@ -273,7 +273,7 @@ suite('WorkingCopyBackupService', () => {
 
 		test('should not fail for URIs without path', () => {
 			const uri = URI.from({
-				scheme: 'vscode-fragment',
+				scheme: 'zycode-fragment',
 				fragment: 'frag'
 			});
 

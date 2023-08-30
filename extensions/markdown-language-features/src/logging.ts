@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Disposable } from './util/dispose';
 
 enum Trace {
@@ -32,17 +32,17 @@ export interface ILogger {
 export class VsCodeOutputLogger extends Disposable implements ILogger {
 	private _trace?: Trace;
 
-	private _outputChannelValue?: vscode.OutputChannel;
+	private _outputChannelValue?: zycode.OutputChannel;
 
 	private get _outputChannel() {
-		this._outputChannelValue ??= this._register(vscode.window.createOutputChannel('Markdown'));
+		this._outputChannelValue ??= this._register(zycode.window.createOutputChannel('Markdown'));
 		return this._outputChannelValue;
 	}
 
 	constructor() {
 		super();
 
-		this._register(vscode.workspace.onDidChangeConfiguration(() => {
+		this._register(zycode.workspace.onDidChangeConfiguration(() => {
 			this._updateConfiguration();
 		}));
 
@@ -74,7 +74,7 @@ export class VsCodeOutputLogger extends Disposable implements ILogger {
 	}
 
 	private _readTrace(): Trace {
-		return Trace.fromString(vscode.workspace.getConfiguration().get<string>('markdown.trace.extension', 'off'));
+		return Trace.fromString(zycode.workspace.getConfiguration().get<string>('markdown.trace.extension', 'off'));
 	}
 
 	private static _data2String(data: any): string {

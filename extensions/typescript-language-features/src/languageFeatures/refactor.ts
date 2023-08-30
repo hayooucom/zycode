@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import * as vscode from 'vscode';
-import { Utils } from 'vscode-uri';
+import * as zycode from 'zycode';
+import { Utils } from 'zycode-uri';
 import { Command, CommandManager } from '../commands/commandManager';
 import { LearnMoreAboutRefactoringsCommand } from '../commands/learnMoreAboutRefactorings';
 import { DocumentSelector } from '../configuration/documentSelector';
@@ -21,8 +21,8 @@ import { nulToken } from '../utils/cancellation';
 import FormattingOptionsManager from './fileConfigurationManager';
 import { conditionalRegistration, requireSomeCapability } from './util/dependentRegistration';
 
-function toWorkspaceEdit(client: ITypeScriptServiceClient, edits: readonly Proto.FileCodeEdits[]): vscode.WorkspaceEdit {
-	const workspaceEdit = new vscode.WorkspaceEdit();
+function toWorkspaceEdit(client: ITypeScriptServiceClient, edits: readonly Proto.FileCodeEdits[]): zycode.WorkspaceEdit {
+	const workspaceEdit = new zycode.WorkspaceEdit();
 	for (const edit of edits) {
 		const resource = client.toResource(edit.fileName);
 		if (resource.scheme === fileSchemes.file) {
@@ -38,9 +38,9 @@ class CompositeCommand implements Command {
 	public static readonly ID = '_typescript.compositeCommand';
 	public readonly id = CompositeCommand.ID;
 
-	public async execute(...commands: vscode.Command[]): Promise<void> {
+	public async execute(...commands: zycode.Command[]): Promise<void> {
 		for (const command of commands) {
-			await vscode.commands.executeCommand(command.command, ...(command.arguments ?? []));
+			await zycode.commands.executeCommand(command.command, ...(command.arguments ?? []));
 		}
 	}
 }
@@ -76,9 +76,9 @@ class DidApplyRefactoringCommand implements Command {
 }
 namespace SelectRefactorCommand {
 	export interface Args {
-		readonly document: vscode.TextDocument;
+		readonly document: zycode.TextDocument;
 		readonly refactor: Proto.ApplicableRefactorInfo;
-		readonly rangeOrSelection: vscode.Range | vscode.Selection;
+		readonly rangeOrSelection: zycode.Range | zycode.Selection;
 	}
 }
 
@@ -96,7 +96,7 @@ class SelectRefactorCommand implements Command {
 			return;
 		}
 
-		const selected = await vscode.window.showQuickPick(args.refactor.actions.map((action): vscode.QuickPickItem & { action: Proto.RefactorActionInfo } => ({
+		const selected = await zycode.window.showQuickPick(args.refactor.actions.map((action): zycode.QuickPickItem & { action: Proto.RefactorActionInfo } => ({
 			action,
 			label: action.name,
 			description: action.description,
@@ -109,23 +109,23 @@ class SelectRefactorCommand implements Command {
 		await tsAction.resolve(nulToken);
 
 		if (tsAction.edit) {
-			if (!(await vscode.workspace.applyEdit(tsAction.edit, { isRefactoring: true }))) {
-				vscode.window.showErrorMessage(vscode.l10n.t("Could not apply refactoring"));
+			if (!(await zycode.workspace.applyEdit(tsAction.edit, { isRefactoring: true }))) {
+				zycode.window.showErrorMessage(zycode.l10n.t("Could not apply refactoring"));
 				return;
 			}
 		}
 
 		if (tsAction.command) {
-			await vscode.commands.executeCommand(tsAction.command.command, ...(tsAction.command.arguments ?? []));
+			await zycode.commands.executeCommand(tsAction.command.command, ...(tsAction.command.arguments ?? []));
 		}
 	}
 }
 
 namespace MoveToFileRefactorCommand {
 	export interface Args {
-		readonly document: vscode.TextDocument;
+		readonly document: zycode.TextDocument;
 		readonly action: Proto.RefactorActionInfo;
-		readonly range: vscode.Range;
+		readonly range: zycode.Range;
 	}
 }
 
@@ -161,15 +161,15 @@ class MoveToFileRefactorCommand implements Command {
 			return;
 		}
 		const edit = toWorkspaceEdit(this.client, response.body.edits);
-		if (!(await vscode.workspace.applyEdit(edit, { isRefactoring: true }))) {
-			vscode.window.showErrorMessage(vscode.l10n.t("Could not apply refactoring"));
+		if (!(await zycode.workspace.applyEdit(edit, { isRefactoring: true }))) {
+			zycode.window.showErrorMessage(zycode.l10n.t("Could not apply refactoring"));
 			return;
 		}
 
 		await this.didApplyCommand.execute({ action: args.action.name });
 	}
 
-	private async getTargetFile(document: vscode.TextDocument, file: string, range: vscode.Range): Promise<string | undefined> {
+	private async getTargetFile(document: zycode.TextDocument, file: string, range: zycode.Range): Promise<string | undefined> {
 		const args = typeConverters.Range.toFileRangeRequestArgs(file, range);
 		const response = await this.client.execute('getMoveToRefactoringFileSuggestions', args, nulToken);
 		if (response.type !== 'response' || !response.body) {
@@ -177,12 +177,12 @@ class MoveToFileRefactorCommand implements Command {
 		}
 		const body = response.body;
 
-		type DestinationItem = vscode.QuickPickItem & { readonly file?: string };
-		const selectExistingFileItem: vscode.QuickPickItem = { label: vscode.l10n.t("Select existing file...") };
-		const selectNewFileItem: vscode.QuickPickItem = { label: vscode.l10n.t("Enter new file path...") };
+		type DestinationItem = zycode.QuickPickItem & { readonly file?: string };
+		const selectExistingFileItem: zycode.QuickPickItem = { label: zycode.l10n.t("Select existing file...") };
+		const selectNewFileItem: zycode.QuickPickItem = { label: zycode.l10n.t("Enter new file path...") };
 
-		const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
-		const quickPick = vscode.window.createQuickPick<DestinationItem>();
+		const workspaceFolder = zycode.workspace.getWorkspaceFolder(document.uri);
+		const quickPick = zycode.window.createQuickPick<DestinationItem>();
 		quickPick.ignoreFocusOut = true;
 
 		// true so we don't skip computing in the first call
@@ -229,12 +229,12 @@ class MoveToFileRefactorCommand implements Command {
 			quickPick.items = [
 				selectExistingFileItem,
 				selectNewFileItem,
-				{ label: vscode.l10n.t("Destination Files"), kind: vscode.QuickPickItemKind.Separator },
+				{ label: zycode.l10n.t("Destination Files"), kind: zycode.QuickPickItemKind.Separator },
 				...coalesce(destinationItems)
 			];
 		};
-		quickPick.title = vscode.l10n.t("Move to File");
-		quickPick.placeholder = vscode.l10n.t("Enter file path");
+		quickPick.title = zycode.l10n.t("Move to File");
+		quickPick.placeholder = zycode.l10n.t("Enter file path");
 		quickPick.matchOnDescription = true;
 		quickPick.onDidChangeValue(updateItems);
 		updateItems();
@@ -255,16 +255,16 @@ class MoveToFileRefactorCommand implements Command {
 		}
 
 		if (picked === selectExistingFileItem) {
-			const picked = await vscode.window.showOpenDialog({
-				title: vscode.l10n.t("Select move destination"),
-				openLabel: vscode.l10n.t("Move to File"),
+			const picked = await zycode.window.showOpenDialog({
+				title: zycode.l10n.t("Select move destination"),
+				openLabel: zycode.l10n.t("Move to File"),
 				defaultUri: Utils.dirname(document.uri),
 			});
 			return picked?.length ? this.client.toTsFilePath(picked[0]) : undefined;
 		} else if (picked === selectNewFileItem) {
-			const picked = await vscode.window.showSaveDialog({
-				title: vscode.l10n.t("Select move destination"),
-				saveLabel: vscode.l10n.t("Move to File"),
+			const picked = await zycode.window.showSaveDialog({
+				title: zycode.l10n.t("Select move destination"),
+				saveLabel: zycode.l10n.t("Move to File"),
 				defaultUri: this.client.toResource(response.body.newFileName),
 			});
 			return picked ? this.client.toTsFilePath(picked) : undefined;
@@ -275,62 +275,62 @@ class MoveToFileRefactorCommand implements Command {
 }
 
 interface CodeActionKind {
-	readonly kind: vscode.CodeActionKind;
+	readonly kind: zycode.CodeActionKind;
 	matches(refactor: Proto.RefactorActionInfo): boolean;
 }
 
 const Extract_Function = Object.freeze<CodeActionKind>({
-	kind: vscode.CodeActionKind.RefactorExtract.append('function'),
+	kind: zycode.CodeActionKind.RefactorExtract.append('function'),
 	matches: refactor => refactor.name.startsWith('function_')
 });
 
 const Extract_Constant = Object.freeze<CodeActionKind>({
-	kind: vscode.CodeActionKind.RefactorExtract.append('constant'),
+	kind: zycode.CodeActionKind.RefactorExtract.append('constant'),
 	matches: refactor => refactor.name.startsWith('constant_')
 });
 
 const Extract_Type = Object.freeze<CodeActionKind>({
-	kind: vscode.CodeActionKind.RefactorExtract.append('type'),
+	kind: zycode.CodeActionKind.RefactorExtract.append('type'),
 	matches: refactor => refactor.name.startsWith('Extract to type alias')
 });
 
 const Extract_Interface = Object.freeze<CodeActionKind>({
-	kind: vscode.CodeActionKind.RefactorExtract.append('interface'),
+	kind: zycode.CodeActionKind.RefactorExtract.append('interface'),
 	matches: refactor => refactor.name.startsWith('Extract to interface')
 });
 
 const Move_File = Object.freeze<CodeActionKind>({
-	kind: vscode.CodeActionKind.RefactorMove.append('file'),
+	kind: zycode.CodeActionKind.RefactorMove.append('file'),
 	matches: refactor => refactor.name.startsWith('Move to file')
 });
 
 const Move_NewFile = Object.freeze<CodeActionKind>({
-	kind: vscode.CodeActionKind.RefactorMove.append('newFile'),
+	kind: zycode.CodeActionKind.RefactorMove.append('newFile'),
 	matches: refactor => refactor.name.startsWith('Move to a new file')
 });
 
 const Rewrite_Import = Object.freeze<CodeActionKind>({
-	kind: vscode.CodeActionKind.RefactorRewrite.append('import'),
+	kind: zycode.CodeActionKind.RefactorRewrite.append('import'),
 	matches: refactor => refactor.name.startsWith('Convert namespace import') || refactor.name.startsWith('Convert named imports')
 });
 
 const Rewrite_Export = Object.freeze<CodeActionKind>({
-	kind: vscode.CodeActionKind.RefactorRewrite.append('export'),
+	kind: zycode.CodeActionKind.RefactorRewrite.append('export'),
 	matches: refactor => refactor.name.startsWith('Convert default export') || refactor.name.startsWith('Convert named export')
 });
 
 const Rewrite_Arrow_Braces = Object.freeze<CodeActionKind>({
-	kind: vscode.CodeActionKind.RefactorRewrite.append('arrow').append('braces'),
+	kind: zycode.CodeActionKind.RefactorRewrite.append('arrow').append('braces'),
 	matches: refactor => refactor.name.startsWith('Convert default export') || refactor.name.startsWith('Convert named export')
 });
 
 const Rewrite_Parameters_ToDestructured = Object.freeze<CodeActionKind>({
-	kind: vscode.CodeActionKind.RefactorRewrite.append('parameters').append('toDestructured'),
+	kind: zycode.CodeActionKind.RefactorRewrite.append('parameters').append('toDestructured'),
 	matches: refactor => refactor.name.startsWith('Convert parameters to destructured object')
 });
 
 const Rewrite_Property_GenerateAccessors = Object.freeze<CodeActionKind>({
-	kind: vscode.CodeActionKind.RefactorRewrite.append('property').append('generateAccessors'),
+	kind: zycode.CodeActionKind.RefactorRewrite.append('property').append('generateAccessors'),
 	matches: refactor => refactor.name.startsWith('Generate \'get\' and \'set\' accessors')
 });
 
@@ -348,13 +348,13 @@ const allKnownCodeActionKinds = [
 	Rewrite_Property_GenerateAccessors
 ];
 
-class InlinedCodeAction extends vscode.CodeAction {
+class InlinedCodeAction extends zycode.CodeAction {
 	constructor(
 		public readonly client: ITypeScriptServiceClient,
-		public readonly document: vscode.TextDocument,
+		public readonly document: zycode.TextDocument,
 		public readonly refactor: Proto.ApplicableRefactorInfo,
 		public readonly action: Proto.RefactorActionInfo,
-		public readonly range: vscode.Range,
+		public readonly range: zycode.Range,
 	) {
 		super(action.description, InlinedCodeAction.getKind(action));
 
@@ -369,7 +369,7 @@ class InlinedCodeAction extends vscode.CodeAction {
 		};
 	}
 
-	public async resolve(token: vscode.CancellationToken): Promise<undefined> {
+	public async resolve(token: zycode.CancellationToken): Promise<undefined> {
 		const file = this.client.toOpenTsFilePath(this.document);
 		if (!file) {
 			return;
@@ -388,12 +388,12 @@ class InlinedCodeAction extends vscode.CodeAction {
 
 		this.edit = toWorkspaceEdit(this.client, response.body.edits);
 		if (!this.edit.size) {
-			vscode.window.showErrorMessage(vscode.l10n.t("Could not apply refactoring"));
+			zycode.window.showErrorMessage(zycode.l10n.t("Could not apply refactoring"));
 			return;
 		}
 
 		if (response.body.renameLocation) {
-			// Disable renames in interactive playground https://github.com/microsoft/vscode/issues/75137
+			// Disable renames in interactive playground https://github.com/microsoft/zycode/issues/75137
 			if (this.document.uri.scheme !== fileSchemes.walkThroughSnippet) {
 				this.command = {
 					command: CompositeCommand.ID,
@@ -415,18 +415,18 @@ class InlinedCodeAction extends vscode.CodeAction {
 
 	private static getKind(refactor: Proto.RefactorActionInfo) {
 		if ((refactor as Proto.RefactorActionInfo & { kind?: string }).kind) {
-			return vscode.CodeActionKind.Empty.append((refactor as Proto.RefactorActionInfo & { kind?: string }).kind!);
+			return zycode.CodeActionKind.Empty.append((refactor as Proto.RefactorActionInfo & { kind?: string }).kind!);
 		}
 		const match = allKnownCodeActionKinds.find(kind => kind.matches(refactor));
-		return match ? match.kind : vscode.CodeActionKind.Refactor;
+		return match ? match.kind : zycode.CodeActionKind.Refactor;
 	}
 }
 
-class MoveToFileCodeAction extends vscode.CodeAction {
+class MoveToFileCodeAction extends zycode.CodeAction {
 	constructor(
-		document: vscode.TextDocument,
+		document: zycode.TextDocument,
 		action: Proto.RefactorActionInfo,
-		range: vscode.Range,
+		range: zycode.Range,
 	) {
 		super(action.description, Move_File.kind);
 
@@ -442,13 +442,13 @@ class MoveToFileCodeAction extends vscode.CodeAction {
 	}
 }
 
-class SelectCodeAction extends vscode.CodeAction {
+class SelectCodeAction extends zycode.CodeAction {
 	constructor(
 		info: Proto.ApplicableRefactorInfo,
-		document: vscode.TextDocument,
-		rangeOrSelection: vscode.Range | vscode.Selection
+		document: zycode.TextDocument,
+		rangeOrSelection: zycode.Range | zycode.Selection
 	) {
-		super(info.description, vscode.CodeActionKind.Refactor);
+		super(info.description, zycode.CodeActionKind.Refactor);
 		this.command = {
 			title: info.description,
 			command: SelectRefactorCommand.ID,
@@ -459,7 +459,7 @@ class SelectCodeAction extends vscode.CodeAction {
 
 type TsCodeAction = InlinedCodeAction | MoveToFileCodeAction | SelectCodeAction;
 
-class TypeScriptRefactorProvider implements vscode.CodeActionProvider<TsCodeAction> {
+class TypeScriptRefactorProvider implements zycode.CodeActionProvider<TsCodeAction> {
 
 	constructor(
 		private readonly client: ITypeScriptServiceClient,
@@ -473,27 +473,27 @@ class TypeScriptRefactorProvider implements vscode.CodeActionProvider<TsCodeActi
 		commandManager.register(new MoveToFileRefactorCommand(this.client, didApplyRefactoringCommand));
 	}
 
-	public static readonly metadata: vscode.CodeActionProviderMetadata = {
+	public static readonly metadata: zycode.CodeActionProviderMetadata = {
 		providedCodeActionKinds: [
-			vscode.CodeActionKind.Refactor,
+			zycode.CodeActionKind.Refactor,
 			...allKnownCodeActionKinds.map(x => x.kind),
 		],
 		documentation: [
 			{
-				kind: vscode.CodeActionKind.Refactor,
+				kind: zycode.CodeActionKind.Refactor,
 				command: {
 					command: LearnMoreAboutRefactoringsCommand.id,
-					title: vscode.l10n.t("Learn more about JS/TS refactorings")
+					title: zycode.l10n.t("Learn more about JS/TS refactorings")
 				}
 			}
 		]
 	};
 
 	public async provideCodeActions(
-		document: vscode.TextDocument,
-		rangeOrSelection: vscode.Range | vscode.Selection,
-		context: vscode.CodeActionContext,
-		token: vscode.CancellationToken
+		document: zycode.TextDocument,
+		rangeOrSelection: zycode.Range | zycode.Selection,
+		context: zycode.CodeActionContext,
+		token: zycode.CancellationToken
 	): Promise<TsCodeAction[] | undefined> {
 		if (!this.shouldTrigger(context, rangeOrSelection)) {
 			return undefined;
@@ -540,7 +540,7 @@ class TypeScriptRefactorProvider implements vscode.CodeActionProvider<TsCodeActi
 
 	public async resolveCodeAction(
 		codeAction: TsCodeAction,
-		token: vscode.CancellationToken,
+		token: zycode.CancellationToken,
 	): Promise<TsCodeAction> {
 		if (codeAction instanceof InlinedCodeAction) {
 			await codeAction.resolve(token);
@@ -548,17 +548,17 @@ class TypeScriptRefactorProvider implements vscode.CodeActionProvider<TsCodeActi
 		return codeAction;
 	}
 
-	private toTsTriggerReason(context: vscode.CodeActionContext): Proto.RefactorTriggerReason | undefined {
-		if (context.triggerKind === vscode.CodeActionTriggerKind.Invoke) {
+	private toTsTriggerReason(context: zycode.CodeActionContext): Proto.RefactorTriggerReason | undefined {
+		if (context.triggerKind === zycode.CodeActionTriggerKind.Invoke) {
 			return 'invoked';
 		}
 		return undefined;
 	}
 
 	private *convertApplicableRefactors(
-		document: vscode.TextDocument,
+		document: zycode.TextDocument,
 		refactors: readonly Proto.ApplicableRefactorInfo[],
-		rangeOrSelection: vscode.Range | vscode.Selection
+		rangeOrSelection: zycode.Range | zycode.Selection
 	): Iterable<TsCodeAction> {
 		for (const refactor of refactors) {
 			if (refactor.inlineable === false) {
@@ -572,10 +572,10 @@ class TypeScriptRefactorProvider implements vscode.CodeActionProvider<TsCodeActi
 	}
 
 	private refactorActionToCodeAction(
-		document: vscode.TextDocument,
+		document: zycode.TextDocument,
 		refactor: Proto.ApplicableRefactorInfo,
 		action: Proto.RefactorActionInfo,
-		rangeOrSelection: vscode.Range | vscode.Selection,
+		rangeOrSelection: zycode.Range | zycode.Selection,
 		allActions: readonly Proto.RefactorActionInfo[],
 	): TsCodeAction {
 		let codeAction: TsCodeAction;
@@ -589,14 +589,14 @@ class TypeScriptRefactorProvider implements vscode.CodeActionProvider<TsCodeActi
 		return codeAction;
 	}
 
-	private shouldTrigger(context: vscode.CodeActionContext, rangeOrSelection: vscode.Range | vscode.Selection) {
-		if (context.only && !vscode.CodeActionKind.Refactor.contains(context.only)) {
+	private shouldTrigger(context: zycode.CodeActionContext, rangeOrSelection: zycode.Range | zycode.Selection) {
+		if (context.only && !zycode.CodeActionKind.Refactor.contains(context.only)) {
 			return false;
 		}
-		if (context.triggerKind === vscode.CodeActionTriggerKind.Invoke) {
+		if (context.triggerKind === zycode.CodeActionTriggerKind.Invoke) {
 			return true;
 		}
-		return rangeOrSelection instanceof vscode.Selection;
+		return rangeOrSelection instanceof zycode.Selection;
 	}
 
 	private static isPreferred(
@@ -627,19 +627,19 @@ class TypeScriptRefactorProvider implements vscode.CodeActionProvider<TsCodeActi
 		return false;
 	}
 
-	private appendInvalidActions(actions: vscode.CodeAction[]): vscode.CodeAction[] {
+	private appendInvalidActions(actions: zycode.CodeAction[]): zycode.CodeAction[] {
 		if (this.client.apiVersion.gte(API.v400)) {
 			// Invalid actions come from TS server instead
 			return actions;
 		}
 
 		if (!actions.some(action => action.kind && Extract_Constant.kind.contains(action.kind))) {
-			const disabledAction = new vscode.CodeAction(
-				vscode.l10n.t("Extract to constant"),
+			const disabledAction = new zycode.CodeAction(
+				zycode.l10n.t("Extract to constant"),
 				Extract_Constant.kind);
 
 			disabledAction.disabled = {
-				reason: vscode.l10n.t("The current selection cannot be extracted"),
+				reason: zycode.l10n.t("The current selection cannot be extracted"),
 			};
 			disabledAction.isPreferred = true;
 
@@ -647,27 +647,27 @@ class TypeScriptRefactorProvider implements vscode.CodeActionProvider<TsCodeActi
 		}
 
 		if (!actions.some(action => action.kind && Extract_Function.kind.contains(action.kind))) {
-			const disabledAction = new vscode.CodeAction(
-				vscode.l10n.t("Extract to function"),
+			const disabledAction = new zycode.CodeAction(
+				zycode.l10n.t("Extract to function"),
 				Extract_Function.kind);
 
 			disabledAction.disabled = {
-				reason: vscode.l10n.t("The current selection cannot be extracted"),
+				reason: zycode.l10n.t("The current selection cannot be extracted"),
 			};
 			actions.push(disabledAction);
 		}
 		return actions;
 	}
 
-	private pruneInvalidActions(actions: vscode.CodeAction[], only?: vscode.CodeActionKind, numberOfInvalid?: number): vscode.CodeAction[] {
+	private pruneInvalidActions(actions: zycode.CodeAction[], only?: zycode.CodeActionKind, numberOfInvalid?: number): zycode.CodeAction[] {
 		if (this.client.apiVersion.lt(API.v400)) {
 			// Older TS version don't return extra actions
 			return actions;
 		}
 
-		const availableActions: vscode.CodeAction[] = [];
-		const invalidCommonActions: vscode.CodeAction[] = [];
-		const invalidUncommonActions: vscode.CodeAction[] = [];
+		const availableActions: zycode.CodeAction[] = [];
+		const invalidCommonActions: zycode.CodeAction[] = [];
+		const invalidUncommonActions: zycode.CodeAction[] = [];
 		for (const action of actions) {
 			if (!action.disabled) {
 				availableActions.push(action);
@@ -684,7 +684,7 @@ class TypeScriptRefactorProvider implements vscode.CodeActionProvider<TsCodeActi
 			invalidUncommonActions.push(action);
 		}
 
-		const prioritizedActions: vscode.CodeAction[] = [];
+		const prioritizedActions: zycode.CodeAction[] = [];
 		prioritizedActions.push(...invalidCommonActions);
 		prioritizedActions.push(...invalidUncommonActions);
 		const topNInvalid = prioritizedActions.filter(action => !only || (action.kind && only.contains(action.kind))).slice(0, numberOfInvalid);
@@ -703,7 +703,7 @@ export function register(
 	return conditionalRegistration([
 		requireSomeCapability(client, ClientCapability.Semantic),
 	], () => {
-		return vscode.languages.registerCodeActionsProvider(selector.semantic,
+		return zycode.languages.registerCodeActionsProvider(selector.semantic,
 			new TypeScriptRefactorProvider(client, formattingOptionsManager, commandManager, telemetryReporter),
 			TypeScriptRefactorProvider.metadata);
 	});

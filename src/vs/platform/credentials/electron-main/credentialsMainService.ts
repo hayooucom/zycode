@@ -44,6 +44,6 @@ export class CredentialsNativeMainService extends BaseCredentialsMainService {
 	}
 
 	protected override surfaceKeytarLoadError = (err: any) => {
-		this.windowsMainService.sendToFocused('vscode:showCredentialsError', err.message ?? err);
+		this.windowsMainService.sendToFocused('zycode:showCredentialsError', err.message ?? err);
 	};
 }

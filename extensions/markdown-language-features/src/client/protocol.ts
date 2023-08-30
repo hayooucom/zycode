@@ -4,16 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type Token = require('markdown-it/lib/token');
-import * as vscode from 'vscode';
-import { FileRename, RequestType } from 'vscode-languageclient';
-import type * as lsp from 'vscode-languageserver-types';
-import type * as md from 'vscode-markdown-languageservice';
+import * as zycode from 'zycode';
+import { FileRename, RequestType } from 'zycode-languageclient';
+import type * as lsp from 'zycode-languageserver-types';
+import type * as md from 'zycode-markdown-languageservice';
 
 
 export type ResolvedDocumentLinkTarget =
-	| { readonly kind: 'file'; readonly uri: vscode.Uri; position?: lsp.Position; fragment?: string }
-	| { readonly kind: 'folder'; readonly uri: vscode.Uri }
-	| { readonly kind: 'external'; readonly uri: vscode.Uri };
+	| { readonly kind: 'file'; readonly uri: zycode.Uri; position?: lsp.Position; fragment?: string }
+	| { readonly kind: 'folder'; readonly uri: zycode.Uri }
+	| { readonly kind: 'external'; readonly uri: zycode.Uri };
 
 //#region From server
 export const parse = new RequestType<{ uri: string }, Token[], any>('markdown/parse');

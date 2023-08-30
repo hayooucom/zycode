@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import * as Proto from './tsServer/protocol/protocol';
 import BufferSyncSupport from './tsServer/bufferSyncSupport';
 import { ExecutionTarget } from './tsServer/server';
@@ -97,7 +97,7 @@ export type TypeScriptRequests = StandardTsServerRequests & NoResponseTsServerRe
 export type ExecConfig = {
 	readonly lowPriority?: boolean;
 	readonly nonRecoverable?: boolean;
-	readonly cancelOnResourceChange?: vscode.Uri;
+	readonly cancelOnResourceChange?: zycode.Uri;
 	readonly executionTarget?: ExecutionTarget;
 };
 
@@ -135,37 +135,37 @@ export interface ITypeScriptServiceClient {
 	/**
 	 * Convert a (VS Code) resource to a path that TypeScript server understands.
 	 */
-	toTsFilePath(resource: vscode.Uri): string | undefined;
+	toTsFilePath(resource: zycode.Uri): string | undefined;
 
 	/**
 	 * Convert a path to a resource.
 	 */
-	toResource(filepath: string): vscode.Uri;
+	toResource(filepath: string): zycode.Uri;
 
 	/**
-	 * Tries to ensure that a vscode document is open on the TS server.
+	 * Tries to ensure that a zycode document is open on the TS server.
 	 *
 	 * @return The normalized path or `undefined` if the document is not open on the server.
 	 */
-	toOpenTsFilePath(document: vscode.TextDocument, options?: {
+	toOpenTsFilePath(document: zycode.TextDocument, options?: {
 		suppressAlertOnFailure?: boolean;
 	}): string | undefined;
 
 	/**
 	 * Checks if `resource` has a given capability.
 	 */
-	hasCapabilityForResource(resource: vscode.Uri, capability: ClientCapability): boolean;
+	hasCapabilityForResource(resource: zycode.Uri, capability: ClientCapability): boolean;
 
-	getWorkspaceRootForResource(resource: vscode.Uri): vscode.Uri | undefined;
+	getWorkspaceRootForResource(resource: zycode.Uri): zycode.Uri | undefined;
 
-	readonly onTsServerStarted: vscode.Event<{ version: TypeScriptVersion; usedApiVersion: API }>;
-	readonly onProjectLanguageServiceStateChanged: vscode.Event<Proto.ProjectLanguageServiceStateEventBody>;
-	readonly onDidBeginInstallTypings: vscode.Event<Proto.BeginInstallTypesEventBody>;
-	readonly onDidEndInstallTypings: vscode.Event<Proto.EndInstallTypesEventBody>;
-	readonly onTypesInstallerInitializationFailed: vscode.Event<Proto.TypesInstallerInitializationFailedEventBody>;
+	readonly onTsServerStarted: zycode.Event<{ version: TypeScriptVersion; usedApiVersion: API }>;
+	readonly onProjectLanguageServiceStateChanged: zycode.Event<Proto.ProjectLanguageServiceStateEventBody>;
+	readonly onDidBeginInstallTypings: zycode.Event<Proto.BeginInstallTypesEventBody>;
+	readonly onDidEndInstallTypings: zycode.Event<Proto.EndInstallTypesEventBody>;
+	readonly onTypesInstallerInitializationFailed: zycode.Event<Proto.TypesInstallerInitializationFailedEventBody>;
 
 	readonly capabilities: ClientCapabilities;
-	readonly onDidChangeCapabilities: vscode.Event<void>;
+	readonly onDidChangeCapabilities: zycode.Event<void>;
 
 	onReady(f: () => void): Promise<void>;
 
@@ -181,7 +181,7 @@ export interface ITypeScriptServiceClient {
 	execute<K extends keyof StandardTsServerRequests>(
 		command: K,
 		args: StandardTsServerRequests[K][0],
-		token: vscode.CancellationToken,
+		token: zycode.CancellationToken,
 		config?: ExecConfig
 	): Promise<ServerResponse.Response<StandardTsServerRequests[K][1]>>;
 
@@ -193,7 +193,7 @@ export interface ITypeScriptServiceClient {
 	executeAsync<K extends keyof AsyncTsServerRequests>(
 		command: K,
 		args: AsyncTsServerRequests[K][0],
-		token: vscode.CancellationToken
+		token: zycode.CancellationToken
 	): Promise<ServerResponse.Response<Proto.Response>>;
 
 	/**

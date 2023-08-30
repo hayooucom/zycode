@@ -9,19 +9,19 @@ import {
 	workspace, window, languages, commands, ExtensionContext, extensions, Uri, ColorInformation,
 	Diagnostic, StatusBarAlignment, TextEditor, TextDocument, FormattingOptions, CancellationToken, FoldingRange,
 	ProviderResult, TextEdit, Range, Position, Disposable, CompletionItem, CompletionList, CompletionContext, Hover, MarkdownString, FoldingContext, DocumentSymbol, SymbolInformation, l10n, TextEditorOptions
-} from 'vscode';
+} from 'zycode';
 import {
 	LanguageClientOptions, RequestType, NotificationType, FormattingOptions as LSPFormattingOptions,
 	DidChangeConfigurationNotification, HandleDiagnosticsSignature, ResponseError, DocumentRangeFormattingParams,
 	DocumentRangeFormattingRequest, ProvideCompletionItemsSignature, ProvideHoverSignature, BaseLanguageClient, ProvideFoldingRangeSignature, ProvideDocumentSymbolsSignature, ProvideDocumentColorsSignature
-} from 'vscode-languageclient';
+} from 'zycode-languageclient';
 
 
 import { hash } from './utils/hash';
 import { createDocumentSymbolsLimitItem, createLanguageStatusItem, createLimitStatusItem } from './languageStatus';
 
 namespace VSCodeContentRequest {
-	export const type: RequestType<string, string, any> = new RequestType('vscode/content');
+	export const type: RequestType<string, string, any> = new RequestType('zycode/content');
 }
 
 namespace SchemaContentChangeNotification {
@@ -622,7 +622,7 @@ function getSchemaId(schema: JSONSchemaSettings, settingsLocation?: Uri): string
 	let url = schema.url;
 	if (!url) {
 		if (schema.schema) {
-			url = schema.schema.id || `vscode://schemas/custom/${encodeURIComponent(hash(schema.schema).toString(16))}`;
+			url = schema.schema.id || `zycode://schemas/custom/${encodeURIComponent(hash(schema.schema).toString(16))}`;
 		}
 	} else if (settingsLocation && (url[0] === '.' || url[0] === '/')) {
 		url = Uri.joinPath(settingsLocation, url).toString(false);

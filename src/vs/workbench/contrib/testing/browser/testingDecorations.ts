@@ -575,7 +575,7 @@ const createRunTestDecoration = (tests: readonly IncrementalTestCollectionItem[]
 					const building = hoverMessage = new MarkdownString('', true).appendText(hoverMessageParts.join(', ') + '.');
 					if (testIdWithMessages) {
 						const args = encodeURIComponent(JSON.stringify([testIdWithMessages]));
-						building.appendMarkdown(` [${localize('peekTestOutout', 'Peek Test Output')}](command:vscode.peekTestError?${args})`);
+						building.appendMarkdown(` [${localize('peekTestOutout', 'Peek Test Output')}](command:zycode.peekTestError?${args})`);
 					}
 				}
 
@@ -845,7 +845,7 @@ abstract class RunTestDecoration {
 
 		if (capabilities & TestRunProfileBitset.HasNonDefaultProfile) {
 			testActions.push(new Action('testing.runUsing', localize('testing.runUsing', 'Execute Using Profile...'), undefined, undefined, async () => {
-				const profile: ITestRunProfile | undefined = await this.commandService.executeCommand('vscode.pickTestProfile', { onlyForTest: test });
+				const profile: ITestRunProfile | undefined = await this.commandService.executeCommand('zycode.pickTestProfile', { onlyForTest: test });
 				if (!profile) {
 					return;
 				}
@@ -863,7 +863,7 @@ abstract class RunTestDecoration {
 
 		if (resultItem && isFailedState(resultItem.computedState)) {
 			testActions.push(new Action('testing.gutter.peekFailure', localize('peek failure', 'Peek Error'), undefined, undefined,
-				() => this.commandService.executeCommand('vscode.peekTestError', test.item.extId)));
+				() => this.commandService.executeCommand('zycode.peekTestError', test.item.extId)));
 		}
 
 		testActions.push(new Action('testing.gutter.reveal', localize('reveal test', 'Reveal in Test Explorer'), undefined, undefined,

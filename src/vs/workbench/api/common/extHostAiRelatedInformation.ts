@@ -5,7 +5,7 @@
 
 import { IExtensionDescription } from 'vs/platform/extensions/common/extensions';
 import { ExtHostAiRelatedInformationShape, IMainContext, MainContext, MainThreadAiRelatedInformationShape } from 'vs/workbench/api/common/extHost.protocol';
-import type { CancellationToken, RelatedInformationProvider, RelatedInformationType, RelatedInformationResult } from 'vscode';
+import type { CancellationToken, RelatedInformationProvider, RelatedInformationType, RelatedInformationResult } from 'zycode';
 import { Disposable } from 'vs/workbench/api/common/extHostTypes';
 
 export class ExtHostRelatedInformation implements ExtHostAiRelatedInformationShape {

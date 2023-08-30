@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { MainContext, MainThreadLanguagesShape, IMainContext, ExtHostLanguagesShape } from './extHost.protocol';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ExtHostDocuments } from 'vs/workbench/api/common/extHostDocuments';
 import * as typeConvert from 'vs/workbench/api/common/extHostTypeConverters';
 import { StandardTokenType, Range, Position, LanguageStatusSeverity } from 'vs/workbench/api/common/extHostTypes';
@@ -38,7 +38,7 @@ export class ExtHostLanguages implements ExtHostLanguagesShape {
 		return this._languageIds.slice(0);
 	}
 
-	async changeLanguage(uri: vscode.Uri, languageId: string): Promise<vscode.TextDocument> {
+	async changeLanguage(uri: zycode.Uri, languageId: string): Promise<zycode.TextDocument> {
 		await this._proxy.$changeLanguage(uri, languageId);
 		const data = this._documents.getDocumentData(uri);
 		if (!data) {
@@ -47,7 +47,7 @@ export class ExtHostLanguages implements ExtHostLanguagesShape {
 		return data.document;
 	}
 
-	async tokenAtPosition(document: vscode.TextDocument, position: vscode.Position): Promise<vscode.TokenInformation> {
+	async tokenAtPosition(document: zycode.TextDocument, position: zycode.Position): Promise<zycode.TokenInformation> {
 		const versionNow = document.version;
 		const pos = typeConvert.Position.from(position);
 		const info = await this._proxy.$tokensAtPosition(document.uri, pos);
@@ -77,7 +77,7 @@ export class ExtHostLanguages implements ExtHostLanguagesShape {
 	private _handlePool: number = 0;
 	private _ids = new Set<string>();
 
-	createLanguageStatusItem(extension: IExtensionDescription, id: string, selector: vscode.DocumentSelector): vscode.LanguageStatusItem {
+	createLanguageStatusItem(extension: IExtensionDescription, id: string, selector: zycode.DocumentSelector): zycode.LanguageStatusItem {
 
 		const handle = this._handlePool++;
 		const proxy = this._proxy;
@@ -90,7 +90,7 @@ export class ExtHostLanguages implements ExtHostLanguagesShape {
 		}
 		ids.add(fullyQualifiedId);
 
-		const data: Omit<vscode.LanguageStatusItem, 'dispose'> = {
+		const data: Omit<zycode.LanguageStatusItem, 'dispose'> = {
 			selector,
 			id,
 			name: extension.displayName ?? extension.name,
@@ -129,7 +129,7 @@ export class ExtHostLanguages implements ExtHostLanguagesShape {
 			}, 0);
 		};
 
-		const result: vscode.LanguageStatusItem = {
+		const result: zycode.LanguageStatusItem = {
 			dispose() {
 				commandDisposables.dispose();
 				soonHandle?.dispose();

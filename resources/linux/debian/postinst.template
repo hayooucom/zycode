@@ -30,7 +30,7 @@ if [ "@@NAME@@" != "code-oss" ]; then
 
 	# Register apt repository
 	eval $(apt-config shell APT_SOURCE_PARTS Dir::Etc::sourceparts/d)
-	CODE_SOURCE_PART=${APT_SOURCE_PARTS}vscode.list
+	CODE_SOURCE_PART=${APT_SOURCE_PARTS}zycode.list
 
 	eval $(apt-config shell APT_TRUSTED_PARTS Dir::Etc::trustedparts/d)
 	CODE_TRUSTED_PART=${APT_TRUSTED_PARTS}microsoft.gpg
@@ -40,7 +40,7 @@ if [ "@@NAME@@" != "code-oss" ]; then
 	if [ ! -f $CODE_SOURCE_PART ] && [ ! -f /etc/rpi-issue ]; then
 		# Write source list if it does not exist and we're not running on Raspberry Pi OS
 		WRITE_SOURCE=1
-	elif grep -Eq "http:\/\/packages\.microsoft\.com\/repos\/vscode" $CODE_SOURCE_PART; then
+	elif grep -Eq "http:\/\/packages\.microsoft\.com\/repos\/zycode" $CODE_SOURCE_PART; then
 		# Migrate from old repository
 		WRITE_SOURCE=1
 	elif grep -q "# disabled on upgrade to" $CODE_SOURCE_PART; then

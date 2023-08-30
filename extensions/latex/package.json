@@ -3,10 +3,10 @@
   "displayName": "%displayName%",
   "description": "%description%",
   "version": "1.0.0",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "license": "MIT",
   "engines": {
-    "vscode": "*"
+    "zycode": "*"
   },
   "scripts": {
     "update-grammar": "node ./build/update-grammars.js"
@@ -106,6 +106,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

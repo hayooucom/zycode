@@ -4,7 +4,7 @@
 
 The Markdown language server powers VS Code's built-in markdown support, providing tools for writing and browsing Markdown files. It runs as a separate executable and implements the [language server protocol](https://microsoft.github.io/language-server-protocol/overview).
 
-This server uses the [Markdown Language Service](https://github.com/microsoft/vscode-markdown-languageservice) to implement almost all of the language features. You can use that library if you need a library for working with Markdown instead of a full language server.
+This server uses the [Markdown Language Service](https://github.com/microsoft/zycode-markdown-languageservice) to implement almost all of the language features. You can use that library if you need a library for working with Markdown instead of a full language server.
 
 ## Server capabilities
 
@@ -109,14 +109,14 @@ Get a list of all markdown files in the workspace.
 
 ## Contribute
 
-The source code of the Markdown language server can be found in the [VSCode repository](https://github.com/microsoft/vscode) at [extensions/markdown-language-features/server](https://github.com/microsoft/vscode/tree/master/extensions/markdown-language-features/server).
+The source code of the Markdown language server can be found in the [VSCode repository](https://github.com/microsoft/zycode) at [extensions/markdown-language-features/server](https://github.com/microsoft/zycode/tree/master/extensions/markdown-language-features/server).
 
-File issues and pull requests in the [VSCode GitHub Issues](https://github.com/microsoft/vscode/issues). See the document [How to Contribute](https://github.com/microsoft/vscode/wiki/How-to-Contribute) on how to build and run from source.
+File issues and pull requests in the [VSCode GitHub Issues](https://github.com/microsoft/zycode/issues). See the document [How to Contribute](https://github.com/microsoft/zycode/wiki/How-to-Contribute) on how to build and run from source.
 
 Most of the functionality of the server is located in libraries:
 
-- [vscode-markdown-languageservice](https://github.com/microsoft/vscode-markdown-languageservice) contains the implementation of all features as a reusable library.
-- [vscode-languageserver-node](https://github.com/microsoft/vscode-languageserver-node) contains the implementation of language server for NodeJS.
+- [zycode-markdown-languageservice](https://github.com/microsoft/zycode-markdown-languageservice) contains the implementation of all features as a reusable library.
+- [zycode-languageserver-node](https://github.com/microsoft/zycode-languageserver-node) contains the implementation of language server for NodeJS.
 
 Help on any of these projects is very welcome.
 
@@ -128,4 +128,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-Licensed under the [MIT](https://github.com/microsoft/vscode/blob/master/LICENSE.txt) License.
+Licensed under the [MIT](https://github.com/microsoft/zycode/blob/master/LICENSE.txt) License.

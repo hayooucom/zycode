@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Disposable, Event } from 'vscode';
+import { Disposable, Event } from 'zycode';
 import { RemoteSourcePublisher } from './api/git';
 
 export interface IRemoteSourcePublisherRegistry {

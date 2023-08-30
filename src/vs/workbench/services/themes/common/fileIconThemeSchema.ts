@@ -9,7 +9,7 @@ import { Extensions as JSONExtensions, IJSONContributionRegistry } from 'vs/plat
 import { IJSONSchema } from 'vs/base/common/jsonSchema';
 import { fontWeightRegex, fontStyleRegex, fontSizeRegex, fontIdRegex } from 'vs/workbench/services/themes/common/productIconThemeSchema';
 
-const schemaId = 'vscode://schemas/icon-theme';
+const schemaId = 'zycode://schemas/icon-theme';
 const schema: IJSONSchema = {
 	type: 'object',
 	allowComments: true,

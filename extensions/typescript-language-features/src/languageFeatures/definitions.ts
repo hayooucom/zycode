@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { API } from '../tsServer/api';
 import * as typeConverters from '../typeConverters';
@@ -11,13 +11,13 @@ import { ClientCapability, ITypeScriptServiceClient } from '../typescriptService
 import DefinitionProviderBase from './definitionProviderBase';
 import { conditionalRegistration, requireSomeCapability } from './util/dependentRegistration';
 
-export default class TypeScriptDefinitionProvider extends DefinitionProviderBase implements vscode.DefinitionProvider {
+export default class TypeScriptDefinitionProvider extends DefinitionProviderBase implements zycode.DefinitionProvider {
 
 	public async provideDefinition(
-		document: vscode.TextDocument,
-		position: vscode.Position,
-		token: vscode.CancellationToken
-	): Promise<vscode.DefinitionLink[] | vscode.Definition | undefined> {
+		document: zycode.TextDocument,
+		position: zycode.Position,
+		token: zycode.CancellationToken
+	): Promise<zycode.DefinitionLink[] | zycode.Definition | undefined> {
 		const filepath = this.client.toOpenTsFilePath(document);
 		if (!filepath) {
 			return undefined;
@@ -32,7 +32,7 @@ export default class TypeScriptDefinitionProvider extends DefinitionProviderBase
 		const span = response.body.textSpan ? typeConverters.Range.fromTextSpan(response.body.textSpan) : undefined;
 		let definitions = response.body.definitions;
 
-		if (vscode.workspace.getConfiguration(document.languageId).get('preferGoToSourceDefinition', false) && this.client.apiVersion.gte(API.v470)) {
+		if (zycode.workspace.getConfiguration(document.languageId).get('preferGoToSourceDefinition', false) && this.client.apiVersion.gte(API.v470)) {
 			const sourceDefinitionsResponse = await this.client.execute('findSourceDefinition', args, token);
 			if (sourceDefinitionsResponse.type === 'response' && sourceDefinitionsResponse.body?.length) {
 				definitions = sourceDefinitionsResponse.body;
@@ -40,7 +40,7 @@ export default class TypeScriptDefinitionProvider extends DefinitionProviderBase
 		}
 
 		return definitions
-			.map((location): vscode.DefinitionLink => {
+			.map((location): zycode.DefinitionLink => {
 				const target = typeConverters.Location.fromTextSpan(this.client.toResource(location.file), location);
 				if (location.contextStart && location.contextEnd) {
 					return {
@@ -66,7 +66,7 @@ export function register(
 	return conditionalRegistration([
 		requireSomeCapability(client, ClientCapability.EnhancedSyntax, ClientCapability.Semantic),
 	], () => {
-		return vscode.languages.registerDefinitionProvider(selector.syntax,
+		return zycode.languages.registerDefinitionProvider(selector.syntax,
 			new TypeScriptDefinitionProvider(client));
 	});
 }

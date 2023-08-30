@@ -5,7 +5,7 @@
 
 import type * as nbformat from '@jupyterlab/nbformat';
 import * as assert from 'assert';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { jupyterCellOutputToCellOutput, jupyterNotebookModelToNotebookData } from '../deserializers';
 import { createMarkdownCellFromNotebookCell, getCellMetadata } from '../serializers';
 
@@ -40,12 +40,12 @@ suite('ipynb serializer', () => {
 		const notebook = jupyterNotebookModelToNotebookData({ cells }, 'python');
 		assert.ok(notebook);
 
-		const expectedCodeCell = new vscode.NotebookCellData(vscode.NotebookCellKind.Code, 'print(1)', 'python');
+		const expectedCodeCell = new zycode.NotebookCellData(zycode.NotebookCellKind.Code, 'print(1)', 'python');
 		expectedCodeCell.outputs = [];
 		expectedCodeCell.metadata = { custom: { metadata: {} } };
 		expectedCodeCell.executionSummary = { executionOrder: 10 };
 
-		const expectedMarkdownCell = new vscode.NotebookCellData(vscode.NotebookCellKind.Markup, '# HEAD', 'markdown');
+		const expectedMarkdownCell = new zycode.NotebookCellData(zycode.NotebookCellKind.Markup, '# HEAD', 'markdown');
 		expectedMarkdownCell.outputs = [];
 		expectedMarkdownCell.metadata = {
 			custom: { metadata: {} }
@@ -56,7 +56,7 @@ suite('ipynb serializer', () => {
 
 
 	test('Serialize', async () => {
-		const markdownCell = new vscode.NotebookCellData(vscode.NotebookCellKind.Markup, '# header1', 'markdown');
+		const markdownCell = new zycode.NotebookCellData(zycode.NotebookCellKind.Markup, '# header1', 'markdown');
 		markdownCell.metadata = {
 			attachments: {
 				'image.png': {
@@ -84,7 +84,7 @@ suite('ipynb serializer', () => {
 			}
 		});
 
-		const markdownCell2 = new vscode.NotebookCellData(vscode.NotebookCellKind.Markup, '# header1', 'markdown');
+		const markdownCell2 = new zycode.NotebookCellData(zycode.NotebookCellKind.Markup, '# header1', 'markdown');
 		markdownCell2.metadata = {
 			custom: {
 				id: '123',
@@ -121,7 +121,7 @@ suite('ipynb serializer', () => {
 	suite('Outputs', () => {
 		function validateCellOutputTranslation(
 			outputs: nbformat.IOutput[],
-			expectedOutputs: vscode.NotebookCellOutput[],
+			expectedOutputs: zycode.NotebookCellOutput[],
 			propertiesToExcludeFromComparison: string[] = []
 		) {
 			const cells: nbformat.ICell[] = [
@@ -163,10 +163,10 @@ suite('ipynb serializer', () => {
 					}
 				],
 				[
-					new vscode.NotebookCellOutput([vscode.NotebookCellOutputItem.stderr('Error')], {
+					new zycode.NotebookCellOutput([zycode.NotebookCellOutputItem.stderr('Error')], {
 						outputType: 'stream'
 					}),
-					new vscode.NotebookCellOutput([vscode.NotebookCellOutputItem.stdout('NoError')], {
+					new zycode.NotebookCellOutput([zycode.NotebookCellOutputItem.stdout('NoError')], {
 						outputType: 'stream'
 					})
 				]
@@ -187,7 +187,7 @@ suite('ipynb serializer', () => {
 					}
 				],
 				[
-					new vscode.NotebookCellOutput([vscode.NotebookCellOutputItem.stdout('Line1\n\nLine3\nLine4')], {
+					new zycode.NotebookCellOutput([zycode.NotebookCellOutputItem.stdout('Line1\n\nLine3\nLine4')], {
 						outputType: 'stream'
 					})
 				]
@@ -208,7 +208,7 @@ suite('ipynb serializer', () => {
 					}
 				],
 				[
-					new vscode.NotebookCellOutput([vscode.NotebookCellOutputItem.stdout('Hello\nHello\nHello\nHello\nHello\nHello\n')], {
+					new zycode.NotebookCellOutput([zycode.NotebookCellOutputItem.stdout('Hello\nHello\nHello\nHello\nHello\nHello\n')], {
 						outputType: 'stream'
 					})
 				]
@@ -235,7 +235,7 @@ suite('ipynb serializer', () => {
 					}
 				],
 				[
-					new vscode.NotebookCellOutput([vscode.NotebookCellOutputItem.stdout(['Epoch 1/5\n',
+					new zycode.NotebookCellOutput([zycode.NotebookCellOutputItem.stdout(['Epoch 1/5\n',
 						'...\n',
 						'Epoch 2/5\n',
 						'...\n',
@@ -272,7 +272,7 @@ suite('ipynb serializer', () => {
 					}
 				],
 				[
-					new vscode.NotebookCellOutput([vscode.NotebookCellOutputItem.stderr(['Epoch 1/5\n',
+					new zycode.NotebookCellOutput([zycode.NotebookCellOutputItem.stderr(['Epoch 1/5\n',
 						'...\n',
 						'Epoch 2/5\n',
 						'...\n',
@@ -300,8 +300,8 @@ suite('ipynb serializer', () => {
 					}
 				],
 				[
-					new vscode.NotebookCellOutput(
-						[vscode.NotebookCellOutputItem.stderr('\u001b[K\u001b[33m✅ \u001b[0m Loading\n')],
+					new zycode.NotebookCellOutput(
+						[zycode.NotebookCellOutputItem.stderr('\u001b[K\u001b[33m✅ \u001b[0m Loading\n')],
 						{
 							outputType: 'stream'
 						}
@@ -320,7 +320,7 @@ suite('ipynb serializer', () => {
 					}
 				],
 				[
-					new vscode.NotebookCellOutput([vscode.NotebookCellOutputItem.stderr('1 is < 2')], {
+					new zycode.NotebookCellOutput([zycode.NotebookCellOutputItem.stderr('1 is < 2')], {
 						outputType: 'stream'
 					})
 				]
@@ -337,8 +337,8 @@ suite('ipynb serializer', () => {
 					}
 				],
 				[
-					new vscode.NotebookCellOutput(
-						[vscode.NotebookCellOutputItem.stderr('1 is < 2\u001b[K\u001b[33m✅ \u001b[0m Loading\n')],
+					new zycode.NotebookCellOutput(
+						[zycode.NotebookCellOutputItem.stderr('1 is < 2\u001b[K\u001b[33m✅ \u001b[0m Loading\n')],
 						{
 							outputType: 'stream'
 						}
@@ -358,9 +358,9 @@ suite('ipynb serializer', () => {
 					}
 				],
 				[
-					new vscode.NotebookCellOutput(
+					new zycode.NotebookCellOutput(
 						[
-							vscode.NotebookCellOutputItem.error({
+							zycode.NotebookCellOutputItem.error({
 								name: 'Error Name',
 								message: 'Error Value',
 								stack: ['stack1', 'stack2', 'stack3'].join('\n')
@@ -406,8 +406,8 @@ suite('ipynb serializer', () => {
 							}
 						],
 						[
-							new vscode.NotebookCellOutput(
-								[new vscode.NotebookCellOutputItem(Buffer.from('Hello World!', 'utf8'), 'text/plain')],
+							new zycode.NotebookCellOutput(
+								[new zycode.NotebookCellOutputItem(Buffer.from('Hello World!', 'utf8'), 'text/plain')],
 								{
 									outputType: output_type,
 									metadata: {}, // display_data & execute_result always have metadata.
@@ -433,10 +433,10 @@ suite('ipynb serializer', () => {
 							}
 						],
 						[
-							new vscode.NotebookCellOutput(
+							new zycode.NotebookCellOutput(
 								[
-									new vscode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/png'),
-									new vscode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/jpeg')
+									new zycode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/png'),
+									new zycode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/jpeg')
 								],
 								{
 									executionCount: 1,
@@ -464,8 +464,8 @@ suite('ipynb serializer', () => {
 							}
 						],
 						[
-							new vscode.NotebookCellOutput(
-								[new vscode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/png')],
+							new zycode.NotebookCellOutput(
+								[new zycode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/png')],
 								{
 									executionCount: 1,
 									metadata: {
@@ -494,8 +494,8 @@ suite('ipynb serializer', () => {
 							}
 						],
 						[
-							new vscode.NotebookCellOutput(
-								[new vscode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/png')],
+							new zycode.NotebookCellOutput(
+								[new zycode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/png')],
 								{
 									executionCount: 1,
 									metadata: {
@@ -524,8 +524,8 @@ suite('ipynb serializer', () => {
 							}
 						],
 						[
-							new vscode.NotebookCellOutput(
-								[new vscode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/png')],
+							new zycode.NotebookCellOutput(
+								[new zycode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/png')],
 								{
 									executionCount: 1,
 									metadata: {
@@ -555,8 +555,8 @@ suite('ipynb serializer', () => {
 							}
 						],
 						[
-							new vscode.NotebookCellOutput(
-								[new vscode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/png')],
+							new zycode.NotebookCellOutput(
+								[new zycode.NotebookCellOutputItem(Buffer.from(base64EncodedImage, 'base64'), 'image/png')],
 								{
 									executionCount: 1,
 									metadata: {

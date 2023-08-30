@@ -25,9 +25,9 @@
 }
 
 .monaco-editor .line-numbers {
-	color: var(--vscode-editorLineNumber-foreground);
+	color: var(--zycode-editorLineNumber-foreground);
 }
 
 .monaco-editor .line-numbers.active-line-number {
-	color: var(--vscode-editorLineNumber-activeForeground);
+	color: var(--zycode-editorLineNumber-activeForeground);
 }

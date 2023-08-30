@@ -166,7 +166,7 @@ suite('Editor Side Editing - collapsed selection', () => {
 		);
 	});
 
-	test('issue #15236: Selections broke after deleting text using vscode.TextEditor.edit ', () => {
+	test('issue #15236: Selections broke after deleting text using zycode.TextEditor.edit ', () => {
 		testCommand(
 			[
 				'foofoofoo, foofoofoo, bar'

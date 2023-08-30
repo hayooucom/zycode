@@ -101,7 +101,7 @@ export class AssignmentFilterProvider implements IExperimentationFilterProvider 
 			case Filters.Language:
 				return platform.language;
 			case Filters.ExtensionName:
-				return 'vscode-core'; // always return vscode-core for exp service
+				return 'zycode-core'; // always return zycode-core for exp service
 			case Filters.ExtensionVersion:
 				return '999999.0'; // always return a very large number for cross-extension experimentation
 			case Filters.TargetPopulation:

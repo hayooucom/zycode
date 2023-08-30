@@ -4,8 +4,8 @@
 			"component": {
 				"type": "git",
 				"git": {
-					"name": "jlelong/vscode-latex-basics",
-					"repositoryUrl": "https://github.com/jlelong/vscode-latex-basics",
+					"name": "jlelong/zycode-latex-basics",
+					"repositoryUrl": "https://github.com/jlelong/zycode-latex-basics",
 					"commitHash": "30d04562e592305b6f6d41a539b3ccf326888aaf"
 				}
 			},
@@ -13,7 +13,7 @@
 			"version": "1.5.3",
 			"description": "The files in syntaxes/ were originally part of https://github.com/James-Yu/LaTeX-Workshop. They have been extracted in the hope that they can useful outside of the LaTeX-Workshop extension.",
 			"licenseDetail": [
-				"Copyright (c) vscode-latex-basics authors",
+				"Copyright (c) zycode-latex-basics authors",
 				"",
 				"If not otherwise specified (see below), files in this repository fall under the MIT License",
 				"",

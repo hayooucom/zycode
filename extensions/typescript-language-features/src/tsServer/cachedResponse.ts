@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { ServerResponse } from '../typescriptService';
 import type * as Proto from './protocol/protocol';
 
@@ -23,7 +23,7 @@ export class CachedResponse<T extends Proto.Response> {
 	 * Caller must ensure that all input `resolve` functions return equivilent results (keyed only off of document).
 	 */
 	public execute(
-		document: vscode.TextDocument,
+		document: zycode.TextDocument,
 		resolve: Resolve<T>
 	): Promise<ServerResponse.Response<T>> {
 		if (this.response && this.matches(document)) {
@@ -33,12 +33,12 @@ export class CachedResponse<T extends Proto.Response> {
 		return this.reset(document, resolve);
 	}
 
-	private matches(document: vscode.TextDocument): boolean {
+	private matches(document: zycode.TextDocument): boolean {
 		return this.version === document.version && this.document === document.uri.toString();
 	}
 
 	private async reset(
-		document: vscode.TextDocument,
+		document: zycode.TextDocument,
 		resolve: Resolve<T>
 	): Promise<ServerResponse.Response<T>> {
 		this.version = document.version;

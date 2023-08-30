@@ -346,7 +346,7 @@ export class WebClientServer {
 
 		if (useTestResolver) {
 			const bundledExtensions: { extensionPath: string; packageJSON: IExtensionManifest }[] = [];
-			for (const extensionPath of ['vscode-test-resolver', 'github-authentication']) {
+			for (const extensionPath of ['zycode-test-resolver', 'github-authentication']) {
 				const packageJSON = JSON.parse((await Promises.readFile(FileAccess.asFileUri(`${builtinExtensionsPath}/${extensionPath}/package.json`).fsPath)).toString());
 				bundledExtensions.push({ extensionPath, packageJSON });
 			}
@@ -368,7 +368,7 @@ export class WebClientServer {
 			'media-src \'self\';',
 			`script-src 'self' 'unsafe-eval' ${this._getScriptCspHashes(data).join(' ')} 'sha256-fh3TwPMflhsEIpR8g1OYTIMVWhXTLcjQ9kh2tIpmv54=' ${useTestResolver ? '' : `http://${remoteAuthority}`};`, // the sha is the same as in src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
 			'child-src \'self\';',
-			`frame-src 'self' https://*.vscode-cdn.net data:;`,
+			`frame-src 'self' https://*.zycode-cdn.net data:;`,
 			'worker-src \'self\' data: blob:;',
 			'style-src \'self\' \'unsafe-inline\';',
 			'connect-src \'self\' ws: wss: https:;',

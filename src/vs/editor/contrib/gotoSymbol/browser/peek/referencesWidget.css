@@ -23,8 +23,8 @@
 
 .monaco-editor .reference-zone-widget .ref-tree {
 	line-height: 23px;
-	background-color: var(--vscode-peekViewResult-background);
-	color: var(--vscode-peekViewResult-lineForeground);
+	background-color: var(--zycode-peekViewResult-background);
+	color: var(--zycode-peekViewResult-lineForeground);
 }
 
 .monaco-editor .reference-zone-widget .ref-tree .reference {
@@ -36,7 +36,7 @@
 	display: inline-flex;
 	width: 100%;
 	height: 100%;
-	color: var(--vscode-peekViewResult-fileForeground);
+	color: var(--zycode-peekViewResult-fileForeground);
 }
 
 .monaco-editor .reference-zone-widget .ref-tree .monaco-list:focus .selected .reference-file {
@@ -44,8 +44,8 @@
 }
 
 .monaco-editor .reference-zone-widget .ref-tree .monaco-list:focus .monaco-list-rows > .monaco-list-row.selected:not(.highlighted) {
-	background-color: var(--vscode-peekViewResult-selectionBackground);
-	color: var(--vscode-peekViewResult-selectionForeground) !important;
+	background-color: var(--zycode-peekViewResult-selectionBackground);
+	color: var(--zycode-peekViewResult-selectionForeground) !important;
 }
 
 .monaco-editor .reference-zone-widget .ref-tree .reference-file .count {
@@ -54,22 +54,22 @@
 }
 
 .monaco-editor .reference-zone-widget .ref-tree .referenceMatch .highlight {
-	background-color: var(--vscode-peekViewResult-matchHighlightBackground);
+	background-color: var(--zycode-peekViewResult-matchHighlightBackground);
 }
 
 .monaco-editor .reference-zone-widget .preview .reference-decoration {
-	background-color: var(--vscode-peekViewEditor-matchHighlightBackground);
-	border: 2px solid var(--vscode-peekViewEditor-matchHighlightBorder);
+	background-color: var(--zycode-peekViewEditor-matchHighlightBackground);
+	border: 2px solid var(--zycode-peekViewEditor-matchHighlightBorder);
 	box-sizing: border-box;
 }
 
 .monaco-editor .reference-zone-widget .preview .monaco-editor .monaco-editor-background,
 .monaco-editor .reference-zone-widget .preview .monaco-editor .inputarea.ime-input {
-	background-color: var(--vscode-peekViewEditor-background);
+	background-color: var(--zycode-peekViewEditor-background);
 }
 
 .monaco-editor .reference-zone-widget .preview .monaco-editor .margin {
-	background-color: var(--vscode-peekViewEditorGutter-background);
+	background-color: var(--zycode-peekViewEditorGutter-background);
 }
 
 /* High Contrast Theming */
@@ -81,6 +81,6 @@
 
 .monaco-editor.hc-black .reference-zone-widget .ref-tree .referenceMatch .highlight,
 .monaco-editor.hc-light .reference-zone-widget .ref-tree .referenceMatch .highlight {
-	border: 1px dotted var(--vscode-contrastActiveBorder, transparent);
+	border: 1px dotted var(--zycode-contrastActiveBorder, transparent);
 	box-sizing: border-box;
 }

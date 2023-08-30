@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { getLocation, JSONPath, parse, visit, Location } from 'jsonc-parser';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { SettingsDocument } from './settingsDocumentHelper';
 import { provideInstalledExtensionProposals } from './extensionsProposals';
 import './importExportProfiles';
 
-export function activate(context: vscode.ExtensionContext): void {
+export function activate(context: zycode.ExtensionContext): void {
 	//settings.json suggestions
 	context.subscriptions.push(registerSettingsCompletions());
 
@@ -29,16 +29,16 @@ export function activate(context: vscode.ExtensionContext): void {
 	context.subscriptions.push(registerContextKeyCompletions());
 }
 
-function registerSettingsCompletions(): vscode.Disposable {
-	return vscode.languages.registerCompletionItemProvider({ language: 'jsonc', pattern: '**/settings.json' }, {
+function registerSettingsCompletions(): zycode.Disposable {
+	return zycode.languages.registerCompletionItemProvider({ language: 'jsonc', pattern: '**/settings.json' }, {
 		provideCompletionItems(document, position, token) {
 			return new SettingsDocument(document).provideCompletionItems(position, token);
 		}
 	});
 }
 
-function registerVariableCompletions(pattern: string): vscode.Disposable {
-	return vscode.languages.registerCompletionItemProvider({ language: 'jsonc', pattern }, {
+function registerVariableCompletions(pattern: string): zycode.Disposable {
+	return zycode.languages.registerCompletionItemProvider({ language: 'jsonc', pattern }, {
 		provideCompletionItems(document, position, _token) {
 			const location = getLocation(document.getText(), document.offsetAt(position));
 			if (isCompletingInsidePropertyStringValue(document, location, position)) {
@@ -48,29 +48,29 @@ function registerVariableCompletions(pattern: string): vscode.Disposable {
 
 				let range = document.getWordRangeAtPosition(position, /\$\{[^"\}]*\}?/);
 				if (!range || range.start.isEqual(position) || range.end.isEqual(position) && document.getText(range).endsWith('}')) {
-					range = new vscode.Range(position, position);
+					range = new zycode.Range(position, position);
 				}
 
 				return [
-					{ label: 'workspaceFolder', detail: vscode.l10n.t("The path of the folder opened in VS Code") },
-					{ label: 'workspaceFolderBasename', detail: vscode.l10n.t("The name of the folder opened in VS Code without any slashes (/)") },
-					{ label: 'relativeFile', detail: vscode.l10n.t("The current opened file relative to ${workspaceFolder}") },
-					{ label: 'relativeFileDirname', detail: vscode.l10n.t("The current opened file's dirname relative to ${workspaceFolder}") },
-					{ label: 'file', detail: vscode.l10n.t("The current opened file") },
-					{ label: 'cwd', detail: vscode.l10n.t("The task runner's current working directory on startup") },
-					{ label: 'lineNumber', detail: vscode.l10n.t("The current selected line number in the active file") },
-					{ label: 'selectedText', detail: vscode.l10n.t("The current selected text in the active file") },
-					{ label: 'fileDirname', detail: vscode.l10n.t("The current opened file's dirname") },
-					{ label: 'fileExtname', detail: vscode.l10n.t("The current opened file's extension") },
-					{ label: 'fileBasename', detail: vscode.l10n.t("The current opened file's basename") },
-					{ label: 'fileBasenameNoExtension', detail: vscode.l10n.t("The current opened file's basename with no file extension") },
-					{ label: 'defaultBuildTask', detail: vscode.l10n.t("The name of the default build task. If there is not a single default build task then a quick pick is shown to choose the build task.") },
-					{ label: 'pathSeparator', detail: vscode.l10n.t("The character used by the operating system to separate components in file paths") },
-					{ label: 'extensionInstallFolder', detail: vscode.l10n.t("The path where an an extension is installed."), param: 'publisher.extension' },
+					{ label: 'workspaceFolder', detail: zycode.l10n.t("The path of the folder opened in VS Code") },
+					{ label: 'workspaceFolderBasename', detail: zycode.l10n.t("The name of the folder opened in VS Code without any slashes (/)") },
+					{ label: 'relativeFile', detail: zycode.l10n.t("The current opened file relative to ${workspaceFolder}") },
+					{ label: 'relativeFileDirname', detail: zycode.l10n.t("The current opened file's dirname relative to ${workspaceFolder}") },
+					{ label: 'file', detail: zycode.l10n.t("The current opened file") },
+					{ label: 'cwd', detail: zycode.l10n.t("The task runner's current working directory on startup") },
+					{ label: 'lineNumber', detail: zycode.l10n.t("The current selected line number in the active file") },
+					{ label: 'selectedText', detail: zycode.l10n.t("The current selected text in the active file") },
+					{ label: 'fileDirname', detail: zycode.l10n.t("The current opened file's dirname") },
+					{ label: 'fileExtname', detail: zycode.l10n.t("The current opened file's extension") },
+					{ label: 'fileBasename', detail: zycode.l10n.t("The current opened file's basename") },
+					{ label: 'fileBasenameNoExtension', detail: zycode.l10n.t("The current opened file's basename with no file extension") },
+					{ label: 'defaultBuildTask', detail: zycode.l10n.t("The name of the default build task. If there is not a single default build task then a quick pick is shown to choose the build task.") },
+					{ label: 'pathSeparator', detail: zycode.l10n.t("The character used by the operating system to separate components in file paths") },
+					{ label: 'extensionInstallFolder', detail: zycode.l10n.t("The path where an an extension is installed."), param: 'publisher.extension' },
 				].map(variable => ({
 					label: `\${${variable.label}}`,
 					range,
-					insertText: variable.param ? new vscode.SnippetString(`\${${variable.label}:`).appendPlaceholder(variable.param).appendText('}') : (`\${${variable.label}}`),
+					insertText: variable.param ? new zycode.SnippetString(`\${${variable.label}:`).appendPlaceholder(variable.param).appendText('}') : (`\${${variable.label}}`),
 					detail: variable.detail
 				}));
 			}
@@ -80,7 +80,7 @@ function registerVariableCompletions(pattern: string): vscode.Disposable {
 	});
 }
 
-function isCompletingInsidePropertyStringValue(document: vscode.TextDocument, location: Location, pos: vscode.Position) {
+function isCompletingInsidePropertyStringValue(document: zycode.TextDocument, location: Location, pos: zycode.Position) {
 	if (location.isAtPropertyKey) {
 		return false;
 	}
@@ -100,12 +100,12 @@ interface IExtensionsContent {
 	recommendations: string[];
 }
 
-function registerExtensionsCompletions(): vscode.Disposable[] {
+function registerExtensionsCompletions(): zycode.Disposable[] {
 	return [registerExtensionsCompletionsInExtensionsDocument(), registerExtensionsCompletionsInWorkspaceConfigurationDocument()];
 }
 
-function registerExtensionsCompletionsInExtensionsDocument(): vscode.Disposable {
-	return vscode.languages.registerCompletionItemProvider({ pattern: '**/extensions.json' }, {
+function registerExtensionsCompletionsInExtensionsDocument(): zycode.Disposable {
+	return zycode.languages.registerCompletionItemProvider({ pattern: '**/extensions.json' }, {
 		provideCompletionItems(document, position, _token) {
 			const location = getLocation(document.getText(), document.offsetAt(position));
 			if (location.path[0] === 'recommendations') {
@@ -118,8 +118,8 @@ function registerExtensionsCompletionsInExtensionsDocument(): vscode.Disposable 
 	});
 }
 
-function registerExtensionsCompletionsInWorkspaceConfigurationDocument(): vscode.Disposable {
-	return vscode.languages.registerCompletionItemProvider({ pattern: '**/*.code-workspace' }, {
+function registerExtensionsCompletionsInWorkspaceConfigurationDocument(): zycode.Disposable {
+	return zycode.languages.registerCompletionItemProvider({ pattern: '**/*.code-workspace' }, {
 		provideCompletionItems(document, position, _token) {
 			const location = getLocation(document.getText(), document.offsetAt(position));
 			if (location.path[0] === 'extensions' && location.path[1] === 'recommendations') {
@@ -132,20 +132,20 @@ function registerExtensionsCompletionsInWorkspaceConfigurationDocument(): vscode
 	});
 }
 
-function getReplaceRange(document: vscode.TextDocument, location: Location, position: vscode.Position) {
+function getReplaceRange(document: zycode.TextDocument, location: Location, position: zycode.Position) {
 	const node = location.previousNode;
 	if (node) {
 		const nodeStart = document.positionAt(node.offset), nodeEnd = document.positionAt(node.offset + node.length);
 		if (nodeStart.isBeforeOrEqual(position) && nodeEnd.isAfterOrEqual(position)) {
-			return new vscode.Range(nodeStart, nodeEnd);
+			return new zycode.Range(nodeStart, nodeEnd);
 		}
 	}
-	return new vscode.Range(position, position);
+	return new zycode.Range(position, position);
 }
 
-vscode.languages.registerDocumentSymbolProvider({ pattern: '**/launch.json', language: 'jsonc' }, {
-	provideDocumentSymbols(document: vscode.TextDocument, _token: vscode.CancellationToken): vscode.ProviderResult<vscode.SymbolInformation[]> {
-		const result: vscode.SymbolInformation[] = [];
+zycode.languages.registerDocumentSymbolProvider({ pattern: '**/launch.json', language: 'jsonc' }, {
+	provideDocumentSymbols(document: zycode.TextDocument, _token: zycode.CancellationToken): zycode.ProviderResult<zycode.SymbolInformation[]> {
+		const result: zycode.SymbolInformation[] = [];
 		let name: string = '';
 		let lastProperty = '';
 		let startOffset = 0;
@@ -168,7 +168,7 @@ vscode.languages.registerDocumentSymbolProvider({ pattern: '**/launch.json', lan
 			},
 			onObjectEnd: (offset: number, _length: number) => {
 				if (name && depthInObjects === 2) {
-					result.push(new vscode.SymbolInformation(name, vscode.SymbolKind.Object, new vscode.Range(document.positionAt(startOffset), document.positionAt(offset))));
+					result.push(new zycode.SymbolInformation(name, zycode.SymbolKind.Object, new zycode.Range(document.positionAt(startOffset), document.positionAt(offset))));
 				}
 				depthInObjects--;
 			},
@@ -178,10 +178,10 @@ vscode.languages.registerDocumentSymbolProvider({ pattern: '**/launch.json', lan
 	}
 }, { label: 'Launch Targets' });
 
-function registerContextKeyCompletions(): vscode.Disposable {
+function registerContextKeyCompletions(): zycode.Disposable {
 	type ContextKeyInfo = { key: string; type?: string; description?: string };
 
-	const paths = new Map<vscode.DocumentFilter, JSONPath[]>([
+	const paths = new Map<zycode.DocumentFilter, JSONPath[]>([
 		[{ language: 'jsonc', pattern: '**/keybindings.json' }, [
 			['*', 'when']
 		]],
@@ -194,10 +194,10 @@ function registerContextKeyCompletions(): vscode.Disposable {
 		]]
 	]);
 
-	return vscode.languages.registerCompletionItemProvider(
+	return zycode.languages.registerCompletionItemProvider(
 		[...paths.keys()],
 		{
-			async provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
+			async provideCompletionItems(document: zycode.TextDocument, position: zycode.Position, token: zycode.CancellationToken) {
 
 				const location = getLocation(document.getText(), document.offsetAt(position));
 
@@ -207,7 +207,7 @@ function registerContextKeyCompletions(): vscode.Disposable {
 
 				let isValidLocation = false;
 				for (const [key, value] of paths) {
-					if (vscode.languages.match(key, document)) {
+					if (zycode.languages.match(key, document)) {
 						if (value.some(location.matches.bind(location))) {
 							isValidLocation = true;
 							break;
@@ -219,17 +219,17 @@ function registerContextKeyCompletions(): vscode.Disposable {
 					return;
 				}
 
-				const replacing = document.getWordRangeAtPosition(position, /[a-zA-Z.]+/) || new vscode.Range(position, position);
+				const replacing = document.getWordRangeAtPosition(position, /[a-zA-Z.]+/) || new zycode.Range(position, position);
 				const inserting = replacing.with(undefined, position);
 
-				const data = await vscode.commands.executeCommand<ContextKeyInfo[]>('getContextKeyInfo');
+				const data = await zycode.commands.executeCommand<ContextKeyInfo[]>('getContextKeyInfo');
 				if (token.isCancellationRequested || !data) {
 					return;
 				}
 
-				const result = new vscode.CompletionList();
+				const result = new zycode.CompletionList();
 				for (const item of data) {
-					const completion = new vscode.CompletionItem(item.key, vscode.CompletionItemKind.Constant);
+					const completion = new zycode.CompletionItem(item.key, zycode.CompletionItemKind.Constant);
 					completion.detail = item.type;
 					completion.range = { replacing, inserting };
 					completion.documentation = item.description;

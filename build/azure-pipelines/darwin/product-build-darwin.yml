@@ -26,8 +26,8 @@ steps:
     - task: AzureKeyVault@1
       displayName: "Azure Key Vault: Get Secrets"
       inputs:
-        azureSubscription: "vscode-builds-subscription"
-        KeyVaultName: vscode-build-secrets
+        azureSubscription: "zycode-builds-subscription"
+        KeyVaultName: zycode-build-secrets
         SecretsFilter: "github-distro-mixin-password,macos-developer-certificate,macos-developer-certificate-key"
 
     - task: DownloadPipelineArtifact@2
@@ -116,7 +116,7 @@ steps:
   - ${{ if ne(parameters.VSCODE_QUALITY, 'oss') }}:
     - script: |
         set -e
-        yarn gulp vscode-darwin-$(VSCODE_ARCH)-min-ci
+        yarn gulp zycode-darwin-$(VSCODE_ARCH)-min-ci
         echo "##vso[task.setvariable variable=BUILT_CLIENT]true"
       env:
         GITHUB_TOKEN: "$(github-distro-mixin-password)"
@@ -124,11 +124,11 @@ steps:
 
     - script: |
         set -e
-        yarn gulp vscode-reh-darwin-$(VSCODE_ARCH)-min-ci
-        mv ../vscode-reh-darwin-$(VSCODE_ARCH) ../vscode-server-darwin-$(VSCODE_ARCH) # TODO@joaomoreno
-        ARCHIVE_PATH=".build/darwin/server/vscode-server-darwin-$(VSCODE_ARCH).zip"
+        yarn gulp zycode-reh-darwin-$(VSCODE_ARCH)-min-ci
+        mv ../zycode-reh-darwin-$(VSCODE_ARCH) ../zycode-server-darwin-$(VSCODE_ARCH) # TODO@joaomoreno
+        ARCHIVE_PATH=".build/darwin/server/zycode-server-darwin-$(VSCODE_ARCH).zip"
         mkdir -p $(dirname $ARCHIVE_PATH)
-        (cd .. && zip -Xry $(Build.SourcesDirectory)/$ARCHIVE_PATH vscode-server-darwin-$(VSCODE_ARCH))
+        (cd .. && zip -Xry $(Build.SourcesDirectory)/$ARCHIVE_PATH zycode-server-darwin-$(VSCODE_ARCH))
         echo "##vso[task.setvariable variable=SERVER_PATH]$ARCHIVE_PATH"
       env:
         GITHUB_TOKEN: "$(github-distro-mixin-password)"
@@ -136,11 +136,11 @@ steps:
 
     - script: |
         set -e
-        yarn gulp vscode-reh-web-darwin-$(VSCODE_ARCH)-min-ci
-        mv ../vscode-reh-web-darwin-$(VSCODE_ARCH) ../vscode-server-darwin-$(VSCODE_ARCH)-web # TODO@joaomoreno
-        ARCHIVE_PATH=".build/darwin/server/vscode-server-darwin-$(VSCODE_ARCH)-web.zip"
+        yarn gulp zycode-reh-web-darwin-$(VSCODE_ARCH)-min-ci
+        mv ../zycode-reh-web-darwin-$(VSCODE_ARCH) ../zycode-server-darwin-$(VSCODE_ARCH)-web # TODO@joaomoreno
+        ARCHIVE_PATH=".build/darwin/server/zycode-server-darwin-$(VSCODE_ARCH)-web.zip"
         mkdir -p $(dirname $ARCHIVE_PATH)
-        (cd .. && zip -Xry $(Build.SourcesDirectory)/$ARCHIVE_PATH vscode-server-darwin-$(VSCODE_ARCH)-web)
+        (cd .. && zip -Xry $(Build.SourcesDirectory)/$ARCHIVE_PATH zycode-server-darwin-$(VSCODE_ARCH)-web)
         echo "##vso[task.setvariable variable=WEB_PATH]$ARCHIVE_PATH"
       env:
         GITHUB_TOKEN: "$(github-distro-mixin-password)"
@@ -213,19 +213,19 @@ steps:
       displayName: Generate SBOM (client)
       inputs:
         BuildDropPath: $(agent.builddirectory)/VSCode-darwin-$(VSCODE_ARCH)
-        PackageName: Visual Studio Code
+        PackageName: ZY Studio Code
 
     - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
       displayName: Generate SBOM (server)
       inputs:
-        BuildDropPath: $(agent.builddirectory)/vscode-server-darwin-$(VSCODE_ARCH)
-        PackageName: Visual Studio Code Server
+        BuildDropPath: $(agent.builddirectory)/zycode-server-darwin-$(VSCODE_ARCH)
+        PackageName: ZY Studio Code Server
 
     - publish: $(agent.builddirectory)/VSCode-darwin-$(VSCODE_ARCH)/_manifest
       displayName: Publish SBOM (client)
       artifact: $(ARTIFACT_PREFIX)sbom_client_darwin_$(VSCODE_ARCH)_sbom
 
-    - publish: $(agent.builddirectory)/vscode-server-darwin-$(VSCODE_ARCH)/_manifest
+    - publish: $(agent.builddirectory)/zycode-server-darwin-$(VSCODE_ARCH)/_manifest
       displayName: Publish SBOM (server)
       artifact: $(ARTIFACT_PREFIX)sbom_server_darwin_$(VSCODE_ARCH)_sbom
 

@@ -89,7 +89,7 @@
 		window['MonacoEnvironment'] = {};
 
 		const loaderConfig = {
-			baseUrl: `${bootstrapLib.fileUriFromPath(configuration.appRoot, { isWindows: safeProcess.platform === 'win32', scheme: 'vscode-file', fallbackAuthority: 'vscode-app' })}/out`,
+			baseUrl: `${bootstrapLib.fileUriFromPath(configuration.appRoot, { isWindows: safeProcess.platform === 'win32', scheme: 'zycode-file', fallbackAuthority: 'zycode-app' })}/out`,
 			'vs/nls': nlsConfig,
 			preferScriptTags: true
 		};
@@ -109,8 +109,8 @@
 		// using a fallback such as node.js require which does not exist in sandbox
 		const baseNodeModulesPath = isDev ? '../node_modules' : '../node_modules.asar';
 		loaderConfig.paths = {
-			'vscode-textmate': `${baseNodeModulesPath}/vscode-textmate/release/main.js`,
-			'vscode-oniguruma': `${baseNodeModulesPath}/vscode-oniguruma/release/main.js`,
+			'zycode-textmate': `${baseNodeModulesPath}/zycode-textmate/release/main.js`,
+			'zycode-oniguruma': `${baseNodeModulesPath}/zycode-oniguruma/release/main.js`,
 			'vsda': `${baseNodeModulesPath}/vsda/index.js`,
 			'xterm': `${baseNodeModulesPath}/xterm/lib/xterm.js`,
 			'xterm-addon-canvas': `${baseNodeModulesPath}/xterm-addon-canvas/lib/xterm-addon-canvas.js`,
@@ -119,10 +119,10 @@
 			'xterm-addon-serialize': `${baseNodeModulesPath}/xterm-addon-serialize/lib/xterm-addon-serialize.js`,
 			'xterm-addon-unicode11': `${baseNodeModulesPath}/xterm-addon-unicode11/lib/xterm-addon-unicode11.js`,
 			'xterm-addon-webgl': `${baseNodeModulesPath}/xterm-addon-webgl/lib/xterm-addon-webgl.js`,
-			'@vscode/iconv-lite-umd': `${baseNodeModulesPath}/@vscode/iconv-lite-umd/lib/iconv-lite-umd.js`,
+			'@zycode/iconv-lite-umd': `${baseNodeModulesPath}/@zycode/iconv-lite-umd/lib/iconv-lite-umd.js`,
 			'jschardet': `${baseNodeModulesPath}/jschardet/dist/jschardet.min.js`,
-			'@vscode/vscode-languagedetection': `${baseNodeModulesPath}/@vscode/vscode-languagedetection/dist/lib/index.js`,
-			'vscode-regexp-languagedetection': `${baseNodeModulesPath}/vscode-regexp-languagedetection/dist/index.js`,
+			'@zycode/zycode-languagedetection': `${baseNodeModulesPath}/@zycode/zycode-languagedetection/dist/lib/index.js`,
+			'zycode-regexp-languagedetection': `${baseNodeModulesPath}/zycode-regexp-languagedetection/dist/index.js`,
 			'tas-client-umd': `${baseNodeModulesPath}/tas-client-umd/lib/tas-client-umd.js`
 		};
 
@@ -195,9 +195,9 @@
 		let listener = function (e) {
 			const key = extractKey(e);
 			if (key === TOGGLE_DEV_TOOLS_KB || key === TOGGLE_DEV_TOOLS_KB_ALT) {
-				ipcRenderer.send('vscode:toggleDevTools');
+				ipcRenderer.send('zycode:toggleDevTools');
 			} else if (key === RELOAD_KB && !disallowReloadKeybinding) {
-				ipcRenderer.send('vscode:reloadWindow');
+				ipcRenderer.send('zycode:reloadWindow');
 			}
 		};
 
@@ -218,7 +218,7 @@
 	function onUnexpectedError(error, showDevtoolsOnError) {
 		if (showDevtoolsOnError) {
 			const ipcRenderer = preloadGlobals.ipcRenderer;
-			ipcRenderer.send('vscode:openDevTools');
+			ipcRenderer.send('zycode:openDevTools');
 		}
 
 		console.error(`[uncaught exception]: ${error}`);
@@ -241,7 +241,7 @@
 	 */
 	function sandboxGlobals() {
 		// @ts-ignore (defined in globals.js)
-		return window.vscode;
+		return window.zycode;
 	}
 
 	return {

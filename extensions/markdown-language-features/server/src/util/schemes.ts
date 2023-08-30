@@ -4,5 +4,5 @@
  *--------------------------------------------------------------------------------------------*/
 
 export const Schemes = Object.freeze({
-	notebookCell: 'vscode-notebook-cell',
+	notebookCell: 'zycode-notebook-cell',
 });

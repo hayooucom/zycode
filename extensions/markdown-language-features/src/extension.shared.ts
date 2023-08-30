@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { MdLanguageClient } from './client/client';
 import { CommandManager } from './commandManager';
 import { registerMarkdownCommands } from './commands/index';
@@ -23,7 +23,7 @@ import { loadDefaultTelemetryReporter } from './telemetryReporter';
 import { MdLinkOpener } from './util/openDocumentLink';
 
 export function activateShared(
-	context: vscode.ExtensionContext,
+	context: zycode.ExtensionContext,
 	client: MdLanguageClient,
 	engine: MarkdownItEngine,
 	logger: ILogger,
@@ -44,7 +44,7 @@ export function activateShared(
 	context.subscriptions.push(registerMarkdownLanguageFeatures(client, commandManager));
 	context.subscriptions.push(registerMarkdownCommands(commandManager, previewManager, telemetryReporter, cspArbiter, engine));
 
-	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
+	context.subscriptions.push(zycode.workspace.onDidChangeConfiguration(() => {
 		previewManager.updateConfiguration();
 	}));
 }
@@ -52,9 +52,9 @@ export function activateShared(
 function registerMarkdownLanguageFeatures(
 	client: MdLanguageClient,
 	commandManager: CommandManager,
-): vscode.Disposable {
-	const selector: vscode.DocumentSelector = { language: 'markdown', scheme: '*' };
-	return vscode.Disposable.from(
+): zycode.Disposable {
+	const selector: zycode.DocumentSelector = { language: 'markdown', scheme: '*' };
+	return zycode.Disposable.from(
 		// Language features
 		registerDiagnosticSupport(selector, commandManager),
 		registerDropIntoEditorSupport(selector),

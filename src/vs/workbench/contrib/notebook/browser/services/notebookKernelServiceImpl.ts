@@ -236,7 +236,7 @@ export class NotebookKernelService extends Disposable implements INotebookKernel
 				kernels.push({
 					score,
 					kernel: info.kernel,
-					instanceAffinity: info.notebookPriorities.get(notebook.uri) ?? 1 /* vscode.NotebookControllerPriority.Default */,
+					instanceAffinity: info.notebookPriorities.get(notebook.uri) ?? 1 /* zycode.NotebookControllerPriority.Default */,
 				});
 			}
 		}
@@ -259,7 +259,7 @@ export class NotebookKernelService extends Disposable implements INotebookKernel
 			return info.selected;
 		}
 
-		const preferred = info.all.filter(kernel => this._kernels.get(kernel.id)?.notebookPriorities.get(notebook.uri) === 2 /* vscode.NotebookControllerPriority.Preferred */);
+		const preferred = info.all.filter(kernel => this._kernels.get(kernel.id)?.notebookPriorities.get(notebook.uri) === 2 /* zycode.NotebookControllerPriority.Preferred */);
 		if (preferred.length === 1) {
 			return preferred[0];
 		}

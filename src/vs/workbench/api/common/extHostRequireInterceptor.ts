@@ -8,7 +8,7 @@ import { URI } from 'vs/base/common/uri';
 import { MainThreadTelemetryShape, MainContext } from 'vs/workbench/api/common/extHost.protocol';
 import { ExtHostConfigProvider, IExtHostConfiguration } from 'vs/workbench/api/common/extHostConfiguration';
 import { nullExtensionDescription } from 'vs/workbench/services/extensions/common/extensions';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { ExtensionIdentifierMap } from 'vs/platform/extensions/common/extensions';
 import { IExtensionApiFactory, IExtensionRegistries } from 'vs/workbench/api/common/extHost.api.impl';
 import { IExtHostRpcService } from 'vs/workbench/api/common/extHostRpcService';
@@ -97,8 +97,8 @@ class NodeModuleAliasingModuleFactory implements IAlternativeModuleProvider {
 	 * renamed without breaking extensions. In the form "original -> new name".
 	 */
 	private static readonly aliased: ReadonlyMap<string, string> = new Map([
-		['vscode-ripgrep', '@vscode/ripgrep'],
-		['vscode-windows-registry', '@vscode/windows-registry'],
+		['zycode-ripgrep', '@zycode/ripgrep'],
+		['zycode-windows-registry', '@zycode/windows-registry'],
 	]);
 
 	private readonly re?: RegExp;
@@ -108,7 +108,7 @@ class NodeModuleAliasingModuleFactory implements IAlternativeModuleProvider {
 			const root = escapeRegExpCharacters(this.forceForwardSlashes(initData.environment.appRoot.fsPath));
 			// decompose ${appRoot}/node_modules/foo/bin to ['${appRoot}/node_modules/', 'foo', '/bin'],
 			// and likewise the more complex form ${appRoot}/node_modules.asar.unpacked/@vcode/foo/bin
-			// to ['${appRoot}/node_modules.asar.unpacked/',' @vscode/foo', '/bin'].
+			// to ['${appRoot}/node_modules.asar.unpacked/',' @zycode/foo', '/bin'].
 			const npmIdChrs = `[a-z0-9_.-]`;
 			const npmModuleName = `@${npmIdChrs}+\\/${npmIdChrs}+|${npmIdChrs}+`;
 			const moduleFolders = 'node_modules|node_modules\\.asar(?:\\.unpacked)?';
@@ -144,13 +144,13 @@ class NodeModuleAliasingModuleFactory implements IAlternativeModuleProvider {
 
 //#endregion
 
-//#region --- vscode-module
+//#region --- zycode-module
 
 class VSCodeNodeModuleFactory implements INodeModuleFactory {
-	public readonly nodeModuleName = 'vscode';
+	public readonly nodeModuleName = 'zycode';
 
-	private readonly _extApiImpl = new ExtensionIdentifierMap<typeof vscode>();
-	private _defaultApiImpl?: typeof vscode;
+	private readonly _extApiImpl = new ExtensionIdentifierMap<typeof zycode>();
+	private _defaultApiImpl?: typeof zycode;
 
 	constructor(
 		private readonly _apiFactory: IExtensionApiFactory,
@@ -178,7 +178,7 @@ class VSCodeNodeModuleFactory implements INodeModuleFactory {
 		if (!this._defaultApiImpl) {
 			let extensionPathsPretty = '';
 			this._extensionPaths.forEach((value, index) => extensionPathsPretty += `\t${index} -> ${value.identifier.value}\n`);
-			this._logService.warn(`Could not identify extension for 'vscode' require call from ${parent}. These are the extension path mappings: \n${extensionPathsPretty}`);
+			this._logService.warn(`Could not identify extension for 'zycode' require call from ${parent}. These are the extension path mappings: \n${extensionPathsPretty}`);
 			this._defaultApiImpl = this._apiFactory(nullExtensionDescription, this._extensionRegistry, this._configProvider);
 		}
 		return this._defaultApiImpl;

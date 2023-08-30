@@ -3,22 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import type * as Proto from '../tsServer/protocol/protocol';
 import * as typeConverters from '../typeConverters';
 import { ITypeScriptServiceClient } from '../typescriptService';
 
-class TypeScriptDocumentHighlightProvider implements vscode.DocumentHighlightProvider {
+class TypeScriptDocumentHighlightProvider implements zycode.DocumentHighlightProvider {
 	public constructor(
 		private readonly client: ITypeScriptServiceClient
 	) { }
 
 	public async provideDocumentHighlights(
-		document: vscode.TextDocument,
-		position: vscode.Position,
-		token: vscode.CancellationToken
-	): Promise<vscode.DocumentHighlight[]> {
+		document: zycode.TextDocument,
+		position: zycode.Position,
+		token: zycode.CancellationToken
+	): Promise<zycode.DocumentHighlight[]> {
 		const file = this.client.toOpenTsFilePath(document);
 		if (!file) {
 			return [];
@@ -37,17 +37,17 @@ class TypeScriptDocumentHighlightProvider implements vscode.DocumentHighlightPro
 	}
 }
 
-function convertDocumentHighlight(highlight: Proto.DocumentHighlightsItem): ReadonlyArray<vscode.DocumentHighlight> {
+function convertDocumentHighlight(highlight: Proto.DocumentHighlightsItem): ReadonlyArray<zycode.DocumentHighlight> {
 	return highlight.highlightSpans.map(span =>
-		new vscode.DocumentHighlight(
+		new zycode.DocumentHighlight(
 			typeConverters.Range.fromTextSpan(span),
-			span.kind === 'writtenReference' ? vscode.DocumentHighlightKind.Write : vscode.DocumentHighlightKind.Read));
+			span.kind === 'writtenReference' ? zycode.DocumentHighlightKind.Write : zycode.DocumentHighlightKind.Read));
 }
 
 export function register(
 	selector: DocumentSelector,
 	client: ITypeScriptServiceClient,
 ) {
-	return vscode.languages.registerDocumentHighlightProvider(selector.syntax,
+	return zycode.languages.registerDocumentHighlightProvider(selector.syntax,
 		new TypeScriptDocumentHighlightProvider(client));
 }

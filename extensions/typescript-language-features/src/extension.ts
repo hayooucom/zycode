@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import VsCodeTelemetryReporter from '@vscode/extension-telemetry';
+import VsCodeTelemetryReporter from '@zycode/extension-telemetry';
 import * as fs from 'fs';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Api, getExtensionApi } from './api';
 import { CommandManager } from './commands/commandManager';
 import { registerBaseCommands } from './commands/index';
@@ -25,7 +25,7 @@ import { PluginManager } from './tsServer/plugins';
 import * as temp from './utils/temp.electron';
 
 export function activate(
-	context: vscode.ExtensionContext
+	context: zycode.ExtensionContext
 ): Api {
 	const pluginManager = new PluginManager();
 	context.subscriptions.push(pluginManager);
@@ -33,7 +33,7 @@ export function activate(
 	const commandManager = new CommandManager();
 	context.subscriptions.push(commandManager);
 
-	const onCompletionAccepted = new vscode.EventEmitter<vscode.CompletionItem>();
+	const onCompletionAccepted = new zycode.EventEmitter<zycode.CompletionItem>();
 	context.subscriptions.push(onCompletionAccepted);
 
 	const logDirectoryProvider = new NodeLogDirectoryProvider(context);

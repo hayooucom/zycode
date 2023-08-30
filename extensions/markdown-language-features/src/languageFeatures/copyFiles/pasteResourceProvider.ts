@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Mime, mediaMimes } from '../../util/mimes';
 import { Schemes } from '../../util/schemes';
 import { PasteUrlAsFormattedLink, createEditAddingLinksForUriList, createEditForMediaFiles, getPasteUrlAsFormattedLinkSetting } from './shared';
 
-class PasteResourceEditProvider implements vscode.DocumentPasteEditProvider {
+class PasteResourceEditProvider implements zycode.DocumentPasteEditProvider {
 
 	public static readonly id = 'insertLink';
 
@@ -19,16 +19,16 @@ class PasteResourceEditProvider implements vscode.DocumentPasteEditProvider {
 
 	private readonly _yieldTo = [
 		{ mimeType: 'text/plain' },
-		{ extensionId: 'vscode.ipynb', providerId: 'insertAttachment' },
+		{ extensionId: 'zycode.ipynb', providerId: 'insertAttachment' },
 	];
 
 	async provideDocumentPasteEdits(
-		document: vscode.TextDocument,
-		ranges: readonly vscode.Range[],
-		dataTransfer: vscode.DataTransfer,
-		token: vscode.CancellationToken,
-	): Promise<vscode.DocumentPasteEdit | undefined> {
-		const enabled = vscode.workspace.getConfiguration('markdown', document).get('editor.filePaste.enabled', true);
+		document: zycode.TextDocument,
+		ranges: readonly zycode.Range[],
+		dataTransfer: zycode.DataTransfer,
+		token: zycode.CancellationToken,
+	): Promise<zycode.DocumentPasteEdit | undefined> {
+		const enabled = zycode.workspace.getConfiguration('markdown', document).get('editor.filePaste.enabled', true);
 		if (!enabled) {
 			return;
 		}
@@ -45,7 +45,7 @@ class PasteResourceEditProvider implements vscode.DocumentPasteEditProvider {
 		return this._getUriListEdit(document, ranges, dataTransfer, token);
 	}
 
-	private async _getUriListEdit(document: vscode.TextDocument, ranges: readonly vscode.Range[], dataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): Promise<vscode.DocumentPasteEdit | undefined> {
+	private async _getUriListEdit(document: zycode.TextDocument, ranges: readonly zycode.Range[], dataTransfer: zycode.DataTransfer, token: zycode.CancellationToken): Promise<zycode.DocumentPasteEdit | undefined> {
 		const uriList = await dataTransfer.get(Mime.textUriList)?.asString();
 		if (!uriList || token.isCancellationRequested) {
 			return;
@@ -57,18 +57,18 @@ class PasteResourceEditProvider implements vscode.DocumentPasteEditProvider {
 			return;
 		}
 
-		const uriEdit = new vscode.DocumentPasteEdit('', pasteEdit.label);
+		const uriEdit = new zycode.DocumentPasteEdit('', pasteEdit.label);
 		uriEdit.additionalEdit = pasteEdit.additionalEdits;
 		uriEdit.yieldTo = this._yieldTo;
 		return uriEdit;
 	}
 
-	private async _getMediaFilesEdit(document: vscode.TextDocument, dataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): Promise<vscode.DocumentPasteEdit | undefined> {
+	private async _getMediaFilesEdit(document: zycode.TextDocument, dataTransfer: zycode.DataTransfer, token: zycode.CancellationToken): Promise<zycode.DocumentPasteEdit | undefined> {
 		if (document.uri.scheme === Schemes.untitled) {
 			return;
 		}
 
-		const copyFilesIntoWorkspace = vscode.workspace.getConfiguration('markdown', document).get<'mediaFiles' | 'never'>('editor.filePaste.copyIntoWorkspace', 'mediaFiles');
+		const copyFilesIntoWorkspace = zycode.workspace.getConfiguration('markdown', document).get<'mediaFiles' | 'never'>('editor.filePaste.copyIntoWorkspace', 'mediaFiles');
 		if (copyFilesIntoWorkspace === 'never') {
 			return;
 		}
@@ -78,13 +78,13 @@ class PasteResourceEditProvider implements vscode.DocumentPasteEditProvider {
 			return;
 		}
 
-		const pasteEdit = new vscode.DocumentPasteEdit(edit.snippet, edit.label);
+		const pasteEdit = new zycode.DocumentPasteEdit(edit.snippet, edit.label);
 		pasteEdit.additionalEdit = edit.additionalEdits;
 		pasteEdit.yieldTo = this._yieldTo;
 		return pasteEdit;
 	}
 }
 
-export function registerPasteSupport(selector: vscode.DocumentSelector,) {
-	return vscode.languages.registerDocumentPasteEditProvider(selector, new PasteResourceEditProvider(), PasteResourceEditProvider);
+export function registerPasteSupport(selector: zycode.DocumentSelector,) {
+	return zycode.languages.registerDocumentPasteEditProvider(selector, new PasteResourceEditProvider(), PasteResourceEditProvider);
 }

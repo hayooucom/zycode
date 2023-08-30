@@ -23,9 +23,9 @@
 }
 
 .settings-editor > .settings-body .settings-tree-container .setting-item-bool .setting-value-checkbox {
-	background-color: var(--vscode-settings-checkboxBackground) !important;
-	color: var(--vscode-settings-checkboxForeground) !important;
-	border-color: var(--vscode-settings-checkboxBorder) !important;
+	background-color: var(--zycode-settings-checkboxBackground) !important;
+	color: var(--zycode-settings-checkboxForeground) !important;
+	border-color: var(--zycode-settings-checkboxBorder) !important;
 }
 .settings-editor > .settings-body .settings-tree-container .setting-item-bool .setting-list-object-input-key-checkbox {
 	margin-left: 4px;
@@ -97,23 +97,23 @@
 	display: flex;
 }
 .settings-editor > .settings-body .settings-tree-container .setting-item.setting-item-list .setting-list-row:hover {
-	background-color: var(--vscode-list-hoverBackground);
-	color: var(--vscode-list-hoverForeground);
+	background-color: var(--zycode-list-hoverBackground);
+	color: var(--zycode-list-hoverForeground);
 }
 .settings-editor > .settings-body .settings-tree-container .setting-item.setting-item-list .setting-list-row.selected:focus {
-	background-color: var(--vscode-list-activeSelectionBackground);
-	color: var(--vscode-list-activeSelectionForeground);
+	background-color: var(--zycode-list-activeSelectionBackground);
+	color: var(--zycode-list-activeSelectionForeground);
 }
 .settings-editor > .settings-body .settings-tree-container .setting-item.setting-item-list .setting-list-row.selected:not(:focus) {
-	background-color: var(--vscode-list-inactiveSelectionBackground);
-	color: var(--vscode-list-inactiveSelectionForeground);
+	background-color: var(--zycode-list-inactiveSelectionBackground);
+	color: var(--zycode-list-inactiveSelectionForeground);
 }
 .settings-editor > .settings-body .settings-tree-container .setting-item.setting-item-list .setting-list-row.draggable {
 	cursor: pointer;
 	user-select: none;
 }
 .settings-editor > .settings-body .settings-tree-container .setting-item.setting-item-list .setting-list-row.drag-hover {
-	background-color: var(--vscode-list-dropBackground);
+	background-color: var(--zycode-list-dropBackground);
 }
 .settings-editor > .settings-body .settings-tree-container .setting-item.setting-item-list .setting-list-row.drag-hover * {
 	pointer-events: none;

@@ -7,16 +7,16 @@ import { createPrivateApiFor, getPrivateApiFor, IExtHostTestItemApi } from 'vs/w
 import { TestId, TestIdPathParts } from 'vs/workbench/contrib/testing/common/testId';
 import { createTestItemChildren, ExtHostTestItemEvent, ITestChildrenLike, ITestItemApi, ITestItemChildren, TestItemCollection, TestItemEventOp } from 'vs/workbench/contrib/testing/common/testItemCollection';
 import { denamespaceTestTag, ITestItem, ITestItemContext } from 'vs/workbench/contrib/testing/common/testTypes';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as Convert from 'vs/workbench/api/common/extHostTypeConverters';
 import { URI } from 'vs/base/common/uri';
 import { ExtHostDocumentsAndEditors } from 'vs/workbench/api/common/extHostDocumentsAndEditors';
 
-const testItemPropAccessor = <K extends keyof vscode.TestItem>(
+const testItemPropAccessor = <K extends keyof zycode.TestItem>(
 	api: IExtHostTestItemApi,
-	defaultValue: vscode.TestItem[K],
-	equals: (a: vscode.TestItem[K], b: vscode.TestItem[K]) => boolean,
-	toUpdate: (newValue: vscode.TestItem[K], oldValue: vscode.TestItem[K]) => ExtHostTestItemEvent,
+	defaultValue: zycode.TestItem[K],
+	equals: (a: zycode.TestItem[K], b: zycode.TestItem[K]) => boolean,
+	toUpdate: (newValue: zycode.TestItem[K], oldValue: zycode.TestItem[K]) => ExtHostTestItemEvent,
 ) => {
 	let value = defaultValue;
 	return {
@@ -25,7 +25,7 @@ const testItemPropAccessor = <K extends keyof vscode.TestItem>(
 		get() {
 			return value;
 		},
-		set(newValue: vscode.TestItem[K]) {
+		set(newValue: zycode.TestItem[K]) {
 			if (!equals(value, newValue)) {
 				const oldValue = value;
 				value = newValue;
@@ -35,11 +35,11 @@ const testItemPropAccessor = <K extends keyof vscode.TestItem>(
 	};
 };
 
-type WritableProps = Pick<vscode.TestItem, 'range' | 'label' | 'description' | 'sortText' | 'canResolveChildren' | 'busy' | 'error' | 'tags'>;
+type WritableProps = Pick<zycode.TestItem, 'range' | 'label' | 'description' | 'sortText' | 'canResolveChildren' | 'busy' | 'error' | 'tags'>;
 
 const strictEqualComparator = <T>(a: T, b: T) => a === b;
 
-const propComparators: { [K in keyof Required<WritableProps>]: (a: vscode.TestItem[K], b: vscode.TestItem[K]) => boolean } = {
+const propComparators: { [K in keyof Required<WritableProps>]: (a: zycode.TestItem[K], b: zycode.TestItem[K]) => boolean } = {
 	range: (a, b) => {
 		if (a === b) { return true; }
 		if (!a || !b) { return false; }
@@ -69,15 +69,15 @@ const evSetProps = <T>(fn: (newValue: T) => Partial<ITestItem>): (newValue: T) =
 
 const makePropDescriptors = (api: IExtHostTestItemApi, label: string): { [K in keyof Required<WritableProps>]: PropertyDescriptor } => ({
 	range: (() => {
-		let value: vscode.Range | undefined;
-		const updateProps = evSetProps<vscode.Range | undefined>(r => ({ range: editorRange.Range.lift(Convert.Range.from(r)) }));
+		let value: zycode.Range | undefined;
+		const updateProps = evSetProps<zycode.Range | undefined>(r => ({ range: editorRange.Range.lift(Convert.Range.from(r)) }));
 		return {
 			enumerable: true,
 			configurable: false,
 			get() {
 				return value;
 			},
-			set(newValue: vscode.Range | undefined) {
+			set(newValue: zycode.Range | undefined) {
 				api.listener?.({ op: TestItemEventOp.DocumentSynced });
 				if (!propComparators.range(value, newValue)) {
 					value = newValue;
@@ -123,25 +123,25 @@ export const toItemFromContext = (context: ITestItemContext): TestItemImpl => {
 	return node!;
 };
 
-export class TestItemImpl implements vscode.TestItem {
+export class TestItemImpl implements zycode.TestItem {
 	public readonly id!: string;
-	public readonly uri!: vscode.Uri | undefined;
-	public readonly children!: ITestItemChildren<vscode.TestItem>;
+	public readonly uri!: zycode.Uri | undefined;
+	public readonly children!: ITestItemChildren<zycode.TestItem>;
 	public readonly parent!: TestItemImpl | undefined;
 
-	public range!: vscode.Range | undefined;
+	public range!: zycode.Range | undefined;
 	public description!: string | undefined;
 	public sortText!: string | undefined;
 	public label!: string;
-	public error!: string | vscode.MarkdownString;
+	public error!: string | zycode.MarkdownString;
 	public busy!: boolean;
 	public canResolveChildren!: boolean;
-	public tags!: readonly vscode.TestTag[];
+	public tags!: readonly zycode.TestTag[];
 
 	/**
 	 * Note that data is deprecated and here for back-compat only
 	 */
-	constructor(controllerId: string, id: string, label: string, uri: vscode.Uri | undefined) {
+	constructor(controllerId: string, id: string, label: string, uri: zycode.Uri | undefined) {
 		if (id.includes(TestIdPathParts.Delimiter)) {
 			throw new Error(`Test IDs may not include the ${JSON.stringify(id)} symbol`);
 		}

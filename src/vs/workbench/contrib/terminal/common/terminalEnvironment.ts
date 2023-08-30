@@ -59,7 +59,7 @@ function _mergeEnvironmentValue(env: ITerminalEnvironment, key: string, value: s
 }
 
 export function addTerminalEnvironmentKeys(env: IProcessEnvironment, version: string | undefined, locale: string | undefined, detectLocale: 'auto' | 'off' | 'on'): void {
-	env['TERM_PROGRAM'] = 'vscode';
+	env['TERM_PROGRAM'] = 'zycode';
 	if (version) {
 		env['TERM_PROGRAM_VERSION'] = version;
 	}

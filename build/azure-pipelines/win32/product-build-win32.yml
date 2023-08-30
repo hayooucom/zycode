@@ -33,8 +33,8 @@ steps:
     - task: AzureKeyVault@1
       displayName: "Azure Key Vault: Get Secrets"
       inputs:
-        azureSubscription: "vscode-builds-subscription"
-        KeyVaultName: vscode-build-secrets
+        azureSubscription: "zycode-builds-subscription"
+        KeyVaultName: zycode-build-secrets
         SecretsFilter: "github-distro-mixin-password,ESRP-PKI,esrp-aad-username,esrp-aad-password"
 
     - task: DownloadPipelineArtifact@2
@@ -97,7 +97,7 @@ steps:
       $ErrorActionPreference = "Stop"
       # TODO: Should be replaced with upstream URL once https://github.com/nodejs/node-gyp/pull/2825
       # gets merged.
-      exec { git config --global user.email "vscode@microsoft.com" } "git config user.email failed"
+      exec { git config --global user.email "zycode@microsoft.com" } "git config user.email failed"
       exec { git config --global user.name "VSCode" } "git config user.name failed"
       exec { git clone https://github.com/nodejs/node-gyp.git . } "Cloning nodejs/node-gyp failed"
       exec { git checkout v9.4.0 } "Checking out v9.4.0 failed"
@@ -161,8 +161,8 @@ steps:
     - powershell: |
         . build/azure-pipelines/win32/exec.ps1
         $ErrorActionPreference = "Stop"
-        exec { yarn gulp "vscode-win32-$(VSCODE_ARCH)-min-ci" }
-        exec { yarn gulp "vscode-win32-$(VSCODE_ARCH)-inno-updater" }
+        exec { yarn gulp "zycode-win32-$(VSCODE_ARCH)-min-ci" }
+        exec { yarn gulp "zycode-win32-$(VSCODE_ARCH)-inno-updater" }
         echo "##vso[task.setvariable variable=BUILT_CLIENT]true"
         echo "##vso[task.setvariable variable=CodeSigningFolderPath]$(agent.builddirectory)/VSCode-win32-$(VSCODE_ARCH)"
       env:
@@ -172,10 +172,10 @@ steps:
     - powershell: |
         . build/azure-pipelines/win32/exec.ps1
         $ErrorActionPreference = "Stop"
-        exec { yarn gulp "vscode-reh-win32-$(VSCODE_ARCH)-min-ci" }
-        mv ..\vscode-reh-win32-$(VSCODE_ARCH) ..\vscode-server-win32-$(VSCODE_ARCH) # TODO@joaomoreno
+        exec { yarn gulp "zycode-reh-win32-$(VSCODE_ARCH)-min-ci" }
+        mv ..\zycode-reh-win32-$(VSCODE_ARCH) ..\zycode-server-win32-$(VSCODE_ARCH) # TODO@joaomoreno
         echo "##vso[task.setvariable variable=BUILT_SERVER]true"
-        echo "##vso[task.setvariable variable=CodeSigningFolderPath]$(CodeSigningFolderPath),$(agent.builddirectory)/vscode-server-win32-$(VSCODE_ARCH)"
+        echo "##vso[task.setvariable variable=CodeSigningFolderPath]$(CodeSigningFolderPath),$(agent.builddirectory)/zycode-server-win32-$(VSCODE_ARCH)"
       env:
         GITHUB_TOKEN: "$(github-distro-mixin-password)"
       displayName: Build server
@@ -184,8 +184,8 @@ steps:
     - powershell: |
         . build/azure-pipelines/win32/exec.ps1
         $ErrorActionPreference = "Stop"
-        exec { yarn gulp "vscode-reh-web-win32-$(VSCODE_ARCH)-min-ci" }
-        mv ..\vscode-reh-web-win32-$(VSCODE_ARCH) ..\vscode-server-win32-$(VSCODE_ARCH)-web # TODO@joaomoreno
+        exec { yarn gulp "zycode-reh-web-win32-$(VSCODE_ARCH)-min-ci" }
+        mv ..\zycode-reh-web-win32-$(VSCODE_ARCH) ..\zycode-server-win32-$(VSCODE_ARCH)-web # TODO@joaomoreno
         echo "##vso[task.setvariable variable=BUILT_WEB]true"
       env:
         GITHUB_TOKEN: "$(github-distro-mixin-password)"
@@ -267,9 +267,9 @@ steps:
       - powershell: |
           . build/azure-pipelines/win32/exec.ps1
           $ErrorActionPreference = "Stop"
-          $ArchivePath = ".build\win32-$(VSCODE_ARCH)\vscode-server-win32-$(VSCODE_ARCH).zip"
+          $ArchivePath = ".build\win32-$(VSCODE_ARCH)\zycode-server-win32-$(VSCODE_ARCH).zip"
           New-Item -ItemType Directory -Path .build\win32-$(VSCODE_ARCH) -Force
-          exec { 7z.exe a -tzip $ArchivePath ..\vscode-server-win32-$(VSCODE_ARCH) -r }
+          exec { 7z.exe a -tzip $ArchivePath ..\zycode-server-win32-$(VSCODE_ARCH) -r }
           echo "##vso[task.setvariable variable=SERVER_PATH]$ArchivePath"
         condition: and(succeededOrFailed(), eq(variables['BUILT_SERVER'], 'true'))
         displayName: Package server
@@ -277,9 +277,9 @@ steps:
       - powershell: |
           . build/azure-pipelines/win32/exec.ps1
           $ErrorActionPreference = "Stop"
-          $ArchivePath = ".build\win32-$(VSCODE_ARCH)\vscode-server-win32-$(VSCODE_ARCH)-web.zip"
+          $ArchivePath = ".build\win32-$(VSCODE_ARCH)\zycode-server-win32-$(VSCODE_ARCH)-web.zip"
           New-Item -ItemType Directory -Path .build\win32-$(VSCODE_ARCH) -Force
-          exec { 7z.exe a -tzip $ArchivePath ..\vscode-server-win32-$(VSCODE_ARCH)-web -r }
+          exec { 7z.exe a -tzip $ArchivePath ..\zycode-server-win32-$(VSCODE_ARCH)-web -r }
           echo "##vso[task.setvariable variable=WEB_PATH]$ArchivePath"
         condition: and(succeededOrFailed(), eq(variables['BUILT_WEB'], 'true'))
         displayName: Package server (web)
@@ -290,7 +290,7 @@ steps:
           $env:ESRPPKI = "$(ESRP-PKI)"
           $env:ESRPAADUsername = "$(esrp-aad-username)"
           $env:ESRPAADPassword = "$(esrp-aad-password)"
-          exec { yarn gulp "vscode-win32-$(VSCODE_ARCH)-system-setup" --sign }
+          exec { yarn gulp "zycode-win32-$(VSCODE_ARCH)-system-setup" --sign }
           $SetupPath = ".build\win32-$(VSCODE_ARCH)\system-setup\VSCodeSetup-$(VSCODE_ARCH)-$(VSCODE_VERSION).exe"
           mv .build\win32-$(VSCODE_ARCH)\system-setup\VSCodeSetup.exe $SetupPath
           echo "##vso[task.setvariable variable=SYSTEM_SETUP_PATH]$SetupPath"
@@ -302,7 +302,7 @@ steps:
           $env:ESRPPKI = "$(ESRP-PKI)"
           $env:ESRPAADUsername = "$(esrp-aad-username)"
           $env:ESRPAADPassword = "$(esrp-aad-password)"
-          exec { yarn gulp "vscode-win32-$(VSCODE_ARCH)-user-setup" --sign }
+          exec { yarn gulp "zycode-win32-$(VSCODE_ARCH)-user-setup" --sign }
           $SetupPath = ".build\win32-$(VSCODE_ARCH)\user-setup\VSCodeUserSetup-$(VSCODE_ARCH)-$(VSCODE_VERSION).exe"
           mv .build\win32-$(VSCODE_ARCH)\user-setup\VSCodeSetup.exe $SetupPath
           echo "##vso[task.setvariable variable=USER_SETUP_PATH]$SetupPath"
@@ -316,20 +316,20 @@ steps:
         displayName: Generate SBOM (client)
         inputs:
           BuildDropPath: $(agent.builddirectory)/VSCode-win32-$(VSCODE_ARCH)
-          PackageName: Visual Studio Code
+          PackageName: ZY Studio Code
 
       - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
         displayName: Generate SBOM (server)
         inputs:
-          BuildDropPath: $(agent.builddirectory)/vscode-server-win32-$(VSCODE_ARCH)
-          PackageName: Visual Studio Code Server
+          BuildDropPath: $(agent.builddirectory)/zycode-server-win32-$(VSCODE_ARCH)
+          PackageName: ZY Studio Code Server
         condition: and(succeeded(), ne(variables['VSCODE_ARCH'], 'arm64'))
 
       - publish: $(agent.builddirectory)/VSCode-win32-$(VSCODE_ARCH)/_manifest
         displayName: Publish SBOM (client)
         artifact: $(ARTIFACT_PREFIX)sbom_client_win32_$(VSCODE_ARCH)
 
-      - publish: $(agent.builddirectory)/vscode-server-win32-$(VSCODE_ARCH)/_manifest
+      - publish: $(agent.builddirectory)/zycode-server-win32-$(VSCODE_ARCH)/_manifest
         displayName: Publish SBOM (server)
         artifact: $(ARTIFACT_PREFIX)sbom_server_win32_$(VSCODE_ARCH)
         condition: and(succeeded(), ne(variables['VSCODE_ARCH'], 'arm64'))

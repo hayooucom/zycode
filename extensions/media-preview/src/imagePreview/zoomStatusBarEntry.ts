@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { PreviewStatusBarEntry as OwnedStatusBarEntry } from '../ownedStatusBarEntry';
 
 
@@ -13,14 +13,14 @@ export type Scale = number | 'fit';
 
 export class ZoomStatusBarEntry extends OwnedStatusBarEntry {
 
-	private readonly _onDidChangeScale = this._register(new vscode.EventEmitter<{ scale: Scale }>());
+	private readonly _onDidChangeScale = this._register(new zycode.EventEmitter<{ scale: Scale }>());
 	public readonly onDidChangeScale = this._onDidChangeScale.event;
 
 	constructor() {
-		super('status.imagePreview.zoom', vscode.l10n.t("Image Zoom"), vscode.StatusBarAlignment.Right, 102 /* to the left of editor size entry (101) */);
+		super('status.imagePreview.zoom', zycode.l10n.t("Image Zoom"), zycode.StatusBarAlignment.Right, 102 /* to the left of editor size entry (101) */);
 
-		this._register(vscode.commands.registerCommand(selectZoomLevelCommandId, async () => {
-			type MyPickItem = vscode.QuickPickItem & { scale: Scale };
+		this._register(zycode.commands.registerCommand(selectZoomLevelCommandId, async () => {
+			type MyPickItem = zycode.QuickPickItem & { scale: Scale };
 
 			const scales: Scale[] = [10, 5, 2, 1, 0.5, 0.2, 'fit'];
 			const options = scales.map((scale): MyPickItem => ({
@@ -28,8 +28,8 @@ export class ZoomStatusBarEntry extends OwnedStatusBarEntry {
 				scale
 			}));
 
-			const pick = await vscode.window.showQuickPick(options, {
-				placeHolder: vscode.l10n.t("Select zoom level")
+			const pick = await zycode.window.showQuickPick(options, {
+				placeHolder: zycode.l10n.t("Select zoom level")
 			});
 			if (pick) {
 				this._onDidChangeScale.fire({ scale: pick.scale });
@@ -45,7 +45,7 @@ export class ZoomStatusBarEntry extends OwnedStatusBarEntry {
 
 	private zoomLabel(scale: Scale): string {
 		return scale === 'fit'
-			? vscode.l10n.t("Whole Image")
+			? zycode.l10n.t("Whole Image")
 			: `${Math.round(scale * 100)}%`;
 	}
 }

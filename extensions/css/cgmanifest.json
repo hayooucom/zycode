@@ -4,8 +4,8 @@
 			"component": {
 				"type": "git",
 				"git": {
-					"name": "microsoft/vscode-css",
-					"repositoryUrl": "https://github.com/microsoft/vscode-css",
+					"name": "microsoft/zycode-css",
+					"repositoryUrl": "https://github.com/microsoft/zycode-css",
 					"commitHash": "3bd00206f6b0d16eb2eba53fb886462eb8c58baa"
 				}
 			},

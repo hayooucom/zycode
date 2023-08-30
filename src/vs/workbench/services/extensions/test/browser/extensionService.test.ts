@@ -254,7 +254,7 @@ suite('ExtensionService', () => {
 		disposables.dispose();
 	});
 
-	test('issue #152204: Remote extension host not disposed after closing vscode client', async () => {
+	test('issue #152204: Remote extension host not disposed after closing zycode client', async () => {
 		await extService.startExtensionHosts();
 		await extService.stopExtensionHosts('foo');
 		assert.deepStrictEqual(extService.order, (['create 1', 'create 2', 'create 3', 'dispose 3', 'dispose 2', 'dispose 1']));

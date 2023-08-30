@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Command, commands, Disposable, Event, EventEmitter, Memento, Uri, workspace, l10n } from 'vscode';
+import { Command, commands, Disposable, Event, EventEmitter, Memento, Uri, workspace, l10n } from 'zycode';
 import { PostCommitCommandsProvider } from './api/git';
 import { Repository } from './repository';
 import { ApiRepository } from './api/api1';

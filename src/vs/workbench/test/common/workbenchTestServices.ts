@@ -31,7 +31,7 @@ import { AutoSaveMode, IAutoSaveConfiguration, IFilesConfigurationService } from
 
 export class TestLoggerService extends AbstractLoggerService {
 	constructor(logsHome?: URI) {
-		super(LogLevel.Info, logsHome ?? URI.file('tests').with({ scheme: 'vscode-tests' }));
+		super(LogLevel.Info, logsHome ?? URI.file('tests').with({ scheme: 'zycode-tests' }));
 	}
 	protected doCreateLogger(): ILogger { return new NullLogger(); }
 }

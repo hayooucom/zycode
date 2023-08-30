@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { TypeScriptServiceConfiguration } from '../configuration/configuration';
 import { API } from './api';
 
@@ -53,7 +53,7 @@ export class TypeScriptVersion {
 
 	public get displayName(): string {
 		const version = this.apiVersion;
-		return version ? version.displayName : vscode.l10n.t("Could not load the TypeScript version at this path");
+		return version ? version.displayName : zycode.l10n.t("Could not load the TypeScript version at this path");
 	}
 }
 

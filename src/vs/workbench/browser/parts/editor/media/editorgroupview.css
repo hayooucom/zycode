@@ -20,7 +20,7 @@
 
 .monaco-workbench .part.editor > .content:not(.empty) .editor-group-container.empty.active:focus {
 	outline-offset: -2px;
-	outline: 1px solid var(--vscode-editorGroup-focusedEmptyBorder);
+	outline: 1px solid var(--zycode-editorGroup-focusedEmptyBorder);
 }
 
 .monaco-workbench .part.editor > .content.empty .editor-group-container.empty.active:focus {
@@ -114,11 +114,11 @@
 
 .monaco-workbench.hc-black .part.editor > .content .editor-group-container .editor-group-watermark > .shortcuts dt,
 .monaco-workbench.hc-light .part.editor > .content .editor-group-container .editor-group-watermark > .shortcuts dt {
-	color: var(--vscode-editor-foreground);
+	color: var(--zycode-editor-foreground);
 }
 .monaco-workbench.hc-black .part.editor > .content .editor-group-container .editor-group-watermark > .shortcuts dl,
 .monaco-workbench.hc-light .part.editor > .content .editor-group-container .editor-group-watermark > .shortcuts dl {
-	color: var(--vscode-editor-foreground);
+	color: var(--zycode-editor-foreground);
 	opacity: 1;
 }
 

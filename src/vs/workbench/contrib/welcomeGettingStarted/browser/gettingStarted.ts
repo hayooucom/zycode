@@ -396,7 +396,7 @@ export class GettingStartedPage extends EditorPane {
 				this.hideCategory(argument);
 				break;
 			}
-			// Use selectTask over selectStep to keep telemetry consistant:https://github.com/microsoft/vscode/issues/122256
+			// Use selectTask over selectStep to keep telemetry consistant:https://github.com/microsoft/zycode/issues/122256
 			case 'selectTask': {
 				this.selectStep(argument);
 				break;
@@ -1512,7 +1512,7 @@ export class GettingStartedPage extends EditorPane {
 		const optOutCopy = localize('optOut', "opt out");
 		const optOutButton = `[${optOutCopy}](command:settings.filterByTelemetry)`;
 
-		const text = localize({ key: 'footer', comment: ['fist substitution is "vs code", second is "privacy statement", third is "opt out".'] },
+		const text = localize({ key: 'footer', comment: ['fist substitution is "zy code", second is "privacy statement", third is "opt out".'] },
 			"{0} collects usage data. Read our {1} and learn how to {2}.", this.productService.nameShort, privacyStatementButton, optOutButton);
 
 		parent.append(mdRenderer.render({ value: text, isTrusted: true }).element);

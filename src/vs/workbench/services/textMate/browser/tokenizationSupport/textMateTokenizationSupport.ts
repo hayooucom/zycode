@@ -9,7 +9,7 @@ import { StopWatch } from 'vs/base/common/stopwatch';
 import { LanguageId, TokenMetadata } from 'vs/editor/common/encodedTokenAttributes';
 import { EncodedTokenizationResult, IBackgroundTokenizationStore, IBackgroundTokenizer, IState, ITokenizationSupport, TokenizationResult } from 'vs/editor/common/languages';
 import { ITextModel } from 'vs/editor/common/model';
-import type { IGrammar, StateStack } from 'vscode-textmate';
+import type { IGrammar, StateStack } from 'zycode-textmate';
 
 export class TextMateTokenizationSupport extends Disposable implements ITokenizationSupport {
 	private readonly _seenLanguages: boolean[] = [];

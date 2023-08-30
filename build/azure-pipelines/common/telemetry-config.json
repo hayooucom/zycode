@@ -18,13 +18,13 @@
 	{
 		"eventPrefix": "extension-telemetry/",
 		"sourceDirs": [
-			"vscode-extension-telemetry"
+			"zycode-extension-telemetry"
 		],
 		"excludedDirs": [],
 		"applyEndpoints": true
 	},
 	{
-		"eventPrefix": "vscode-markdown/",
+		"eventPrefix": "zycode-markdown/",
 		"sourceDirs": [
 			"../../s/extensions/markdown-language-features"
 		],
@@ -35,7 +35,7 @@
 		"eventPrefix": "html-language-features/",
 		"sourceDirs": [
 			"../../s/extensions/html-language-features",
-			"vscode-html-languageservice"
+			"zycode-html-languageservice"
 		],
 		"excludedDirs": [],
 		"applyEndpoints": true
@@ -44,16 +44,16 @@
 		"eventPrefix": "json-language-features/",
 		"sourceDirs": [
 			"../../s/extensions/json-language-features",
-			"vscode-json-languageservice"
+			"zycode-json-languageservice"
 		],
 		"excludedDirs": [],
 		"applyEndpoints": true
 	},
 	{
-		"eventPrefix": "ms-vscode.node/",
+		"eventPrefix": "ms-zycode.node/",
 		"sourceDirs": [
-			"vscode-chrome-debug-core",
-			"vscode-node-debug"
+			"zycode-chrome-debug-core",
+			"zycode-node-debug"
 		],
 		"excludedDirs": [],
 		"applyEndpoints": true,

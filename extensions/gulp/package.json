@@ -1,13 +1,13 @@
 {
   "name": "gulp",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "description": "%description%",
   "displayName": "%displayName%",
   "version": "1.0.0",
   "icon": "images/gulp.png",
   "license": "MIT",
   "engines": {
-    "vscode": "*"
+    "zycode": "*"
   },
   "categories": [
     "Other"
@@ -70,6 +70,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

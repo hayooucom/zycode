@@ -5,13 +5,13 @@
 
 import { ExtHostManagedSocketsShape, MainContext, MainThreadManagedSocketsShape } from 'vs/workbench/api/common/extHost.protocol';
 import { createDecorator } from 'vs/platform/instantiation/common/instantiation';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Disposable, DisposableStore, toDisposable } from 'vs/base/common/lifecycle';
 import { IExtHostRpcService } from 'vs/workbench/api/common/extHostRpcService';
 import { VSBuffer } from 'vs/base/common/buffer';
 
 export interface IExtHostManagedSockets extends ExtHostManagedSocketsShape {
-	setFactory(socketFactoryId: number, makeConnection: () => Thenable<vscode.ManagedMessagePassing>): void;
+	setFactory(socketFactoryId: number, makeConnection: () => Thenable<zycode.ManagedMessagePassing>): void;
 	readonly _serviceBrand: undefined;
 }
 
@@ -31,7 +31,7 @@ export class ExtHostManagedSockets implements IExtHostManagedSockets {
 		this._proxy = extHostRpc.getProxy(MainContext.MainThreadManagedSockets);
 	}
 
-	setFactory(socketFactoryId: number, makeConnection: () => Thenable<vscode.ManagedMessagePassing>): void {
+	setFactory(socketFactoryId: number, makeConnection: () => Thenable<zycode.ManagedMessagePassing>): void {
 		// Terminate all previous sockets
 		for (const socket of this._managedRemoteSockets.values()) {
 			// calling dispose() will lead to it removing itself from the map
@@ -90,14 +90,14 @@ export class ExtHostManagedSockets implements IExtHostManagedSockets {
 class ManagedSocketFactory {
 	constructor(
 		public readonly socketFactoryId: number,
-		public readonly makeConnection: () => Thenable<vscode.ManagedMessagePassing>,
+		public readonly makeConnection: () => Thenable<zycode.ManagedMessagePassing>,
 	) { }
 }
 
 class ManagedSocket extends Disposable {
 	constructor(
 		public readonly socketId: number,
-		public readonly actual: vscode.ManagedMessagePassing,
+		public readonly actual: zycode.ManagedMessagePassing,
 		disposer: DisposableStore,
 	) {
 		super();

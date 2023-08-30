@@ -14,7 +14,7 @@ suite('Decoration Render Options', () => {
 	const themeServiceMock = new TestThemeService();
 
 	const options: IDecorationRenderOptions = {
-		gutterIconPath: URI.parse('https://github.com/microsoft/vscode/blob/main/resources/linux/code.png'),
+		gutterIconPath: URI.parse('https://github.com/microsoft/zycode/blob/main/resources/linux/code.png'),
 		gutterIconSize: 'contain',
 		backgroundColor: 'red',
 		borderColor: 'yellow'
@@ -41,7 +41,7 @@ suite('Decoration Render Options', () => {
 		const styleSheet = s.globalStyleSheet;
 		s.registerDecorationType('test', 'example', options);
 		const sheet = readStyleSheet(styleSheet);
-		assert(sheet.indexOf(`{background:url('https://github.com/microsoft/vscode/blob/main/resources/linux/code.png') center center no-repeat;background-size:contain;}`) >= 0);
+		assert(sheet.indexOf(`{background:url('https://github.com/microsoft/zycode/blob/main/resources/linux/code.png') center center no-repeat;background-size:contain;}`) >= 0);
 		assert(sheet.indexOf(`{background-color:red;border-color:yellow;box-sizing: border-box;}`) >= 0);
 	});
 
@@ -122,22 +122,22 @@ suite('Decoration Render Options', () => {
 		if (platform.isWindows) {
 			// windows file path (used as string)
 			s.registerDecorationType('test', 'example', { gutterIconPath: URI.file('c:\\files\\miles\\more.png') });
-			assertBackground('file:///c:/files/miles/more.png', 'vscode-file://vscode-app/c:/files/miles/more.png');
+			assertBackground('file:///c:/files/miles/more.png', 'zycode-file://zycode-app/c:/files/miles/more.png');
 			s.removeDecorationType('example');
 
 			// single quote must always be escaped/encoded
 			s.registerDecorationType('test', 'example', { gutterIconPath: URI.file('c:\\files\\foo\\b\'ar.png') });
-			assertBackground('file:///c:/files/foo/b%27ar.png', 'vscode-file://vscode-app/c:/files/foo/b%27ar.png');
+			assertBackground('file:///c:/files/foo/b%27ar.png', 'zycode-file://zycode-app/c:/files/foo/b%27ar.png');
 			s.removeDecorationType('example');
 		} else {
 			// unix file path (used as string)
 			s.registerDecorationType('test', 'example', { gutterIconPath: URI.file('/Users/foo/bar.png') });
-			assertBackground('file:///Users/foo/bar.png', 'vscode-file://vscode-app/Users/foo/bar.png');
+			assertBackground('file:///Users/foo/bar.png', 'zycode-file://zycode-app/Users/foo/bar.png');
 			s.removeDecorationType('example');
 
 			// single quote must always be escaped/encoded
 			s.registerDecorationType('test', 'example', { gutterIconPath: URI.file('/Users/foo/b\'ar.png') });
-			assertBackground('file:///Users/foo/b%27ar.png', 'vscode-file://vscode-app/Users/foo/b%27ar.png');
+			assertBackground('file:///Users/foo/b%27ar.png', 'zycode-file://zycode-app/Users/foo/b%27ar.png');
 			s.removeDecorationType('example');
 		}
 

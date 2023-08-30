@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import * as URI from 'vscode-uri';
+import * as zycode from 'zycode';
+import * as URI from 'zycode-uri';
 import { Schemes } from './schemes';
 
 export const markdownFileExtensions = Object.freeze<string[]>([
@@ -19,20 +19,20 @@ export const markdownFileExtensions = Object.freeze<string[]>([
 	'workbook',
 ]);
 
-export function isMarkdownFile(document: vscode.TextDocument) {
+export function isMarkdownFile(document: zycode.TextDocument) {
 	return document.languageId === 'markdown';
 }
 
-export function looksLikeMarkdownPath(resolvedHrefPath: vscode.Uri): boolean {
-	const doc = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === resolvedHrefPath.toString());
+export function looksLikeMarkdownPath(resolvedHrefPath: zycode.Uri): boolean {
+	const doc = zycode.workspace.textDocuments.find(doc => doc.uri.toString() === resolvedHrefPath.toString());
 	if (doc) {
 		return isMarkdownFile(doc);
 	}
 
 	if (resolvedHrefPath.scheme === Schemes.notebookCell) {
-		for (const notebook of vscode.workspace.notebookDocuments) {
+		for (const notebook of zycode.workspace.notebookDocuments) {
 			for (const cell of notebook.getCells()) {
-				if (cell.kind === vscode.NotebookCellKind.Markup && isMarkdownFile(cell.document)) {
+				if (cell.kind === zycode.NotebookCellKind.Markup && isMarkdownFile(cell.document)) {
 					return true;
 				}
 			}

@@ -2,10 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import * as interfaces from './interfaces';
 import { DocumentMergeConflict } from './documentMergeConflict';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import TelemetryReporter from '@zycode/extension-telemetry';
 
 const startHeaderMarker = '<<<<<<<';
 const commonAncestorsMarker = '|||||||';
@@ -13,15 +13,15 @@ const splitterMarker = '=======';
 const endFooterMarker = '>>>>>>>';
 
 interface IScanMergedConflict {
-	startHeader: vscode.TextLine;
-	commonAncestors: vscode.TextLine[];
-	splitter?: vscode.TextLine;
-	endFooter?: vscode.TextLine;
+	startHeader: zycode.TextLine;
+	commonAncestors: zycode.TextLine[];
+	splitter?: zycode.TextLine;
+	endFooter?: zycode.TextLine;
 }
 
 export class MergeConflictParser {
 
-	static scanDocument(document: vscode.TextDocument, telemetryReporter: TelemetryReporter): interfaces.IDocumentMergeConflict[] {
+	static scanDocument(document: zycode.TextDocument, telemetryReporter: TelemetryReporter): interfaces.IDocumentMergeConflict[] {
 
 		// Scan each line in the document, we already know there is at least a <<<<<<< and
 		// >>>>>> marker within the document, we need to group these into conflict ranges.
@@ -85,13 +85,13 @@ export class MergeConflictParser {
 			.map(descriptor => new DocumentMergeConflict(descriptor, telemetryReporter));
 	}
 
-	private static scanItemTolMergeConflictDescriptor(document: vscode.TextDocument, scanned: IScanMergedConflict): interfaces.IDocumentMergeConflictDescriptor | null {
+	private static scanItemTolMergeConflictDescriptor(document: zycode.TextDocument, scanned: IScanMergedConflict): interfaces.IDocumentMergeConflictDescriptor | null {
 		// Validate we have all the required lines within the scan item.
 		if (!scanned.startHeader || !scanned.splitter || !scanned.endFooter) {
 			return null;
 		}
 
-		const tokenAfterCurrentBlock: vscode.TextLine = scanned.commonAncestors[0] || scanned.splitter;
+		const tokenAfterCurrentBlock: zycode.TextLine = scanned.commonAncestors[0] || scanned.splitter;
 
 		// Assume that descriptor.current.header, descriptor.incoming.header and descriptor.splitter
 		// have valid ranges, fill in content and total ranges from these parts.
@@ -101,11 +101,11 @@ export class MergeConflictParser {
 		return {
 			current: {
 				header: scanned.startHeader.range,
-				decoratorContent: new vscode.Range(
+				decoratorContent: new zycode.Range(
 					scanned.startHeader.rangeIncludingLineBreak.end,
 					MergeConflictParser.shiftBackOneCharacter(document, tokenAfterCurrentBlock.range.start, scanned.startHeader.rangeIncludingLineBreak.end)),
 				// Current content is range between header (shifted for linebreak) and splitter or common ancestors mark start
-				content: new vscode.Range(
+				content: new zycode.Range(
 					scanned.startHeader.rangeIncludingLineBreak.end,
 					tokenAfterCurrentBlock.range.start),
 				name: scanned.startHeader.text.substring(startHeaderMarker.length + 1)
@@ -114,12 +114,12 @@ export class MergeConflictParser {
 				const nextTokenLine = commonAncestors[index + 1] || scanned.splitter;
 				return {
 					header: currentTokenLine.range,
-					decoratorContent: new vscode.Range(
+					decoratorContent: new zycode.Range(
 						currentTokenLine.rangeIncludingLineBreak.end,
 						MergeConflictParser.shiftBackOneCharacter(document, nextTokenLine.range.start, currentTokenLine.rangeIncludingLineBreak.end)),
 					// Each common ancestors block is range between one common ancestors token
 					// (shifted for linebreak) and start of next common ancestors token or splitter
-					content: new vscode.Range(
+					content: new zycode.Range(
 						currentTokenLine.rangeIncludingLineBreak.end,
 						nextTokenLine.range.start),
 					name: currentTokenLine.text.substring(commonAncestorsMarker.length + 1)
@@ -128,21 +128,21 @@ export class MergeConflictParser {
 			splitter: scanned.splitter.range,
 			incoming: {
 				header: scanned.endFooter.range,
-				decoratorContent: new vscode.Range(
+				decoratorContent: new zycode.Range(
 					scanned.splitter.rangeIncludingLineBreak.end,
 					MergeConflictParser.shiftBackOneCharacter(document, scanned.endFooter.range.start, scanned.splitter.rangeIncludingLineBreak.end)),
 				// Incoming content is range between splitter (shifted for linebreak) and footer start
-				content: new vscode.Range(
+				content: new zycode.Range(
 					scanned.splitter.rangeIncludingLineBreak.end,
 					scanned.endFooter.range.start),
 				name: scanned.endFooter.text.substring(endFooterMarker.length + 1)
 			},
 			// Entire range is between current header start and incoming header end (including line break)
-			range: new vscode.Range(scanned.startHeader.range.start, scanned.endFooter.rangeIncludingLineBreak.end)
+			range: new zycode.Range(scanned.startHeader.range.start, scanned.endFooter.rangeIncludingLineBreak.end)
 		};
 	}
 
-	static containsConflict(document: vscode.TextDocument): boolean {
+	static containsConflict(document: zycode.TextDocument): boolean {
 		if (!document) {
 			return false;
 		}
@@ -151,7 +151,7 @@ export class MergeConflictParser {
 		return text.includes(startHeaderMarker) && text.includes(endFooterMarker);
 	}
 
-	private static shiftBackOneCharacter(document: vscode.TextDocument, range: vscode.Position, unlessEqual: vscode.Position): vscode.Position {
+	private static shiftBackOneCharacter(document: zycode.TextDocument, range: zycode.Position, unlessEqual: zycode.Position): zycode.Position {
 		if (range.isEqual(unlessEqual)) {
 			return range;
 		}
@@ -164,6 +164,6 @@ export class MergeConflictParser {
 			character = document.lineAt(line).range.end.character;
 		}
 
-		return new vscode.Position(line, character);
+		return new zycode.Position(line, character);
 	}
 }

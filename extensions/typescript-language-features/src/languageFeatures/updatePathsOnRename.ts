@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import * as fileSchemes from '../configuration/fileSchemes';
 import { doesResourceLookLikeATypeScriptFile } from '../configuration/languageDescription';
 import { API } from '../tsServer/api';
@@ -20,9 +20,9 @@ import { conditionalRegistration, requireMinVersion, requireSomeCapability } fro
 
 const updateImportsOnFileMoveName = 'updateImportsOnFileMove.enabled';
 
-async function isDirectory(resource: vscode.Uri): Promise<boolean> {
+async function isDirectory(resource: zycode.Uri): Promise<boolean> {
 	try {
-		return (await vscode.workspace.fs.stat(resource)).type === vscode.FileType.Directory;
+		return (await zycode.workspace.fs.stat(resource)).type === zycode.FileType.Directory;
 	} catch {
 		return false;
 	}
@@ -35,11 +35,11 @@ const enum UpdateImportsOnFileMoveSetting {
 }
 
 interface RenameAction {
-	readonly oldUri: vscode.Uri;
-	readonly newUri: vscode.Uri;
+	readonly oldUri: zycode.Uri;
+	readonly newUri: zycode.Uri;
 	readonly newFilePath: string;
 	readonly oldFilePath: string;
-	readonly jsTsFileThatIsBeingMoved: vscode.Uri;
+	readonly jsTsFileThatIsBeingMoved: zycode.Uri;
 }
 
 class UpdateImportsOnFileRenameHandler extends Disposable {
@@ -51,11 +51,11 @@ class UpdateImportsOnFileRenameHandler extends Disposable {
 	public constructor(
 		private readonly client: ITypeScriptServiceClient,
 		private readonly fileConfigurationManager: FileConfigurationManager,
-		private readonly _handles: (uri: vscode.Uri) => Promise<boolean>,
+		private readonly _handles: (uri: zycode.Uri) => Promise<boolean>,
 	) {
 		super();
 
-		this._register(vscode.workspace.onDidRenameFiles(async (e) => {
+		this._register(zycode.workspace.onDidRenameFiles(async (e) => {
 			const [{ newUri, oldUri }] = e.files;
 			const newFilePath = this.client.toTsFilePath(newUri);
 			if (!newFilePath) {
@@ -83,9 +83,9 @@ class UpdateImportsOnFileRenameHandler extends Disposable {
 			this._pendingRenames.add({ oldUri, newUri, newFilePath, oldFilePath, jsTsFileThatIsBeingMoved });
 
 			this._delayer.trigger(() => {
-				vscode.window.withProgress({
-					location: vscode.ProgressLocation.Window,
-					title: vscode.l10n.t("Checking for update of JS/TS imports")
+				zycode.window.withProgress({
+					location: zycode.ProgressLocation.Window,
+					title: zycode.l10n.t("Checking for update of JS/TS imports")
 				}, () => this.flushRenames());
 			});
 		}));
@@ -95,11 +95,11 @@ class UpdateImportsOnFileRenameHandler extends Disposable {
 		const renames = Array.from(this._pendingRenames);
 		this._pendingRenames.clear();
 		for (const group of this.groupRenames(renames)) {
-			const edits = new vscode.WorkspaceEdit();
-			const resourcesBeingRenamed: vscode.Uri[] = [];
+			const edits = new zycode.WorkspaceEdit();
+			const resourcesBeingRenamed: zycode.Uri[] = [];
 
 			for (const { oldUri, newUri, newFilePath, oldFilePath, jsTsFileThatIsBeingMoved } of group) {
-				const document = await vscode.workspace.openTextDocument(jsTsFileThatIsBeingMoved);
+				const document = await zycode.workspace.openTextDocument(jsTsFileThatIsBeingMoved);
 
 				// Make sure TS knows about file
 				this.client.bufferSyncSupport.closeResource(oldUri);
@@ -112,13 +112,13 @@ class UpdateImportsOnFileRenameHandler extends Disposable {
 
 			if (edits.size) {
 				if (await this.confirmActionWithUser(resourcesBeingRenamed)) {
-					await vscode.workspace.applyEdit(edits, { isRefactoring: true });
+					await zycode.workspace.applyEdit(edits, { isRefactoring: true });
 				}
 			}
 		}
 	}
 
-	private async confirmActionWithUser(newResources: readonly vscode.Uri[]): Promise<boolean> {
+	private async confirmActionWithUser(newResources: readonly zycode.Uri[]): Promise<boolean> {
 		if (!newResources.length) {
 			return false;
 		}
@@ -136,36 +136,36 @@ class UpdateImportsOnFileRenameHandler extends Disposable {
 		}
 	}
 
-	private getConfiguration(resource: vscode.Uri) {
-		return vscode.workspace.getConfiguration(doesResourceLookLikeATypeScriptFile(resource) ? 'typescript' : 'javascript', resource);
+	private getConfiguration(resource: zycode.Uri) {
+		return zycode.workspace.getConfiguration(doesResourceLookLikeATypeScriptFile(resource) ? 'typescript' : 'javascript', resource);
 	}
 
-	private async promptUser(newResources: readonly vscode.Uri[]): Promise<boolean> {
+	private async promptUser(newResources: readonly zycode.Uri[]): Promise<boolean> {
 		if (!newResources.length) {
 			return false;
 		}
 
-		const rejectItem: vscode.MessageItem = {
-			title: vscode.l10n.t("No"),
+		const rejectItem: zycode.MessageItem = {
+			title: zycode.l10n.t("No"),
 			isCloseAffordance: true,
 		};
 
-		const acceptItem: vscode.MessageItem = {
-			title: vscode.l10n.t("Yes"),
+		const acceptItem: zycode.MessageItem = {
+			title: zycode.l10n.t("Yes"),
 		};
 
-		const alwaysItem: vscode.MessageItem = {
-			title: vscode.l10n.t("Always"),
+		const alwaysItem: zycode.MessageItem = {
+			title: zycode.l10n.t("Always"),
 		};
 
-		const neverItem: vscode.MessageItem = {
-			title: vscode.l10n.t("Never"),
+		const neverItem: zycode.MessageItem = {
+			title: zycode.l10n.t("Never"),
 		};
 
-		const response = await vscode.window.showInformationMessage(
+		const response = await zycode.window.showInformationMessage(
 			newResources.length === 1
-				? vscode.l10n.t("Update imports for '{0}'?", path.basename(newResources[0].fsPath))
-				: this.getConfirmMessage(vscode.l10n.t("Update imports for the following {0} files?", newResources.length), newResources), {
+				? zycode.l10n.t("Update imports for '{0}'?", path.basename(newResources[0].fsPath))
+				: this.getConfirmMessage(zycode.l10n.t("Update imports for the following {0} files?", newResources.length), newResources), {
 			modal: true,
 		}, rejectItem, acceptItem, alwaysItem, neverItem);
 
@@ -199,13 +199,13 @@ class UpdateImportsOnFileRenameHandler extends Disposable {
 		}
 	}
 
-	private async getJsTsFileBeingMoved(resource: vscode.Uri): Promise<vscode.Uri | undefined> {
+	private async getJsTsFileBeingMoved(resource: zycode.Uri): Promise<zycode.Uri | undefined> {
 		if (resource.scheme !== fileSchemes.file) {
 			return undefined;
 		}
 
 		if (await isDirectory(resource)) {
-			const files = await vscode.workspace.findFiles(new vscode.RelativePattern(resource, '**/*.{ts,tsx,js,jsx}'), '**/node_modules/**', 1);
+			const files = await zycode.workspace.findFiles(new zycode.RelativePattern(resource, '**/*.{ts,tsx,js,jsx}'), '**/node_modules/**', 1);
 			return files[0];
 		}
 
@@ -213,8 +213,8 @@ class UpdateImportsOnFileRenameHandler extends Disposable {
 	}
 
 	private async withEditsForFileRename(
-		edits: vscode.WorkspaceEdit,
-		document: vscode.TextDocument,
+		edits: zycode.WorkspaceEdit,
+		document: zycode.TextDocument,
 		oldFilePath: string,
 		newFilePath: string,
 	): Promise<boolean> {
@@ -249,7 +249,7 @@ class UpdateImportsOnFileRenameHandler extends Disposable {
 		return groups.values();
 	}
 
-	private getConfirmMessage(start: string, resourcesToConfirm: readonly vscode.Uri[]): string {
+	private getConfirmMessage(start: string, resourcesToConfirm: readonly zycode.Uri[]): string {
 		const MAX_CONFIRM_FILES = 10;
 
 		const paths = [start];
@@ -258,9 +258,9 @@ class UpdateImportsOnFileRenameHandler extends Disposable {
 
 		if (resourcesToConfirm.length > MAX_CONFIRM_FILES) {
 			if (resourcesToConfirm.length - MAX_CONFIRM_FILES === 1) {
-				paths.push(vscode.l10n.t("...1 additional file not shown"));
+				paths.push(zycode.l10n.t("...1 additional file not shown"));
 			} else {
-				paths.push(vscode.l10n.t("...{0} additional files not shown", resourcesToConfirm.length - MAX_CONFIRM_FILES));
+				paths.push(zycode.l10n.t("...{0} additional files not shown", resourcesToConfirm.length - MAX_CONFIRM_FILES));
 			}
 		}
 
@@ -268,24 +268,24 @@ class UpdateImportsOnFileRenameHandler extends Disposable {
 		return paths.join('\n');
 	}
 
-	private getConfigTargetScope(config: vscode.WorkspaceConfiguration, settingsName: string): vscode.ConfigurationTarget {
+	private getConfigTargetScope(config: zycode.WorkspaceConfiguration, settingsName: string): zycode.ConfigurationTarget {
 		const inspected = config.inspect(settingsName);
 		if (inspected?.workspaceFolderValue) {
-			return vscode.ConfigurationTarget.WorkspaceFolder;
+			return zycode.ConfigurationTarget.WorkspaceFolder;
 		}
 
 		if (inspected?.workspaceValue) {
-			return vscode.ConfigurationTarget.Workspace;
+			return zycode.ConfigurationTarget.Workspace;
 		}
 
-		return vscode.ConfigurationTarget.Global;
+		return zycode.ConfigurationTarget.Global;
 	}
 }
 
 export function register(
 	client: ITypeScriptServiceClient,
 	fileConfigurationManager: FileConfigurationManager,
-	handles: (uri: vscode.Uri) => Promise<boolean>,
+	handles: (uri: zycode.Uri) => Promise<boolean>,
 ) {
 	return conditionalRegistration([
 		requireMinVersion(client, UpdateImportsOnFileRenameHandler.minVersion),

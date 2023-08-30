@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { URI } from 'vs/base/common/uri';
 import { MainContext, ExtHostDecorationsShape, MainThreadDecorationsShape, DecorationData, DecorationRequest, DecorationReply } from 'vs/workbench/api/common/extHost.protocol';
 import { Disposable, FileDecoration } from 'vs/workbench/api/common/extHostTypes';
@@ -18,7 +18,7 @@ import { dirname } from 'vs/base/common/path';
 import { checkProposedApiEnabled } from 'vs/workbench/services/extensions/common/extensions';
 
 interface ProviderData {
-	provider: vscode.FileDecorationProvider;
+	provider: zycode.FileDecorationProvider;
 	extensionDescription: IExtensionDescription;
 }
 
@@ -38,7 +38,7 @@ export class ExtHostDecorations implements ExtHostDecorationsShape {
 		this._proxy = extHostRpc.getProxy(MainContext.MainThreadDecorations);
 	}
 
-	registerFileDecorationProvider(provider: vscode.FileDecorationProvider, extensionDescription: IExtensionDescription): vscode.Disposable {
+	registerFileDecorationProvider(provider: zycode.FileDecorationProvider, extensionDescription: IExtensionDescription): zycode.Disposable {
 		const handle = ExtHostDecorations._handlePool++;
 		this._provider.set(handle, { provider, extensionDescription });
 		this._proxy.$registerDecorationProvider(handle, extensionDescription.identifier.value);

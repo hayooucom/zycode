@@ -19,8 +19,8 @@ export class Client extends IPCClient implements IDisposable {
 	private protocol: ElectronProtocol;
 
 	private static createProtocol(): ElectronProtocol {
-		const onMessage = Event.fromNodeEventEmitter<VSBuffer>(ipcRenderer, 'vscode:message', (_, message) => VSBuffer.wrap(message));
-		ipcRenderer.send('vscode:hello');
+		const onMessage = Event.fromNodeEventEmitter<VSBuffer>(ipcRenderer, 'zycode:message', (_, message) => VSBuffer.wrap(message));
+		ipcRenderer.send('zycode:hello');
 
 		return new ElectronProtocol(ipcRenderer, onMessage);
 	}

@@ -37,7 +37,7 @@
 	outline-width: 1px;
 	outline-style: solid;
 	outline-offset: -1px;
-	outline-color: var(--vscode-focusBorder);
+	outline-color: var(--zycode-focusBorder);
 }
 
 .menubar.compact {

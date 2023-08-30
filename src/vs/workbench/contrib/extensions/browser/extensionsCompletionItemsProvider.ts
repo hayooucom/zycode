@@ -60,7 +60,7 @@ export class ExtensionsCompletionItemsProvider extends Disposable implements IWo
 				return { label: e.identifier.id, kind: CompletionItemKind.Value, insertText: text, filterText: text, range };
 			}));
 		} else {
-			const text = '"vscode.csharp": {\n\t"supported": true,\n\t"version": "0.0.0"\n},';
+			const text = '"zycode.csharp": {\n\t"supported": true,\n\t"version": "0.0.0"\n},';
 			suggestions.push({ label: localize('exampleExtension', "Example"), kind: CompletionItemKind.Value, insertText: text, filterText: text, range });
 		}
 

@@ -5,10 +5,10 @@
 	},
 	"exclude": [
 		"node_modules",
-		".vscode-test"
+		".zycode-test"
 	],
 	"include": [
 		"src/**/*",
-		"../../src/vscode-dts/vscode.d.ts"
+		"../../src/zycode-dts/zycode.d.ts"
 	]
 }

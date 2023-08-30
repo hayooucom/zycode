@@ -139,7 +139,7 @@ CommandsRegistry.registerCommand({
 });
 
 CommandsRegistry.registerCommand({
-	id: 'vscode.peekTestError',
+	id: 'zycode.peekTestError',
 	handler: async (accessor: ServicesAccessor, extId: string) => {
 		const lookup = accessor.get(ITestResultService).getStateById(extId);
 		if (!lookup) {
@@ -163,7 +163,7 @@ CommandsRegistry.registerCommand({
 });
 
 CommandsRegistry.registerCommand({
-	id: 'vscode.revealTest',
+	id: 'zycode.revealTest',
 	handler: async (accessor: ServicesAccessor, extId: string) => {
 		const test = accessor.get(ITestService).collection.getNodeById(extId);
 		if (!test) {
@@ -207,7 +207,7 @@ CommandsRegistry.registerCommand({
 });
 
 CommandsRegistry.registerCommand({
-	id: 'vscode.runTestsById',
+	id: 'zycode.runTestsById',
 	handler: async (accessor: ServicesAccessor, group: TestRunProfileBitset, ...testIds: string[]) => {
 		const testService = accessor.get(ITestService);
 		await discoverAndRunTests(

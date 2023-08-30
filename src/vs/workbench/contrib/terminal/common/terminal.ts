@@ -656,12 +656,12 @@ export const terminalContributionsDescriptor: IExtensionPointDescriptor<ITermina
 		}
 	},
 	jsonSchema: {
-		description: nls.localize('vscode.extension.contributes.terminal', 'Contributes terminal functionality.'),
+		description: nls.localize('zycode.extension.contributes.terminal', 'Contributes terminal functionality.'),
 		type: 'object',
 		properties: {
 			profiles: {
 				type: 'array',
-				description: nls.localize('vscode.extension.contributes.terminal.profiles', "Defines additional terminal profiles that the user can create."),
+				description: nls.localize('zycode.extension.contributes.terminal.profiles', "Defines additional terminal profiles that the user can create."),
 				items: {
 					type: 'object',
 					required: ['id', 'title'],
@@ -673,15 +673,15 @@ export const terminalContributionsDescriptor: IExtensionPointDescriptor<ITermina
 					}],
 					properties: {
 						id: {
-							description: nls.localize('vscode.extension.contributes.terminal.profiles.id', "The ID of the terminal profile provider."),
+							description: nls.localize('zycode.extension.contributes.terminal.profiles.id', "The ID of the terminal profile provider."),
 							type: 'string',
 						},
 						title: {
-							description: nls.localize('vscode.extension.contributes.terminal.profiles.title', "Title for this terminal profile."),
+							description: nls.localize('zycode.extension.contributes.terminal.profiles.title', "Title for this terminal profile."),
 							type: 'string',
 						},
 						icon: {
-							description: nls.localize('vscode.extension.contributes.terminal.types.icon', "A codicon, URI, or light and dark URIs to associate with this terminal type."),
+							description: nls.localize('zycode.extension.contributes.terminal.types.icon', "A codicon, URI, or light and dark URIs to associate with this terminal type."),
 							anyOf: [{
 								type: 'string',
 							},
@@ -689,11 +689,11 @@ export const terminalContributionsDescriptor: IExtensionPointDescriptor<ITermina
 								type: 'object',
 								properties: {
 									light: {
-										description: nls.localize('vscode.extension.contributes.terminal.types.icon.light', 'Icon path when a light theme is used'),
+										description: nls.localize('zycode.extension.contributes.terminal.types.icon.light', 'Icon path when a light theme is used'),
 										type: 'string'
 									},
 									dark: {
-										description: nls.localize('vscode.extension.contributes.terminal.types.icon.dark', 'Icon path when a dark theme is used'),
+										description: nls.localize('zycode.extension.contributes.terminal.types.icon.dark', 'Icon path when a dark theme is used'),
 										type: 'string'
 									}
 								}

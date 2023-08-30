@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { workspace, WorkspaceFoldersChangeEvent, Uri, window, Event, EventEmitter, QuickPickItem, Disposable, SourceControl, SourceControlResourceGroup, TextEditor, Memento, commands, LogOutputChannel, l10n, ProgressLocation, WorkspaceFolder } from 'vscode';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { workspace, WorkspaceFoldersChangeEvent, Uri, window, Event, EventEmitter, QuickPickItem, Disposable, SourceControl, SourceControlResourceGroup, TextEditor, Memento, commands, LogOutputChannel, l10n, ProgressLocation, WorkspaceFolder } from 'zycode';
+import TelemetryReporter from '@zycode/extension-telemetry';
 import { Repository, RepositoryState } from './repository';
 import { memoize, sequentialize, debounce } from './decorators';
 import { dispose, anyEvent, filterEvent, isDescendant, pathEquals, toDisposable, eventToPromise } from './util';
@@ -602,7 +602,7 @@ export class Model implements IBranchProtectionProviderRegistry, IRemoteSourcePu
 			const rawRoot = await this.git.getRepositoryRoot(repoPath);
 
 			// This can happen whenever `path` has the wrong case sensitivity in case
-			// insensitive file systems https://github.com/microsoft/vscode/issues/33498
+			// insensitive file systems https://github.com/microsoft/zycode/issues/33498
 			return { repositoryRoot: Uri.file(rawRoot).fsPath, unsafeRepositoryMatch: null };
 		} catch (err) {
 			// Handle unsafe repository
@@ -1032,7 +1032,7 @@ export class Model implements IBranchProtectionProviderRegistry, IRemoteSourcePu
 			commands.executeCommand('git.manageUnsafeRepositories');
 		} else if (choice === learnMore) {
 			// Learn More
-			commands.executeCommand('vscode.open', Uri.parse('https://aka.ms/vscode-git-unsafe-repository'));
+			commands.executeCommand('zycode.open', Uri.parse('https://aka.ms/zycode-git-unsafe-repository'));
 		}
 	}
 

@@ -23,7 +23,7 @@ parameters:
   - name: NPM_REGISTRY
     displayName: "Custom NPM Registry"
     type: string
-    default: 'https://pkgs.dev.azure.com/monacotools/Monaco/_packaging/vscode/npm/registry/'
+    default: 'https://pkgs.dev.azure.com/monacotools/Monaco/_packaging/zycode/npm/registry/'
   - name: VSCODE_BUILD_WIN32
     displayName: "🎯 Windows x64"
     type: boolean
@@ -95,7 +95,7 @@ parameters:
 
 variables:
   - name: VSCODE_PRIVATE_BUILD
-    value: ${{ ne(variables['Build.Repository.Uri'], 'https://github.com/microsoft/vscode.git') }}
+    value: ${{ ne(variables['Build.Repository.Uri'], 'https://github.com/microsoft/zycode.git') }}
   - name: NPM_REGISTRY
     value: ${{ parameters.NPM_REGISTRY }}
   - name: VSCODE_QUALITY
@@ -127,11 +127,11 @@ variables:
   - name: AZURE_CDN_URL
     value: https://az764295.vo.msecnd.net
   - name: AZURE_DOCUMENTDB_ENDPOINT
-    value: https://vscode.documents.azure.com:443/
+    value: https://zycode.documents.azure.com:443/
   - name: MOONCAKE_CDN_URL
-    value: https://vscode.cdn.azure.cn
+    value: https://zycode.cdn.azure.cn
   - name: VSCODE_MIXIN_REPO
-    value: microsoft/vscode-distro
+    value: microsoft/zycode-distro
   - name: skipComponentGovernanceDetection
     value: true
   - name: Codeql.SkipTaskAutoInjection
@@ -144,10 +144,10 @@ name: "$(Date:yyyyMMdd).$(Rev:r) (${{ parameters.VSCODE_QUALITY }})"
 resources:
   containers:
     - container: snapcraft
-      image: vscodehub.azurecr.io/vscode-linux-build-agent:snapcraft-x64
+      image: vscodehub.azurecr.io/zycode-linux-build-agent:snapcraft-x64
       endpoint: VSCodeHub
   pipelines:
-    - pipeline: vscode-7pm-kick-off
+    - pipeline: zycode-7pm-kick-off
       source: 'VS Code 7PM Kick-Off'
       trigger: true
 
@@ -668,7 +668,7 @@ stages:
         jobs:
           - deployment: ApproveRelease
             displayName: "Approve Release"
-            environment: "vscode"
+            environment: "zycode"
             variables:
               skipComponentGovernanceDetection: true
             strategy:

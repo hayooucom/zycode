@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { CommandManager } from '../commandManager';
 
 
@@ -16,33 +16,33 @@ export enum DiagnosticCode {
 }
 
 
-class AddToIgnoreLinksQuickFixProvider implements vscode.CodeActionProvider {
+class AddToIgnoreLinksQuickFixProvider implements zycode.CodeActionProvider {
 
 	private static readonly _addToIgnoreLinksCommandId = '_markdown.addToIgnoreLinks';
 
-	private static readonly _metadata: vscode.CodeActionProviderMetadata = {
+	private static readonly _metadata: zycode.CodeActionProviderMetadata = {
 		providedCodeActionKinds: [
-			vscode.CodeActionKind.QuickFix
+			zycode.CodeActionKind.QuickFix
 		],
 	};
 
-	public static register(selector: vscode.DocumentSelector, commandManager: CommandManager): vscode.Disposable {
-		const reg = vscode.languages.registerCodeActionsProvider(selector, new AddToIgnoreLinksQuickFixProvider(), AddToIgnoreLinksQuickFixProvider._metadata);
+	public static register(selector: zycode.DocumentSelector, commandManager: CommandManager): zycode.Disposable {
+		const reg = zycode.languages.registerCodeActionsProvider(selector, new AddToIgnoreLinksQuickFixProvider(), AddToIgnoreLinksQuickFixProvider._metadata);
 		const commandReg = commandManager.register({
 			id: AddToIgnoreLinksQuickFixProvider._addToIgnoreLinksCommandId,
-			execute(resource: vscode.Uri, path: string) {
+			execute(resource: zycode.Uri, path: string) {
 				const settingId = 'validate.ignoredLinks';
-				const config = vscode.workspace.getConfiguration('markdown', resource);
+				const config = zycode.workspace.getConfiguration('markdown', resource);
 				const paths = new Set(config.get<string[]>(settingId, []));
 				paths.add(path);
-				config.update(settingId, [...paths], vscode.ConfigurationTarget.WorkspaceFolder);
+				config.update(settingId, [...paths], zycode.ConfigurationTarget.WorkspaceFolder);
 			}
 		});
-		return vscode.Disposable.from(reg, commandReg);
+		return zycode.Disposable.from(reg, commandReg);
 	}
 
-	provideCodeActions(document: vscode.TextDocument, _range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, _token: vscode.CancellationToken): vscode.ProviderResult<(vscode.CodeAction | vscode.Command)[]> {
-		const fixes: vscode.CodeAction[] = [];
+	provideCodeActions(document: zycode.TextDocument, _range: zycode.Range | zycode.Selection, context: zycode.CodeActionContext, _token: zycode.CancellationToken): zycode.ProviderResult<(zycode.CodeAction | zycode.Command)[]> {
+		const fixes: zycode.CodeAction[] = [];
 
 		for (const diagnostic of context.diagnostics) {
 			switch (diagnostic.code) {
@@ -52,9 +52,9 @@ class AddToIgnoreLinksQuickFixProvider implements vscode.CodeActionProvider {
 				case DiagnosticCode.link_noSuchHeaderInFile: {
 					const hrefText = (diagnostic as any).data?.hrefText;
 					if (hrefText) {
-						const fix = new vscode.CodeAction(
-							vscode.l10n.t("Exclude '{0}' from link validation.", hrefText),
-							vscode.CodeActionKind.QuickFix);
+						const fix = new zycode.CodeAction(
+							zycode.l10n.t("Exclude '{0}' from link validation.", hrefText),
+							zycode.CodeActionKind.QuickFix);
 
 						fix.command = {
 							command: AddToIgnoreLinksQuickFixProvider._addToIgnoreLinksCommandId,
@@ -74,8 +74,8 @@ class AddToIgnoreLinksQuickFixProvider implements vscode.CodeActionProvider {
 
 
 export function registerDiagnosticSupport(
-	selector: vscode.DocumentSelector,
+	selector: zycode.DocumentSelector,
 	commandManager: CommandManager,
-): vscode.Disposable {
+): zycode.Disposable {
 	return AddToIgnoreLinksQuickFixProvider.register(selector, commandManager);
 }

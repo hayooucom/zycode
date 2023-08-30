@@ -7,7 +7,7 @@ import {
 	window, languages, Uri, Disposable, commands, QuickPickItem,
 	extensions, workspace, Extension, WorkspaceFolder, QuickPickItemKind,
 	ThemeIcon, TextDocument, LanguageStatusSeverity, l10n
-} from 'vscode';
+} from 'zycode';
 import { JSONLanguageStatus, JSONSchemaSettings } from './jsonClient';
 
 type ShowSchemasInput = {
@@ -151,7 +151,7 @@ function showSchemaList(input: ShowSchemasInput) {
 	quickPick.onDidAccept(() => {
 		const uri = quickPick.selectedItems[0].uri;
 		if (uri) {
-			commands.executeCommand('vscode.open', uri);
+			commands.executeCommand('zycode.open', uri);
 			quickPick.dispose();
 		}
 	});

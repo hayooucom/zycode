@@ -107,7 +107,7 @@ suite('ExtHostCommands', function () {
 		assert.strictEqual(count, 2);
 	});
 
-	test('onCommand:abc activates extensions when executed from command palette, but not when executed programmatically with vscode.commands.executeCommand #150293', async function () {
+	test('onCommand:abc activates extensions when executed from command palette, but not when executed programmatically with zycode.commands.executeCommand #150293', async function () {
 
 		const activationEvents: string[] = [];
 

@@ -13,7 +13,7 @@ import { IExtHostInitDataService } from 'vs/workbench/api/common/extHostInitData
 import { ExtHostTelemetry, ExtHostTelemetryLogger } from 'vs/workbench/api/common/extHostTelemetry';
 import { IEnvironment } from 'vs/workbench/services/extensions/common/extensionHostProtocol';
 import { mock } from 'vs/workbench/test/common/workbenchTestServices';
-import type { TelemetryLoggerOptions, TelemetrySender } from 'vscode';
+import type { TelemetryLoggerOptions, TelemetrySender } from 'zycode';
 
 interface TelemetryLoggerSpy {
 	dataArr: any[];
@@ -57,9 +57,9 @@ suite('ExtHostTelemetry', function () {
 		isUserBuiltin: true,
 		isUnderDevelopment: true,
 		name: 'test-extension',
-		publisher: 'vscode',
+		publisher: 'zycode',
 		version: '1.0.0',
-		engines: { vscode: '*' },
+		engines: { zycode: '*' },
 		extensionLocation: URI.parse('fake')
 	};
 
@@ -217,7 +217,7 @@ suite('ExtHostTelemetry', function () {
 			'fake-email': 'no-reply@example.com',
 			'fake-token': 'token=123',
 			'fake-slack-token': 'xoxp-123',
-			'fake-path': '/Users/username/.vscode/extensions',
+			'fake-path': '/Users/username/.zycode/extensions',
 		});
 
 		assert.strictEqual(functionSpy.dataArr.length, 1);

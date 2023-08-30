@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
-export function disposeAll(disposables: Iterable<vscode.Disposable>) {
+export function disposeAll(disposables: Iterable<zycode.Disposable>) {
 	const errors: any[] = [];
 
 	for (const disposable of disposables) {
@@ -30,7 +30,7 @@ export interface IDisposable {
 export abstract class Disposable {
 	private _isDisposed = false;
 
-	protected _disposables: vscode.Disposable[] = [];
+	protected _disposables: zycode.Disposable[] = [];
 
 	public dispose(): any {
 		if (this._isDisposed) {

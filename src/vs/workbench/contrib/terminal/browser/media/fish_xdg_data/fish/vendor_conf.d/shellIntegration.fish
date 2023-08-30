@@ -3,20 +3,20 @@
 #   Licensed under the MIT License. See License.txt in the project root for license information.
 # ---------------------------------------------------------------------------------------------
 #
-# Visual Studio Code terminal integration for fish
+# ZY Studio Code terminal integration for fish
 #
 # Manual installation:
 #
 #   (1) Add the following to the end of `$__fish_config_dir/config.fish`:
 #
-#         string match -q "$TERM_PROGRAM" "vscode"
+#         string match -q "$TERM_PROGRAM" "zycode"
 #         and . (code --locate-shell-integration-path fish)
 #
 #   (2) Restart fish.
 
 # Don't run in scripts, other terminals, or more than once per session.
 status is-interactive
-and string match --quiet "$TERM_PROGRAM" "vscode"
+and string match --quiet "$TERM_PROGRAM" "zycode"
 and ! set --query VSCODE_SHELL_INTEGRATION
 or exit
 

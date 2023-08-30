@@ -444,7 +444,7 @@ export interface ITerminalInstanceHost {
 
 /**
  * Similar to xterm.js' ILinkProvider but using promises and hides xterm.js internals (like buffer
- * positions, decorations, etc.) from the rest of vscode. This is the interface to use for
+ * positions, decorations, etc.) from the rest of zycode. This is the interface to use for
  * workbench integrations.
  */
 export interface ITerminalExternalLinkProvider {

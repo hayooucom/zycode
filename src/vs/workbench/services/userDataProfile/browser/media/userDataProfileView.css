@@ -19,16 +19,16 @@
 }
 
 .monaco-workbench .pane>.pane-body>.profile-view-message-container a {
-	color: var(--vscode-textLink-foreground)
+	color: var(--zycode-textLink-foreground)
 }
 
 .monaco-workbench .pane>.pane-body>.profile-view-message-container a:hover {
 	text-decoration: underline;
-	color: var(--vscode-textLink-activeForeground)
+	color: var(--zycode-textLink-activeForeground)
 }
 
 .monaco-workbench .pane>.pane-body>.profile-view-message-container a:active {
-	color: var(--vscode-textLink-activeForeground)
+	color: var(--zycode-textLink-activeForeground)
 }
 
 .monaco-workbench .pane>.pane-body>.profile-view-message-container.hide {

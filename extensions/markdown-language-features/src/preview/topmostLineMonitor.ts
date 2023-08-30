@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Disposable } from '../util/dispose';
 import { isMarkdownFile } from '../util/file';
 import { ResourceMap } from '../util/resourceMap';
 
 export interface LastScrollLocation {
 	readonly line: number;
-	readonly uri: vscode.Uri;
+	readonly uri: zycode.Uri;
 }
 
 export class TopmostLineMonitor extends Disposable {
@@ -23,12 +23,12 @@ export class TopmostLineMonitor extends Disposable {
 	constructor() {
 		super();
 
-		if (vscode.window.activeTextEditor) {
-			const line = getVisibleLine(vscode.window.activeTextEditor);
-			this.setPreviousTextEditorLine({ uri: vscode.window.activeTextEditor.document.uri, line: line ?? 0 });
+		if (zycode.window.activeTextEditor) {
+			const line = getVisibleLine(zycode.window.activeTextEditor);
+			this.setPreviousTextEditorLine({ uri: zycode.window.activeTextEditor.document.uri, line: line ?? 0 });
 		}
 
-		this._register(vscode.window.onDidChangeTextEditorVisibleRanges(event => {
+		this._register(zycode.window.onDidChangeTextEditorVisibleRanges(event => {
 			if (isMarkdownFile(event.textEditor.document)) {
 				const line = getVisibleLine(event.textEditor);
 				if (typeof line === 'number') {
@@ -39,14 +39,14 @@ export class TopmostLineMonitor extends Disposable {
 		}));
 	}
 
-	private readonly _onChanged = this._register(new vscode.EventEmitter<{ readonly resource: vscode.Uri; readonly line: number }>());
+	private readonly _onChanged = this._register(new zycode.EventEmitter<{ readonly resource: zycode.Uri; readonly line: number }>());
 	public readonly onDidChanged = this._onChanged.event;
 
 	public setPreviousStaticEditorLine(scrollLocation: LastScrollLocation): void {
 		this._previousStaticEditorInfo.set(scrollLocation.uri, scrollLocation);
 	}
 
-	public getPreviousStaticEditorLineByUri(resource: vscode.Uri): number | undefined {
+	public getPreviousStaticEditorLineByUri(resource: zycode.Uri): number | undefined {
 		const scrollLoc = this._previousStaticEditorInfo.get(resource);
 		this._previousStaticEditorInfo.delete(resource);
 		return scrollLoc?.line;
@@ -57,19 +57,19 @@ export class TopmostLineMonitor extends Disposable {
 		this._previousTextEditorInfo.set(scrollLocation.uri, scrollLocation);
 	}
 
-	public getPreviousTextEditorLineByUri(resource: vscode.Uri): number | undefined {
+	public getPreviousTextEditorLineByUri(resource: zycode.Uri): number | undefined {
 		const scrollLoc = this._previousTextEditorInfo.get(resource);
 		this._previousTextEditorInfo.delete(resource);
 		return scrollLoc?.line;
 	}
 
-	public getPreviousStaticTextEditorLineByUri(resource: vscode.Uri): number | undefined {
+	public getPreviousStaticTextEditorLineByUri(resource: zycode.Uri): number | undefined {
 		const state = this._previousStaticEditorInfo.get(resource);
 		return state?.line;
 	}
 
 	public updateLine(
-		resource: vscode.Uri,
+		resource: zycode.Uri,
 		line: number
 	) {
 		if (!this._pendingUpdates.has(resource)) {
@@ -96,7 +96,7 @@ export class TopmostLineMonitor extends Disposable {
  * Floor to get real line number
  */
 export function getVisibleLine(
-	editor: vscode.TextEditor
+	editor: zycode.TextEditor
 ): number | undefined {
 	if (!editor.visibleRanges.length) {
 		return undefined;

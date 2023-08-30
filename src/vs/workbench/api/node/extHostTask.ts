@@ -9,7 +9,7 @@ import { URI, UriComponents } from 'vs/base/common/uri';
 import { win32 } from 'vs/base/node/processes';
 import * as types from 'vs/workbench/api/common/extHostTypes';
 import { IExtHostWorkspace } from 'vs/workbench/api/common/extHostWorkspace';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as tasks from '../common/shared/tasks';
 import { IExtHostDocumentsAndEditors } from 'vs/workbench/api/common/extHostDocumentsAndEditors';
 import { IExtHostConfiguration } from 'vs/workbench/api/common/extHostConfiguration';
@@ -55,7 +55,7 @@ export class ExtHostTask extends ExtHostTaskBase {
 		this._proxy.$registerSupportedExecutions(true, true, true);
 	}
 
-	public async executeTask(extension: IExtensionDescription, task: vscode.Task): Promise<vscode.TaskExecution> {
+	public async executeTask(extension: IExtensionDescription, task: zycode.Task): Promise<zycode.TaskExecution> {
 		const tTask = (task as types.Task);
 
 		if (!task.execution && (tTask._id === undefined)) {
@@ -92,7 +92,7 @@ export class ExtHostTask extends ExtHostTaskBase {
 		}
 	}
 
-	protected provideTasksInternal(validTypes: { [key: string]: boolean }, taskIdPromises: Promise<void>[], handler: HandlerData, value: vscode.Task[] | null | undefined): { tasks: tasks.ITaskDTO[]; extension: IExtensionDescription } {
+	protected provideTasksInternal(validTypes: { [key: string]: boolean }, taskIdPromises: Promise<void>[], handler: HandlerData, value: zycode.Task[] | null | undefined): { tasks: tasks.ITaskDTO[]; extension: IExtensionDescription } {
 		const taskDTOs: tasks.ITaskDTO[] = [];
 		if (value) {
 			for (const task of value) {
@@ -125,7 +125,7 @@ export class ExtHostTask extends ExtHostTaskBase {
 		return resolvedTaskDTO;
 	}
 
-	private async getAFolder(workspaceFolders: vscode.WorkspaceFolder[] | undefined): Promise<IWorkspaceFolder> {
+	private async getAFolder(workspaceFolders: zycode.WorkspaceFolder[] | undefined): Promise<IWorkspaceFolder> {
 		let folder = (workspaceFolders && workspaceFolders.length > 0) ? workspaceFolders[0] : undefined;
 		if (!folder) {
 			const userhome = URI.file(homedir());

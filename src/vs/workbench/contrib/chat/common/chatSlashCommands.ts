@@ -33,7 +33,7 @@ const slashItem: IJSONSchema = {
 };
 
 const slashItems: IJSONSchema = {
-	description: localize('vscode.extension.contributes.slashes', "Contributes slash commands to chat"),
+	description: localize('zycode.extension.contributes.slashes', "Contributes slash commands to chat"),
 	oneOf: [
 		slashItem,
 		{

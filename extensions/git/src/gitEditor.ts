@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as path from 'path';
-import { TabInputText, Uri, window, workspace } from 'vscode';
+import { TabInputText, Uri, window, workspace } from 'zycode';
 import { IIPCHandler, IIPCServer } from './ipc/ipcServer';
 import { ITerminalEnvironmentProvider } from './terminal';
 import { EmptyDisposable, IDisposable } from './util';

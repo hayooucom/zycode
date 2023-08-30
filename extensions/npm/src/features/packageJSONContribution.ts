@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CompletionItemKind, CompletionItem, DocumentSelector, SnippetString, workspace, MarkdownString, Uri, l10n } from 'vscode';
+import { CompletionItemKind, CompletionItem, DocumentSelector, SnippetString, workspace, MarkdownString, Uri, l10n } from 'zycode';
 import { IJSONContribution, ISuggestionsCollector } from './jsonContributions';
 import { XHRRequest } from 'request-light';
 import { Location } from 'jsonc-parser';
@@ -14,7 +14,7 @@ import { fromNow } from './date';
 
 const LIMIT = 40;
 
-const USER_AGENT = 'Visual Studio Code';
+const USER_AGENT = 'ZY Studio Code';
 
 export class PackageJSONContribution implements IJSONContribution {
 

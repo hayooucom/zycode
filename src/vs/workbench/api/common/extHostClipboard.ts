@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IMainContext, MainContext } from 'vs/workbench/api/common/extHost.protocol';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 
 export class ExtHostClipboard {
 
-	readonly value: vscode.Clipboard;
+	readonly value: zycode.Clipboard;
 
 	constructor(mainContext: IMainContext) {
 		const proxy = mainContext.getProxy(MainContext.MainThreadClipboard);

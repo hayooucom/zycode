@@ -103,5 +103,5 @@
 }
 
 .monaco-workbench .codicon.codicon-ports-forwarded-with-process-icon {
-	color: var(--vscode-ports-iconRunningProcessForeground);
+	color: var(--zycode-ports-iconRunningProcessForeground);
 }

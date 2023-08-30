@@ -11,7 +11,7 @@ const sw = /** @type {ServiceWorkerGlobalScope} */ (/** @type {any} */ (self));
 
 const VERSION = 4;
 
-const resourceCacheName = `vscode-resource-cache-${VERSION}`;
+const resourceCacheName = `zycode-resource-cache-${VERSION}`;
 
 const rootPath = sw.location.pathname.replace(/\/service-worker.js$/, '');
 
@@ -22,7 +22,7 @@ const remoteAuthority = searchParams.get('remoteAuthority');
 /**
  * Origin used for resources
  */
-const resourceBaseAuthority = searchParams.get('vscode-resource-base-authority');
+const resourceBaseAuthority = searchParams.get('zycode-resource-base-authority');
 
 const resolveTimeout = 30_000;
 
@@ -325,7 +325,7 @@ async function processResourceRequest(event, requestUrlComponents) {
 		}
 
 		// support COI requests, see network.ts#COI.getHeadersFromQuery(...)
-		const coiRequest = new URL(event.request.url).searchParams.get('vscode-coi');
+		const coiRequest = new URL(event.request.url).searchParams.get('zycode-coi');
 		if (coiRequest === '3') {
 			headers['Cross-Origin-Opener-Policy'] = 'same-origin';
 			headers['Cross-Origin-Embedder-Policy'] = 'require-corp';
@@ -387,7 +387,7 @@ async function processLocalhostRequest(event, requestUrl) {
 	const client = await sw.clients.get(event.clientId);
 	if (!client) {
 		// This is expected when requesting resources on other localhost ports
-		// that are not spawned by vs code
+		// that are not spawned by zy code
 		return fetch(event.request);
 	}
 	const webviewId = getWebviewIdForClient(client);

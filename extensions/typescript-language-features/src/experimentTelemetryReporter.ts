@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import VsCodeTelemetryReporter from '@vscode/extension-telemetry';
-import * as vscode from 'vscode';
-import * as tas from 'vscode-tas-client';
+import VsCodeTelemetryReporter from '@zycode/extension-telemetry';
+import * as zycode from 'zycode';
+import * as tas from 'zycode-tas-client';
 
-export interface IExperimentationTelemetryReporter extends tas.IExperimentationTelemetry, vscode.Disposable {
+export interface IExperimentationTelemetryReporter extends tas.IExperimentationTelemetry, zycode.Disposable {
 	postEventObj(eventName: string, props: { [prop: string]: string }): void;
 }
 

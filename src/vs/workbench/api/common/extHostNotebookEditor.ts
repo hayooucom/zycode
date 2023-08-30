@@ -7,35 +7,35 @@ import { illegalArgument } from 'vs/base/common/errors';
 import { MainThreadNotebookEditorsShape } from 'vs/workbench/api/common/extHost.protocol';
 import * as extHostConverter from 'vs/workbench/api/common/extHostTypeConverters';
 import * as extHostTypes from 'vs/workbench/api/common/extHostTypes';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { ExtHostNotebookDocument } from './extHostNotebookDocument';
 
 export class ExtHostNotebookEditor {
 
-	public static readonly apiEditorsToExtHost = new WeakMap<vscode.NotebookEditor, ExtHostNotebookEditor>();
+	public static readonly apiEditorsToExtHost = new WeakMap<zycode.NotebookEditor, ExtHostNotebookEditor>();
 
-	private _selections: vscode.NotebookRange[] = [];
-	private _visibleRanges: vscode.NotebookRange[] = [];
-	private _viewColumn?: vscode.ViewColumn;
+	private _selections: zycode.NotebookRange[] = [];
+	private _visibleRanges: zycode.NotebookRange[] = [];
+	private _viewColumn?: zycode.ViewColumn;
 
 	private _visible: boolean = false;
 
-	private _editor?: vscode.NotebookEditor;
+	private _editor?: zycode.NotebookEditor;
 
 	constructor(
 		readonly id: string,
 		private readonly _proxy: MainThreadNotebookEditorsShape,
 		readonly notebookData: ExtHostNotebookDocument,
-		visibleRanges: vscode.NotebookRange[],
-		selections: vscode.NotebookRange[],
-		viewColumn: vscode.ViewColumn | undefined
+		visibleRanges: zycode.NotebookRange[],
+		selections: zycode.NotebookRange[],
+		viewColumn: zycode.ViewColumn | undefined
 	) {
 		this._selections = selections;
 		this._visibleRanges = visibleRanges;
 		this._viewColumn = viewColumn;
 	}
 
-	get apiEditor(): vscode.NotebookEditor {
+	get apiEditor(): zycode.NotebookEditor {
 		if (!this._editor) {
 			const that = this;
 			this._editor = {
@@ -45,13 +45,13 @@ export class ExtHostNotebookEditor {
 				get selection() {
 					return that._selections[0];
 				},
-				set selection(selection: vscode.NotebookRange) {
+				set selection(selection: zycode.NotebookRange) {
 					this.selections = [selection];
 				},
 				get selections() {
 					return that._selections;
 				},
-				set selections(value: vscode.NotebookRange[]) {
+				set selections(value: zycode.NotebookRange[]) {
 					if (!Array.isArray(value) || !value.every(extHostTypes.NotebookRange.isNotebookRange)) {
 						throw illegalArgument('selections');
 					}
@@ -86,19 +86,19 @@ export class ExtHostNotebookEditor {
 		this._visible = value;
 	}
 
-	_acceptVisibleRanges(value: vscode.NotebookRange[]): void {
+	_acceptVisibleRanges(value: zycode.NotebookRange[]): void {
 		this._visibleRanges = value;
 	}
 
-	_acceptSelections(selections: vscode.NotebookRange[]): void {
+	_acceptSelections(selections: zycode.NotebookRange[]): void {
 		this._selections = selections;
 	}
 
-	private _trySetSelections(value: vscode.NotebookRange[]): void {
+	private _trySetSelections(value: zycode.NotebookRange[]): void {
 		this._proxy.$trySetSelections(this.id, value.map(extHostConverter.NotebookRange.from));
 	}
 
-	_acceptViewColumn(value: vscode.ViewColumn | undefined) {
+	_acceptViewColumn(value: zycode.ViewColumn | undefined) {
 		this._viewColumn = value;
 	}
 }

@@ -8,8 +8,8 @@ steps:
   - task: AzureKeyVault@1
     displayName: "Azure Key Vault: Get Secrets"
     inputs:
-      azureSubscription: "vscode-builds-subscription"
-      KeyVaultName: vscode-build-secrets
+      azureSubscription: "zycode-builds-subscription"
+      KeyVaultName: zycode-build-secrets
       SecretsFilter: "github-distro-mixin-password"
 
   - task: DownloadPipelineArtifact@2
@@ -96,10 +96,10 @@ steps:
 
   - script: |
       set -e
-      yarn gulp vscode-web-min-ci
-      ARCHIVE_PATH=".build/web/vscode-web.tar.gz"
+      yarn gulp zycode-web-min-ci
+      ARCHIVE_PATH=".build/web/zycode-web.tar.gz"
       mkdir -p $(dirname $ARCHIVE_PATH)
-      tar --owner=0 --group=0 -czf $ARCHIVE_PATH -C .. vscode-web
+      tar --owner=0 --group=0 -czf $ARCHIVE_PATH -C .. zycode-web
       echo "##vso[task.setvariable variable=WEB_PATH]$ARCHIVE_PATH"
     env:
       GITHUB_TOKEN: "$(github-distro-mixin-password)"
@@ -107,7 +107,7 @@ steps:
 
   - task: AzureCLI@2
     inputs:
-      azureSubscription: "vscode-builds-subscription"
+      azureSubscription: "zycode-builds-subscription"
       scriptType: pscore
       scriptLocation: inlineScript
       addSpnToEnvironment: true
@@ -134,7 +134,7 @@ steps:
       AZURE_TENANT_ID="$(AZURE_TENANT_ID)" \
       AZURE_CLIENT_ID="$(AZURE_CLIENT_ID)" \
       AZURE_CLIENT_SECRET="$(AZURE_CLIENT_SECRET)" \
-        node build/azure-pipelines/upload-sourcemaps out-vscode-web-min out-vscode-web-min/vs/workbench/workbench.web.main.js.map
+        node build/azure-pipelines/upload-sourcemaps out-zycode-web-min out-zycode-web-min/vs/workbench/workbench.web.main.js.map
     displayName: Upload sourcemaps (Web)
 
   - script: |

@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { Utils } from 'vscode-uri';
+import * as zycode from 'zycode';
+import { Utils } from 'zycode-uri';
 import { disposeAll, IDisposable } from '../util/dispose';
 import { ResourceMap } from '../util/resourceMap';
 import { Schemes } from '../util/schemes';
 
 type DirWatcherEntry = {
-	readonly uri: vscode.Uri;
+	readonly uri: zycode.Uri;
 	readonly listeners: IDisposable[];
 };
 
@@ -18,17 +18,17 @@ type DirWatcherEntry = {
 export class FileWatcherManager {
 
 	private readonly _fileWatchers = new Map<number, {
-		readonly watcher: vscode.FileSystemWatcher;
+		readonly watcher: zycode.FileSystemWatcher;
 		readonly dirWatchers: DirWatcherEntry[];
 	}>();
 
 	private readonly _dirWatchers = new ResourceMap<{
-		readonly watcher: vscode.FileSystemWatcher;
+		readonly watcher: zycode.FileSystemWatcher;
 		refCount: number;
 	}>();
 
-	create(id: number, uri: vscode.Uri, watchParentDirs: boolean, listeners: { create?: () => void; change?: () => void; delete?: () => void }): void {
-		const watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(uri, '*'), !listeners.create, !listeners.change, !listeners.delete);
+	create(id: number, uri: zycode.Uri, watchParentDirs: boolean, listeners: { create?: () => void; change?: () => void; delete?: () => void }): void {
+		const watcher = zycode.workspace.createFileSystemWatcher(new zycode.RelativePattern(uri, '*'), !listeners.create, !listeners.change, !listeners.delete);
 		const parentDirWatchers: DirWatcherEntry[] = [];
 		this._fileWatchers.set(id, { watcher, dirWatchers: parentDirWatchers });
 
@@ -43,8 +43,8 @@ export class FileWatcherManager {
 
 				let parentDirWatcher = this._dirWatchers.get(dirUri);
 				if (!parentDirWatcher) {
-					const glob = new vscode.RelativePattern(Utils.dirname(dirUri), Utils.basename(dirUri));
-					const parentWatcher = vscode.workspace.createFileSystemWatcher(glob, !listeners.create, true, !listeners.delete);
+					const glob = new zycode.RelativePattern(Utils.dirname(dirUri), Utils.basename(dirUri));
+					const parentWatcher = zycode.workspace.createFileSystemWatcher(glob, !listeners.create, true, !listeners.delete);
 					parentDirWatcher = { refCount: 0, watcher: parentWatcher };
 					this._dirWatchers.set(dirUri, parentDirWatcher);
 				}
@@ -54,8 +54,8 @@ export class FileWatcherManager {
 					dirWatcher.listeners.push(parentDirWatcher.watcher.onDidCreate(async () => {
 						// Just because the parent dir was created doesn't mean our file was created
 						try {
-							const stat = await vscode.workspace.fs.stat(uri);
-							if (stat.type === vscode.FileType.File) {
+							const stat = await zycode.workspace.fs.stat(uri);
+							if (stat.type === zycode.FileType.File) {
 								listeners.create!();
 							}
 						} catch {

@@ -3,22 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import * as typeConverters from '../typeConverters';
 import { ClientCapability, ITypeScriptServiceClient } from '../typescriptService';
 import { conditionalRegistration, requireSomeCapability } from './util/dependentRegistration';
 
-class TypeScriptReferenceSupport implements vscode.ReferenceProvider {
+class TypeScriptReferenceSupport implements zycode.ReferenceProvider {
 	public constructor(
 		private readonly client: ITypeScriptServiceClient) { }
 
 	public async provideReferences(
-		document: vscode.TextDocument,
-		position: vscode.Position,
-		options: vscode.ReferenceContext,
-		token: vscode.CancellationToken
-	): Promise<vscode.Location[]> {
+		document: zycode.TextDocument,
+		position: zycode.Position,
+		options: zycode.ReferenceContext,
+		token: zycode.CancellationToken
+	): Promise<zycode.Location[]> {
 		const filepath = this.client.toOpenTsFilePath(document);
 		if (!filepath) {
 			return [];
@@ -30,7 +30,7 @@ class TypeScriptReferenceSupport implements vscode.ReferenceProvider {
 			return [];
 		}
 
-		const result: vscode.Location[] = [];
+		const result: zycode.Location[] = [];
 		for (const ref of response.body.refs) {
 			if (!options.includeDeclaration && ref.isDefinition) {
 				continue;
@@ -50,7 +50,7 @@ export function register(
 	return conditionalRegistration([
 		requireSomeCapability(client, ClientCapability.EnhancedSyntax, ClientCapability.Semantic),
 	], () => {
-		return vscode.languages.registerReferenceProvider(selector.syntax,
+		return zycode.languages.registerReferenceProvider(selector.syntax,
 			new TypeScriptReferenceSupport(client));
 	});
 }

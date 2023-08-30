@@ -4,36 +4,36 @@
  *--------------------------------------------------------------------------------------------*/
 
 .monaco-editor .focused .selectionHighlight {
-	background-color: var(--vscode-editor-selectionHighlightBackground);
+	background-color: var(--zycode-editor-selectionHighlightBackground);
 	box-sizing: border-box;
-	border: 1px solid var(--vscode-editor-selectionHighlightBorder);
+	border: 1px solid var(--zycode-editor-selectionHighlightBorder);
 }
 .monaco-editor.hc-black .focused .selectionHighlight, .monaco-editor.hc-light .focused .selectionHighlight {
 	border-style: dotted;
 }
 
 .monaco-editor .wordHighlight {
-	background-color: var(--vscode-editor-wordHighlightBackground);
+	background-color: var(--zycode-editor-wordHighlightBackground);
 	box-sizing: border-box;
-	border: 1px solid var(--vscode-editor-wordHighlightBorder);
+	border: 1px solid var(--zycode-editor-wordHighlightBorder);
 }
 .monaco-editor.hc-black .wordHighlight, .monaco-editor.hc-light .wordHighlight {
 	border-style: dotted;
 }
 
 .monaco-editor .wordHighlightStrong {
-	background-color: var(--vscode-editor-wordHighlightStrongBackground);
+	background-color: var(--zycode-editor-wordHighlightStrongBackground);
 	box-sizing: border-box;
-	border: 1px solid var(--vscode-editor-wordHighlightStrongBorder);
+	border: 1px solid var(--zycode-editor-wordHighlightStrongBorder);
 }
 .monaco-editor.hc-black .wordHighlightStrong, .monaco-editor.hc-light .wordHighlightStrong {
 	border-style: dotted;
 }
 
 .monaco-editor .wordHighlightText {
-	background-color: var(--vscode-editor-wordHighlightTextBackground);
+	background-color: var(--zycode-editor-wordHighlightTextBackground);
 	box-sizing: border-box;
-	border: 1px solid var(--vscode-editor-wordHighlightTextBorder);
+	border: 1px solid var(--zycode-editor-wordHighlightTextBorder);
 }
 .monaco-editor.hc-black .wordHighlightText, .monaco-editor.hc-light .wordHighlightText {
 	border-style: dotted;

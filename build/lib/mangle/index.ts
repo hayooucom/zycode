@@ -316,7 +316,7 @@ const skippedExportMangledFiles = [
 
 const skippedExportMangledProjects = [
 	// Test projects
-	'vscode-api-tests',
+	'zycode-api-tests',
 
 	// These projects use webpack to dynamically rewrite imports, which messes up our mangling
 	'configuration-editing',

@@ -3,22 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { getHtmlFlatNode, validate } from './util';
 import { HtmlNode as HtmlFlatNode } from 'EmmetFlatNode';
 import { getRootNode } from './parseDocument';
 
 interface TagRange {
 	name: string;
-	range: vscode.Range;
+	range: zycode.Range;
 }
 
 export async function updateTag(tagName: string | undefined): Promise<boolean | undefined> {
-	if (!validate(false) || !vscode.window.activeTextEditor) {
+	if (!validate(false) || !zycode.window.activeTextEditor) {
 		return;
 	}
 
-	const editor = vscode.window.activeTextEditor;
+	const editor = zycode.window.activeTextEditor;
 	const document = editor.document;
 	const rootNode = <HtmlFlatNode>getRootNode(document, true);
 	if (!rootNode) {
@@ -35,7 +35,7 @@ export async function updateTag(tagName: string | undefined): Promise<boolean | 
 	const tagNamesAreEqual = rangesToUpdate.every(range => range.name === firstTagName);
 
 	if (tagName === undefined) {
-		tagName = await vscode.window.showInputBox({
+		tagName = await zycode.window.showInputBox({
 			prompt: 'Enter Tag',
 			value: tagNamesAreEqual ? firstTagName : undefined
 		});
@@ -53,13 +53,13 @@ export async function updateTag(tagName: string | undefined): Promise<boolean | 
 	});
 }
 
-function getRangesFromNode(node: HtmlFlatNode, document: vscode.TextDocument): TagRange[] {
+function getRangesFromNode(node: HtmlFlatNode, document: zycode.TextDocument): TagRange[] {
 	const ranges: TagRange[] = [];
 	if (node.open) {
 		const start = document.positionAt(node.open.start);
 		ranges.push({
 			name: node.name,
-			range: new vscode.Range(start.translate(0, 1), start.translate(0, 1).translate(0, node.name.length))
+			range: new zycode.Range(start.translate(0, 1), start.translate(0, 1).translate(0, node.name.length))
 		});
 	}
 	if (node.close) {
@@ -67,13 +67,13 @@ function getRangesFromNode(node: HtmlFlatNode, document: vscode.TextDocument): T
 		const end = document.positionAt(node.close.end);
 		ranges.push({
 			name: node.name,
-			range: new vscode.Range(endTagStart.translate(0, 2), end.translate(0, -1))
+			range: new zycode.Range(endTagStart.translate(0, 2), end.translate(0, -1))
 		});
 	}
 	return ranges;
 }
 
-function getRangesToUpdate(document: vscode.TextDocument, selection: vscode.Selection, rootNode: HtmlFlatNode): TagRange[] {
+function getRangesToUpdate(document: zycode.TextDocument, selection: zycode.Selection, rootNode: HtmlFlatNode): TagRange[] {
 	const documentText = document.getText();
 	const offset = document.offsetAt(selection.start);
 	const nodeToUpdate = getHtmlFlatNode(documentText, rootNode, offset, true);

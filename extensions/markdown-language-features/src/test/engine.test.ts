@@ -5,12 +5,12 @@
 
 import * as assert from 'assert';
 import 'mocha';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { InMemoryDocument } from '../client/inMemoryDocument';
 import { createNewMarkdownEngine } from './engine';
 
 
-const testFileName = vscode.Uri.file('test.md');
+const testFileName = zycode.Uri.file('test.md');
 
 suite('markdown.engine', () => {
 	suite('rendering', () => {

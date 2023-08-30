@@ -101,30 +101,30 @@ const keybindingType: IJSONSchema = {
 	default: { command: '', key: '' },
 	properties: {
 		command: {
-			description: nls.localize('vscode.extension.contributes.keybindings.command', 'Identifier of the command to run when keybinding is triggered.'),
+			description: nls.localize('zycode.extension.contributes.keybindings.command', 'Identifier of the command to run when keybinding is triggered.'),
 			type: 'string'
 		},
 		args: {
-			description: nls.localize('vscode.extension.contributes.keybindings.args', "Arguments to pass to the command to execute.")
+			description: nls.localize('zycode.extension.contributes.keybindings.args', "Arguments to pass to the command to execute.")
 		},
 		key: {
-			description: nls.localize('vscode.extension.contributes.keybindings.key', 'Key or key sequence (separate keys with plus-sign and sequences with space, e.g. Ctrl+O and Ctrl+L L for a chord).'),
+			description: nls.localize('zycode.extension.contributes.keybindings.key', 'Key or key sequence (separate keys with plus-sign and sequences with space, e.g. Ctrl+O and Ctrl+L L for a chord).'),
 			type: 'string'
 		},
 		mac: {
-			description: nls.localize('vscode.extension.contributes.keybindings.mac', 'Mac specific key or key sequence.'),
+			description: nls.localize('zycode.extension.contributes.keybindings.mac', 'Mac specific key or key sequence.'),
 			type: 'string'
 		},
 		linux: {
-			description: nls.localize('vscode.extension.contributes.keybindings.linux', 'Linux specific key or key sequence.'),
+			description: nls.localize('zycode.extension.contributes.keybindings.linux', 'Linux specific key or key sequence.'),
 			type: 'string'
 		},
 		win: {
-			description: nls.localize('vscode.extension.contributes.keybindings.win', 'Windows specific key or key sequence.'),
+			description: nls.localize('zycode.extension.contributes.keybindings.win', 'Windows specific key or key sequence.'),
 			type: 'string'
 		},
 		when: {
-			description: nls.localize('vscode.extension.contributes.keybindings.when', 'Condition when the key is active.'),
+			description: nls.localize('zycode.extension.contributes.keybindings.when', 'Condition when the key is active.'),
 			type: 'string'
 		},
 	}
@@ -134,7 +134,7 @@ const keybindingsExtPoint = ExtensionsRegistry.registerExtensionPoint<Contribute
 	extensionPoint: 'keybindings',
 	deps: [commandsExtensionPoint],
 	jsonSchema: {
-		description: nls.localize('vscode.extension.contributes.keybindings', "Contributes keybindings."),
+		description: nls.localize('zycode.extension.contributes.keybindings', "Contributes keybindings."),
 		oneOf: [
 			keybindingType,
 			{
@@ -666,7 +666,7 @@ export class WorkbenchKeybindingService extends AbstractKeybindingService {
 
 		const keycode = IMMUTABLE_CODE_TO_KEY_CODE[code];
 		if (keycode !== -1) {
-			// https://github.com/microsoft/vscode/issues/74934
+			// https://github.com/microsoft/zycode/issues/74934
 			return false;
 		}
 		// consult the KeyboardMapperFactory to check the given event for
@@ -742,7 +742,7 @@ class UserKeybindings extends Disposable {
 	private watch(): void {
 		this.watchDisposables.clear();
 		this.watchDisposables.add(this.fileService.watch(dirname(this.userDataProfileService.currentProfile.keybindingsResource)));
-		// Also listen to the resource incase the resource is a symlink - https://github.com/microsoft/vscode/issues/118134
+		// Also listen to the resource incase the resource is a symlink - https://github.com/microsoft/zycode/issues/118134
 		this.watchDisposables.add(this.fileService.watch(this.userDataProfileService.currentProfile.keybindingsResource));
 	}
 
@@ -782,7 +782,7 @@ class UserKeybindings extends Disposable {
  */
 class KeybindingsJsonSchema {
 
-	private static readonly schemaId = 'vscode://schemas/keybindings';
+	private static readonly schemaId = 'zycode://schemas/keybindings';
 
 	private readonly commandsSchemas: IJSONSchema[] = [];
 	private readonly commandsEnum: string[] = [];

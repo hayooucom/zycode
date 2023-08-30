@@ -277,7 +277,7 @@ suite('OpenerService', function () {
 		disposable.dispose();
 	});
 
-	test('vscode.open command can\'t open HTTP URL with hash (#) in it [extension development] #140907', async function () {
+	test('zycode.open command can\'t open HTTP URL with hash (#) in it [extension development] #140907', async function () {
 		const openerService = new OpenerService(editorService, NullCommandService);
 
 		const actual: string[] = [];

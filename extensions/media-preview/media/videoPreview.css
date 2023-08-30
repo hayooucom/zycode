@@ -41,10 +41,10 @@ body {
 	margin: 1em;
 }
 
-.vscode-dark .loading-indicator {
+.zycode-dark .loading-indicator {
 	background-image: url('./loading-dark.svg');
 }
 
-.vscode-high-contrast .loading-indicator {
+.zycode-high-contrast .loading-indicator {
 	background-image: url('./loading-hc.svg');
 }

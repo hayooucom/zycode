@@ -24,7 +24,7 @@ export class ProtocolMainService extends Disposable implements IProtocolMainServ
 	declare readonly _serviceBrand: undefined;
 
 	private readonly validRoots = TernarySearchTree.forPaths<boolean>(!isLinux);
-	private readonly validExtensions = new Set(['.svg', '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp']); // https://github.com/microsoft/vscode/issues/119384
+	private readonly validExtensions = new Set(['.svg', '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp']); // https://github.com/microsoft/zycode/issues/119384
 
 	constructor(
 		@INativeEnvironmentService private readonly environmentService: INativeEnvironmentService,
@@ -36,7 +36,7 @@ export class ProtocolMainService extends Disposable implements IProtocolMainServ
 		// Define an initial set of roots we allow loading from
 		// - appRoot	: all files installed as part of the app
 		// - extensions : all files shipped from extensions
-		// - storage    : all files in global and workspace storage (https://github.com/microsoft/vscode/issues/116735)
+		// - storage    : all files in global and workspace storage (https://github.com/microsoft/zycode/issues/116735)
 		this.addValidFileRoot(environmentService.appRoot);
 		this.addValidFileRoot(environmentService.extensionsPath);
 		this.addValidFileRoot(userDataProfilesService.defaultProfile.globalStorageHome.fsPath);
@@ -49,7 +49,7 @@ export class ProtocolMainService extends Disposable implements IProtocolMainServ
 	private handleProtocols(): void {
 		const { defaultSession } = session;
 
-		// Register vscode-file:// handler
+		// Register zycode-file:// handler
 		defaultSession.protocol.registerFileProtocol(Schemas.vscodeFileResource, (request, callback) => this.handleResourceRequest(request, callback));
 
 		// Block any file:// access
@@ -89,7 +89,7 @@ export class ProtocolMainService extends Disposable implements IProtocolMainServ
 
 	//#endregion
 
-	//#region vscode-file://
+	//#region zycode-file://
 
 	private handleResourceRequest(request: Electron.ProtocolRequest, callback: ProtocolCallback): void {
 		const path = this.requestToNormalizedFilePath(request);
@@ -126,7 +126,7 @@ export class ProtocolMainService extends Disposable implements IProtocolMainServ
 		const requestUri = URI.parse(request.url);
 
 		// 2.) Use `FileAccess.asFileUri` to convert back from a
-		//     `vscode-file:` URI to a `file:` URI.
+		//     `zycode-file:` URI to a `file:` URI.
 		const unnormalizedFileUri = FileAccess.uriToFileUri(requestUri);
 
 		// 3.) Strip anything from the URI that could result in
@@ -143,7 +143,7 @@ export class ProtocolMainService extends Disposable implements IProtocolMainServ
 
 		// Create unique URI
 		const resource = URI.from({
-			scheme: 'vscode', // used for all our IPC communication (vscode:<channel>)
+			scheme: 'zycode', // used for all our IPC communication (zycode:<channel>)
 			path: generateUuid()
 		});
 

@@ -85,7 +85,7 @@ function fromLocal(extensionPath: string, forWeb: boolean, disableMangle: boolea
 
 
 function fromLocalWebpack(extensionPath: string, webpackConfigFileName: string, disableMangle: boolean): Stream {
-	const vsce = require('@vscode/vsce') as typeof import('@vscode/vsce');
+	const vsce = require('@zycode/vsce') as typeof import('@zycode/vsce');
 	const webpack = require('webpack');
 	const webpackGulp = require('webpack-stream');
 	const result = es.through();
@@ -193,7 +193,7 @@ function fromLocalWebpack(extensionPath: string, webpackConfigFileName: string, 
 }
 
 function fromLocalNormal(extensionPath: string): Stream {
-	const vsce = require('@vscode/vsce') as typeof import('@vscode/vsce');
+	const vsce = require('@zycode/vsce') as typeof import('@zycode/vsce');
 	const result = es.through();
 
 	vsce.listFiles({ cwd: extensionPath, packageManager: vsce.PackageManager.Yarn })
@@ -271,19 +271,19 @@ export function fromGithub({ name, version, repo, sha256, metadata }: IExtension
 }
 
 const excludedExtensions = [
-	'vscode-api-tests',
-	'vscode-colorize-tests',
-	'vscode-test-resolver',
-	'ms-vscode.node-debug',
-	'ms-vscode.node-debug2',
+	'zycode-api-tests',
+	'zycode-colorize-tests',
+	'zycode-test-resolver',
+	'ms-zycode.node-debug',
+	'ms-zycode.node-debug2',
 ];
 
 const marketplaceWebExtensionsExclude = new Set([
-	'ms-vscode.node-debug',
-	'ms-vscode.node-debug2',
-	'ms-vscode.js-debug-companion',
-	'ms-vscode.js-debug',
-	'ms-vscode.vscode-js-profile-table'
+	'ms-zycode.node-debug',
+	'ms-zycode.node-debug2',
+	'ms-zycode.js-debug-companion',
+	'ms-zycode.js-debug',
+	'ms-zycode.zycode-js-profile-table'
 ]);
 
 const productJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../product.json'), 'utf8'));

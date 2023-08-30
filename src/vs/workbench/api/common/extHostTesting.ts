@@ -30,11 +30,11 @@ import { TestId, TestIdPathParts, TestPosition } from 'vs/workbench/contrib/test
 import { InvalidTestItemError } from 'vs/workbench/contrib/testing/common/testItemCollection';
 import { AbstractIncrementalTestCollection, CoverageDetails, ICallProfileRunHandler, IFileCoverage, ISerializedTestResults, IStartControllerTests, IStartControllerTestsResult, ITestErrorMessage, ITestItem, ITestItemContext, ITestMessageMenuArgs, IncrementalChangeCollector, IncrementalTestCollectionItem, InternalTestItem, TestResultState, TestRunProfileBitset, TestsDiff, TestsDiffOp, isStartControllerTests } from 'vs/workbench/contrib/testing/common/testTypes';
 import { checkProposedApiEnabled } from 'vs/workbench/services/extensions/common/extensions';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 
 interface ControllerInfo {
-	controller: vscode.TestController;
-	profiles: Map<number, vscode.TestRunProfile>;
+	controller: zycode.TestController;
+	profiles: Map<number, zycode.TestRunProfile>;
 	collection: ExtHostTestItemCollection;
 	extension: Readonly<IRelaxedExtensionDescription>;
 }
@@ -47,7 +47,7 @@ export class ExtHostTesting implements ExtHostTestingShape {
 	private readonly observer: TestObservers;
 
 	public onResultsChanged = this.resultsChangedEmitter.event;
-	public results: ReadonlyArray<vscode.TestRunResult> = [];
+	public results: ReadonlyArray<zycode.TestRunResult> = [];
 
 	constructor(
 		@IExtHostRpcService rpc: IExtHostRpcService,
@@ -99,9 +99,9 @@ export class ExtHostTesting implements ExtHostTestingShape {
 	}
 
 	/**
-	 * Implements vscode.test.registerTestProvider
+	 * Implements zycode.test.registerTestProvider
 	 */
-	public createTestController(extension: IExtensionDescription, controllerId: string, label: string, refreshHandler?: (token: CancellationToken) => Thenable<void> | void): vscode.TestController {
+	public createTestController(extension: IExtensionDescription, controllerId: string, label: string, refreshHandler?: (token: CancellationToken) => Thenable<void> | void): zycode.TestController {
 		if (this.controllers.has(controllerId)) {
 			throw new Error(`Attempt to insert a duplicate controller with ID "${controllerId}"`);
 		}
@@ -110,10 +110,10 @@ export class ExtHostTesting implements ExtHostTestingShape {
 		const collection = disposable.add(new ExtHostTestItemCollection(controllerId, label, this.editors));
 		collection.root.label = label;
 
-		const profiles = new Map<number, vscode.TestRunProfile>();
+		const profiles = new Map<number, zycode.TestRunProfile>();
 		const proxy = this.proxy;
 
-		const controller: vscode.TestController = {
+		const controller: zycode.TestController = {
 			items: collection.root.children,
 			get label() {
 				return label;
@@ -133,7 +133,7 @@ export class ExtHostTesting implements ExtHostTestingShape {
 			get id() {
 				return controllerId;
 			},
-			createRunProfile: (label, group, runHandler, isDefault, tag?: vscode.TestTag | undefined, supportsContinuousRun?: boolean) => {
+			createRunProfile: (label, group, runHandler, isDefault, tag?: zycode.TestTag | undefined, supportsContinuousRun?: boolean) => {
 				// Derive the profile ID from a hash so that the same profile will tend
 				// to have the same hashes, allowing re-run requests to work across reloads.
 				let profileId = hash(label);
@@ -161,7 +161,7 @@ export class ExtHostTesting implements ExtHostTestingShape {
 				collection.resolveHandler = fn;
 			},
 			get resolveHandler() {
-				return collection.resolveHandler as undefined | ((item?: vscode.TestItem) => void);
+				return collection.resolveHandler as undefined | ((item?: zycode.TestItem) => void);
 			},
 			dispose: () => {
 				disposable.dispose();
@@ -181,7 +181,7 @@ export class ExtHostTesting implements ExtHostTestingShape {
 	}
 
 	/**
-	 * Implements vscode.test.createTestObserver
+	 * Implements zycode.test.createTestObserver
 	 */
 	public createTestObserver() {
 		return this.observer.checkout();
@@ -189,12 +189,12 @@ export class ExtHostTesting implements ExtHostTestingShape {
 
 
 	/**
-	 * Implements vscode.test.runTests
+	 * Implements zycode.test.runTests
 	 */
-	public async runTests(req: vscode.TestRunRequest, token = CancellationToken.None) {
+	public async runTests(req: zycode.TestRunRequest, token = CancellationToken.None) {
 		const profile = tryGetProfileFromTestRunReq(req);
 		if (!profile) {
-			throw new Error('The request passed to `vscode.test.runTests` must include a profile');
+			throw new Error('The request passed to `zycode.test.runTests` must include a profile');
 		}
 
 		const controller = this.controllers.get(profile.controllerId);
@@ -397,7 +397,7 @@ const enum TestRunTrackerState {
 
 class TestRunTracker extends Disposable {
 	private state = TestRunTrackerState.Running;
-	private readonly tasks = new Map</* task ID */string, { run: vscode.TestRun; coverage: TestRunCoverageBearer }>();
+	private readonly tasks = new Map</* task ID */string, { run: zycode.TestRun; coverage: TestRunCoverageBearer }>();
 	private readonly sharedTestIds = new Set<string>();
 	private readonly cts: CancellationTokenSource;
 	private readonly endEmitter = this._register(new Emitter<void>());
@@ -450,14 +450,14 @@ class TestRunTracker extends Disposable {
 	}
 
 	/** Creates the public test run interface to give to extensions. */
-	public createRun(name: string | undefined): vscode.TestRun {
+	public createRun(name: string | undefined): zycode.TestRun {
 		const runId = this.dto.id;
 		const ctrlId = this.dto.controllerId;
 		const taskId = generateUuid();
 		const coverage = new TestRunCoverageBearer(this.proxy, runId, taskId);
 
-		const guardTestMutation = <Args extends unknown[]>(fn: (test: vscode.TestItem, ...args: Args) => void) =>
-			(test: vscode.TestItem, ...args: Args) => {
+		const guardTestMutation = <Args extends unknown[]>(fn: (test: zycode.TestItem, ...args: Args) => void) =>
+			(test: zycode.TestItem, ...args: Args) => {
 				if (ended) {
 					console.warn(`Setting the state of test "${test.id}" is a no-op after the run ends.`);
 					return;
@@ -471,7 +471,7 @@ class TestRunTracker extends Disposable {
 				fn(test, ...args);
 			};
 
-		const appendMessages = (test: vscode.TestItem, messages: vscode.TestMessage | readonly vscode.TestMessage[]) => {
+		const appendMessages = (test: zycode.TestItem, messages: zycode.TestMessage | readonly zycode.TestMessage[]) => {
 			const converted = messages instanceof Array
 				? messages.map(Convert.TestMessage.from)
 				: [Convert.TestMessage.from(messages)];
@@ -491,7 +491,7 @@ class TestRunTracker extends Disposable {
 		};
 
 		let ended = false;
-		const run: vscode.TestRun = {
+		const run: zycode.TestRun = {
 			isPersisted: this.dto.isPersisted,
 			token: this.cts.token,
 			name,
@@ -523,7 +523,7 @@ class TestRunTracker extends Disposable {
 				this.proxy.$updateTestStateInRun(runId, taskId, TestId.fromExtHostTestItem(test, this.dto.controllerId).toString(), TestResultState.Passed, duration);
 			}),
 			//#endregion
-			appendOutput: (output, location?: vscode.Location, test?: vscode.TestItem) => {
+			appendOutput: (output, location?: zycode.Location, test?: zycode.TestItem) => {
 				if (ended) {
 					return;
 				}
@@ -577,7 +577,7 @@ class TestRunTracker extends Disposable {
 		}
 	}
 
-	private ensureTestIsKnown(test: vscode.TestItem) {
+	private ensureTestIsKnown(test: zycode.TestItem) {
 		if (!(test instanceof TestItemImpl)) {
 			throw new InvalidTestItemError(test.id);
 		}
@@ -613,7 +613,7 @@ class TestRunTracker extends Disposable {
  * run so that `createTestRun` can be properly correlated.
  */
 export class TestRunCoordinator {
-	private tracked = new Map<vscode.TestRunRequest, TestRunTracker>();
+	private tracked = new Map<zycode.TestRunRequest, TestRunTracker>();
 
 	public get trackers() {
 		return this.tracked.values();
@@ -626,7 +626,7 @@ export class TestRunCoordinator {
 	 * `$startedExtensionTestRun` is not invoked. The run must eventually
 	 * be cancelled manually.
 	 */
-	public prepareForMainThreadTestRun(req: vscode.TestRunRequest, dto: TestRunDto, extension: Readonly<IRelaxedExtensionDescription>, token: CancellationToken) {
+	public prepareForMainThreadTestRun(req: zycode.TestRunRequest, dto: TestRunDto, extension: Readonly<IRelaxedExtensionDescription>, token: CancellationToken) {
 		return this.getTracker(req, dto, extension, token);
 	}
 
@@ -655,7 +655,7 @@ export class TestRunCoordinator {
 	/**
 	 * Implements the public `createTestRun` API.
 	 */
-	public createTestRun(extension: IRelaxedExtensionDescription, controllerId: string, collection: ExtHostTestItemCollection, request: vscode.TestRunRequest, name: string | undefined, persist: boolean): vscode.TestRun {
+	public createTestRun(extension: IRelaxedExtensionDescription, controllerId: string, collection: ExtHostTestItemCollection, request: zycode.TestRunRequest, name: string | undefined, persist: boolean): zycode.TestRun {
 		const existing = this.tracked.get(request);
 		if (existing) {
 			return existing.createRun(name);
@@ -684,7 +684,7 @@ export class TestRunCoordinator {
 		return tracker.createRun(name);
 	}
 
-	private getTracker(req: vscode.TestRunRequest, dto: TestRunDto, extension: IRelaxedExtensionDescription, token?: CancellationToken) {
+	private getTracker(req: zycode.TestRunRequest, dto: TestRunDto, extension: IRelaxedExtensionDescription, token?: CancellationToken) {
 		const tracker = new TestRunTracker(dto, this.proxy, extension, token);
 		this.tracked.set(req, tracker);
 		tracker.onEnd(() => this.tracked.delete(req));
@@ -692,7 +692,7 @@ export class TestRunCoordinator {
 	}
 }
 
-const tryGetProfileFromTestRunReq = (request: vscode.TestRunRequest) => {
+const tryGetProfileFromTestRunReq = (request: zycode.TestRunRequest) => {
 	if (!request.profile) {
 		return undefined;
 	}
@@ -708,7 +708,7 @@ export class TestRunDto {
 	private readonly includePrefix: string[];
 	private readonly excludePrefix: string[];
 
-	public static fromPublic(controllerId: string, collection: ExtHostTestItemCollection, request: vscode.TestRunRequest, persist: boolean) {
+	public static fromPublic(controllerId: string, collection: ExtHostTestItemCollection, request: zycode.TestRunRequest, persist: boolean) {
 		return new TestRunDto(
 			controllerId,
 			generateUuid(),
@@ -742,7 +742,7 @@ export class TestRunDto {
 		this.excludePrefix = exclude.map(id => id + TestIdPathParts.Delimiter);
 	}
 
-	public isIncluded(test: vscode.TestItem) {
+	public isIncluded(test: zycode.TestItem) {
 		const id = TestId.fromExtHostTestItem(test, this.controllerId).toString() + TestIdPathParts.Delimiter;
 		for (const prefix of this.excludePrefix) {
 			if (id === prefix || id.startsWith(prefix)) {
@@ -761,10 +761,10 @@ export class TestRunDto {
 }
 
 class TestRunCoverageBearer {
-	private _coverageProvider?: vscode.TestCoverageProvider;
-	private fileCoverage?: Promise<vscode.FileCoverage[] | null | undefined>;
+	private _coverageProvider?: zycode.TestCoverageProvider;
+	private fileCoverage?: Promise<zycode.FileCoverage[] | null | undefined>;
 
-	public set coverageProvider(provider: vscode.TestCoverageProvider | undefined) {
+	public set coverageProvider(provider: zycode.TestCoverageProvider | undefined) {
 		if (this._coverageProvider) {
 			throw new Error('The TestCoverageProvider cannot be replaced after being provided');
 		}
@@ -825,7 +825,7 @@ class TestRunCoverageBearer {
  * @private
  */
 interface MirroredCollectionTestItem extends IncrementalTestCollectionItem {
-	revived: vscode.TestItem;
+	revived: zycode.TestItem;
 	depth: number;
 }
 
@@ -840,7 +840,7 @@ class MirroredChangeCollector implements IncrementalChangeCollector<MirroredColl
 		return this.added.size === 0 && this.removed.size === 0 && this.updated.size === 0;
 	}
 
-	constructor(private readonly emitter: Emitter<vscode.TestsChangeEvent>) {
+	constructor(private readonly emitter: Emitter<zycode.TestsChangeEvent>) {
 	}
 
 	/**
@@ -883,7 +883,7 @@ class MirroredChangeCollector implements IncrementalChangeCollector<MirroredColl
 	/**
 	 * @inheritdoc
 	 */
-	public getChangeEvent(): vscode.TestsChangeEvent {
+	public getChangeEvent(): zycode.TestsChangeEvent {
 		const { added, updated, removed } = this;
 		return {
 			get added() { return [...added].map(n => n.revived); },
@@ -904,7 +904,7 @@ class MirroredChangeCollector implements IncrementalChangeCollector<MirroredColl
  * @private
  */
 class MirroredTestCollection extends AbstractIncrementalTestCollection<MirroredCollectionTestItem> {
-	private changeEmitter = new Emitter<vscode.TestsChangeEvent>();
+	private changeEmitter = new Emitter<zycode.TestsChangeEvent>();
 
 	/**
 	 * Change emitter that fires with the same semantics as `TestObserver.onDidChangeTests`.
@@ -929,7 +929,7 @@ class MirroredTestCollection extends AbstractIncrementalTestCollection<MirroredC
 	/**
 	 * If the test item is a mirrored test item, returns its underlying ID.
 	 */
-	public getMirroredTestDataByReference(item: vscode.TestItem) {
+	public getMirroredTestDataByReference(item: zycode.TestItem) {
 		return this.items.get(item.id);
 	}
 
@@ -940,7 +940,7 @@ class MirroredTestCollection extends AbstractIncrementalTestCollection<MirroredC
 		return {
 			...item,
 			// todo@connor4312: make this work well again with children
-			revived: Convert.TestItem.toPlain(item.item) as vscode.TestItem,
+			revived: Convert.TestItem.toPlain(item.item) as zycode.TestItem,
 			depth: parent ? parent.depth + 1 : 0,
 			children: new Set(),
 		};
@@ -963,7 +963,7 @@ class TestObservers {
 	constructor(private readonly proxy: MainThreadTestingShape) {
 	}
 
-	public checkout(): vscode.TestObserver {
+	public checkout(): zycode.TestObserver {
 		if (!this.current) {
 			this.current = this.createObserverData();
 		}
@@ -986,7 +986,7 @@ class TestObservers {
 	/**
 	 * Gets the internal test data by its reference.
 	 */
-	public getMirroredTestDataByReference(ref: vscode.TestItem) {
+	public getMirroredTestDataByReference(ref: zycode.TestItem) {
 		return this.current?.tests.getMirroredTestDataByReference(ref);
 	}
 
@@ -1004,9 +1004,9 @@ class TestObservers {
 	}
 }
 
-export class TestRunProfileImpl implements vscode.TestRunProfile {
+export class TestRunProfileImpl implements zycode.TestRunProfile {
 	readonly #proxy: MainThreadTestingShape;
-	#profiles?: Map<number, vscode.TestRunProfile>;
+	#profiles?: Map<number, zycode.TestRunProfile>;
 	private _configureHandler?: (() => void);
 
 	public get label() {
@@ -1046,7 +1046,7 @@ export class TestRunProfileImpl implements vscode.TestRunProfile {
 		return this._tag;
 	}
 
-	public set tag(tag: vscode.TestTag | undefined) {
+	public set tag(tag: zycode.TestTag | undefined) {
 		if (tag?.id !== this._tag?.id) {
 			this._tag = tag;
 			this.#proxy.$updateTestRunConfig(this.controllerId, this.profileId, {
@@ -1068,14 +1068,14 @@ export class TestRunProfileImpl implements vscode.TestRunProfile {
 
 	constructor(
 		proxy: MainThreadTestingShape,
-		profiles: Map<number, vscode.TestRunProfile>,
+		profiles: Map<number, zycode.TestRunProfile>,
 		public readonly controllerId: string,
 		public readonly profileId: number,
 		private _label: string,
-		public readonly kind: vscode.TestRunProfileKind,
-		public runHandler: (request: vscode.TestRunRequest, token: vscode.CancellationToken) => Thenable<void> | void,
+		public readonly kind: zycode.TestRunProfileKind,
+		public runHandler: (request: zycode.TestRunRequest, token: zycode.CancellationToken) => Thenable<void> | void,
 		private _isDefault = false,
-		public _tag: vscode.TestTag | undefined = undefined,
+		public _tag: zycode.TestTag | undefined = undefined,
 		private _supportsContinuousRun = false,
 	) {
 		this.#proxy = proxy;

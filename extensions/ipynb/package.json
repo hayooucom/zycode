@@ -2,11 +2,11 @@
 	"name": "ipynb",
 	"displayName": "%displayName%",
 	"description": "%description%",
-	"publisher": "vscode",
+	"publisher": "zycode",
 	"version": "1.0.0",
 	"license": "MIT",
 	"engines": {
-		"vscode": "^1.57.0"
+		"zycode": "^1.57.0"
 	},
 	"enabledApiProposals": [
 		"documentPaste",
@@ -76,10 +76,10 @@
 		],
 		"notebookRenderer": [
 			{
-				"id": "vscode.markdown-it-cell-attachment-renderer",
+				"id": "zycode.markdown-it-cell-attachment-renderer",
 				"displayName": "%markdownAttachmentRenderer.displayName%",
 				"entrypoint": {
-					"extends": "vscode.markdown-it-renderer",
+					"extends": "zycode.markdown-it-renderer",
 					"path": "./notebook-out/cellAttachmentRenderer.js"
 				}
 			}
@@ -129,6 +129,6 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/microsoft/vscode.git"
+		"url": "https://github.com/microsoft/zycode.git"
 	}
 }

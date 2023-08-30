@@ -23,7 +23,7 @@ import { ExtHostDocuments } from 'vs/workbench/api/common/extHostDocuments';
 import { ExtHostDocumentsAndEditors } from 'vs/workbench/api/common/extHostDocumentsAndEditors';
 import { MainContext, ExtHostContext } from 'vs/workbench/api/common/extHost.protocol';
 import { ExtHostDiagnostics } from 'vs/workbench/api/common/extHostDiagnostics';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import 'vs/workbench/contrib/search/browser/search.contribution';
 import { ILogService, NullLogService } from 'vs/platform/log/common/log';
 import { ITextModel } from 'vs/editor/common/model';
@@ -67,8 +67,8 @@ function assertRejects(fn: () => Promise<any>, message: string = 'Expected rejec
 	return fn().then(() => assert.ok(false, message), _err => assert.ok(true));
 }
 
-function isLocation(value: vscode.Location | vscode.LocationLink): value is vscode.Location {
-	const candidate = value as vscode.Location;
+function isLocation(value: zycode.Location | zycode.LocationLink): value is zycode.Location {
+	const candidate = value as zycode.Location;
 	return candidate && candidate.uri instanceof URI && candidate.range instanceof types.Range;
 }
 
@@ -80,7 +80,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	let extHost: ExtHostLanguageFeatures;
 	let mainThread: MainThreadLanguageFeatures;
 	let commands: ExtHostCommands;
-	let disposables: vscode.Disposable[] = [];
+	let disposables: zycode.Disposable[] = [];
 
 	let originalErrorHandler: (e: any) => any;
 
@@ -207,17 +207,17 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('WorkspaceSymbols, invalid arguments', function () {
 		const promises = [
-			assertRejects(() => commands.executeCommand('vscode.executeWorkspaceSymbolProvider')),
-			assertRejects(() => commands.executeCommand('vscode.executeWorkspaceSymbolProvider', null)),
-			assertRejects(() => commands.executeCommand('vscode.executeWorkspaceSymbolProvider', undefined)),
-			assertRejects(() => commands.executeCommand('vscode.executeWorkspaceSymbolProvider', true))
+			assertRejects(() => commands.executeCommand('zycode.executeWorkspaceSymbolProvider')),
+			assertRejects(() => commands.executeCommand('zycode.executeWorkspaceSymbolProvider', null)),
+			assertRejects(() => commands.executeCommand('zycode.executeWorkspaceSymbolProvider', undefined)),
+			assertRejects(() => commands.executeCommand('zycode.executeWorkspaceSymbolProvider', true))
 		];
 		return Promise.all(promises);
 	});
 
 	test('WorkspaceSymbols, back and forth', function () {
 
-		disposables.push(extHost.registerWorkspaceSymbolProvider(nullExtensionDescription, <vscode.WorkspaceSymbolProvider>{
+		disposables.push(extHost.registerWorkspaceSymbolProvider(nullExtensionDescription, <zycode.WorkspaceSymbolProvider>{
 			provideWorkspaceSymbols(query): any {
 				return [
 					new types.SymbolInformation(query, types.SymbolKind.Array, new types.Range(0, 0, 1, 1), URI.parse('far://testing/first')),
@@ -226,7 +226,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 			}
 		}));
 
-		disposables.push(extHost.registerWorkspaceSymbolProvider(nullExtensionDescription, <vscode.WorkspaceSymbolProvider>{
+		disposables.push(extHost.registerWorkspaceSymbolProvider(nullExtensionDescription, <zycode.WorkspaceSymbolProvider>{
 			provideWorkspaceSymbols(query): any {
 				return [
 					new types.SymbolInformation(query, types.SymbolKind.Array, new types.Range(0, 0, 1, 1), URI.parse('far://testing/first'))
@@ -235,7 +235,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.SymbolInformation[]>('vscode.executeWorkspaceSymbolProvider', 'testing').then(value => {
+			return commands.executeCommand<zycode.SymbolInformation[]>('zycode.executeWorkspaceSymbolProvider', 'testing').then(value => {
 
 				assert.strictEqual(value.length, 2); // de-duped
 				for (const info of value) {
@@ -250,47 +250,47 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	test('executeWorkspaceSymbolProvider should accept empty string, #39522', async function () {
 
 		disposables.push(extHost.registerWorkspaceSymbolProvider(nullExtensionDescription, {
-			provideWorkspaceSymbols(): vscode.SymbolInformation[] {
-				return [new types.SymbolInformation('hello', types.SymbolKind.Array, new types.Range(0, 0, 0, 0), URI.parse('foo:bar')) as vscode.SymbolInformation];
+			provideWorkspaceSymbols(): zycode.SymbolInformation[] {
+				return [new types.SymbolInformation('hello', types.SymbolKind.Array, new types.Range(0, 0, 0, 0), URI.parse('foo:bar')) as zycode.SymbolInformation];
 			}
 		}));
 
 		await rpcProtocol.sync();
-		let symbols = await commands.executeCommand<vscode.SymbolInformation[]>('vscode.executeWorkspaceSymbolProvider', '');
+		let symbols = await commands.executeCommand<zycode.SymbolInformation[]>('zycode.executeWorkspaceSymbolProvider', '');
 		assert.strictEqual(symbols.length, 1);
 
 		await rpcProtocol.sync();
-		symbols = await commands.executeCommand<vscode.SymbolInformation[]>('vscode.executeWorkspaceSymbolProvider', '*');
+		symbols = await commands.executeCommand<zycode.SymbolInformation[]>('zycode.executeWorkspaceSymbolProvider', '*');
 		assert.strictEqual(symbols.length, 1);
 	});
 
 	// --- formatting
 	test('executeFormatDocumentProvider, back and forth', async function () {
 
-		disposables.push(extHost.registerDocumentFormattingEditProvider(nullExtensionDescription, defaultSelector, new class implements vscode.DocumentFormattingEditProvider {
+		disposables.push(extHost.registerDocumentFormattingEditProvider(nullExtensionDescription, defaultSelector, new class implements zycode.DocumentFormattingEditProvider {
 			provideDocumentFormattingEdits() {
 				return [types.TextEdit.insert(new types.Position(0, 0), '42')];
 			}
 		}));
 
 		await rpcProtocol.sync();
-		const edits = await commands.executeCommand<vscode.SymbolInformation[]>('vscode.executeFormatDocumentProvider', model.uri);
+		const edits = await commands.executeCommand<zycode.SymbolInformation[]>('zycode.executeFormatDocumentProvider', model.uri);
 		assert.strictEqual(edits.length, 1);
 	});
 
 
 	// --- rename
-	test('vscode.prepareRename', async function () {
-		disposables.push(extHost.registerRenameProvider(nullExtensionDescription, defaultSelector, new class implements vscode.RenameProvider {
+	test('zycode.prepareRename', async function () {
+		disposables.push(extHost.registerRenameProvider(nullExtensionDescription, defaultSelector, new class implements zycode.RenameProvider {
 
-			prepareRename(document: vscode.TextDocument, position: vscode.Position) {
+			prepareRename(document: zycode.TextDocument, position: zycode.Position) {
 				return {
 					range: new types.Range(0, 12, 0, 24),
 					placeholder: 'foooPlaceholder'
 				};
 			}
 
-			provideRenameEdits(document: vscode.TextDocument, position: vscode.Position, newName: string) {
+			provideRenameEdits(document: zycode.TextDocument, position: zycode.Position, newName: string) {
 				const edit = new types.WorkspaceEdit();
 				edit.insert(document.uri, <types.Position>position, newName);
 				return edit;
@@ -299,7 +299,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const data = await commands.executeCommand<{ range: vscode.Range; placeholder: string }>('vscode.prepareRename', model.uri, new types.Position(0, 12));
+		const data = await commands.executeCommand<{ range: zycode.Range; placeholder: string }>('zycode.prepareRename', model.uri, new types.Position(0, 12));
 
 		assert.ok(data);
 		assert.strictEqual(data.placeholder, 'foooPlaceholder');
@@ -310,9 +310,9 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	});
 
-	test('vscode.executeDocumentRenameProvider', async function () {
-		disposables.push(extHost.registerRenameProvider(nullExtensionDescription, defaultSelector, new class implements vscode.RenameProvider {
-			provideRenameEdits(document: vscode.TextDocument, position: vscode.Position, newName: string) {
+	test('zycode.executeDocumentRenameProvider', async function () {
+		disposables.push(extHost.registerRenameProvider(nullExtensionDescription, defaultSelector, new class implements zycode.RenameProvider {
+			provideRenameEdits(document: zycode.TextDocument, position: zycode.Position, newName: string) {
 				const edit = new types.WorkspaceEdit();
 				edit.insert(document.uri, <types.Position>position, newName);
 				return edit;
@@ -321,7 +321,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const edit = await commands.executeCommand<vscode.WorkspaceEdit>('vscode.executeDocumentRenameProvider', model.uri, new types.Position(0, 12), 'newNameOfThis');
+		const edit = await commands.executeCommand<zycode.WorkspaceEdit>('zycode.executeDocumentRenameProvider', model.uri, new types.Position(0, 12), 'newNameOfThis');
 
 		assert.ok(edit);
 		assert.strictEqual(edit.has(model.uri), true);
@@ -334,10 +334,10 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('Definition, invalid arguments', function () {
 		const promises = [
-			assertRejects(() => commands.executeCommand('vscode.executeDefinitionProvider')),
-			assertRejects(() => commands.executeCommand('vscode.executeDefinitionProvider', null)),
-			assertRejects(() => commands.executeCommand('vscode.executeDefinitionProvider', undefined)),
-			assertRejects(() => commands.executeCommand('vscode.executeDefinitionProvider', true, false))
+			assertRejects(() => commands.executeCommand('zycode.executeDefinitionProvider')),
+			assertRejects(() => commands.executeCommand('zycode.executeDefinitionProvider', null)),
+			assertRejects(() => commands.executeCommand('zycode.executeDefinitionProvider', undefined)),
+			assertRejects(() => commands.executeCommand('zycode.executeDefinitionProvider', true, false))
 		];
 
 		return Promise.all(promises);
@@ -345,18 +345,18 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('Definition, back and forth', function () {
 
-		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <vscode.DefinitionProvider>{
+		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <zycode.DefinitionProvider>{
 			provideDefinition(doc: any): any {
 				return new types.Location(doc.uri, new types.Range(1, 0, 0, 0));
 			}
 		}));
-		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <vscode.DefinitionProvider>{
+		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <zycode.DefinitionProvider>{
 			provideDefinition(doc: any): any {
 				// duplicate result will get removed
 				return new types.Location(doc.uri, new types.Range(1, 0, 0, 0));
 			}
 		}));
-		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <vscode.DefinitionProvider>{
+		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <zycode.DefinitionProvider>{
 			provideDefinition(doc: any): any {
 				return [
 					new types.Location(doc.uri, new types.Range(2, 0, 0, 0)),
@@ -367,7 +367,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.Location[]>('vscode.executeDefinitionProvider', model.uri, new types.Position(0, 0)).then(values => {
+			return commands.executeCommand<zycode.Location[]>('zycode.executeDefinitionProvider', model.uri, new types.Position(0, 0)).then(values => {
 				assert.strictEqual(values.length, 4);
 				for (const v of values) {
 					assert.ok(v.uri instanceof URI);
@@ -380,18 +380,18 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('Definition, back and forth (sorting & de-deduping)', function () {
 
-		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <vscode.DefinitionProvider>{
+		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <zycode.DefinitionProvider>{
 			provideDefinition(doc: any): any {
 				return new types.Location(URI.parse('file:///b'), new types.Range(1, 0, 0, 0));
 			}
 		}));
-		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <vscode.DefinitionProvider>{
+		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <zycode.DefinitionProvider>{
 			provideDefinition(doc: any): any {
 				// duplicate result will get removed
 				return new types.Location(URI.parse('file:///b'), new types.Range(1, 0, 0, 0));
 			}
 		}));
-		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <vscode.DefinitionProvider>{
+		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <zycode.DefinitionProvider>{
 			provideDefinition(doc: any): any {
 				return [
 					new types.Location(URI.parse('file:///a'), new types.Range(2, 0, 0, 0)),
@@ -402,7 +402,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.Location[]>('vscode.executeDefinitionProvider', model.uri, new types.Position(0, 0)).then(values => {
+			return commands.executeCommand<zycode.Location[]>('zycode.executeDefinitionProvider', model.uri, new types.Position(0, 0)).then(values => {
 				assert.strictEqual(values.length, 4);
 
 				assert.strictEqual(values[0].uri.path, '/a');
@@ -414,8 +414,8 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	});
 
 	test('Definition Link', () => {
-		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <vscode.DefinitionProvider>{
-			provideDefinition(doc: any): (vscode.Location | vscode.LocationLink)[] {
+		disposables.push(extHost.registerDefinitionProvider(nullExtensionDescription, defaultSelector, <zycode.DefinitionProvider>{
+			provideDefinition(doc: any): (zycode.Location | zycode.LocationLink)[] {
 				return [
 					new types.Location(doc.uri, new types.Range(0, 0, 0, 0)),
 					{ targetUri: doc.uri, targetRange: new types.Range(1, 0, 0, 0), targetSelectionRange: new types.Range(1, 1, 1, 1), originSelectionRange: new types.Range(2, 2, 2, 2) }
@@ -424,7 +424,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<(vscode.Location | vscode.LocationLink)[]>('vscode.executeDefinitionProvider', model.uri, new types.Position(0, 0)).then(values => {
+			return commands.executeCommand<(zycode.Location | zycode.LocationLink)[]>('zycode.executeDefinitionProvider', model.uri, new types.Position(0, 0)).then(values => {
 				assert.strictEqual(values.length, 2);
 				for (const v of values) {
 					if (isLocation(v)) {
@@ -445,18 +445,18 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('Declaration, back and forth', function () {
 
-		disposables.push(extHost.registerDeclarationProvider(nullExtensionDescription, defaultSelector, <vscode.DeclarationProvider>{
+		disposables.push(extHost.registerDeclarationProvider(nullExtensionDescription, defaultSelector, <zycode.DeclarationProvider>{
 			provideDeclaration(doc: any): any {
 				return new types.Location(doc.uri, new types.Range(1, 0, 0, 0));
 			}
 		}));
-		disposables.push(extHost.registerDeclarationProvider(nullExtensionDescription, defaultSelector, <vscode.DeclarationProvider>{
+		disposables.push(extHost.registerDeclarationProvider(nullExtensionDescription, defaultSelector, <zycode.DeclarationProvider>{
 			provideDeclaration(doc: any): any {
 				// duplicate result will get removed
 				return new types.Location(doc.uri, new types.Range(1, 0, 0, 0));
 			}
 		}));
-		disposables.push(extHost.registerDeclarationProvider(nullExtensionDescription, defaultSelector, <vscode.DeclarationProvider>{
+		disposables.push(extHost.registerDeclarationProvider(nullExtensionDescription, defaultSelector, <zycode.DeclarationProvider>{
 			provideDeclaration(doc: any): any {
 				return [
 					new types.Location(doc.uri, new types.Range(2, 0, 0, 0)),
@@ -467,7 +467,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.Location[]>('vscode.executeDeclarationProvider', model.uri, new types.Position(0, 0)).then(values => {
+			return commands.executeCommand<zycode.Location[]>('zycode.executeDeclarationProvider', model.uri, new types.Position(0, 0)).then(values => {
 				assert.strictEqual(values.length, 4);
 				for (const v of values) {
 					assert.ok(v.uri instanceof URI);
@@ -478,8 +478,8 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	});
 
 	test('Declaration Link', () => {
-		disposables.push(extHost.registerDeclarationProvider(nullExtensionDescription, defaultSelector, <vscode.DeclarationProvider>{
-			provideDeclaration(doc: any): (vscode.Location | vscode.LocationLink)[] {
+		disposables.push(extHost.registerDeclarationProvider(nullExtensionDescription, defaultSelector, <zycode.DeclarationProvider>{
+			provideDeclaration(doc: any): (zycode.Location | zycode.LocationLink)[] {
 				return [
 					new types.Location(doc.uri, new types.Range(0, 0, 0, 0)),
 					{ targetUri: doc.uri, targetRange: new types.Range(1, 0, 0, 0), targetSelectionRange: new types.Range(1, 1, 1, 1), originSelectionRange: new types.Range(2, 2, 2, 2) }
@@ -488,7 +488,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<(vscode.Location | vscode.LocationLink)[]>('vscode.executeDeclarationProvider', model.uri, new types.Position(0, 0)).then(values => {
+			return commands.executeCommand<(zycode.Location | zycode.LocationLink)[]>('zycode.executeDeclarationProvider', model.uri, new types.Position(0, 0)).then(values => {
 				assert.strictEqual(values.length, 2);
 				for (const v of values) {
 					if (isLocation(v)) {
@@ -509,10 +509,10 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('Type Definition, invalid arguments', function () {
 		const promises = [
-			assertRejects(() => commands.executeCommand('vscode.executeTypeDefinitionProvider')),
-			assertRejects(() => commands.executeCommand('vscode.executeTypeDefinitionProvider', null)),
-			assertRejects(() => commands.executeCommand('vscode.executeTypeDefinitionProvider', undefined)),
-			assertRejects(() => commands.executeCommand('vscode.executeTypeDefinitionProvider', true, false))
+			assertRejects(() => commands.executeCommand('zycode.executeTypeDefinitionProvider')),
+			assertRejects(() => commands.executeCommand('zycode.executeTypeDefinitionProvider', null)),
+			assertRejects(() => commands.executeCommand('zycode.executeTypeDefinitionProvider', undefined)),
+			assertRejects(() => commands.executeCommand('zycode.executeTypeDefinitionProvider', true, false))
 		];
 
 		return Promise.all(promises);
@@ -520,18 +520,18 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('Type Definition, back and forth', function () {
 
-		disposables.push(extHost.registerTypeDefinitionProvider(nullExtensionDescription, defaultSelector, <vscode.TypeDefinitionProvider>{
+		disposables.push(extHost.registerTypeDefinitionProvider(nullExtensionDescription, defaultSelector, <zycode.TypeDefinitionProvider>{
 			provideTypeDefinition(doc: any): any {
 				return new types.Location(doc.uri, new types.Range(1, 0, 0, 0));
 			}
 		}));
-		disposables.push(extHost.registerTypeDefinitionProvider(nullExtensionDescription, defaultSelector, <vscode.TypeDefinitionProvider>{
+		disposables.push(extHost.registerTypeDefinitionProvider(nullExtensionDescription, defaultSelector, <zycode.TypeDefinitionProvider>{
 			provideTypeDefinition(doc: any): any {
 				// duplicate result will get removed
 				return new types.Location(doc.uri, new types.Range(1, 0, 0, 0));
 			}
 		}));
-		disposables.push(extHost.registerTypeDefinitionProvider(nullExtensionDescription, defaultSelector, <vscode.TypeDefinitionProvider>{
+		disposables.push(extHost.registerTypeDefinitionProvider(nullExtensionDescription, defaultSelector, <zycode.TypeDefinitionProvider>{
 			provideTypeDefinition(doc: any): any {
 				return [
 					new types.Location(doc.uri, new types.Range(2, 0, 0, 0)),
@@ -542,7 +542,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.Location[]>('vscode.executeTypeDefinitionProvider', model.uri, new types.Position(0, 0)).then(values => {
+			return commands.executeCommand<zycode.Location[]>('zycode.executeTypeDefinitionProvider', model.uri, new types.Position(0, 0)).then(values => {
 				assert.strictEqual(values.length, 4);
 				for (const v of values) {
 					assert.ok(v.uri instanceof URI);
@@ -553,8 +553,8 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	});
 
 	test('Type Definition Link', () => {
-		disposables.push(extHost.registerTypeDefinitionProvider(nullExtensionDescription, defaultSelector, <vscode.TypeDefinitionProvider>{
-			provideTypeDefinition(doc: any): (vscode.Location | vscode.LocationLink)[] {
+		disposables.push(extHost.registerTypeDefinitionProvider(nullExtensionDescription, defaultSelector, <zycode.TypeDefinitionProvider>{
+			provideTypeDefinition(doc: any): (zycode.Location | zycode.LocationLink)[] {
 				return [
 					new types.Location(doc.uri, new types.Range(0, 0, 0, 0)),
 					{ targetUri: doc.uri, targetRange: new types.Range(1, 0, 0, 0), targetSelectionRange: new types.Range(1, 1, 1, 1), originSelectionRange: new types.Range(2, 2, 2, 2) }
@@ -563,7 +563,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<(vscode.Location | vscode.LocationLink)[]>('vscode.executeTypeDefinitionProvider', model.uri, new types.Position(0, 0)).then(values => {
+			return commands.executeCommand<(zycode.Location | zycode.LocationLink)[]>('zycode.executeTypeDefinitionProvider', model.uri, new types.Position(0, 0)).then(values => {
 				assert.strictEqual(values.length, 2);
 				for (const v of values) {
 					if (isLocation(v)) {
@@ -584,10 +584,10 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('Implementation, invalid arguments', function () {
 		const promises = [
-			assertRejects(() => commands.executeCommand('vscode.executeImplementationProvider')),
-			assertRejects(() => commands.executeCommand('vscode.executeImplementationProvider', null)),
-			assertRejects(() => commands.executeCommand('vscode.executeImplementationProvider', undefined)),
-			assertRejects(() => commands.executeCommand('vscode.executeImplementationProvider', true, false))
+			assertRejects(() => commands.executeCommand('zycode.executeImplementationProvider')),
+			assertRejects(() => commands.executeCommand('zycode.executeImplementationProvider', null)),
+			assertRejects(() => commands.executeCommand('zycode.executeImplementationProvider', undefined)),
+			assertRejects(() => commands.executeCommand('zycode.executeImplementationProvider', true, false))
 		];
 
 		return Promise.all(promises);
@@ -595,18 +595,18 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('Implementation, back and forth', function () {
 
-		disposables.push(extHost.registerImplementationProvider(nullExtensionDescription, defaultSelector, <vscode.ImplementationProvider>{
+		disposables.push(extHost.registerImplementationProvider(nullExtensionDescription, defaultSelector, <zycode.ImplementationProvider>{
 			provideImplementation(doc: any): any {
 				return new types.Location(doc.uri, new types.Range(1, 0, 0, 0));
 			}
 		}));
-		disposables.push(extHost.registerImplementationProvider(nullExtensionDescription, defaultSelector, <vscode.ImplementationProvider>{
+		disposables.push(extHost.registerImplementationProvider(nullExtensionDescription, defaultSelector, <zycode.ImplementationProvider>{
 			provideImplementation(doc: any): any {
 				// duplicate result will get removed
 				return new types.Location(doc.uri, new types.Range(1, 0, 0, 0));
 			}
 		}));
-		disposables.push(extHost.registerImplementationProvider(nullExtensionDescription, defaultSelector, <vscode.ImplementationProvider>{
+		disposables.push(extHost.registerImplementationProvider(nullExtensionDescription, defaultSelector, <zycode.ImplementationProvider>{
 			provideImplementation(doc: any): any {
 				return [
 					new types.Location(doc.uri, new types.Range(2, 0, 0, 0)),
@@ -617,7 +617,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.Location[]>('vscode.executeImplementationProvider', model.uri, new types.Position(0, 0)).then(values => {
+			return commands.executeCommand<zycode.Location[]>('zycode.executeImplementationProvider', model.uri, new types.Position(0, 0)).then(values => {
 				assert.strictEqual(values.length, 4);
 				for (const v of values) {
 					assert.ok(v.uri instanceof URI);
@@ -628,8 +628,8 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	});
 
 	test('Implementation Definition Link', () => {
-		disposables.push(extHost.registerImplementationProvider(nullExtensionDescription, defaultSelector, <vscode.ImplementationProvider>{
-			provideImplementation(doc: any): (vscode.Location | vscode.LocationLink)[] {
+		disposables.push(extHost.registerImplementationProvider(nullExtensionDescription, defaultSelector, <zycode.ImplementationProvider>{
+			provideImplementation(doc: any): (zycode.Location | zycode.LocationLink)[] {
 				return [
 					new types.Location(doc.uri, new types.Range(0, 0, 0, 0)),
 					{ targetUri: doc.uri, targetRange: new types.Range(1, 0, 0, 0), targetSelectionRange: new types.Range(1, 1, 1, 1), originSelectionRange: new types.Range(2, 2, 2, 2) }
@@ -638,7 +638,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<(vscode.Location | vscode.LocationLink)[]>('vscode.executeImplementationProvider', model.uri, new types.Position(0, 0)).then(values => {
+			return commands.executeCommand<(zycode.Location | zycode.LocationLink)[]>('zycode.executeImplementationProvider', model.uri, new types.Position(0, 0)).then(values => {
 				assert.strictEqual(values.length, 2);
 				for (const v of values) {
 					if (isLocation(v)) {
@@ -659,7 +659,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('reference search, back and forth', function () {
 
-		disposables.push(extHost.registerReferenceProvider(nullExtensionDescription, defaultSelector, <vscode.ReferenceProvider>{
+		disposables.push(extHost.registerReferenceProvider(nullExtensionDescription, defaultSelector, <zycode.ReferenceProvider>{
 			provideReferences() {
 				return [
 					new types.Location(URI.parse('some:uri/path'), new types.Range(0, 1, 0, 5))
@@ -667,7 +667,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 			}
 		}));
 
-		return commands.executeCommand<vscode.Location[]>('vscode.executeReferenceProvider', model.uri, new types.Position(0, 0)).then(values => {
+		return commands.executeCommand<zycode.Location[]>('zycode.executeReferenceProvider', model.uri, new types.Position(0, 0)).then(values => {
 			assert.strictEqual(values.length, 1);
 			const [first] = values;
 			assert.strictEqual(first.uri.toString(), 'some:uri/path');
@@ -681,7 +681,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	// --- outline
 
 	test('Outline, back and forth', function () {
-		disposables.push(extHost.registerDocumentSymbolProvider(nullExtensionDescription, defaultSelector, <vscode.DocumentSymbolProvider>{
+		disposables.push(extHost.registerDocumentSymbolProvider(nullExtensionDescription, defaultSelector, <zycode.DocumentSymbolProvider>{
 			provideDocumentSymbols(): any {
 				return [
 					new types.SymbolInformation('testing1', types.SymbolKind.Enum, new types.Range(1, 0, 1, 0)),
@@ -691,7 +691,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.SymbolInformation[]>('vscode.executeDocumentSymbolProvider', model.uri).then(values => {
+			return commands.executeCommand<zycode.SymbolInformation[]>('zycode.executeDocumentSymbolProvider', model.uri).then(values => {
 				assert.strictEqual(values.length, 2);
 				const [first, second] = values;
 				assert.strictEqual(first instanceof types.SymbolInformation, true);
@@ -702,15 +702,15 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		});
 	});
 
-	test('vscode.executeDocumentSymbolProvider command only returns SymbolInformation[] rather than DocumentSymbol[] #57984', function () {
-		disposables.push(extHost.registerDocumentSymbolProvider(nullExtensionDescription, defaultSelector, <vscode.DocumentSymbolProvider>{
+	test('zycode.executeDocumentSymbolProvider command only returns SymbolInformation[] rather than DocumentSymbol[] #57984', function () {
+		disposables.push(extHost.registerDocumentSymbolProvider(nullExtensionDescription, defaultSelector, <zycode.DocumentSymbolProvider>{
 			provideDocumentSymbols(): any {
 				return [
 					new types.SymbolInformation('SymbolInformation', types.SymbolKind.Enum, new types.Range(1, 0, 1, 0))
 				];
 			}
 		}));
-		disposables.push(extHost.registerDocumentSymbolProvider(nullExtensionDescription, defaultSelector, <vscode.DocumentSymbolProvider>{
+		disposables.push(extHost.registerDocumentSymbolProvider(nullExtensionDescription, defaultSelector, <zycode.DocumentSymbolProvider>{
 			provideDocumentSymbols(): any {
 				const root = new types.DocumentSymbol('DocumentSymbol', 'DocumentSymbol#detail', types.SymbolKind.Enum, new types.Range(1, 0, 1, 0), new types.Range(1, 0, 1, 0));
 				root.children = [new types.DocumentSymbol('DocumentSymbol#child', 'DocumentSymbol#detail#child', types.SymbolKind.Enum, new types.Range(1, 0, 1, 0), new types.Range(1, 0, 1, 0))];
@@ -719,7 +719,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<(vscode.SymbolInformation & vscode.DocumentSymbol)[]>('vscode.executeDocumentSymbolProvider', model.uri).then(values => {
+			return commands.executeCommand<(zycode.SymbolInformation & zycode.DocumentSymbol)[]>('zycode.executeDocumentSymbolProvider', model.uri).then(values => {
 				assert.strictEqual(values.length, 2);
 				const [first, second] = values;
 				assert.strictEqual(first instanceof types.SymbolInformation, true);
@@ -736,9 +736,9 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('triggerCharacter is null when completion provider is called programmatically #159914', async function () {
 
-		let actualContext: vscode.CompletionContext | undefined;
+		let actualContext: zycode.CompletionContext | undefined;
 
-		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <vscode.CompletionItemProvider>{
+		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <zycode.CompletionItemProvider>{
 			provideCompletionItems(_doc, _pos, _tok, context): any {
 				actualContext = context;
 				return [];
@@ -747,14 +747,14 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		await commands.executeCommand<vscode.CompletionList>('vscode.executeCompletionItemProvider', model.uri, new types.Position(0, 4));
+		await commands.executeCommand<zycode.CompletionList>('zycode.executeCompletionItemProvider', model.uri, new types.Position(0, 4));
 
 		assert.ok(actualContext);
 		assert.deepStrictEqual(actualContext, { triggerKind: types.CompletionTriggerKind.Invoke, triggerCharacter: undefined });
 	});
 
 	test('Suggest, back and forth', function () {
-		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <vscode.CompletionItemProvider>{
+		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <zycode.CompletionItemProvider>{
 			provideCompletionItems(): any {
 				const a = new types.CompletionItem('item1');
 				a.documentation = new types.MarkdownString('hello_md_string');
@@ -772,7 +772,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}, []));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.CompletionList>('vscode.executeCompletionItemProvider', model.uri, new types.Position(0, 4)).then(list => {
+			return commands.executeCommand<zycode.CompletionList>('zycode.executeCompletionItemProvider', model.uri, new types.Position(0, 4)).then(list => {
 
 				assert.ok(list instanceof types.CompletionList);
 				const values = list.items;
@@ -814,7 +814,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	});
 
 	test('Suggest, return CompletionList !array', function () {
-		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <vscode.CompletionItemProvider>{
+		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <zycode.CompletionItemProvider>{
 			provideCompletionItems(): any {
 				const a = new types.CompletionItem('item1');
 				const b = new types.CompletionItem('item2');
@@ -823,7 +823,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}, []));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.CompletionList>('vscode.executeCompletionItemProvider', model.uri, new types.Position(0, 4)).then(list => {
+			return commands.executeCommand<zycode.CompletionList>('zycode.executeCompletionItemProvider', model.uri, new types.Position(0, 4)).then(list => {
 				assert.ok(list instanceof types.CompletionList);
 				assert.strictEqual(list.isIncomplete, true);
 			});
@@ -834,7 +834,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		let resolveCount = 0;
 
-		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <vscode.CompletionItemProvider>{
+		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <zycode.CompletionItemProvider>{
 			provideCompletionItems(): any {
 				const a = new types.CompletionItem('item1');
 				const b = new types.CompletionItem('item2');
@@ -850,8 +850,8 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const list = await commands.executeCommand<vscode.CompletionList>(
-			'vscode.executeCompletionItemProvider',
+		const list = await commands.executeCommand<zycode.CompletionList>(
+			'zycode.executeCompletionItemProvider',
 			model.uri,
 			new types.Position(0, 4),
 			undefined,
@@ -863,8 +863,8 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	});
 
-	test('"vscode.executeCompletionItemProvider" doesnot return a preselect field #53749', async function () {
-		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <vscode.CompletionItemProvider>{
+	test('"zycode.executeCompletionItemProvider" doesnot return a preselect field #53749', async function () {
+		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <zycode.CompletionItemProvider>{
 			provideCompletionItems(): any {
 				const a = new types.CompletionItem('item1');
 				a.preselect = true;
@@ -878,8 +878,8 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const list = await commands.executeCommand<vscode.CompletionList>(
-			'vscode.executeCompletionItemProvider',
+		const list = await commands.executeCommand<zycode.CompletionList>(
+			'zycode.executeCompletionItemProvider',
 			model.uri,
 			new types.Position(0, 4),
 			undefined
@@ -896,7 +896,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	});
 
 	test('executeCompletionItemProvider doesn\'t capture commitCharacters #58228', async function () {
-		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <vscode.CompletionItemProvider>{
+		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <zycode.CompletionItemProvider>{
 			provideCompletionItems(): any {
 				const a = new types.CompletionItem('item1');
 				a.commitCharacters = ['a', 'b'];
@@ -907,8 +907,8 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const list = await commands.executeCommand<vscode.CompletionList>(
-			'vscode.executeCompletionItemProvider',
+		const list = await commands.executeCommand<zycode.CompletionList>(
+			'zycode.executeCompletionItemProvider',
 			model.uri,
 			new types.Position(0, 4),
 			undefined
@@ -922,8 +922,8 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		assert.strictEqual(b.commitCharacters, undefined);
 	});
 
-	test('vscode.executeCompletionItemProvider returns the wrong CompletionItemKinds in insiders #95715', async function () {
-		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <vscode.CompletionItemProvider>{
+	test('zycode.executeCompletionItemProvider returns the wrong CompletionItemKinds in insiders #95715', async function () {
+		disposables.push(extHost.registerCompletionItemProvider(nullExtensionDescription, defaultSelector, <zycode.CompletionItemProvider>{
 			provideCompletionItems(): any {
 				return [
 					new types.CompletionItem('My Method', types.CompletionItemKind.Method),
@@ -934,8 +934,8 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const list = await commands.executeCommand<vscode.CompletionList>(
-			'vscode.executeCompletionItemProvider',
+		const list = await commands.executeCommand<zycode.CompletionList>(
+			'zycode.executeCompletionItemProvider',
 			model.uri,
 			new types.Position(0, 4),
 			undefined
@@ -952,15 +952,15 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	// --- signatureHelp
 
 	test('Parameter Hints, back and forth', async () => {
-		disposables.push(extHost.registerSignatureHelpProvider(nullExtensionDescription, defaultSelector, new class implements vscode.SignatureHelpProvider {
-			provideSignatureHelp(_document: vscode.TextDocument, _position: vscode.Position, _token: vscode.CancellationToken, context: vscode.SignatureHelpContext): vscode.SignatureHelp {
+		disposables.push(extHost.registerSignatureHelpProvider(nullExtensionDescription, defaultSelector, new class implements zycode.SignatureHelpProvider {
+			provideSignatureHelp(_document: zycode.TextDocument, _position: zycode.Position, _token: zycode.CancellationToken, context: zycode.SignatureHelpContext): zycode.SignatureHelp {
 				return {
 					activeSignature: 0,
 					activeParameter: 1,
 					signatures: [
 						{
 							label: 'abc',
-							documentation: `${context.triggerKind === 1 /* vscode.SignatureHelpTriggerKind.Invoke */ ? 'invoked' : 'unknown'} ${context.triggerCharacter}`,
+							documentation: `${context.triggerKind === 1 /* zycode.SignatureHelpTriggerKind.Invoke */ ? 'invoked' : 'unknown'} ${context.triggerCharacter}`,
 							parameters: []
 						}
 					]
@@ -970,7 +970,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const firstValue = await commands.executeCommand<vscode.SignatureHelp>('vscode.executeSignatureHelpProvider', model.uri, new types.Position(0, 1), ',');
+		const firstValue = await commands.executeCommand<zycode.SignatureHelp>('zycode.executeSignatureHelpProvider', model.uri, new types.Position(0, 1), ',');
 		assert.strictEqual(firstValue.activeSignature, 0);
 		assert.strictEqual(firstValue.activeParameter, 1);
 		assert.strictEqual(firstValue.signatures.length, 1);
@@ -982,13 +982,13 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('QuickFix, back and forth', function () {
 		disposables.push(extHost.registerCodeActionProvider(nullExtensionDescription, defaultSelector, {
-			provideCodeActions(): vscode.Command[] {
+			provideCodeActions(): zycode.Command[] {
 				return [{ command: 'testing', title: 'Title', arguments: [1, 2, true] }];
 			}
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.Command[]>('vscode.executeCodeActionProvider', model.uri, new types.Range(0, 0, 1, 1)).then(value => {
+			return commands.executeCommand<zycode.Command[]>('zycode.executeCodeActionProvider', model.uri, new types.Range(0, 0, 1, 1)).then(value => {
 				assert.strictEqual(value.length, 1);
 				const [first] = value;
 				assert.strictEqual(first.title, 'Title');
@@ -998,9 +998,9 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		});
 	});
 
-	test('vscode.executeCodeActionProvider results seem to be missing their `command` property #45124', function () {
+	test('zycode.executeCodeActionProvider results seem to be missing their `command` property #45124', function () {
 		disposables.push(extHost.registerCodeActionProvider(nullExtensionDescription, defaultSelector, {
-			provideCodeActions(document, range): vscode.CodeAction[] {
+			provideCodeActions(document, range): zycode.CodeAction[] {
 				return [{
 					command: {
 						arguments: [document, range],
@@ -1014,7 +1014,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.CodeAction[]>('vscode.executeCodeActionProvider', model.uri, new types.Range(0, 0, 1, 1)).then(value => {
+			return commands.executeCommand<zycode.CodeAction[]>('zycode.executeCodeActionProvider', model.uri, new types.Range(0, 0, 1, 1)).then(value => {
 				assert.strictEqual(value.length, 1);
 				const [first] = value;
 				assert.ok(first.command);
@@ -1027,9 +1027,9 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		});
 	});
 
-	test('vscode.executeCodeActionProvider passes Range to provider although Selection is passed in #77997', function () {
+	test('zycode.executeCodeActionProvider passes Range to provider although Selection is passed in #77997', function () {
 		disposables.push(extHost.registerCodeActionProvider(nullExtensionDescription, defaultSelector, {
-			provideCodeActions(document, rangeOrSelection): vscode.CodeAction[] {
+			provideCodeActions(document, rangeOrSelection): zycode.CodeAction[] {
 				return [{
 					command: {
 						arguments: [document, rangeOrSelection],
@@ -1045,7 +1045,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		const selection = new types.Selection(0, 0, 1, 1);
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.CodeAction[]>('vscode.executeCodeActionProvider', model.uri, selection).then(value => {
+			return commands.executeCommand<zycode.CodeAction[]>('zycode.executeCodeActionProvider', model.uri, selection).then(value => {
 				assert.strictEqual(value.length, 1);
 				const [first] = value;
 				assert.ok(first.command);
@@ -1055,9 +1055,9 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		});
 	});
 
-	test('vscode.executeCodeActionProvider results seem to be missing their `isPreferred` property #78098', function () {
+	test('zycode.executeCodeActionProvider results seem to be missing their `isPreferred` property #78098', function () {
 		disposables.push(extHost.registerCodeActionProvider(nullExtensionDescription, defaultSelector, {
-			provideCodeActions(document, rangeOrSelection): vscode.CodeAction[] {
+			provideCodeActions(document, rangeOrSelection): zycode.CodeAction[] {
 				return [{
 					command: {
 						arguments: [document, rangeOrSelection],
@@ -1074,7 +1074,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		const selection = new types.Selection(0, 0, 1, 1);
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.CodeAction[]>('vscode.executeCodeActionProvider', model.uri, selection).then(value => {
+			return commands.executeCommand<zycode.CodeAction[]>('zycode.executeCodeActionProvider', model.uri, selection).then(value => {
 				assert.strictEqual(value.length, 1);
 				const [first] = value;
 				assert.strictEqual(first.isPreferred, true);
@@ -1088,10 +1088,10 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		class MyAction extends types.CodeAction { }
 
 		disposables.push(extHost.registerCodeActionProvider(nullExtensionDescription, defaultSelector, {
-			provideCodeActions(document, rangeOrSelection): vscode.CodeAction[] {
+			provideCodeActions(document, rangeOrSelection): zycode.CodeAction[] {
 				return [new MyAction('title', types.CodeActionKind.Empty.append('foo'))];
 			},
-			resolveCodeAction(action): vscode.CodeAction {
+			resolveCodeAction(action): zycode.CodeAction {
 				assert.ok(action instanceof MyAction);
 
 				didCallResolve += 1;
@@ -1105,7 +1105,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const value = await commands.executeCommand<vscode.CodeAction[]>('vscode.executeCodeActionProvider', model.uri, selection, undefined, 1000);
+		const value = await commands.executeCommand<zycode.CodeAction[]>('zycode.executeCodeActionProvider', model.uri, selection, undefined, 1000);
 		assert.strictEqual(didCallResolve, 1);
 		assert.strictEqual(value.length, 1);
 
@@ -1124,14 +1124,14 @@ suite('ExtHostLanguageFeatureCommands', function () {
 			big: extHost
 		};
 
-		disposables.push(extHost.registerCodeLensProvider(nullExtensionDescription, defaultSelector, <vscode.CodeLensProvider>{
+		disposables.push(extHost.registerCodeLensProvider(nullExtensionDescription, defaultSelector, <zycode.CodeLensProvider>{
 			provideCodeLenses(): any {
 				return [new types.CodeLens(new types.Range(0, 0, 1, 1), { title: 'Title', command: 'cmd', arguments: [1, true, complexArg] })];
 			}
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.CodeLens[]>('vscode.executeCodeLensProvider', model.uri).then(value => {
+			return commands.executeCommand<zycode.CodeLens[]>('zycode.executeCodeLensProvider', model.uri).then(value => {
 				assert.strictEqual(value.length, 1);
 				const [first] = value;
 
@@ -1148,7 +1148,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		let resolveCount = 0;
 
-		disposables.push(extHost.registerCodeLensProvider(nullExtensionDescription, defaultSelector, <vscode.CodeLensProvider>{
+		disposables.push(extHost.registerCodeLensProvider(nullExtensionDescription, defaultSelector, <zycode.CodeLensProvider>{
 			provideCodeLenses(): any {
 				return [
 					new types.CodeLens(new types.Range(0, 0, 1, 1)),
@@ -1166,13 +1166,13 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		let value = await commands.executeCommand<vscode.CodeLens[]>('vscode.executeCodeLensProvider', model.uri, 2);
+		let value = await commands.executeCommand<zycode.CodeLens[]>('zycode.executeCodeLensProvider', model.uri, 2);
 
 		assert.strictEqual(value.length, 3); // the resolve argument defines the number of results being returned
 		assert.strictEqual(resolveCount, 2);
 
 		resolveCount = 0;
-		value = await commands.executeCommand<vscode.CodeLens[]>('vscode.executeCodeLensProvider', model.uri);
+		value = await commands.executeCommand<zycode.CodeLens[]>('zycode.executeCodeLensProvider', model.uri);
 
 		assert.strictEqual(value.length, 4);
 		assert.strictEqual(resolveCount, 0);
@@ -1180,14 +1180,14 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('Links, back and forth', function () {
 
-		disposables.push(extHost.registerDocumentLinkProvider(nullExtensionDescription, defaultSelector, <vscode.DocumentLinkProvider>{
+		disposables.push(extHost.registerDocumentLinkProvider(nullExtensionDescription, defaultSelector, <zycode.DocumentLinkProvider>{
 			provideDocumentLinks(): any {
 				return [new types.DocumentLink(new types.Range(0, 0, 0, 20), URI.parse('foo:bar'))];
 			}
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.DocumentLink[]>('vscode.executeLinkProvider', model.uri).then(value => {
+			return commands.executeCommand<zycode.DocumentLink[]>('zycode.executeLinkProvider', model.uri).then(value => {
 				assert.strictEqual(value.length, 1);
 				const [first] = value;
 
@@ -1201,7 +1201,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	});
 
 	test('What\'s the condition for DocumentLink target to be undefined? #106308', async function () {
-		disposables.push(extHost.registerDocumentLinkProvider(nullExtensionDescription, defaultSelector, <vscode.DocumentLinkProvider>{
+		disposables.push(extHost.registerDocumentLinkProvider(nullExtensionDescription, defaultSelector, <zycode.DocumentLinkProvider>{
 			provideDocumentLinks(): any {
 				return [new types.DocumentLink(new types.Range(0, 0, 0, 20), undefined)];
 			},
@@ -1213,11 +1213,11 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const links1 = await commands.executeCommand<vscode.DocumentLink[]>('vscode.executeLinkProvider', model.uri);
+		const links1 = await commands.executeCommand<zycode.DocumentLink[]>('zycode.executeLinkProvider', model.uri);
 		assert.strictEqual(links1.length, 1);
 		assert.strictEqual(links1[0].target, undefined);
 
-		const links2 = await commands.executeCommand<vscode.DocumentLink[]>('vscode.executeLinkProvider', model.uri, 1000);
+		const links2 = await commands.executeCommand<zycode.DocumentLink[]>('zycode.executeLinkProvider', model.uri, 1000);
 		assert.strictEqual(links2.length, 1);
 		assert.strictEqual(links2[0].target!.toString(), URI.parse('foo:bar').toString());
 
@@ -1226,11 +1226,11 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('Color provider', function () {
 
-		disposables.push(extHost.registerColorProvider(nullExtensionDescription, defaultSelector, <vscode.DocumentColorProvider>{
-			provideDocumentColors(): vscode.ColorInformation[] {
+		disposables.push(extHost.registerColorProvider(nullExtensionDescription, defaultSelector, <zycode.DocumentColorProvider>{
+			provideDocumentColors(): zycode.ColorInformation[] {
 				return [new types.ColorInformation(new types.Range(0, 0, 0, 20), new types.Color(0.1, 0.2, 0.3, 0.4))];
 			},
-			provideColorPresentations(): vscode.ColorPresentation[] {
+			provideColorPresentations(): zycode.ColorPresentation[] {
 				const cp = new types.ColorPresentation('#ABC');
 				cp.textEdit = types.TextEdit.replace(new types.Range(1, 0, 1, 20), '#ABC');
 				cp.additionalTextEdits = [types.TextEdit.insert(new types.Position(2, 20), '*')];
@@ -1239,7 +1239,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.ColorInformation[]>('vscode.executeDocumentColorProvider', model.uri).then(value => {
+			return commands.executeCommand<zycode.ColorInformation[]>('zycode.executeDocumentColorProvider', model.uri).then(value => {
 				assert.strictEqual(value.length, 1);
 				const [first] = value;
 
@@ -1255,7 +1255,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}).then(() => {
 			const color = new types.Color(0.5, 0.6, 0.7, 0.8);
 			const range = new types.Range(0, 0, 0, 20);
-			return commands.executeCommand<vscode.ColorPresentation[]>('vscode.executeColorPresentationProvider', color, { uri: model.uri, range }).then(value => {
+			return commands.executeCommand<zycode.ColorPresentation[]>('zycode.executeColorPresentationProvider', color, { uri: model.uri, range }).then(value => {
 				assert.strictEqual(value.length, 1);
 				const [first] = value;
 
@@ -1276,14 +1276,14 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('"TypeError: e.onCancellationRequested is not a function" calling hover provider in Insiders #54174', function () {
 
-		disposables.push(extHost.registerHoverProvider(nullExtensionDescription, defaultSelector, <vscode.HoverProvider>{
+		disposables.push(extHost.registerHoverProvider(nullExtensionDescription, defaultSelector, <zycode.HoverProvider>{
 			provideHover(): any {
 				return new types.Hover('fofofofo');
 			}
 		}));
 
 		return rpcProtocol.sync().then(() => {
-			return commands.executeCommand<vscode.Hover[]>('vscode.executeHoverProvider', model.uri, new types.Position(1, 1)).then(value => {
+			return commands.executeCommand<zycode.Hover[]>('zycode.executeHoverProvider', model.uri, new types.Position(1, 1)).then(value => {
 				assert.strictEqual(value.length, 1);
 				assert.strictEqual(value[0].contents.length, 1);
 			});
@@ -1293,7 +1293,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	// --- inline hints
 
 	test('Inlay Hints, back and forth', async function () {
-		disposables.push(extHost.registerInlayHintsProvider(nullExtensionDescription, defaultSelector, <vscode.InlayHintsProvider>{
+		disposables.push(extHost.registerInlayHintsProvider(nullExtensionDescription, defaultSelector, <zycode.InlayHintsProvider>{
 			provideInlayHints() {
 				return [new types.InlayHint(new types.Position(0, 1), 'Foo')];
 			}
@@ -1301,7 +1301,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const value = await commands.executeCommand<vscode.InlayHint[]>('vscode.executeInlayHintProvider', model.uri, new types.Range(0, 0, 20, 20));
+		const value = await commands.executeCommand<zycode.InlayHint[]>('zycode.executeInlayHintProvider', model.uri, new types.Range(0, 0, 20, 20));
 		assert.strictEqual(value.length, 1);
 
 		const [first] = value;
@@ -1311,7 +1311,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	});
 
 	test('Inline Hints, merge', async function () {
-		disposables.push(extHost.registerInlayHintsProvider(nullExtensionDescription, defaultSelector, <vscode.InlayHintsProvider>{
+		disposables.push(extHost.registerInlayHintsProvider(nullExtensionDescription, defaultSelector, <zycode.InlayHintsProvider>{
 			provideInlayHints() {
 				const part = new types.InlayHintLabelPart('Bar');
 				part.tooltip = 'part_tooltip';
@@ -1324,7 +1324,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 			}
 		}));
 
-		disposables.push(extHost.registerInlayHintsProvider(nullExtensionDescription, defaultSelector, <vscode.InlayHintsProvider>{
+		disposables.push(extHost.registerInlayHintsProvider(nullExtensionDescription, defaultSelector, <zycode.InlayHintsProvider>{
 			provideInlayHints() {
 				const hint = new types.InlayHint(new types.Position(0, 1), 'Foo', types.InlayHintKind.Parameter);
 				hint.textEdits = [types.TextEdit.insert(new types.Position(0, 0), 'Hello')];
@@ -1334,7 +1334,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const value = await commands.executeCommand<vscode.InlayHint[]>('vscode.executeInlayHintProvider', model.uri, new types.Range(0, 0, 20, 20));
+		const value = await commands.executeCommand<zycode.InlayHint[]>('zycode.executeInlayHintProvider', model.uri, new types.Range(0, 0, 20, 20));
 		assert.strictEqual(value.length, 2);
 
 		const [first, second] = value;
@@ -1359,12 +1359,12 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	});
 
 	test('Inline Hints, bad provider', async function () {
-		disposables.push(extHost.registerInlayHintsProvider(nullExtensionDescription, defaultSelector, <vscode.InlayHintsProvider>{
+		disposables.push(extHost.registerInlayHintsProvider(nullExtensionDescription, defaultSelector, <zycode.InlayHintsProvider>{
 			provideInlayHints() {
 				return [new types.InlayHint(new types.Position(0, 1), 'Foo')];
 			}
 		}));
-		disposables.push(extHost.registerInlayHintsProvider(nullExtensionDescription, defaultSelector, <vscode.InlayHintsProvider>{
+		disposables.push(extHost.registerInlayHintsProvider(nullExtensionDescription, defaultSelector, <zycode.InlayHintsProvider>{
 			provideInlayHints() {
 				throw new Error();
 			}
@@ -1372,7 +1372,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const value = await commands.executeCommand<vscode.InlayHint[]>('vscode.executeInlayHintProvider', model.uri, new types.Range(0, 0, 20, 20));
+		const value = await commands.executeCommand<zycode.InlayHint[]>('zycode.executeInlayHintProvider', model.uri, new types.Range(0, 0, 20, 20));
 		assert.strictEqual(value.length, 1);
 
 		const [first] = value;
@@ -1385,7 +1385,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('Selection Range, back and forth', async function () {
 
-		disposables.push(extHost.registerSelectionRangeProvider(nullExtensionDescription, defaultSelector, <vscode.SelectionRangeProvider>{
+		disposables.push(extHost.registerSelectionRangeProvider(nullExtensionDescription, defaultSelector, <zycode.SelectionRangeProvider>{
 			provideSelectionRanges() {
 				return [
 					new types.SelectionRange(new types.Range(0, 10, 0, 18), new types.SelectionRange(new types.Range(0, 2, 0, 20))),
@@ -1394,7 +1394,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		await rpcProtocol.sync();
-		const value = await commands.executeCommand<vscode.SelectionRange[]>('vscode.executeSelectionRangeProvider', model.uri, [new types.Position(0, 10)]);
+		const value = await commands.executeCommand<zycode.SelectionRange[]>('zycode.executeSelectionRangeProvider', model.uri, [new types.Position(0, 10)]);
 		assert.strictEqual(value.length, 1);
 		assert.ok(value[0].parent);
 	});
@@ -1403,13 +1403,13 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('CallHierarchy, back and forth', async function () {
 
-		disposables.push(extHost.registerCallHierarchyProvider(nullExtensionDescription, defaultSelector, new class implements vscode.CallHierarchyProvider {
+		disposables.push(extHost.registerCallHierarchyProvider(nullExtensionDescription, defaultSelector, new class implements zycode.CallHierarchyProvider {
 
-			prepareCallHierarchy(document: vscode.TextDocument, position: vscode.Position,): vscode.ProviderResult<vscode.CallHierarchyItem> {
+			prepareCallHierarchy(document: zycode.TextDocument, position: zycode.Position,): zycode.ProviderResult<zycode.CallHierarchyItem> {
 				return new types.CallHierarchyItem(types.SymbolKind.Constant, 'ROOT', 'ROOT', document.uri, new types.Range(0, 0, 0, 0), new types.Range(0, 0, 0, 0));
 			}
 
-			provideCallHierarchyIncomingCalls(item: vscode.CallHierarchyItem, token: vscode.CancellationToken): vscode.ProviderResult<vscode.CallHierarchyIncomingCall[]> {
+			provideCallHierarchyIncomingCalls(item: zycode.CallHierarchyItem, token: zycode.CancellationToken): zycode.ProviderResult<zycode.CallHierarchyIncomingCall[]> {
 
 				return [new types.CallHierarchyIncomingCall(
 					new types.CallHierarchyItem(types.SymbolKind.Constant, 'INCOMING', 'INCOMING', item.uri, new types.Range(0, 0, 0, 0), new types.Range(0, 0, 0, 0)),
@@ -1417,7 +1417,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 				)];
 			}
 
-			provideCallHierarchyOutgoingCalls(item: vscode.CallHierarchyItem, token: vscode.CancellationToken): vscode.ProviderResult<vscode.CallHierarchyOutgoingCall[]> {
+			provideCallHierarchyOutgoingCalls(item: zycode.CallHierarchyItem, token: zycode.CancellationToken): zycode.ProviderResult<zycode.CallHierarchyOutgoingCall[]> {
 				return [new types.CallHierarchyOutgoingCall(
 					new types.CallHierarchyItem(types.SymbolKind.Constant, 'OUTGOING', 'OUTGOING', item.uri, new types.Range(0, 0, 0, 0), new types.Range(0, 0, 0, 0)),
 					[new types.Range(0, 0, 0, 0)]
@@ -1427,38 +1427,38 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 		await rpcProtocol.sync();
 
-		const root = await commands.executeCommand<vscode.CallHierarchyItem[]>('vscode.prepareCallHierarchy', model.uri, new types.Position(0, 0));
+		const root = await commands.executeCommand<zycode.CallHierarchyItem[]>('zycode.prepareCallHierarchy', model.uri, new types.Position(0, 0));
 
 		assert.ok(Array.isArray(root));
 		assert.strictEqual(root.length, 1);
 		assert.strictEqual(root[0].name, 'ROOT');
 
-		const incoming = await commands.executeCommand<vscode.CallHierarchyIncomingCall[]>('vscode.provideIncomingCalls', root[0]);
+		const incoming = await commands.executeCommand<zycode.CallHierarchyIncomingCall[]>('zycode.provideIncomingCalls', root[0]);
 		assert.strictEqual(incoming.length, 1);
 		assert.strictEqual(incoming[0].from.name, 'INCOMING');
 
-		const outgoing = await commands.executeCommand<vscode.CallHierarchyOutgoingCall[]>('vscode.provideOutgoingCalls', root[0]);
+		const outgoing = await commands.executeCommand<zycode.CallHierarchyOutgoingCall[]>('zycode.provideOutgoingCalls', root[0]);
 		assert.strictEqual(outgoing.length, 1);
 		assert.strictEqual(outgoing[0].to.name, 'OUTGOING');
 	});
 
 	test('prepareCallHierarchy throws TypeError if clangd returns empty result #137415', async function () {
 
-		disposables.push(extHost.registerCallHierarchyProvider(nullExtensionDescription, defaultSelector, new class implements vscode.CallHierarchyProvider {
-			prepareCallHierarchy(document: vscode.TextDocument, position: vscode.Position,): vscode.ProviderResult<vscode.CallHierarchyItem[]> {
+		disposables.push(extHost.registerCallHierarchyProvider(nullExtensionDescription, defaultSelector, new class implements zycode.CallHierarchyProvider {
+			prepareCallHierarchy(document: zycode.TextDocument, position: zycode.Position,): zycode.ProviderResult<zycode.CallHierarchyItem[]> {
 				return [];
 			}
-			provideCallHierarchyIncomingCalls(item: vscode.CallHierarchyItem, token: vscode.CancellationToken): vscode.ProviderResult<vscode.CallHierarchyIncomingCall[]> {
+			provideCallHierarchyIncomingCalls(item: zycode.CallHierarchyItem, token: zycode.CancellationToken): zycode.ProviderResult<zycode.CallHierarchyIncomingCall[]> {
 				return [];
 			}
-			provideCallHierarchyOutgoingCalls(item: vscode.CallHierarchyItem, token: vscode.CancellationToken): vscode.ProviderResult<vscode.CallHierarchyOutgoingCall[]> {
+			provideCallHierarchyOutgoingCalls(item: zycode.CallHierarchyItem, token: zycode.CancellationToken): zycode.ProviderResult<zycode.CallHierarchyOutgoingCall[]> {
 				return [];
 			}
 		}));
 
 		await rpcProtocol.sync();
 
-		const root = await commands.executeCommand<vscode.CallHierarchyItem[]>('vscode.prepareCallHierarchy', model.uri, new types.Position(0, 0));
+		const root = await commands.executeCommand<zycode.CallHierarchyItem[]>('zycode.prepareCallHierarchy', model.uri, new types.Position(0, 0));
 
 		assert.ok(Array.isArray(root));
 		assert.strictEqual(root.length, 0);
@@ -1469,38 +1469,38 @@ suite('ExtHostLanguageFeatureCommands', function () {
 	test('TypeHierarchy, back and forth', async function () {
 
 
-		disposables.push(extHost.registerTypeHierarchyProvider(nullExtensionDescription, defaultSelector, new class implements vscode.TypeHierarchyProvider {
-			prepareTypeHierarchy(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): vscode.ProviderResult<vscode.TypeHierarchyItem[]> {
+		disposables.push(extHost.registerTypeHierarchyProvider(nullExtensionDescription, defaultSelector, new class implements zycode.TypeHierarchyProvider {
+			prepareTypeHierarchy(document: zycode.TextDocument, position: zycode.Position, token: zycode.CancellationToken): zycode.ProviderResult<zycode.TypeHierarchyItem[]> {
 				return [new types.TypeHierarchyItem(types.SymbolKind.Constant, 'ROOT', 'ROOT', document.uri, new types.Range(0, 0, 0, 0), new types.Range(0, 0, 0, 0))];
 			}
-			provideTypeHierarchySupertypes(item: vscode.TypeHierarchyItem, token: vscode.CancellationToken): vscode.ProviderResult<vscode.TypeHierarchyItem[]> {
+			provideTypeHierarchySupertypes(item: zycode.TypeHierarchyItem, token: zycode.CancellationToken): zycode.ProviderResult<zycode.TypeHierarchyItem[]> {
 				return [new types.TypeHierarchyItem(types.SymbolKind.Constant, 'SUPER', 'SUPER', item.uri, new types.Range(0, 0, 0, 0), new types.Range(0, 0, 0, 0))];
 			}
-			provideTypeHierarchySubtypes(item: vscode.TypeHierarchyItem, token: vscode.CancellationToken): vscode.ProviderResult<vscode.TypeHierarchyItem[]> {
+			provideTypeHierarchySubtypes(item: zycode.TypeHierarchyItem, token: zycode.CancellationToken): zycode.ProviderResult<zycode.TypeHierarchyItem[]> {
 				return [new types.TypeHierarchyItem(types.SymbolKind.Constant, 'SUB', 'SUB', item.uri, new types.Range(0, 0, 0, 0), new types.Range(0, 0, 0, 0))];
 			}
 		}));
 
 		await rpcProtocol.sync();
 
-		const root = await commands.executeCommand<vscode.TypeHierarchyItem[]>('vscode.prepareTypeHierarchy', model.uri, new types.Position(0, 0));
+		const root = await commands.executeCommand<zycode.TypeHierarchyItem[]>('zycode.prepareTypeHierarchy', model.uri, new types.Position(0, 0));
 
 		assert.ok(Array.isArray(root));
 		assert.strictEqual(root.length, 1);
 		assert.strictEqual(root[0].name, 'ROOT');
 
-		const incoming = await commands.executeCommand<vscode.TypeHierarchyItem[]>('vscode.provideSupertypes', root[0]);
+		const incoming = await commands.executeCommand<zycode.TypeHierarchyItem[]>('zycode.provideSupertypes', root[0]);
 		assert.strictEqual(incoming.length, 1);
 		assert.strictEqual(incoming[0].name, 'SUPER');
 
-		const outgoing = await commands.executeCommand<vscode.TypeHierarchyItem[]>('vscode.provideSubtypes', root[0]);
+		const outgoing = await commands.executeCommand<zycode.TypeHierarchyItem[]>('zycode.provideSubtypes', root[0]);
 		assert.strictEqual(outgoing.length, 1);
 		assert.strictEqual(outgoing[0].name, 'SUB');
 	});
 
 	test('selectionRangeProvider on inner array always returns outer array #91852', async function () {
 
-		disposables.push(extHost.registerSelectionRangeProvider(nullExtensionDescription, defaultSelector, <vscode.SelectionRangeProvider>{
+		disposables.push(extHost.registerSelectionRangeProvider(nullExtensionDescription, defaultSelector, <zycode.SelectionRangeProvider>{
 			provideSelectionRanges(_doc, positions) {
 				const [first] = positions;
 				return [
@@ -1510,7 +1510,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		await rpcProtocol.sync();
-		const value = await commands.executeCommand<vscode.SelectionRange[]>('vscode.executeSelectionRangeProvider', model.uri, [new types.Position(0, 10)]);
+		const value = await commands.executeCommand<zycode.SelectionRange[]>('zycode.executeSelectionRangeProvider', model.uri, [new types.Position(0, 10)]);
 		assert.strictEqual(value.length, 1);
 		assert.strictEqual(value[0].range.start.line, 0);
 		assert.strictEqual(value[0].range.start.character, 10);
@@ -1520,7 +1520,7 @@ suite('ExtHostLanguageFeatureCommands', function () {
 
 	test('more element test of selectionRangeProvider on inner array always returns outer array #91852', async function () {
 
-		disposables.push(extHost.registerSelectionRangeProvider(nullExtensionDescription, defaultSelector, <vscode.SelectionRangeProvider>{
+		disposables.push(extHost.registerSelectionRangeProvider(nullExtensionDescription, defaultSelector, <zycode.SelectionRangeProvider>{
 			provideSelectionRanges(_doc, positions) {
 				const [first, second] = positions;
 				return [
@@ -1531,8 +1531,8 @@ suite('ExtHostLanguageFeatureCommands', function () {
 		}));
 
 		await rpcProtocol.sync();
-		const value = await commands.executeCommand<vscode.SelectionRange[]>(
-			'vscode.executeSelectionRangeProvider',
+		const value = await commands.executeCommand<zycode.SelectionRange[]>(
+			'zycode.executeSelectionRangeProvider',
 			model.uri,
 			[new types.Position(0, 0), new types.Position(0, 10)]
 		);

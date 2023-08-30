@@ -11,7 +11,7 @@ import { MainThreadTextEditorsShape, IWorkspaceEditDto, IWorkspaceTextEditDto, M
 import { ExtHostDocumentSaveParticipant } from 'vs/workbench/api/common/extHostDocumentSaveParticipant';
 import { SingleProxyRPCProtocol } from 'vs/workbench/api/test/common/testRPCProtocol';
 import { SaveReason } from 'vs/workbench/common/editor';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { mock } from 'vs/base/test/common/mock';
 import { NullLogService } from 'vs/platform/log/common/log';
 import { timeout } from 'vs/base/common/async';
@@ -47,7 +47,7 @@ suite('ExtHostDocumentSaveParticipant', () => {
 	test('event delivery', () => {
 		const participant = new ExtHostDocumentSaveParticipant(nullLogService, documents, mainThreadBulkEdits);
 
-		let event: vscode.TextDocumentWillSaveEvent;
+		let event: zycode.TextDocumentWillSaveEvent;
 		const sub = participant.getOnWillSaveTextDocumentEvent(nullExtensionDescription)(function (e) {
 			event = e;
 		});
@@ -64,7 +64,7 @@ suite('ExtHostDocumentSaveParticipant', () => {
 	test('event delivery, immutable', () => {
 		const participant = new ExtHostDocumentSaveParticipant(nullLogService, documents, mainThreadBulkEdits);
 
-		let event: vscode.TextDocumentWillSaveEvent;
+		let event: zycode.TextDocumentWillSaveEvent;
 		const sub = participant.getOnWillSaveTextDocumentEvent(nullExtensionDescription)(function (e) {
 			event = e;
 		});
@@ -98,7 +98,7 @@ suite('ExtHostDocumentSaveParticipant', () => {
 		const sub1 = participant.getOnWillSaveTextDocumentEvent(nullExtensionDescription)(function (e) {
 			throw new Error('💀');
 		});
-		let event: vscode.TextDocumentWillSaveEvent;
+		let event: zycode.TextDocumentWillSaveEvent;
 		const sub2 = participant.getOnWillSaveTextDocumentEvent(nullExtensionDescription)(function (e) {
 			event = e;
 		});
@@ -235,7 +235,7 @@ suite('ExtHostDocumentSaveParticipant', () => {
 			e.waitUntil(Promise.reject(new Error('dddd')));
 		});
 
-		let event: vscode.TextDocumentWillSaveEvent;
+		let event: zycode.TextDocumentWillSaveEvent;
 		const sub2 = participant.getOnWillSaveTextDocumentEvent(nullExtensionDescription)(function (e) {
 			event = e;
 		});

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Connection, createConnection } from 'vscode-languageserver/node';
+import { Connection, createConnection } from 'zycode-languageserver/node';
 import { startVsCodeServer } from '../server';
 
 // Create a connection for the server.

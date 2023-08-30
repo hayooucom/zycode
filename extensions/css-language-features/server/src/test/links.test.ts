@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import 'mocha';
 import * as assert from 'assert';
-import { URI } from 'vscode-uri';
+import { URI } from 'zycode-uri';
 import { resolve } from 'path';
-import { TextDocument, DocumentLink } from 'vscode-languageserver-types';
-import { WorkspaceFolder } from 'vscode-languageserver-protocol';
-import { getCSSLanguageService } from 'vscode-css-languageservice';
+import { TextDocument, DocumentLink } from 'zycode-languageserver-types';
+import { WorkspaceFolder } from 'zycode-languageserver-protocol';
+import { getCSSLanguageService } from 'zycode-css-languageservice';
 import { getDocumentContext } from '../utils/documentContext';
 import { getNodeFSRequestService } from '../node/nodeFs';
 

@@ -5,12 +5,12 @@
 
 import * as assert from 'assert';
 import 'mocha';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { CURSOR, joinLines, wait, withRandomFileEditor } from '../testUtils';
 
-const onDocumentChange = (doc: vscode.TextDocument): Promise<vscode.TextDocument> => {
-	return new Promise<vscode.TextDocument>(resolve => {
-		const sub = vscode.workspace.onDidChangeTextDocument(e => {
+const onDocumentChange = (doc: zycode.TextDocument): Promise<zycode.TextDocument> => {
+	return new Promise<zycode.TextDocument>(resolve => {
+		const sub = zycode.workspace.onDidChangeTextDocument(e => {
 			if (e.document !== doc) {
 				return;
 			}
@@ -20,9 +20,9 @@ const onDocumentChange = (doc: vscode.TextDocument): Promise<vscode.TextDocument
 	});
 };
 
-const type = async (document: vscode.TextDocument, text: string): Promise<vscode.TextDocument> => {
+const type = async (document: zycode.TextDocument, text: string): Promise<zycode.TextDocument> => {
 	const onChange = onDocumentChange(document);
-	await vscode.commands.executeCommand('type', { text });
+	await zycode.commands.executeCommand('type', { text });
 	await onChange;
 	return document;
 };
@@ -30,7 +30,7 @@ const type = async (document: vscode.TextDocument, text: string): Promise<vscode
 suite.skip('OnEnter', () => {
 	setup(async () => {
 		// the tests make the assumption that language rules are registered
-		await vscode.extensions.getExtension('vscode.typescript-language-features')!.activate();
+		await zycode.extensions.getExtension('zycode.typescript-language-features')!.activate();
 	});
 
 	test('should indent after if block with braces', () => {

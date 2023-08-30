@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { MainContext, MainThreadOutputServiceShape, ExtHostOutputServiceShape } from './extHost.protocol';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { URI } from 'vs/base/common/uri';
 import { createDecorator } from 'vs/platform/instantiation/common/instantiation';
 import { IExtHostRpcService } from 'vs/workbench/api/common/extHostRpcService';
@@ -21,7 +21,7 @@ import { FileSystemProviderErrorCode, toFileSystemProviderErrorCode } from 'vs/p
 import { Emitter } from 'vs/base/common/event';
 import { DisposableStore } from 'vs/base/common/lifecycle';
 
-class ExtHostOutputChannel extends AbstractMessageLogger implements vscode.LogOutputChannel {
+class ExtHostOutputChannel extends AbstractMessageLogger implements zycode.LogOutputChannel {
 
 	private offset: number = 0;
 
@@ -68,7 +68,7 @@ class ExtHostOutputChannel extends AbstractMessageLogger implements vscode.LogOu
 		}
 	}
 
-	show(columnOrPreserveFocus?: vscode.ViewColumn | boolean, preserveFocus?: boolean): void {
+	show(columnOrPreserveFocus?: zycode.ViewColumn | boolean, preserveFocus?: boolean): void {
 		this.logger.flush();
 		this.proxy.$reveal(this.id, !!(typeof columnOrPreserveFocus === 'boolean' ? columnOrPreserveFocus : preserveFocus));
 	}
@@ -138,7 +138,7 @@ export class ExtHostOutputService implements ExtHostOutputServiceShape {
 		}
 	}
 
-	createOutputChannel(name: string, options: string | { log: true } | undefined, extension: IExtensionDescription): vscode.OutputChannel | vscode.LogOutputChannel {
+	createOutputChannel(name: string, options: string | { log: true } | undefined, extension: IExtensionDescription): zycode.OutputChannel | zycode.LogOutputChannel {
 		name = name.trim();
 		if (!name) {
 			throw new Error('illegal argument `name`. must not be falsy');
@@ -199,7 +199,7 @@ export class ExtHostOutputService implements ExtHostOutputServiceShape {
 		return extensionLogDirectoryPromise;
 	}
 
-	private createExtHostOutputChannel(name: string, channelPromise: Promise<ExtHostOutputChannel>): vscode.OutputChannel {
+	private createExtHostOutputChannel(name: string, channelPromise: Promise<ExtHostOutputChannel>): zycode.OutputChannel {
 		let disposed = false;
 		const validate = () => {
 			if (disposed) {
@@ -224,7 +224,7 @@ export class ExtHostOutputService implements ExtHostOutputServiceShape {
 				validate();
 				channelPromise.then(channel => channel.replace(value));
 			},
-			show(columnOrPreserveFocus?: vscode.ViewColumn | boolean, preserveFocus?: boolean): void {
+			show(columnOrPreserveFocus?: zycode.ViewColumn | boolean, preserveFocus?: boolean): void {
 				validate();
 				channelPromise.then(channel => channel.show(columnOrPreserveFocus, preserveFocus));
 			},
@@ -239,7 +239,7 @@ export class ExtHostOutputService implements ExtHostOutputServiceShape {
 		};
 	}
 
-	private createExtHostLogOutputChannel(name: string, logLevel: LogLevel, channelPromise: Promise<ExtHostOutputChannel>): vscode.LogOutputChannel {
+	private createExtHostLogOutputChannel(name: string, logLevel: LogLevel, channelPromise: Promise<ExtHostOutputChannel>): zycode.LogOutputChannel {
 		const disposables = new DisposableStore();
 		const validate = () => {
 			if (disposables.isDisposed) {

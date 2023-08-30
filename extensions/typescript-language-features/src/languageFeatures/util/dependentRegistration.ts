@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { API } from '../../tsServer/api';
 import { ClientCapability, ITypeScriptServiceClient } from '../../typescriptService';
 import { Disposable } from '../../utils/dispose';
@@ -29,16 +29,16 @@ export class Condition extends Disposable {
 
 	public get value(): boolean { return this._value; }
 
-	private readonly _onDidChange = this._register(new vscode.EventEmitter<void>());
+	private readonly _onDidChange = this._register(new zycode.EventEmitter<void>());
 	public readonly onDidChange = this._onDidChange.event;
 }
 
 class ConditionalRegistration {
-	private registration: vscode.Disposable | undefined = undefined;
+	private registration: zycode.Disposable | undefined = undefined;
 
 	public constructor(
 		private readonly conditions: readonly Condition[],
-		private readonly doRegister: () => vscode.Disposable
+		private readonly doRegister: () => zycode.Disposable
 	) {
 		for (const condition of conditions) {
 			condition.onDidChange(() => this.update());
@@ -64,8 +64,8 @@ class ConditionalRegistration {
 
 export function conditionalRegistration(
 	conditions: readonly Condition[],
-	doRegister: () => vscode.Disposable,
-): vscode.Disposable {
+	doRegister: () => zycode.Disposable,
+): zycode.Disposable {
 	return new ConditionalRegistration(conditions, doRegister);
 }
 
@@ -85,10 +85,10 @@ export function requireGlobalConfiguration(
 ) {
 	return new Condition(
 		() => {
-			const config = vscode.workspace.getConfiguration(section, null);
+			const config = zycode.workspace.getConfiguration(section, null);
 			return !!config.get<boolean>(configValue);
 		},
-		vscode.workspace.onDidChangeConfiguration
+		zycode.workspace.onDidChangeConfiguration
 	);
 }
 

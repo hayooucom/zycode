@@ -5,7 +5,7 @@
 
 import { onceDocumentLoaded } from './events';
 
-const vscode = acquireVsCodeApi();
+const zycode = acquireVsCodeApi();
 
 function getSettings() {
 	const element = document.getElementById('simple-browser-settings');
@@ -68,7 +68,7 @@ onceDocumentLoaded(() => {
 	});
 
 	openExternalButton.addEventListener('click', () => {
-		vscode.postMessage({
+		zycode.postMessage({
 			type: 'openExternal',
 			url: input.value
 		});
@@ -102,7 +102,7 @@ onceDocumentLoaded(() => {
 			iframe.src = rawUrl;
 		}
 
-		vscode.setState({ url: rawUrl });
+		zycode.setState({ url: rawUrl });
 	}
 });
 

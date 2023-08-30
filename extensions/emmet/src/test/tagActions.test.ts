@@ -5,7 +5,7 @@
 
 import 'mocha';
 import * as assert from 'assert';
-import { Selection, workspace, ConfigurationTarget } from 'vscode';
+import { Selection, workspace, ConfigurationTarget } from 'zycode';
 import { withRandomFileEditor, closeAllEditors } from './testUtils';
 import { removeTag } from '../removeTag';
 import { updateTag } from '../updateTag';

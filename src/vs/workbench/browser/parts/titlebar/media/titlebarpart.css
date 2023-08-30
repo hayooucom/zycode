@@ -135,11 +135,11 @@
 }
 
 .monaco-workbench .part.titlebar > .titlebar-container > .titlebar-center > .window-title > .command-center .action-item > .action-label {
-	color: var(--vscode-titleBar-activeForeground);
+	color: var(--zycode-titleBar-activeForeground);
 }
 
 .monaco-workbench .part.titlebar.inactive > .titlebar-container > .titlebar-center > .window-title > .command-center .action-item > .action-label {
-	color: var(--vscode-titleBar-inactiveForeground);
+	color: var(--zycode-titleBar-inactiveForeground);
 }
 
 .monaco-workbench .part.titlebar > .titlebar-container > .titlebar-center > .window-title > .command-center .codicon {
@@ -149,9 +149,9 @@
 .monaco-workbench .part.titlebar > .titlebar-container > .titlebar-center > .window-title > .command-center .action-item.command-center {
 	display: flex;
 	align-items: stretch;
-	color: var(--vscode-commandCenter-foreground);
-	background-color: var(--vscode-commandCenter-background);
-	border: 1px solid var(--vscode-commandCenter-border);
+	color: var(--zycode-commandCenter-foreground);
+	background-color: var(--zycode-commandCenter-background);
+	border: 1px solid var(--zycode-commandCenter-border);
 	overflow: hidden;
 	margin-left: 6px;
 	border-top-left-radius: 6px;
@@ -168,8 +168,8 @@
 }
 
 .monaco-workbench .part.titlebar.inactive > .titlebar-container > .titlebar-center > .window-title > .command-center .action-item.command-center {
-	color: var(--vscode-titleBar-inactiveForeground);
-	border-color: var(--vscode-commandCenter-inactiveBorder) !important;
+	color: var(--zycode-titleBar-inactiveForeground);
+	border-color: var(--zycode-commandCenter-inactiveBorder) !important;
 }
 
 .monaco-workbench .part.titlebar > .titlebar-container > .titlebar-center > .window-title > .command-center .action-item.command-center .search-icon {
@@ -184,9 +184,9 @@
 }
 
 .monaco-workbench .part.titlebar > .titlebar-container > .titlebar-center > .window-title > .command-center .action-item.command-center:HOVER {
-	color: var(--vscode-commandCenter-activeForeground);
-	background-color: var(--vscode-commandCenter-activeBackground);
-	border-color: var(--vscode-commandCenter-activeBorder);
+	color: var(--zycode-commandCenter-activeForeground);
+	background-color: var(--zycode-commandCenter-activeBackground);
+	border-color: var(--zycode-commandCenter-activeBorder);
 }
 
 /* Menubar */
@@ -377,9 +377,9 @@
 }
 
 .monaco-workbench .part.titlebar .window-controls-container .window-icon {
-	color: var(--vscode-titleBar-activeForeground);
+	color: var(--zycode-titleBar-activeForeground);
 }
 
 .monaco-workbench .part.titlebar.inactive .window-controls-container .window-icon {
-	color: var(--vscode-titleBar-inactiveForeground);
+	color: var(--zycode-titleBar-inactiveForeground);
 }

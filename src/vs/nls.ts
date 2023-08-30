@@ -91,7 +91,7 @@ function endWithSlash(path: string): string {
 }
 
 async function getMessagesFromTranslationsService(translationServiceUrl: string, language: string, name: string): Promise<string[] | IBundledStrings> {
-	const url = endWithSlash(translationServiceUrl) + endWithSlash(language) + 'vscode/' + endWithSlash(name);
+	const url = endWithSlash(translationServiceUrl) + endWithSlash(language) + 'zycode/' + endWithSlash(name);
 	const res = await fetch(url);
 	if (res.ok) {
 		const messages = await res.json() as string[] | IBundledStrings;

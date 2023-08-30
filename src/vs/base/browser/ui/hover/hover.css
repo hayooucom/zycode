@@ -12,7 +12,7 @@
 	box-sizing: border-box;
 	animation: fadein 100ms linear;
 	line-height: 1.5em;
-	white-space: var(--vscode-hover-whiteSpace, normal);
+	white-space: var(--zycode-hover-whiteSpace, normal);
 }
 
 .monaco-hover.hidden {
@@ -28,7 +28,7 @@
 }
 
 .monaco-hover .markdown-hover > .hover-contents:not(.code-hover-contents) {
-	max-width: var(--vscode-hover-maxWidth, 500px);
+	max-width: var(--zycode-hover-maxWidth, 500px);
 	word-wrap: break-word;
 }
 
@@ -106,7 +106,7 @@
 }
 
 .monaco-hover .monaco-tokenized-source {
-	white-space: var(--vscode-hover-sourceWhiteSpace, pre-wrap);
+	white-space: var(--zycode-hover-sourceWhiteSpace, pre-wrap);
 }
 
 .monaco-hover .hover-row.status-bar {
@@ -157,14 +157,14 @@
 	/** Hack to force underline to show **/
 	border-bottom: 1px solid transparent;
 	text-underline-position: under;
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 }
 
 .monaco-hover .hover-contents a.code-link > span:hover {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 }
 
-/** Spans in markdown hovers need a margin-bottom to avoid looking cramped: https://github.com/microsoft/vscode/issues/101496 **/
+/** Spans in markdown hovers need a margin-bottom to avoid looking cramped: https://github.com/microsoft/zycode/issues/101496 **/
 .monaco-hover .markdown-hover .hover-contents:not(.code-hover-contents):not(.html-hover-contents) span {
 	margin-bottom: 4px;
 	display: inline-block;

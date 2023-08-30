@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { TextDecoder } from 'util';
-import { commands, env, ProgressLocation, Uri, window, workspace, QuickPickOptions, FileType, l10n, Disposable, TextDocumentContentProvider } from 'vscode';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { commands, env, ProgressLocation, Uri, window, workspace, QuickPickOptions, FileType, l10n, Disposable, TextDocumentContentProvider } from 'zycode';
+import TelemetryReporter from '@zycode/extension-telemetry';
 import { getOctokit } from './auth';
 import { GitErrorCodes, PushErrorHandler, Remote, Repository } from './typings/git';
 import * as path from 'path';
@@ -47,8 +47,8 @@ async function findMarkdownFilesInDir(uri: Uri): Promise<Uri[]> {
  * - In the root, `docs`, or `.github` folders, called `pull_request_template.md` or `PULL_REQUEST_TEMPLATE.md`
  * - Or, in a `PULL_REQUEST_TEMPLATE` directory directly below the root, `docs`, or `.github` folders, called `*.md`
  *
- * NOTE This method is a modified copy of a method with same name at microsoft/vscode-pull-request-github repository:
- *   https://github.com/microsoft/vscode-pull-request-github/blob/0a0c3c6c21c0b9c2f4d5ffbc3f8c6a825472e9e6/src/github/folderRepositoryManager.ts#L1061
+ * NOTE This method is a modified copy of a method with same name at microsoft/zycode-pull-request-github repository:
+ *   https://github.com/microsoft/zycode-pull-request-github/blob/0a0c3c6c21c0b9c2f4d5ffbc3f8c6a825472e9e6/src/github/folderRepositoryManager.ts#L1061
  *
  */
 export async function findPullRequestTemplates(repositoryRootUri: Uri): Promise<Uri[]> {
@@ -244,7 +244,7 @@ export class GithubPushErrorHandler implements PushErrorHandler {
 			const action = await window.showInformationMessage(l10n.t('The fork "{0}" was successfully created on GitHub.', ghRepository.full_name), openOnGitHub, createPR);
 
 			if (action === openOnGitHub) {
-				await commands.executeCommand('vscode.open', Uri.parse(ghRepository.html_url));
+				await commands.executeCommand('zycode.open', Uri.parse(ghRepository.html_url));
 			} else if (action === createPR) {
 				const pr = await window.withProgress({ location: ProgressLocation.Notification, cancellable: false, title: l10n.t('Creating GitHub Pull Request...') }, async _ => {
 					let title = `Update ${remoteName}`;
@@ -289,7 +289,7 @@ export class GithubPushErrorHandler implements PushErrorHandler {
 				const action = await window.showInformationMessage(l10n.t('The PR "{0}/{1}#{2}" was successfully created on GitHub.', owner, repo, pr.number), openPR);
 
 				if (action === openPR) {
-					await commands.executeCommand('vscode.open', Uri.parse(pr.html_url));
+					await commands.executeCommand('zycode.open', Uri.parse(pr.html_url));
 				}
 			}
 		})();
@@ -314,7 +314,7 @@ export class GithubPushErrorHandler implements PushErrorHandler {
 		const message = l10n.t('Your push to "{0}/{1}" was rejected by GitHub because push protection is enabled and one or more secrets were detected.', owner, repo);
 		const answer = await window.showWarningMessage(message, { modal: true }, learnMore);
 		if (answer === learnMore) {
-			commands.executeCommand('vscode.open', 'https://aka.ms/vscode-github-push-protection');
+			commands.executeCommand('zycode.open', 'https://aka.ms/zycode-github-push-protection');
 		}
 	}
 

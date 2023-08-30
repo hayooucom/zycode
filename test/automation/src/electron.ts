@@ -6,7 +6,7 @@
 import { join } from 'path';
 import * as mkdirp from 'mkdirp';
 import { copyExtension } from './extensions';
-import { URI } from 'vscode-uri';
+import { URI } from 'zycode-uri';
 import { measureAndLog } from './logger';
 import type { LaunchOptions } from './code';
 
@@ -45,7 +45,7 @@ export async function resolveElectronConfiguration(options: LaunchOptions): Prom
 		// --disable-dev-shm-usage: when run on docker containers where size of /dev/shm
 		// partition < 64MB which causes OOM failure for chromium compositor that uses
 		// this partition for shared memory.
-		// Refs https://github.com/microsoft/vscode/issues/152143
+		// Refs https://github.com/microsoft/zycode/issues/152143
 		args.push('--disable-dev-shm-usage');
 	}
 
@@ -60,13 +60,13 @@ export async function resolveElectronConfiguration(options: LaunchOptions): Prom
 
 	if (remote) {
 		// Replace workspace path with URI
-		args[0] = `--${workspacePath.endsWith('.code-workspace') ? 'file' : 'folder'}-uri=vscode-remote://test+test/${URI.file(workspacePath).path}`;
+		args[0] = `--${workspacePath.endsWith('.code-workspace') ? 'file' : 'folder'}-uri=zycode-remote://test+test/${URI.file(workspacePath).path}`;
 
 		if (codePath) {
 			// running against a build: copy the test resolver extension
-			await measureAndLog(() => copyExtension(root, extensionsPath, 'vscode-test-resolver'), 'copyExtension(vscode-test-resolver)', logger);
+			await measureAndLog(() => copyExtension(root, extensionsPath, 'zycode-test-resolver'), 'copyExtension(zycode-test-resolver)', logger);
 		}
-		args.push('--enable-proposed-api=vscode.vscode-test-resolver');
+		args.push('--enable-proposed-api=zycode.zycode-test-resolver');
 		const remoteDataDir = `${userDataDir}-server`;
 		mkdirp.sync(remoteDataDir);
 

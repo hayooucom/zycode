@@ -699,7 +699,7 @@ abstract class AbstractExtensionGalleryService implements IExtensionGalleryServi
 			if (!manifest) {
 				throw new Error('Manifest was not found');
 			}
-			engine = manifest.engines.vscode;
+			engine = manifest.engines.zycode;
 		}
 		return isEngineValid(engine, this.productService.version, this.productService.date);
 	}
@@ -864,7 +864,7 @@ abstract class AbstractExtensionGalleryService implements IExtensionGalleryServi
 				/**
 				 * Need all versions if the extension is a release version with a different target platform than requested and also has a pre-release version
 				 * Because, this is a platform specific extension and can have a newer release version supporting this platform.
-				 * See https://github.com/microsoft/vscode/issues/139628
+				 * See https://github.com/microsoft/zycode/issues/139628
 				*/
 				|| (!extension.properties.isPreReleaseVersion && extension.properties.targetPlatform !== criteria.targetPlatform && extension.hasPreReleaseVersion)
 			) {
@@ -1197,7 +1197,7 @@ abstract class AbstractExtensionGalleryService implements IExtensionGalleryServi
 			if (!manifest) {
 				throw new Error('Manifest was not found');
 			}
-			engine = manifest.engines.vscode;
+			engine = manifest.engines.zycode;
 		}
 		return engine;
 	}

@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 /**
- * Minimal version of {@link vscode.TextDocument}.
+ * Minimal version of {@link zycode.TextDocument}.
  */
 export interface ITextDocument {
-	readonly uri: vscode.Uri;
+	readonly uri: zycode.Uri;
 	readonly version: number;
 
 	getText(): string;

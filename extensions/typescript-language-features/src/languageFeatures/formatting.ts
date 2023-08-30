@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { LanguageDescription } from '../configuration/languageDescription';
 import type * as Proto from '../tsServer/protocol/protocol';
@@ -12,18 +12,18 @@ import { ITypeScriptServiceClient } from '../typescriptService';
 import FileConfigurationManager from './fileConfigurationManager';
 import { conditionalRegistration, requireGlobalConfiguration } from './util/dependentRegistration';
 
-class TypeScriptFormattingProvider implements vscode.DocumentRangeFormattingEditProvider, vscode.OnTypeFormattingEditProvider {
+class TypeScriptFormattingProvider implements zycode.DocumentRangeFormattingEditProvider, zycode.OnTypeFormattingEditProvider {
 	public constructor(
 		private readonly client: ITypeScriptServiceClient,
 		private readonly formattingOptionsManager: FileConfigurationManager
 	) { }
 
 	public async provideDocumentRangeFormattingEdits(
-		document: vscode.TextDocument,
-		range: vscode.Range,
-		options: vscode.FormattingOptions,
-		token: vscode.CancellationToken
-	): Promise<vscode.TextEdit[] | undefined> {
+		document: zycode.TextDocument,
+		range: zycode.Range,
+		options: zycode.FormattingOptions,
+		token: zycode.CancellationToken
+	): Promise<zycode.TextEdit[] | undefined> {
 		const file = this.client.toOpenTsFilePath(document);
 		if (!file) {
 			return undefined;
@@ -41,12 +41,12 @@ class TypeScriptFormattingProvider implements vscode.DocumentRangeFormattingEdit
 	}
 
 	public async provideOnTypeFormattingEdits(
-		document: vscode.TextDocument,
-		position: vscode.Position,
+		document: zycode.TextDocument,
+		position: zycode.Position,
 		ch: string,
-		options: vscode.FormattingOptions,
-		token: vscode.CancellationToken
-	): Promise<vscode.TextEdit[]> {
+		options: zycode.FormattingOptions,
+		token: zycode.CancellationToken
+	): Promise<zycode.TextEdit[]> {
 		const file = this.client.toOpenTsFilePath(document);
 		if (!file) {
 			return [];
@@ -63,7 +63,7 @@ class TypeScriptFormattingProvider implements vscode.DocumentRangeFormattingEdit
 			return [];
 		}
 
-		const result: vscode.TextEdit[] = [];
+		const result: zycode.TextEdit[] = [];
 		for (const edit of response.body) {
 			const textEdit = typeConverters.TextEdit.fromCodeEdit(edit);
 			const range = textEdit.range;
@@ -95,9 +95,9 @@ export function register(
 		requireGlobalConfiguration(language.id, 'format.enable'),
 	], () => {
 		const formattingProvider = new TypeScriptFormattingProvider(client, fileConfigurationManager);
-		return vscode.Disposable.from(
-			vscode.languages.registerOnTypeFormattingEditProvider(selector.syntax, formattingProvider, ';', '}', '\n'),
-			vscode.languages.registerDocumentRangeFormattingEditProvider(selector.syntax, formattingProvider),
+		return zycode.Disposable.from(
+			zycode.languages.registerOnTypeFormattingEditProvider(selector.syntax, formattingProvider, ';', '}', '\n'),
+			zycode.languages.registerDocumentRangeFormattingEditProvider(selector.syntax, formattingProvider),
 		);
 	});
 }

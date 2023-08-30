@@ -11,18 +11,18 @@ import { Event } from 'vs/base/common/event';
 import { ResourceMap } from 'vs/base/common/map';
 import { IAnyWorkspaceIdentifier } from 'vs/platform/workspace/common/workspace';
 
-export const FOLDER_CONFIG_FOLDER_NAME = '.vscode';
+export const FOLDER_CONFIG_FOLDER_NAME = '.zycode';
 export const FOLDER_SETTINGS_NAME = 'settings';
 export const FOLDER_SETTINGS_PATH = `${FOLDER_CONFIG_FOLDER_NAME}/${FOLDER_SETTINGS_NAME}.json`;
 
-export const defaultSettingsSchemaId = 'vscode://schemas/settings/default';
-export const userSettingsSchemaId = 'vscode://schemas/settings/user';
-export const profileSettingsSchemaId = 'vscode://schemas/settings/profile';
-export const machineSettingsSchemaId = 'vscode://schemas/settings/machine';
-export const workspaceSettingsSchemaId = 'vscode://schemas/settings/workspace';
-export const folderSettingsSchemaId = 'vscode://schemas/settings/folder';
-export const launchSchemaId = 'vscode://schemas/launch';
-export const tasksSchemaId = 'vscode://schemas/tasks';
+export const defaultSettingsSchemaId = 'zycode://schemas/settings/default';
+export const userSettingsSchemaId = 'zycode://schemas/settings/user';
+export const profileSettingsSchemaId = 'zycode://schemas/settings/profile';
+export const machineSettingsSchemaId = 'zycode://schemas/settings/machine';
+export const workspaceSettingsSchemaId = 'zycode://schemas/settings/workspace';
+export const folderSettingsSchemaId = 'zycode://schemas/settings/folder';
+export const launchSchemaId = 'zycode://schemas/launch';
+export const tasksSchemaId = 'zycode://schemas/tasks';
 
 export const APPLICATION_SCOPES = [ConfigurationScope.APPLICATION];
 export const PROFILE_SCOPES = [ConfigurationScope.MACHINE, ConfigurationScope.WINDOW, ConfigurationScope.RESOURCE, ConfigurationScope.LANGUAGE_OVERRIDABLE, ConfigurationScope.MACHINE_OVERRIDABLE];

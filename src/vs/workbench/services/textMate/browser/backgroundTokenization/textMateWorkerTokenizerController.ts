@@ -17,7 +17,7 @@ import { ContiguousMultilineTokensBuilder } from 'vs/editor/common/tokens/contig
 import { IConfigurationService } from 'vs/platform/configuration/common/configuration';
 import { ArrayEdit, MonotonousIndexTransformer, SingleArrayEdit } from 'vs/workbench/services/textMate/browser/arrayOperation';
 import type { StateDeltas, TextMateTokenizationWorker } from 'vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker';
-import type { applyStateStackDiff, StateStack } from 'vscode-textmate';
+import type { applyStateStackDiff, StateStack } from 'zycode-textmate';
 
 export class TextMateWorkerTokenizerController extends Disposable {
 	private static _id = 0;
@@ -178,7 +178,7 @@ export class TextMateWorkerTokenizerController extends Disposable {
 		);
 
 		if (!this._applyStateStackDiffFn || !this._initialState) {
-			const { applyStateStackDiff, INITIAL } = await importAMDNodeModule<typeof import('vscode-textmate')>('vscode-textmate', 'release/main.js');
+			const { applyStateStackDiff, INITIAL } = await importAMDNodeModule<typeof import('zycode-textmate')>('zycode-textmate', 'release/main.js');
 			this._applyStateStackDiffFn = applyStateStackDiff;
 			this._initialState = INITIAL;
 		}

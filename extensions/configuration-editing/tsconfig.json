@@ -8,7 +8,7 @@
 	},
 	"include": [
 		"src/**/*",
-		"../../src/vscode-dts/vscode.d.ts",
-		"../../src/vscode-dts/vscode.proposed.profileContentHandlers.d.ts",
+		"../../src/zycode-dts/zycode.d.ts",
+		"../../src/zycode-dts/zycode.proposed.profileContentHandlers.d.ts",
 	]
 }

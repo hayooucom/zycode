@@ -5,7 +5,7 @@
 
 import { URI, UriComponents } from 'vs/base/common/uri';
 import { equals, mixin } from 'vs/base/common/objects';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as typeConvert from 'vs/workbench/api/common/extHostTypeConverters';
 import { Range, Disposable, CompletionList, SnippetString, CodeActionKind, SymbolInformation, DocumentSymbol, SemanticTokensEdits, SemanticTokens, SemanticTokensEdit, Location, InlineCompletionTriggerKind, InternalDataTransferItem, CodeActionTriggerKind } from 'vs/workbench/api/common/extHostTypes';
 import { ISingleEditOperation } from 'vs/editor/common/core/editOperation';
@@ -43,7 +43,7 @@ class DocumentSymbolAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.DocumentSymbolProvider
+		private readonly _provider: zycode.DocumentSymbolProvider
 	) { }
 
 	async provideDocumentSymbols(resource: URI, token: CancellationToken): Promise<languages.DocumentSymbol[] | undefined> {
@@ -103,15 +103,15 @@ class DocumentSymbolAdapter {
 
 class CodeLensAdapter {
 
-	private static _badCmd: vscode.Command = { command: 'missing', title: '!!MISSING: command!!' };
+	private static _badCmd: zycode.Command = { command: 'missing', title: '!!MISSING: command!!' };
 
-	private readonly _cache = new Cache<vscode.CodeLens>('CodeLens');
+	private readonly _cache = new Cache<zycode.CodeLens>('CodeLens');
 	private readonly _disposables = new Map<number, DisposableStore>();
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
 		private readonly _commands: CommandsConverter,
-		private readonly _provider: vscode.CodeLensProvider
+		private readonly _provider: zycode.CodeLensProvider
 	) { }
 
 	async provideCodeLenses(resource: URI, token: CancellationToken): Promise<extHostProtocol.ICodeLensListDto | undefined> {
@@ -145,7 +145,7 @@ class CodeLensAdapter {
 			return undefined;
 		}
 
-		let resolvedLens: vscode.CodeLens | undefined | null;
+		let resolvedLens: zycode.CodeLens | undefined | null;
 		if (typeof this._provider.resolveCodeLens !== 'function' || lens.isResolved) {
 			resolvedLens = lens;
 		} else {
@@ -174,7 +174,7 @@ class CodeLensAdapter {
 	}
 }
 
-function convertToLocationLinks(value: vscode.Location | vscode.Location[] | vscode.LocationLink[] | undefined | null): languages.LocationLink[] {
+function convertToLocationLinks(value: zycode.Location | zycode.Location[] | zycode.LocationLink[] | undefined | null): languages.LocationLink[] {
 	if (Array.isArray(value)) {
 		return (<any>value).map(typeConvert.DefinitionLink.from);
 	} else if (value) {
@@ -187,7 +187,7 @@ class DefinitionAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.DefinitionProvider
+		private readonly _provider: zycode.DefinitionProvider
 	) { }
 
 	async provideDefinition(resource: URI, position: IPosition, token: CancellationToken): Promise<languages.LocationLink[]> {
@@ -202,7 +202,7 @@ class DeclarationAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.DeclarationProvider
+		private readonly _provider: zycode.DeclarationProvider
 	) { }
 
 	async provideDeclaration(resource: URI, position: IPosition, token: CancellationToken): Promise<languages.LocationLink[]> {
@@ -217,7 +217,7 @@ class ImplementationAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.ImplementationProvider
+		private readonly _provider: zycode.ImplementationProvider
 	) { }
 
 	async provideImplementation(resource: URI, position: IPosition, token: CancellationToken): Promise<languages.LocationLink[]> {
@@ -232,7 +232,7 @@ class TypeDefinitionAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.TypeDefinitionProvider
+		private readonly _provider: zycode.TypeDefinitionProvider
 	) { }
 
 	async provideTypeDefinition(resource: URI, position: IPosition, token: CancellationToken): Promise<languages.LocationLink[]> {
@@ -247,7 +247,7 @@ class HoverAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.HoverProvider,
+		private readonly _provider: zycode.HoverProvider,
 	) { }
 
 	async provideHover(resource: URI, position: IPosition, token: CancellationToken): Promise<languages.Hover | undefined> {
@@ -273,7 +273,7 @@ class EvaluatableExpressionAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.EvaluatableExpressionProvider,
+		private readonly _provider: zycode.EvaluatableExpressionProvider,
 	) { }
 
 	async provideEvaluatableExpression(resource: URI, position: IPosition, token: CancellationToken): Promise<languages.EvaluatableExpression | undefined> {
@@ -293,7 +293,7 @@ class InlineValuesAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.InlineValuesProvider,
+		private readonly _provider: zycode.InlineValuesProvider,
 	) { }
 
 	async provideInlineValues(resource: URI, viewPort: IRange, context: extHostProtocol.IInlineValueContextDto, token: CancellationToken): Promise<languages.InlineValue[] | undefined> {
@@ -310,7 +310,7 @@ class DocumentHighlightAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.DocumentHighlightProvider
+		private readonly _provider: zycode.DocumentHighlightProvider
 	) { }
 
 	async provideDocumentHighlights(resource: URI, position: IPosition, token: CancellationToken): Promise<languages.DocumentHighlight[] | undefined> {
@@ -329,7 +329,7 @@ class DocumentHighlightAdapter {
 class LinkedEditingRangeAdapter {
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.LinkedEditingRangeProvider
+		private readonly _provider: zycode.LinkedEditingRangeProvider
 	) { }
 
 	async provideLinkedEditingRanges(resource: URI, position: IPosition, token: CancellationToken): Promise<languages.LinkedEditingRanges | undefined> {
@@ -352,7 +352,7 @@ class ReferenceAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.ReferenceProvider
+		private readonly _provider: zycode.ReferenceProvider
 	) { }
 
 	async provideReferences(resource: URI, position: IPosition, context: languages.ReferenceContext, token: CancellationToken): Promise<languages.Location[] | undefined> {
@@ -374,7 +374,7 @@ export interface CustomCodeAction extends extHostProtocol.ICodeActionDto {
 class CodeActionAdapter {
 	private static readonly _maxCodeActionsPerFile: number = 1000;
 
-	private readonly _cache = new Cache<vscode.CodeAction | vscode.Command>('CodeAction');
+	private readonly _cache = new Cache<zycode.CodeAction | zycode.Command>('CodeAction');
 	private readonly _disposables = new Map<number, DisposableStore>();
 	private readonly nbKind = new CodeActionKind('notebook');
 
@@ -382,7 +382,7 @@ class CodeActionAdapter {
 		private readonly _documents: ExtHostDocuments,
 		private readonly _commands: CommandsConverter,
 		private readonly _diagnostics: ExtHostDiagnostics,
-		private readonly _provider: vscode.CodeActionProvider,
+		private readonly _provider: zycode.CodeActionProvider,
 		private readonly _logService: ILogService,
 		private readonly _extension: IExtensionDescription,
 		private readonly _apiDeprecation: IExtHostApiDeprecationService,
@@ -392,9 +392,9 @@ class CodeActionAdapter {
 
 		const doc = this._documents.getDocument(resource);
 		const ran = Selection.isISelection(rangeOrSelection)
-			? <vscode.Selection>typeConvert.Selection.to(rangeOrSelection)
-			: <vscode.Range>typeConvert.Range.to(rangeOrSelection);
-		const allDiagnostics: vscode.Diagnostic[] = [];
+			? <zycode.Selection>typeConvert.Selection.to(rangeOrSelection)
+			: <zycode.Range>typeConvert.Range.to(rangeOrSelection);
+		const allDiagnostics: zycode.Diagnostic[] = [];
 
 		for (const diagnostic of this._diagnostics.getDiagnostics(resource)) {
 			if (ran.intersection(diagnostic.range)) {
@@ -405,7 +405,7 @@ class CodeActionAdapter {
 			}
 		}
 
-		const codeActionContext: vscode.CodeActionContext = {
+		const codeActionContext: zycode.CodeActionContext = {
 			diagnostics: allDiagnostics,
 			only: context.only ? new CodeActionKind(context.only) : undefined,
 			triggerKind: typeConvert.CodeActionTriggerKind.to(context.trigger),
@@ -499,8 +499,8 @@ class CodeActionAdapter {
 		this._cache.delete(cachedId);
 	}
 
-	private static _isCommand(thing: any): thing is vscode.Command {
-		return typeof (<vscode.Command>thing).command === 'string' && typeof (<vscode.Command>thing).title === 'string';
+	private static _isCommand(thing: any): thing is zycode.Command {
+		return typeof (<zycode.Command>thing).command === 'string' && typeof (<zycode.Command>thing).title === 'string';
 	}
 }
 
@@ -513,7 +513,7 @@ class DocumentPasteEditProvider {
 	constructor(
 		private readonly _proxy: extHostProtocol.MainThreadLanguageFeaturesShape,
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.DocumentPasteEditProvider,
+		private readonly _provider: zycode.DocumentPasteEditProvider,
 		private readonly _handle: number,
 		private readonly _extension: IExtensionDescription,
 	) { }
@@ -572,7 +572,7 @@ class DocumentFormattingAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.DocumentFormattingEditProvider
+		private readonly _provider: zycode.DocumentFormattingEditProvider
 	) { }
 
 	async provideDocumentFormattingEdits(resource: URI, options: languages.FormattingOptions, token: CancellationToken): Promise<ISingleEditOperation[] | undefined> {
@@ -591,7 +591,7 @@ class RangeFormattingAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.DocumentRangeFormattingEditProvider
+		private readonly _provider: zycode.DocumentRangeFormattingEditProvider
 	) { }
 
 	async provideDocumentRangeFormattingEdits(resource: URI, range: IRange, options: languages.FormattingOptions, token: CancellationToken): Promise<ISingleEditOperation[] | undefined> {
@@ -623,7 +623,7 @@ class OnTypeFormattingAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.OnTypeFormattingEditProvider
+		private readonly _provider: zycode.OnTypeFormattingEditProvider
 	) { }
 
 	autoFormatTriggerCharacters: string[] = []; // not here
@@ -643,10 +643,10 @@ class OnTypeFormattingAdapter {
 
 class NavigateTypeAdapter {
 
-	private readonly _cache = new Cache<vscode.SymbolInformation>('WorkspaceSymbols');
+	private readonly _cache = new Cache<zycode.SymbolInformation>('WorkspaceSymbols');
 
 	constructor(
-		private readonly _provider: vscode.WorkspaceSymbolProvider,
+		private readonly _provider: zycode.WorkspaceSymbolProvider,
 		private readonly _logService: ILogService
 	) { }
 
@@ -700,13 +700,13 @@ class NavigateTypeAdapter {
 
 class RenameAdapter {
 
-	static supportsResolving(provider: vscode.RenameProvider): boolean {
+	static supportsResolving(provider: zycode.RenameProvider): boolean {
 		return typeof provider.prepareRename === 'function';
 	}
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.RenameProvider,
+		private readonly _provider: zycode.RenameProvider,
 		private readonly _logService: ILogService
 	) { }
 
@@ -744,7 +744,7 @@ class RenameAdapter {
 		try {
 			const rangeOrLocation = await this._provider.prepareRename(doc, pos, token);
 
-			let range: vscode.Range | undefined;
+			let range: zycode.Range | undefined;
 			let text: string | undefined;
 			if (Range.isRange(rangeOrLocation)) {
 				range = rangeOrLocation;
@@ -796,8 +796,8 @@ type RelaxedSemanticTokens = { readonly resultId?: string; readonly data: number
 type RelaxedSemanticTokensEdit = { readonly start: number; readonly deleteCount: number; readonly data?: number[] };
 type RelaxedSemanticTokensEdits = { readonly resultId?: string; readonly edits: RelaxedSemanticTokensEdit[] };
 
-type ProvidedSemanticTokens = vscode.SemanticTokens | RelaxedSemanticTokens;
-type ProvidedSemanticTokensEdits = vscode.SemanticTokensEdits | RelaxedSemanticTokensEdits;
+type ProvidedSemanticTokens = zycode.SemanticTokens | RelaxedSemanticTokens;
+type ProvidedSemanticTokensEdits = zycode.SemanticTokensEdits | RelaxedSemanticTokensEdits;
 
 class DocumentSemanticTokensAdapter {
 
@@ -806,7 +806,7 @@ class DocumentSemanticTokensAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.DocumentSemanticTokensProvider,
+		private readonly _provider: zycode.DocumentSemanticTokensProvider,
 	) {
 		this._previousResults = new Map<number, SemanticTokensPreviousResult>();
 	}
@@ -832,7 +832,7 @@ class DocumentSemanticTokensAdapter {
 		this._previousResults.delete(semanticColoringResultId);
 	}
 
-	private static _fixProvidedSemanticTokens(v: ProvidedSemanticTokens | ProvidedSemanticTokensEdits): vscode.SemanticTokens | vscode.SemanticTokensEdits {
+	private static _fixProvidedSemanticTokens(v: ProvidedSemanticTokens | ProvidedSemanticTokensEdits): zycode.SemanticTokens | zycode.SemanticTokensEdits {
 		if (DocumentSemanticTokensAdapter._isSemanticTokens(v)) {
 			if (DocumentSemanticTokensAdapter._isCorrectSemanticTokens(v)) {
 				return v;
@@ -851,7 +851,7 @@ class DocumentSemanticTokensAdapter {
 		return v && !!((v as ProvidedSemanticTokens).data);
 	}
 
-	private static _isCorrectSemanticTokens(v: ProvidedSemanticTokens): v is vscode.SemanticTokens {
+	private static _isCorrectSemanticTokens(v: ProvidedSemanticTokens): v is zycode.SemanticTokens {
 		return (v.data instanceof Uint32Array);
 	}
 
@@ -859,7 +859,7 @@ class DocumentSemanticTokensAdapter {
 		return v && Array.isArray((v as ProvidedSemanticTokensEdits).edits);
 	}
 
-	private static _isCorrectSemanticTokensEdits(v: ProvidedSemanticTokensEdits): v is vscode.SemanticTokensEdits {
+	private static _isCorrectSemanticTokensEdits(v: ProvidedSemanticTokensEdits): v is zycode.SemanticTokensEdits {
 		for (const edit of v.edits) {
 			if (!(edit.data instanceof Uint32Array)) {
 				return false;
@@ -868,7 +868,7 @@ class DocumentSemanticTokensAdapter {
 		return true;
 	}
 
-	private static _convertToEdits(previousResult: SemanticTokensPreviousResult | null | undefined, newResult: vscode.SemanticTokens | vscode.SemanticTokensEdits): vscode.SemanticTokens | vscode.SemanticTokensEdits {
+	private static _convertToEdits(previousResult: SemanticTokensPreviousResult | null | undefined, newResult: zycode.SemanticTokens | zycode.SemanticTokensEdits): zycode.SemanticTokens | zycode.SemanticTokensEdits {
 		if (!DocumentSemanticTokensAdapter._isSemanticTokens(newResult)) {
 			return newResult;
 		}
@@ -904,7 +904,7 @@ class DocumentSemanticTokensAdapter {
 		}], newResult.resultId);
 	}
 
-	private _send(value: vscode.SemanticTokens | vscode.SemanticTokensEdits, original: vscode.SemanticTokens | vscode.SemanticTokensEdits): VSBuffer | null {
+	private _send(value: zycode.SemanticTokens | zycode.SemanticTokensEdits, original: zycode.SemanticTokens | zycode.SemanticTokensEdits): VSBuffer | null {
 		if (DocumentSemanticTokensAdapter._isSemanticTokens(value)) {
 			const myId = this._nextResultId++;
 			this._previousResults.set(myId, new SemanticTokensPreviousResult(value.resultId, value.data));
@@ -938,7 +938,7 @@ class DocumentRangeSemanticTokensAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.DocumentRangeSemanticTokensProvider,
+		private readonly _provider: zycode.DocumentRangeSemanticTokensProvider,
 	) { }
 
 	async provideDocumentRangeSemanticTokens(resource: URI, range: IRange, token: CancellationToken): Promise<VSBuffer | null> {
@@ -950,7 +950,7 @@ class DocumentRangeSemanticTokensAdapter {
 		return this._send(value);
 	}
 
-	private _send(value: vscode.SemanticTokens): VSBuffer {
+	private _send(value: zycode.SemanticTokens): VSBuffer {
 		return encodeSemanticTokensDto({
 			id: 0,
 			type: 'full',
@@ -961,17 +961,17 @@ class DocumentRangeSemanticTokensAdapter {
 
 class CompletionsAdapter {
 
-	static supportsResolving(provider: vscode.CompletionItemProvider): boolean {
+	static supportsResolving(provider: zycode.CompletionItemProvider): boolean {
 		return typeof provider.resolveCompletionItem === 'function';
 	}
 
-	private _cache = new Cache<vscode.CompletionItem>('CompletionItem');
+	private _cache = new Cache<zycode.CompletionItem>('CompletionItem');
 	private _disposables = new Map<number, DisposableStore>();
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
 		private readonly _commands: CommandsConverter,
-		private readonly _provider: vscode.CompletionItemProvider,
+		private readonly _provider: zycode.CompletionItemProvider,
 		private readonly _apiDeprecation: IExtHostApiDeprecationService,
 		private readonly _extension: IExtensionDescription,
 	) { }
@@ -983,7 +983,7 @@ class CompletionsAdapter {
 
 		// The default insert/replace ranges. It's important to compute them
 		// before asynchronously asking the provider for its results. See
-		// https://github.com/microsoft/vscode/issues/83400#issuecomment-546851421
+		// https://github.com/microsoft/zycode/issues/83400#issuecomment-546851421
 		const replaceRange = doc.getWordRangeAtPosition(pos) || new Range(pos, pos);
 		const insertRange = replaceRange.with({ end: pos });
 
@@ -1084,7 +1084,7 @@ class CompletionsAdapter {
 		this._cache.delete(id);
 	}
 
-	private _convertCompletionItem(item: vscode.CompletionItem, id: extHostProtocol.ChainedCacheId, defaultInsertRange?: vscode.Range, defaultReplaceRange?: vscode.Range): extHostProtocol.ISuggestDataDto {
+	private _convertCompletionItem(item: zycode.CompletionItem, id: extHostProtocol.ChainedCacheId, defaultInsertRange?: zycode.Range, defaultReplaceRange?: zycode.Range): extHostProtocol.ISuggestDataDto {
 
 		const disposables = this._disposables.get(id[0]);
 		if (!disposables) {
@@ -1126,7 +1126,7 @@ class CompletionsAdapter {
 		}
 
 		// 'overwrite[Before|After]'-logic
-		let range: vscode.Range | { inserting: vscode.Range; replacing: vscode.Range } | undefined;
+		let range: zycode.Range | { inserting: zycode.Range; replacing: zycode.Range } | undefined;
 		if (item.textEdit) {
 			range = item.textEdit.range;
 		} else if (item.range) {
@@ -1164,7 +1164,7 @@ class InlineCompletionAdapterBase {
 class InlineCompletionAdapter extends InlineCompletionAdapterBase {
 	private readonly _references = new ReferenceMap<{
 		dispose(): void;
-		items: readonly vscode.InlineCompletionItem[];
+		items: readonly zycode.InlineCompletionItem[];
 	}>();
 
 	private readonly _isAdditionsProposedApiEnabled = isProposedApiEnabled(this._extension, 'inlineCompletionsAdditions');
@@ -1172,7 +1172,7 @@ class InlineCompletionAdapter extends InlineCompletionAdapterBase {
 	constructor(
 		private readonly _extension: IExtensionDescription,
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.InlineCompletionItemProvider,
+		private readonly _provider: zycode.InlineCompletionItemProvider,
 		private readonly _commands: CommandsConverter,
 	) {
 		super();
@@ -1306,11 +1306,11 @@ class ReferenceMap<T> {
 
 class SignatureHelpAdapter {
 
-	private readonly _cache = new Cache<vscode.SignatureHelp>('SignatureHelp');
+	private readonly _cache = new Cache<zycode.SignatureHelp>('SignatureHelp');
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.SignatureHelpProvider,
+		private readonly _provider: zycode.SignatureHelpProvider,
 	) { }
 
 	async provideSignatureHelp(resource: URI, position: IPosition, context: extHostProtocol.ISignatureHelpContextDto, token: CancellationToken): Promise<extHostProtocol.ISignatureHelpDto | undefined> {
@@ -1326,8 +1326,8 @@ class SignatureHelpAdapter {
 		return undefined;
 	}
 
-	private reviveContext(context: extHostProtocol.ISignatureHelpContextDto): vscode.SignatureHelpContext {
-		let activeSignatureHelp: vscode.SignatureHelp | undefined = undefined;
+	private reviveContext(context: extHostProtocol.ISignatureHelpContextDto): zycode.SignatureHelpContext {
+		let activeSignatureHelp: zycode.SignatureHelp | undefined = undefined;
 		if (context.activeSignatureHelp) {
 			const revivedSignatureHelp = typeConvert.SignatureHelp.to(context.activeSignatureHelp);
 			const saved = this._cache.get(context.activeSignatureHelp.id, 0);
@@ -1349,13 +1349,13 @@ class SignatureHelpAdapter {
 
 class InlayHintsAdapter {
 
-	private _cache = new Cache<vscode.InlayHint>('InlayHints');
+	private _cache = new Cache<zycode.InlayHint>('InlayHints');
 	private readonly _disposables = new Map<number, DisposableStore>();
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
 		private readonly _commands: CommandsConverter,
-		private readonly _provider: vscode.InlayHintsProvider,
+		private readonly _provider: zycode.InlayHintsProvider,
 		private readonly _logService: ILogService,
 		private readonly _extension: IExtensionDescription
 	) { }
@@ -1411,7 +1411,7 @@ class InlayHintsAdapter {
 		this._cache.delete(id);
 	}
 
-	private _isValidInlayHint(hint: vscode.InlayHint, range?: vscode.Range): boolean {
+	private _isValidInlayHint(hint: zycode.InlayHint, range?: zycode.Range): boolean {
 		if (hint.label.length === 0 || Array.isArray(hint.label) && hint.label.every(part => part.value.length === 0)) {
 			console.log('INVALID inlay hint, empty label', hint);
 			return false;
@@ -1423,7 +1423,7 @@ class InlayHintsAdapter {
 		return true;
 	}
 
-	private _convertInlayHint(hint: vscode.InlayHint, id: extHostProtocol.ChainedCacheId): extHostProtocol.IInlayHintDto {
+	private _convertInlayHint(hint: zycode.InlayHint, id: extHostProtocol.ChainedCacheId): extHostProtocol.IInlayHintDto {
 
 		const disposables = this._disposables.get(id[0]);
 		if (!disposables) {
@@ -1462,11 +1462,11 @@ class InlayHintsAdapter {
 
 class LinkProviderAdapter {
 
-	private _cache = new Cache<vscode.DocumentLink>('DocumentLink');
+	private _cache = new Cache<zycode.DocumentLink>('DocumentLink');
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.DocumentLinkProvider
+		private readonly _provider: zycode.DocumentLinkProvider
 	) { }
 
 	async provideLinks(resource: URI, token: CancellationToken): Promise<extHostProtocol.ILinksListDto | undefined> {
@@ -1504,7 +1504,7 @@ class LinkProviderAdapter {
 		}
 	}
 
-	private static _validateLink(link: vscode.DocumentLink): boolean {
+	private static _validateLink(link: zycode.DocumentLink): boolean {
 		if (link.target && link.target.path.length > 50_000) {
 			console.warn('DROPPING link because it is too long');
 			return false;
@@ -1536,7 +1536,7 @@ class ColorProviderAdapter {
 
 	constructor(
 		private _documents: ExtHostDocuments,
-		private _provider: vscode.DocumentColorProvider
+		private _provider: zycode.DocumentColorProvider
 	) { }
 
 	async provideColors(resource: URI, token: CancellationToken): Promise<extHostProtocol.IRawColorInfo[]> {
@@ -1570,7 +1570,7 @@ class FoldingProviderAdapter {
 
 	constructor(
 		private _documents: ExtHostDocuments,
-		private _provider: vscode.FoldingRangeProvider
+		private _provider: zycode.FoldingRangeProvider
 	) { }
 
 	async provideFoldingRanges(resource: URI, context: languages.FoldingContext, token: CancellationToken): Promise<languages.FoldingRange[] | undefined> {
@@ -1587,7 +1587,7 @@ class SelectionRangeAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.SelectionRangeProvider,
+		private readonly _provider: zycode.SelectionRangeProvider,
 		private readonly _logService: ILogService
 	) { }
 
@@ -1608,7 +1608,7 @@ class SelectionRangeAdapter {
 			const oneResult: languages.SelectionRange[] = [];
 			allResults.push(oneResult);
 
-			let last: vscode.Position | vscode.Range = positions[i];
+			let last: zycode.Position | zycode.Range = positions[i];
 			let selectionRange = allProviderRanges[i];
 
 			while (true) {
@@ -1630,11 +1630,11 @@ class SelectionRangeAdapter {
 class CallHierarchyAdapter {
 
 	private readonly _idPool = new IdGenerator('');
-	private readonly _cache = new Map<string, Map<string, vscode.CallHierarchyItem>>();
+	private readonly _cache = new Map<string, Map<string, zycode.CallHierarchyItem>>();
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.CallHierarchyProvider
+		private readonly _provider: zycode.CallHierarchyProvider
 	) { }
 
 	async prepareSession(uri: URI, position: IPosition, token: CancellationToken): Promise<extHostProtocol.ICallHierarchyItemDto[] | undefined> {
@@ -1694,14 +1694,14 @@ class CallHierarchyAdapter {
 		this._cache.delete(sessionId);
 	}
 
-	private _cacheAndConvertItem(sessionId: string, item: vscode.CallHierarchyItem): extHostProtocol.ICallHierarchyItemDto {
+	private _cacheAndConvertItem(sessionId: string, item: zycode.CallHierarchyItem): extHostProtocol.ICallHierarchyItemDto {
 		const map = this._cache.get(sessionId)!;
 		const dto = typeConvert.CallHierarchyItem.from(item, sessionId, map.size.toString(36));
 		map.set(dto._itemId, item);
 		return dto;
 	}
 
-	private _itemFromCache(sessionId: string, itemId: string): vscode.CallHierarchyItem | undefined {
+	private _itemFromCache(sessionId: string, itemId: string): zycode.CallHierarchyItem | undefined {
 		const map = this._cache.get(sessionId);
 		return map?.get(itemId);
 	}
@@ -1710,11 +1710,11 @@ class CallHierarchyAdapter {
 class TypeHierarchyAdapter {
 
 	private readonly _idPool = new IdGenerator('');
-	private readonly _cache = new Map<string, Map<string, vscode.TypeHierarchyItem>>();
+	private readonly _cache = new Map<string, Map<string, zycode.TypeHierarchyItem>>();
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.TypeHierarchyProvider
+		private readonly _provider: zycode.TypeHierarchyProvider
 	) { }
 
 	async prepareSession(uri: URI, position: IPosition, token: CancellationToken): Promise<extHostProtocol.ITypeHierarchyItemDto[] | undefined> {
@@ -1768,14 +1768,14 @@ class TypeHierarchyAdapter {
 		this._cache.delete(sessionId);
 	}
 
-	private _cacheAndConvertItem(sessionId: string, item: vscode.TypeHierarchyItem): extHostProtocol.ITypeHierarchyItemDto {
+	private _cacheAndConvertItem(sessionId: string, item: zycode.TypeHierarchyItem): extHostProtocol.ITypeHierarchyItemDto {
 		const map = this._cache.get(sessionId)!;
 		const dto = typeConvert.TypeHierarchyItem.from(item, sessionId, map.size.toString(36));
 		map.set(dto._itemId, item);
 		return dto;
 	}
 
-	private _itemFromCache(sessionId: string, itemId: string): vscode.TypeHierarchyItem | undefined {
+	private _itemFromCache(sessionId: string, itemId: string): zycode.TypeHierarchyItem | undefined {
 		const map = this._cache.get(sessionId);
 		return map?.get(itemId);
 	}
@@ -1790,7 +1790,7 @@ class DocumentOnDropEditAdapter {
 	constructor(
 		private readonly _proxy: extHostProtocol.MainThreadLanguageFeaturesShape,
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.DocumentDropEditProvider,
+		private readonly _provider: zycode.DocumentDropEditProvider,
 		private readonly _handle: number,
 		private readonly _extension: IExtensionDescription,
 	) { }
@@ -1821,7 +1821,7 @@ class MappedEditsAdapter {
 
 	constructor(
 		private readonly _documents: ExtHostDocuments,
-		private readonly _provider: vscode.MappedEditsProvider,
+		private readonly _provider: zycode.MappedEditsProvider,
 	) { }
 
 	async provideMappedEdits(
@@ -1883,7 +1883,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		this._proxy = mainContext.getProxy(extHostProtocol.MainContext.MainThreadLanguageFeatures);
 	}
 
-	private _transformDocumentSelector(selector: vscode.DocumentSelector, extension: IExtensionDescription): Array<extHostProtocol.IDocumentFilterDto> {
+	private _transformDocumentSelector(selector: zycode.DocumentSelector, extension: IExtensionDescription): Array<extHostProtocol.IDocumentFilterDto> {
 		return typeConvert.DocumentSelector.from(selector, this._uriTransformer, extension);
 	}
 
@@ -1950,7 +1950,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- outline
 
-	registerDocumentSymbolProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DocumentSymbolProvider, metadata?: vscode.DocumentSymbolProviderMetadata): vscode.Disposable {
+	registerDocumentSymbolProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DocumentSymbolProvider, metadata?: zycode.DocumentSymbolProviderMetadata): zycode.Disposable {
 		const handle = this._addNewAdapter(new DocumentSymbolAdapter(this._documents, provider), extension);
 		const displayName = (metadata && metadata.label) || ExtHostLanguageFeatures._extLabel(extension);
 		this._proxy.$registerDocumentSymbolProvider(handle, this._transformDocumentSelector(selector, extension), displayName);
@@ -1963,7 +1963,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- code lens
 
-	registerCodeLensProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.CodeLensProvider): vscode.Disposable {
+	registerCodeLensProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.CodeLensProvider): zycode.Disposable {
 		const handle = this._nextHandle();
 		const eventHandle = typeof provider.onDidChangeCodeLenses === 'function' ? this._nextHandle() : undefined;
 
@@ -1993,7 +1993,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- declaration
 
-	registerDefinitionProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DefinitionProvider): vscode.Disposable {
+	registerDefinitionProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DefinitionProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new DefinitionAdapter(this._documents, provider), extension);
 		this._proxy.$registerDefinitionSupport(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2003,7 +2003,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		return this._withAdapter(handle, DefinitionAdapter, adapter => adapter.provideDefinition(URI.revive(resource), position, token), [], token);
 	}
 
-	registerDeclarationProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DeclarationProvider): vscode.Disposable {
+	registerDeclarationProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DeclarationProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new DeclarationAdapter(this._documents, provider), extension);
 		this._proxy.$registerDeclarationSupport(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2013,7 +2013,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		return this._withAdapter(handle, DeclarationAdapter, adapter => adapter.provideDeclaration(URI.revive(resource), position, token), [], token);
 	}
 
-	registerImplementationProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.ImplementationProvider): vscode.Disposable {
+	registerImplementationProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.ImplementationProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new ImplementationAdapter(this._documents, provider), extension);
 		this._proxy.$registerImplementationSupport(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2023,7 +2023,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		return this._withAdapter(handle, ImplementationAdapter, adapter => adapter.provideImplementation(URI.revive(resource), position, token), [], token);
 	}
 
-	registerTypeDefinitionProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.TypeDefinitionProvider): vscode.Disposable {
+	registerTypeDefinitionProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.TypeDefinitionProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new TypeDefinitionAdapter(this._documents, provider), extension);
 		this._proxy.$registerTypeDefinitionSupport(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2035,7 +2035,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- extra info
 
-	registerHoverProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.HoverProvider, extensionId?: ExtensionIdentifier): vscode.Disposable {
+	registerHoverProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.HoverProvider, extensionId?: ExtensionIdentifier): zycode.Disposable {
 		const handle = this._addNewAdapter(new HoverAdapter(this._documents, provider), extension);
 		this._proxy.$registerHoverProvider(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2047,7 +2047,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- debug hover
 
-	registerEvaluatableExpressionProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.EvaluatableExpressionProvider, extensionId?: ExtensionIdentifier): vscode.Disposable {
+	registerEvaluatableExpressionProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.EvaluatableExpressionProvider, extensionId?: ExtensionIdentifier): zycode.Disposable {
 		const handle = this._addNewAdapter(new EvaluatableExpressionAdapter(this._documents, provider), extension);
 		this._proxy.$registerEvaluatableExpressionProvider(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2059,7 +2059,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- debug inline values
 
-	registerInlineValuesProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.InlineValuesProvider, extensionId?: ExtensionIdentifier): vscode.Disposable {
+	registerInlineValuesProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.InlineValuesProvider, extensionId?: ExtensionIdentifier): zycode.Disposable {
 
 		const eventHandle = typeof provider.onDidChangeInlineValues === 'function' ? this._nextHandle() : undefined;
 		const handle = this._addNewAdapter(new InlineValuesAdapter(this._documents, provider), extension);
@@ -2080,7 +2080,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- occurrences
 
-	registerDocumentHighlightProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DocumentHighlightProvider): vscode.Disposable {
+	registerDocumentHighlightProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DocumentHighlightProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new DocumentHighlightAdapter(this._documents, provider), extension);
 		this._proxy.$registerDocumentHighlightProvider(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2092,7 +2092,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- linked editing
 
-	registerLinkedEditingRangeProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.LinkedEditingRangeProvider): vscode.Disposable {
+	registerLinkedEditingRangeProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.LinkedEditingRangeProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new LinkedEditingRangeAdapter(this._documents, provider), extension);
 		this._proxy.$registerLinkedEditingRangeProvider(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2113,7 +2113,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- references
 
-	registerReferenceProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.ReferenceProvider): vscode.Disposable {
+	registerReferenceProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.ReferenceProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new ReferenceAdapter(this._documents, provider), extension);
 		this._proxy.$registerReferenceSupport(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2125,7 +2125,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- quick fix
 
-	registerCodeActionProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.CodeActionProvider, metadata?: vscode.CodeActionProviderMetadata): vscode.Disposable {
+	registerCodeActionProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.CodeActionProvider, metadata?: zycode.CodeActionProviderMetadata): zycode.Disposable {
 		const store = new DisposableStore();
 		const handle = this._addNewAdapter(new CodeActionAdapter(this._documents, this._commands.converter, this._diagnostics, provider, this._logService, extension, this._apiDeprecation), extension);
 		this._proxy.$registerQuickFixSupport(handle, this._transformDocumentSelector(selector, extension), {
@@ -2154,7 +2154,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- formatting
 
-	registerDocumentFormattingEditProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DocumentFormattingEditProvider): vscode.Disposable {
+	registerDocumentFormattingEditProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DocumentFormattingEditProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new DocumentFormattingAdapter(this._documents, provider), extension);
 		this._proxy.$registerDocumentFormattingSupport(handle, this._transformDocumentSelector(selector, extension), extension.identifier, extension.displayName || extension.name);
 		return this._createDisposable(handle);
@@ -2164,7 +2164,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		return this._withAdapter(handle, DocumentFormattingAdapter, adapter => adapter.provideDocumentFormattingEdits(URI.revive(resource), options, token), undefined, token);
 	}
 
-	registerDocumentRangeFormattingEditProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DocumentRangeFormattingEditProvider): vscode.Disposable {
+	registerDocumentRangeFormattingEditProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DocumentRangeFormattingEditProvider): zycode.Disposable {
 		const canFormatMultipleRanges = typeof provider.provideDocumentRangesFormattingEdits === 'function';
 		const handle = this._addNewAdapter(new RangeFormattingAdapter(this._documents, provider), extension);
 		this._proxy.$registerRangeFormattingSupport(handle, this._transformDocumentSelector(selector, extension), extension.identifier, extension.displayName || extension.name, canFormatMultipleRanges);
@@ -2179,7 +2179,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		return this._withAdapter(handle, RangeFormattingAdapter, adapter => adapter.provideDocumentRangesFormattingEdits(URI.revive(resource), ranges, options, token), undefined, token);
 	}
 
-	registerOnTypeFormattingEditProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.OnTypeFormattingEditProvider, triggerCharacters: string[]): vscode.Disposable {
+	registerOnTypeFormattingEditProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.OnTypeFormattingEditProvider, triggerCharacters: string[]): zycode.Disposable {
 		const handle = this._addNewAdapter(new OnTypeFormattingAdapter(this._documents, provider), extension);
 		this._proxy.$registerOnTypeFormattingSupport(handle, this._transformDocumentSelector(selector, extension), triggerCharacters, extension.identifier);
 		return this._createDisposable(handle);
@@ -2191,7 +2191,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- navigate types
 
-	registerWorkspaceSymbolProvider(extension: IExtensionDescription, provider: vscode.WorkspaceSymbolProvider): vscode.Disposable {
+	registerWorkspaceSymbolProvider(extension: IExtensionDescription, provider: zycode.WorkspaceSymbolProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new NavigateTypeAdapter(provider, this._logService), extension);
 		this._proxy.$registerNavigateTypeSupport(handle, typeof provider.resolveWorkspaceSymbol === 'function');
 		return this._createDisposable(handle);
@@ -2211,7 +2211,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- rename
 
-	registerRenameProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.RenameProvider): vscode.Disposable {
+	registerRenameProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.RenameProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new RenameAdapter(this._documents, provider, this._logService), extension);
 		this._proxy.$registerRenameSupport(handle, this._transformDocumentSelector(selector, extension), RenameAdapter.supportsResolving(provider));
 		return this._createDisposable(handle);
@@ -2227,7 +2227,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	//#region semantic coloring
 
-	registerDocumentSemanticTokensProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DocumentSemanticTokensProvider, legend: vscode.SemanticTokensLegend): vscode.Disposable {
+	registerDocumentSemanticTokensProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DocumentSemanticTokensProvider, legend: zycode.SemanticTokensLegend): zycode.Disposable {
 		const handle = this._addNewAdapter(new DocumentSemanticTokensAdapter(this._documents, provider), extension);
 		const eventHandle = (typeof provider.onDidChangeSemanticTokens === 'function' ? this._nextHandle() : undefined);
 		this._proxy.$registerDocumentSemanticTokensProvider(handle, this._transformDocumentSelector(selector, extension), legend, eventHandle);
@@ -2249,7 +2249,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		this._withAdapter(handle, DocumentSemanticTokensAdapter, adapter => adapter.releaseDocumentSemanticColoring(semanticColoringResultId), undefined, undefined);
 	}
 
-	registerDocumentRangeSemanticTokensProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DocumentRangeSemanticTokensProvider, legend: vscode.SemanticTokensLegend): vscode.Disposable {
+	registerDocumentRangeSemanticTokensProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DocumentRangeSemanticTokensProvider, legend: zycode.SemanticTokensLegend): zycode.Disposable {
 		const handle = this._addNewAdapter(new DocumentRangeSemanticTokensAdapter(this._documents, provider), extension);
 		this._proxy.$registerDocumentRangeSemanticTokensProvider(handle, this._transformDocumentSelector(selector, extension), legend);
 		return this._createDisposable(handle);
@@ -2263,7 +2263,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- suggestion
 
-	registerCompletionItemProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.CompletionItemProvider, triggerCharacters: string[]): vscode.Disposable {
+	registerCompletionItemProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.CompletionItemProvider, triggerCharacters: string[]): zycode.Disposable {
 		const handle = this._addNewAdapter(new CompletionsAdapter(this._documents, this._commands.converter, provider, this._apiDeprecation, extension), extension);
 		this._proxy.$registerCompletionsProvider(handle, this._transformDocumentSelector(selector, extension), triggerCharacters, CompletionsAdapter.supportsResolving(provider), extension.identifier);
 		return this._createDisposable(handle);
@@ -2283,7 +2283,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- ghost test
 
-	registerInlineCompletionsProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.InlineCompletionItemProvider, metadata: vscode.InlineCompletionItemProviderMetadata | undefined): vscode.Disposable {
+	registerInlineCompletionsProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.InlineCompletionItemProvider, metadata: zycode.InlineCompletionItemProviderMetadata | undefined): zycode.Disposable {
 		const adapter = new InlineCompletionAdapter(extension, this._documents, provider, this._commands.converter);
 		const handle = this._addNewAdapter(adapter, extension);
 		this._proxy.$registerInlineCompletionsSupport(handle, this._transformDocumentSelector(selector, extension), adapter.supportsHandleEvents,
@@ -2313,7 +2313,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- parameter hints
 
-	registerSignatureHelpProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.SignatureHelpProvider, metadataOrTriggerChars: string[] | vscode.SignatureHelpProviderMetadata): vscode.Disposable {
+	registerSignatureHelpProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.SignatureHelpProvider, metadataOrTriggerChars: string[] | zycode.SignatureHelpProviderMetadata): zycode.Disposable {
 		const metadata: extHostProtocol.ISignatureHelpProviderMetadataDto | undefined = Array.isArray(metadataOrTriggerChars)
 			? { triggerCharacters: metadataOrTriggerChars, retriggerCharacters: [] }
 			: metadataOrTriggerChars;
@@ -2333,7 +2333,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- inline hints
 
-	registerInlayHintsProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.InlayHintsProvider): vscode.Disposable {
+	registerInlayHintsProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.InlayHintsProvider): zycode.Disposable {
 
 		const eventHandle = typeof provider.onDidChangeInlayHints === 'function' ? this._nextHandle() : undefined;
 		const handle = this._addNewAdapter(new InlayHintsAdapter(this._documents, this._commands.converter, provider, this._logService, extension), extension);
@@ -2362,7 +2362,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- links
 
-	registerDocumentLinkProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DocumentLinkProvider): vscode.Disposable {
+	registerDocumentLinkProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DocumentLinkProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new LinkProviderAdapter(this._documents, provider), extension);
 		this._proxy.$registerDocumentLinkProvider(handle, this._transformDocumentSelector(selector, extension), typeof provider.resolveDocumentLink === 'function');
 		return this._createDisposable(handle);
@@ -2380,7 +2380,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		this._withAdapter(handle, LinkProviderAdapter, adapter => adapter.releaseLinks(id), undefined, undefined, true);
 	}
 
-	registerColorProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DocumentColorProvider): vscode.Disposable {
+	registerColorProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DocumentColorProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new ColorProviderAdapter(this._documents, provider), extension);
 		this._proxy.$registerDocumentColorProvider(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2394,7 +2394,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		return this._withAdapter(handle, ColorProviderAdapter, adapter => adapter.provideColorPresentations(URI.revive(resource), colorInfo, token), undefined, token);
 	}
 
-	registerFoldingRangeProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.FoldingRangeProvider): vscode.Disposable {
+	registerFoldingRangeProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.FoldingRangeProvider): zycode.Disposable {
 		const handle = this._nextHandle();
 		const eventHandle = typeof provider.onDidChangeFoldingRanges === 'function' ? this._nextHandle() : undefined;
 
@@ -2410,7 +2410,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		return result;
 	}
 
-	$provideFoldingRanges(handle: number, resource: UriComponents, context: vscode.FoldingContext, token: CancellationToken): Promise<languages.FoldingRange[] | undefined> {
+	$provideFoldingRanges(handle: number, resource: UriComponents, context: zycode.FoldingContext, token: CancellationToken): Promise<languages.FoldingRange[] | undefined> {
 		return this._withAdapter(
 			handle,
 			FoldingProviderAdapter,
@@ -2423,7 +2423,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- smart select
 
-	registerSelectionRangeProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.SelectionRangeProvider): vscode.Disposable {
+	registerSelectionRangeProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.SelectionRangeProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new SelectionRangeAdapter(this._documents, provider, this._logService), extension);
 		this._proxy.$registerSelectionRangeProvider(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2435,7 +2435,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- call hierarchy
 
-	registerCallHierarchyProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.CallHierarchyProvider): vscode.Disposable {
+	registerCallHierarchyProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.CallHierarchyProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new CallHierarchyAdapter(this._documents, provider), extension);
 		this._proxy.$registerCallHierarchyProvider(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2458,7 +2458,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 	}
 
 	// --- type hierarchy
-	registerTypeHierarchyProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.TypeHierarchyProvider): vscode.Disposable {
+	registerTypeHierarchyProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.TypeHierarchyProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new TypeHierarchyAdapter(this._documents, provider), extension);
 		this._proxy.$registerTypeHierarchyProvider(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2482,7 +2482,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- Document on drop
 
-	registerDocumentOnDropEditProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DocumentDropEditProvider, metadata?: vscode.DocumentDropEditProviderMetadata) {
+	registerDocumentOnDropEditProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DocumentDropEditProvider, metadata?: zycode.DocumentDropEditProviderMetadata) {
 		const handle = this._nextHandle();
 		this._adapter.set(handle, new AdapterData(new DocumentOnDropEditAdapter(this._proxy, this._documents, provider, handle, extension), extension));
 
@@ -2499,7 +2499,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- mapped edits
 
-	registerMappedEditsProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.MappedEditsProvider): vscode.Disposable {
+	registerMappedEditsProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.MappedEditsProvider): zycode.Disposable {
 		const handle = this._addNewAdapter(new MappedEditsAdapter(this._documents, provider), extension);
 		this._proxy.$registerMappedEditsProvider(handle, this._transformDocumentSelector(selector, extension));
 		return this._createDisposable(handle);
@@ -2512,7 +2512,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 
 	// --- copy/paste actions
 
-	registerDocumentPasteEditProvider(extension: IExtensionDescription, selector: vscode.DocumentSelector, provider: vscode.DocumentPasteEditProvider, metadata: vscode.DocumentPasteProviderMetadata): vscode.Disposable {
+	registerDocumentPasteEditProvider(extension: IExtensionDescription, selector: zycode.DocumentSelector, provider: zycode.DocumentPasteEditProvider, metadata: zycode.DocumentPasteProviderMetadata): zycode.Disposable {
 		const handle = this._nextHandle();
 		this._adapter.set(handle, new AdapterData(new DocumentPasteEditProvider(this._proxy, this._documents, provider, handle, extension), extension));
 		const internalId = DocumentPasteEditProvider.toInternalProviderId(extension.identifier.value, metadata.id);
@@ -2542,7 +2542,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		};
 	}
 
-	private static _serializeIndentationRule(indentationRule: vscode.IndentationRule): extHostProtocol.IIndentationRuleDto {
+	private static _serializeIndentationRule(indentationRule: zycode.IndentationRule): extHostProtocol.IIndentationRuleDto {
 		return {
 			decreaseIndentPattern: ExtHostLanguageFeatures._serializeRegExp(indentationRule.decreaseIndentPattern),
 			increaseIndentPattern: ExtHostLanguageFeatures._serializeRegExp(indentationRule.increaseIndentPattern),
@@ -2551,7 +2551,7 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		};
 	}
 
-	private static _serializeOnEnterRule(onEnterRule: vscode.OnEnterRule): extHostProtocol.IOnEnterRuleDto {
+	private static _serializeOnEnterRule(onEnterRule: zycode.OnEnterRule): extHostProtocol.IOnEnterRuleDto {
 		return {
 			beforeText: ExtHostLanguageFeatures._serializeRegExp(onEnterRule.beforeText),
 			afterText: onEnterRule.afterText ? ExtHostLanguageFeatures._serializeRegExp(onEnterRule.afterText) : undefined,
@@ -2560,11 +2560,11 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		};
 	}
 
-	private static _serializeOnEnterRules(onEnterRules: vscode.OnEnterRule[]): extHostProtocol.IOnEnterRuleDto[] {
+	private static _serializeOnEnterRules(onEnterRules: zycode.OnEnterRule[]): extHostProtocol.IOnEnterRuleDto[] {
 		return onEnterRules.map(ExtHostLanguageFeatures._serializeOnEnterRule);
 	}
 
-	setLanguageConfiguration(extension: IExtensionDescription, languageId: string, configuration: vscode.LanguageConfiguration): vscode.Disposable {
+	setLanguageConfiguration(extension: IExtensionDescription, languageId: string, configuration: zycode.LanguageConfiguration): zycode.Disposable {
 		const { wordPattern } = configuration;
 
 		// check for a valid word pattern

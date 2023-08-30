@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { MainContext, MainThreadFileSystemShape } from './extHost.protocol';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as files from 'vs/platform/files/common/files';
 import { FileSystemError } from 'vs/workbench/api/common/extHostTypes';
 import { VSBuffer } from 'vs/base/common/buffer';
@@ -21,10 +21,10 @@ export class ExtHostConsumerFileSystem {
 
 	readonly _serviceBrand: undefined;
 
-	readonly value: vscode.FileSystem;
+	readonly value: zycode.FileSystem;
 
 	private readonly _proxy: MainThreadFileSystemShape;
-	private readonly _fileSystemProvider = new Map<string, { impl: vscode.FileSystemProvider; extUri: IExtUri; isReadonly: boolean }>();
+	private readonly _fileSystemProvider = new Map<string, { impl: zycode.FileSystemProvider; extUri: IExtUri; isReadonly: boolean }>();
 
 	private readonly _writeQueue = new ResourceQueue();
 
@@ -36,7 +36,7 @@ export class ExtHostConsumerFileSystem {
 		const that = this;
 
 		this.value = Object.freeze({
-			async stat(uri: vscode.Uri): Promise<vscode.FileStat> {
+			async stat(uri: zycode.Uri): Promise<zycode.FileStat> {
 				try {
 					let stat;
 
@@ -60,7 +60,7 @@ export class ExtHostConsumerFileSystem {
 					ExtHostConsumerFileSystem._handleError(err);
 				}
 			},
-			async readDirectory(uri: vscode.Uri): Promise<[string, vscode.FileType][]> {
+			async readDirectory(uri: zycode.Uri): Promise<[string, zycode.FileType][]> {
 				try {
 					const provider = that._fileSystemProvider.get(uri.scheme);
 					if (provider) {
@@ -74,7 +74,7 @@ export class ExtHostConsumerFileSystem {
 					return ExtHostConsumerFileSystem._handleError(err);
 				}
 			},
-			async createDirectory(uri: vscode.Uri): Promise<void> {
+			async createDirectory(uri: zycode.Uri): Promise<void> {
 				try {
 					const provider = that._fileSystemProvider.get(uri.scheme);
 					if (provider && !provider.isReadonly) {
@@ -88,7 +88,7 @@ export class ExtHostConsumerFileSystem {
 					return ExtHostConsumerFileSystem._handleError(err);
 				}
 			},
-			async readFile(uri: vscode.Uri): Promise<Uint8Array> {
+			async readFile(uri: zycode.Uri): Promise<Uint8Array> {
 				try {
 					const provider = that._fileSystemProvider.get(uri.scheme);
 					if (provider) {
@@ -103,7 +103,7 @@ export class ExtHostConsumerFileSystem {
 					return ExtHostConsumerFileSystem._handleError(err);
 				}
 			},
-			async writeFile(uri: vscode.Uri, content: Uint8Array): Promise<void> {
+			async writeFile(uri: zycode.Uri, content: Uint8Array): Promise<void> {
 				try {
 					const provider = that._fileSystemProvider.get(uri.scheme);
 					if (provider && !provider.isReadonly) {
@@ -118,7 +118,7 @@ export class ExtHostConsumerFileSystem {
 					return ExtHostConsumerFileSystem._handleError(err);
 				}
 			},
-			async delete(uri: vscode.Uri, options?: { recursive?: boolean; useTrash?: boolean }): Promise<void> {
+			async delete(uri: zycode.Uri, options?: { recursive?: boolean; useTrash?: boolean }): Promise<void> {
 				try {
 					const provider = that._fileSystemProvider.get(uri.scheme);
 					if (provider && !provider.isReadonly) {
@@ -132,7 +132,7 @@ export class ExtHostConsumerFileSystem {
 					return ExtHostConsumerFileSystem._handleError(err);
 				}
 			},
-			async rename(oldUri: vscode.Uri, newUri: vscode.Uri, options?: { overwrite?: boolean }): Promise<void> {
+			async rename(oldUri: zycode.Uri, newUri: zycode.Uri, options?: { overwrite?: boolean }): Promise<void> {
 				try {
 					// no shortcut: potentially involves different schemes, does mkdirp
 					return await that._proxy.$rename(oldUri, newUri, { ...{ overwrite: false }, ...options });
@@ -140,7 +140,7 @@ export class ExtHostConsumerFileSystem {
 					return ExtHostConsumerFileSystem._handleError(err);
 				}
 			},
-			async copy(source: vscode.Uri, destination: vscode.Uri, options?: { overwrite?: boolean }): Promise<void> {
+			async copy(source: zycode.Uri, destination: zycode.Uri, options?: { overwrite?: boolean }): Promise<void> {
 				try {
 					// no shortcut: potentially involves different schemes, does mkdirp
 					return await that._proxy.$copy(source, destination, { ...{ overwrite: false }, ...options });
@@ -158,7 +158,7 @@ export class ExtHostConsumerFileSystem {
 		});
 	}
 
-	private async mkdirp(provider: vscode.FileSystemProvider, providerExtUri: IExtUri, directory: vscode.Uri): Promise<void> {
+	private async mkdirp(provider: zycode.FileSystemProvider, providerExtUri: IExtUri, directory: zycode.Uri): Promise<void> {
 		const directoriesToCreate: string[] = [];
 
 		while (!providerExtUri.isEqual(directory, providerExtUri.dirname(directory))) {
@@ -194,7 +194,7 @@ export class ExtHostConsumerFileSystem {
 					// if multiple calls try to create the same folders
 					// As such, we only throw an error here if it is other than
 					// the fact that the file already exists.
-					// (see also https://github.com/microsoft/vscode/issues/89834)
+					// (see also https://github.com/microsoft/zycode/issues/89834)
 					throw error;
 				}
 			}
@@ -246,7 +246,7 @@ export class ExtHostConsumerFileSystem {
 
 	// ---
 
-	addFileSystemProvider(scheme: string, provider: vscode.FileSystemProvider, options?: { isCaseSensitive?: boolean; isReadonly?: boolean | IMarkdownString }): IDisposable {
+	addFileSystemProvider(scheme: string, provider: zycode.FileSystemProvider, options?: { isCaseSensitive?: boolean; isReadonly?: boolean | IMarkdownString }): IDisposable {
 		this._fileSystemProvider.set(scheme, { impl: provider, extUri: options?.isCaseSensitive ? extUri : extUriIgnorePathCase, isReadonly: !!options?.isReadonly });
 		return toDisposable(() => this._fileSystemProvider.delete(scheme));
 	}

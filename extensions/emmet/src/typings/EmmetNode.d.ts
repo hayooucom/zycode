@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 declare module 'EmmetNode' {
-    import { Position } from 'vscode';
+    import { Position } from 'zycode';
 
     export interface Node {
         start: Position

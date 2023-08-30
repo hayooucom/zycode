@@ -9,7 +9,7 @@ const gulp = require('gulp');
 const path = require('path');
 const task = require('./lib/task');
 const util = require('./lib/util');
-const electron = require('@vscode/gulp-electron');
+const electron = require('@zycode/gulp-electron');
 const { config } = require('./lib/electron');
 const filter = require('gulp-filter');
 const deps = require('./lib/dependencies');
@@ -61,7 +61,7 @@ BUILD_TARGETS.forEach(buildTarget => {
 		nodeModules(destinationExe, destinationPdb, platform)
 	);
 
-	const setupSymbolsTask = task.define(`vscode-symbols${dashed(platform)}${dashed(arch)}`,
+	const setupSymbolsTask = task.define(`zycode-symbols${dashed(platform)}${dashed(arch)}`,
 		task.series(...tasks)
 	);
 

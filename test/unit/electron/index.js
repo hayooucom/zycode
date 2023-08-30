@@ -74,7 +74,7 @@ if (crashReporterDirectory) {
 }
 
 if (!argv.dev) {
-	app.setPath('userData', path.join(tmpdir(), `vscode-tests-${Date.now()}`));
+	app.setPath('userData', path.join(tmpdir(), `zycode-tests-${Date.now()}`));
 }
 
 function deserializeSuite(suite) {
@@ -161,21 +161,21 @@ app.on('ready', () => {
 	// We need to provide a basic `ISandboxConfiguration`
 	// for our preload script to function properly because
 	// some of our types depend on it (e.g. product.ts).
-	ipcMain.handle('vscode:test-vscode-window-config', async () => {
+	ipcMain.handle('zycode:test-zycode-window-config', async () => {
 		return {
 			product: {
 				version: '1.x.y',
 				nameShort: 'Code - OSS Dev',
 				nameLong: 'Code - OSS Dev',
 				applicationName: 'code-oss',
-				dataFolderName: '.vscode-oss',
+				dataFolderName: '.zycode-oss',
 				urlProtocol: 'code-oss',
 			}
 		};
 	});
 
 	// No-op since invoke the IPC as part of IIFE in the preload.
-	ipcMain.handle('vscode:fetchShellEnv', event => { });
+	ipcMain.handle('zycode:fetchShellEnv', event => { });
 
 	const win = new BrowserWindow({
 		height: 600,
@@ -183,7 +183,7 @@ app.on('ready', () => {
 		show: false,
 		webPreferences: {
 			preload: path.join(__dirname, '..', '..', '..', 'src', 'vs', 'base', 'parts', 'sandbox', 'electron-sandbox', 'preload.js'), // ensure similar environment as VSCode as tests may depend on this
-			additionalArguments: [`--vscode-window-config=vscode:test-vscode-window-config`],
+			additionalArguments: [`--zycode-window-config=zycode:test-zycode-window-config`],
 			nodeIntegration: true,
 			contextIsolation: false,
 			enableWebSQL: false,

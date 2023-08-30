@@ -73,7 +73,7 @@
 
 /**
  * The following rules are very specific because of inline drop down menus
- * https://github.com/microsoft/vscode/issues/101410
+ * https://github.com/microsoft/zycode/issues/101410
  */
 .scm-view .scm-provider > .actions > .monaco-toolbar > .monaco-action-bar > .actions-container > .action-item {
 	padding-left: 4px;
@@ -103,7 +103,7 @@
 }
 
 .scm-view .scm-provider > .status > .monaco-action-bar > .actions-container {
-	border-color: var(--vscode-sideBar-border);
+	border-color: var(--zycode-sideBar-border);
 }
 
 .scm-view .monaco-list-row {
@@ -205,7 +205,7 @@
 }
 
 .scm-view .scm-editor-container .monaco-editor .focused .selected-text {
-	background-color: var(--vscode-editor-selectionBackground);
+	background-color: var(--zycode-editor-selectionBackground);
 }
 
 .scm-view .scm-editor {
@@ -262,35 +262,35 @@
 }
 
 .monaco-workbench .part.panel .scm-view .scm-editor-container {
-	outline: 1px solid var(--vscode-panelInput-border);
+	outline: 1px solid var(--zycode-panelInput-border);
 }
 
 .scm-view .scm-editor-container {
 	position: relative;
 	box-sizing: border-box;
-	background-color: var(--vscode-input-background);
-	border: 1px solid var(--vscode-input-border, transparent);
+	background-color: var(--zycode-input-background);
+	border: 1px solid var(--zycode-input-border, transparent);
 	border-radius: 2px;
 }
 
 .scm-view .scm-editor-container.synthetic-focus,
 .monaco-workbench .part.panel .scm-view .scm-editor-container.synthetic-focus {
-	outline: 1px solid var(--vscode-focusBorder);
+	outline: 1px solid var(--zycode-focusBorder);
 	outline-offset: -1px;
 }
 
 .scm-view .scm-editor-container.validation-info {
-	outline: 1px solid var(--vscode-inputValidation-infoBorder) !important;
+	outline: 1px solid var(--zycode-inputValidation-infoBorder) !important;
 	outline-offset: -1px;
 }
 
 .scm-view .scm-editor-container.validation-warning {
-	outline: 1px solid var(--vscode-inputValidation-warningBorder) !important;
+	outline: 1px solid var(--zycode-inputValidation-warningBorder) !important;
 	outline-offset: -1px;
 }
 
 .scm-view .scm-editor-container.validation-error {
-	outline: 1px solid var(--vscode-inputValidation-errorBorder) !important;
+	outline: 1px solid var(--zycode-inputValidation-errorBorder) !important;
 	outline-offset: -1px;
 }
 
@@ -306,21 +306,21 @@
 }
 
 .scm-editor-validation-container.validation-info {
-	background-color: var(--vscode-inputValidation-infoBackground);
-	border-color: var(--vscode-inputValidation-infoBorder);
-	color: var(--vscode-inputValidation-infoForeground);
+	background-color: var(--zycode-inputValidation-infoBackground);
+	border-color: var(--zycode-inputValidation-infoBorder);
+	color: var(--zycode-inputValidation-infoForeground);
 }
 
 .scm-editor-validation-container.validation-warning {
-	background-color: var(--vscode-inputValidation-warningBackground);
-	border-color: var(--vscode-inputValidation-warningBorder);
-	color: var(--vscode-inputValidation-warningForeground);
+	background-color: var(--zycode-inputValidation-warningBackground);
+	border-color: var(--zycode-inputValidation-warningBorder);
+	color: var(--zycode-inputValidation-warningForeground);
 }
 
 .scm-editor-validation-container.validation-error {
-	background-color: var(--vscode-inputValidation-errorBackground);
-	border-color: var(--vscode-inputValidation-errorBorder);
-	color: var(--vscode-inputValidation-errorForeground);
+	background-color: var(--zycode-inputValidation-errorBackground);
+	border-color: var(--zycode-inputValidation-errorBorder);
+	color: var(--zycode-inputValidation-errorForeground);
 }
 
 .scm-editor-validation {
@@ -338,14 +338,14 @@
 }
 
 .scm-editor-validation a {
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 	-webkit-user-select: none;
 	user-select: none;
 }
 
 .scm-editor-validation a:active,
 .scm-editor-validation a:hover {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 }
 
 .scm-editor-validation-actions {
@@ -363,7 +363,7 @@
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	color: var(--vscode-input-placeholderForeground);
+	color: var(--zycode-input-placeholderForeground);
 }
 
 .scm-view .scm-editor-placeholder.hidden {
@@ -377,11 +377,11 @@
 .monaco-workbench .part.basepanel > .content .scm-view .scm-editor-container .monaco-editor .margin,
 .monaco-workbench .part.basepanel > .content .scm-view .scm-editor-container .monaco-editor .monaco-editor-background {
 	color: inherit;
-	background-color: var(--vscode-input-background);
+	background-color: var(--zycode-input-background);
 }
 
 .scm-view .scm-editor-container .mtk1 {
-	color: var(--vscode-input-foreground);
+	color: var(--zycode-input-foreground);
 }
 
 /* Repositories */

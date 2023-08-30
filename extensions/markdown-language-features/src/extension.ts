@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { LanguageClient, ServerOptions, TransportKind } from 'vscode-languageclient/node';
+import * as zycode from 'zycode';
+import { LanguageClient, ServerOptions, TransportKind } from 'zycode-languageclient/node';
 import { MdLanguageClient, startClient } from './client/client';
 import { activateShared } from './extension.shared';
 import { VsCodeOutputLogger } from './logging';
@@ -12,7 +12,7 @@ import { IMdParser, MarkdownItEngine } from './markdownEngine';
 import { getMarkdownExtensionContributions } from './markdownExtensions';
 import { githubSlugifier } from './slugify';
 
-export async function activate(context: vscode.ExtensionContext) {
+export async function activate(context: zycode.ExtensionContext) {
 	const contributions = getMarkdownExtensionContributions(context);
 	context.subscriptions.push(contributions);
 
@@ -26,8 +26,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	activateShared(context, client, engine, logger, contributions);
 }
 
-function startServer(context: vscode.ExtensionContext, parser: IMdParser): Promise<MdLanguageClient> {
-	const clientMain = vscode.extensions.getExtension('vscode.markdown-language-features')?.packageJSON?.main || '';
+function startServer(context: zycode.ExtensionContext, parser: IMdParser): Promise<MdLanguageClient> {
+	const clientMain = zycode.extensions.getExtension('zycode.markdown-language-features')?.packageJSON?.main || '';
 
 	const serverMain = `./server/${clientMain.indexOf('/dist/') !== -1 ? 'dist' : 'out'}/node/workerMain`;
 	const serverModule = context.asAbsolutePath(serverMain);
@@ -43,7 +43,7 @@ function startServer(context: vscode.ExtensionContext, parser: IMdParser): Promi
 	};
 
 	// pass the location of the localization bundle to the server
-	process.env['VSCODE_L10N_BUNDLE_LOCATION'] = vscode.l10n.uri?.toString() ?? '';
+	process.env['VSCODE_L10N_BUNDLE_LOCATION'] = zycode.l10n.uri?.toString() ?? '';
 
 	return startClient((id, name, clientOptions) => {
 		return new LanguageClient(id, name, serverOptions, clientOptions);

@@ -102,9 +102,9 @@ export class PreferencesContribution implements IWorkbenchContribution {
 
 	private start(): void {
 
-		this.textModelResolverService.registerTextModelContentProvider('vscode', {
+		this.textModelResolverService.registerTextModelContentProvider('zycode', {
 			provideTextContent: async (uri: URI): Promise<ITextModel | null> => {
-				if (uri.scheme !== 'vscode') {
+				if (uri.scheme !== 'zycode') {
 					return null;
 				}
 				if (uri.authority === 'schemas') {

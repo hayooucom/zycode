@@ -26,7 +26,7 @@ function main(): Promise<void> {
 	return new Promise((c, e) => {
 
 		es.merge(
-			vfs.src('out-vscode-web-min/nls.metadata.json', { base: 'out-vscode-web-min' }),
+			vfs.src('out-zycode-web-min/nls.metadata.json', { base: 'out-zycode-web-min' }),
 			vfs.src('.build/extensions/**/nls.metadata.json', { base: '.build/extensions' }),
 			vfs.src('.build/extensions/**/nls.metadata.header.json', { base: '.build/extensions' }),
 			vfs.src('.build/extensions/**/package.nls.json', { base: '.build/extensions' }))
@@ -35,8 +35,8 @@ function main(): Promise<void> {
 				jsonSpace: '',
 				concatArrays: true,
 				edit: (parsedJson, file) => {
-					if (file.base === 'out-vscode-web-min') {
-						return { vscode: parsedJson };
+					if (file.base === 'out-zycode-web-min') {
+						return { zycode: parsedJson };
 					}
 
 					// Handle extensions and follow the same structure as the Core nls file.

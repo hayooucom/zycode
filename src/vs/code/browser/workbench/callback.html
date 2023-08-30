@@ -7,7 +7,7 @@
 		<!-- Disable pinch zooming -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 
-		<title>Visual Studio Code</title>
+		<title>ZY Studio Code</title>
 
 		<!-- Scripts -->
 		<script>
@@ -18,9 +18,9 @@
 
 			const url = new URL(window.location.href);
 			const params = url.searchParams;
-			const id = decode(params.get('vscode-reqid'));
-			const scheme = decode(params.get('vscode-scheme'));
-			const authority = decode(params.get('vscode-authority'));
+			const id = decode(params.get('zycode-reqid'));
+			const scheme = decode(params.get('zycode-scheme'));
+			const authority = decode(params.get('zycode-authority'));
 
 			if (!id) {
 				throw new Error('Missing id');
@@ -30,16 +30,16 @@
 				throw new Error('Missing authority');
 			}
 
-			const path = decode(params.get('vscode-path'));
-			const query = decode(params.get('vscode-query'));
-			const fragment = decode(params.get('vscode-fragment'));
+			const path = decode(params.get('zycode-path'));
+			const query = decode(params.get('zycode-query'));
+			const fragment = decode(params.get('zycode-fragment'));
 
-			params.delete('vscode-reqid');
-			params.delete('vscode-scheme');
-			params.delete('vscode-authority');
-			params.delete('vscode-path');
-			params.delete('vscode-query');
-			params.delete('vscode-fragment');
+			params.delete('zycode-reqid');
+			params.delete('zycode-scheme');
+			params.delete('zycode-authority');
+			params.delete('zycode-path');
+			params.delete('zycode-query');
+			params.delete('zycode-fragment');
 
 			let uri = { scheme, authority };
 
@@ -61,7 +61,7 @@
 				uri.fragment = fragment;
 			}
 
-			window.localStorage.setItem(`vscode-web.url-callbacks[${id}]`, JSON.stringify(uri));
+			window.localStorage.setItem(`zycode-web.url-callbacks[${id}]`, JSON.stringify(uri));
 		</script>
 
 		<!-- Styling -->
@@ -112,7 +112,7 @@
 	</head>
 	<body>
 		<span class="branding">
-			Visual Studio Code
+			ZY Studio Code
 		</span>
 		<div class="message-container">
 			<div class="message">

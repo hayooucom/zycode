@@ -9,7 +9,7 @@ import { ExtHostInteractiveShape, IMainContext } from 'vs/workbench/api/common/e
 import { ApiCommand, ApiCommandArgument, ApiCommandResult, ExtHostCommands } from 'vs/workbench/api/common/extHostCommands';
 import { ExtHostDocumentsAndEditors } from 'vs/workbench/api/common/extHostDocumentsAndEditors';
 import { ExtHostNotebookController } from 'vs/workbench/api/common/extHostNotebook';
-import { NotebookEditor } from 'vscode';
+import { NotebookEditor } from 'zycode';
 
 export class ExtHostInteractive implements ExtHostInteractiveShape {
 	constructor(

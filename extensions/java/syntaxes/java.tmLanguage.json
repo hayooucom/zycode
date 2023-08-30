@@ -1,10 +1,10 @@
 {
 	"information_for_contributors": [
-		"This file has been converted from https://github.com/redhat-developer/vscode-java/blob/master/language-support/java/java.tmLanguage.json",
+		"This file has been converted from https://github.com/redhat-developer/zycode-java/blob/master/language-support/java/java.tmLanguage.json",
 		"If you want to provide a fix or improvement, please create a pull request against the original repository.",
 		"Once accepted there, we are happy to receive an update request."
 	],
-	"version": "https://github.com/redhat-developer/vscode-java/commit/5fb57e8e1c5d776b21be13cd7227b25b87edf4a6",
+	"version": "https://github.com/redhat-developer/zycode-java/commit/5fb57e8e1c5d776b21be13cd7227b25b87edf4a6",
 	"name": "Java",
 	"scopeName": "source.java",
 	"patterns": [

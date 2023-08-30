@@ -9,13 +9,13 @@ import { Disposable } from 'vs/base/common/lifecycle';
 import { IExtensionDescription } from 'vs/platform/extensions/common/extensions';
 import { ExtHostWebview, ExtHostWebviews, toExtensionData, shouldSerializeBuffersForPostMessage } from 'vs/workbench/api/common/extHostWebview';
 import { ViewBadge } from 'vs/workbench/api/common/extHostTypeConverters';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as extHostProtocol from './extHost.protocol';
 import * as extHostTypes from './extHostTypes';
 
 /* eslint-disable local/code-no-native-private */
 
-class ExtHostWebviewView extends Disposable implements vscode.WebviewView {
+class ExtHostWebviewView extends Disposable implements zycode.WebviewView {
 
 	readonly #handle: extHostProtocol.WebviewHandle;
 	readonly #proxy: extHostProtocol.MainThreadWebviewViewsShape;
@@ -27,7 +27,7 @@ class ExtHostWebviewView extends Disposable implements vscode.WebviewView {
 	#isVisible: boolean;
 	#title: string | undefined;
 	#description: string | undefined;
-	#badge: vscode.ViewBadge | undefined;
+	#badge: zycode.ViewBadge | undefined;
 
 	constructor(
 		handle: extHostProtocol.WebviewHandle,
@@ -94,7 +94,7 @@ class ExtHostWebviewView extends Disposable implements vscode.WebviewView {
 
 	public get visible(): boolean { return this.#isVisible; }
 
-	public get webview(): vscode.Webview { return this.#webview; }
+	public get webview(): zycode.Webview { return this.#webview; }
 
 	public get viewType(): string { return this.#viewType; }
 
@@ -107,12 +107,12 @@ class ExtHostWebviewView extends Disposable implements vscode.WebviewView {
 		this.#onDidChangeVisibility.fire();
 	}
 
-	public get badge(): vscode.ViewBadge | undefined {
+	public get badge(): zycode.ViewBadge | undefined {
 		this.assertNotDisposed();
 		return this.#badge;
 	}
 
-	public set badge(badge: vscode.ViewBadge | undefined) {
+	public set badge(badge: zycode.ViewBadge | undefined) {
 		this.assertNotDisposed();
 
 		if (badge?.value === this.#badge?.value &&
@@ -141,7 +141,7 @@ export class ExtHostWebviewViews implements extHostProtocol.ExtHostWebviewViewsS
 	private readonly _proxy: extHostProtocol.MainThreadWebviewViewsShape;
 
 	private readonly _viewProviders = new Map<string, {
-		readonly provider: vscode.WebviewViewProvider;
+		readonly provider: zycode.WebviewViewProvider;
 		readonly extension: IExtensionDescription;
 	}>();
 
@@ -157,11 +157,11 @@ export class ExtHostWebviewViews implements extHostProtocol.ExtHostWebviewViewsS
 	public registerWebviewViewProvider(
 		extension: IExtensionDescription,
 		viewType: string,
-		provider: vscode.WebviewViewProvider,
+		provider: zycode.WebviewViewProvider,
 		webviewOptions?: {
 			retainContextWhenHidden?: boolean;
 		},
-	): vscode.Disposable {
+	): zycode.Disposable {
 		if (this._viewProviders.has(viewType)) {
 			throw new Error(`View provider for '${viewType}' already registered`);
 		}

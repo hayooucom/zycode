@@ -34,7 +34,7 @@ class VoiceTranscriptionWorklet extends AudioWorkletProcessor {
 	private registerListeners() {
 		this.port.onmessage = event => {
 			switch (event.data) {
-				case 'vscode:startVoiceTranscription': {
+				case 'zycode:startVoiceTranscription': {
 					this.sharedProcessConnection = event.ports[0];
 
 					this.sharedProcessConnection.onmessage = event => {
@@ -51,7 +51,7 @@ class VoiceTranscriptionWorklet extends AudioWorkletProcessor {
 					break;
 				}
 
-				case 'vscode:stopVoiceTranscription': {
+				case 'zycode:stopVoiceTranscription': {
 					this.stopped = true;
 
 					this.sharedProcessConnection?.close();

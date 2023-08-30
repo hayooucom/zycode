@@ -698,7 +698,7 @@ suite('ExtensionsProfileScannerService', () => {
 				name: 'name',
 				publisher: 'publisher',
 				version: '1.0.0',
-				engines: { vscode: '1.0.0' },
+				engines: { zycode: '1.0.0' },
 				...manifest,
 			},
 			isValid: true,

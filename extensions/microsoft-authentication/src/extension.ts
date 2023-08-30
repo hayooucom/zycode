@@ -3,35 +3,35 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Environment, EnvironmentParameters } from '@azure/ms-rest-azure-env';
 import { AzureActiveDirectoryService, IStoredSession } from './AADHelper';
 import { BetterTokenStorage } from './betterSecretStorage';
 import { UriEventHandler } from './UriEventHandler';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import TelemetryReporter from '@zycode/extension-telemetry';
 
-async function initMicrosoftSovereignCloudAuthProvider(context: vscode.ExtensionContext, telemetryReporter: TelemetryReporter, uriHandler: UriEventHandler, tokenStorage: BetterTokenStorage<IStoredSession>): Promise<vscode.Disposable | undefined> {
-	const environment = vscode.workspace.getConfiguration('microsoft-sovereign-cloud').get<string | undefined>('environment');
+async function initMicrosoftSovereignCloudAuthProvider(context: zycode.ExtensionContext, telemetryReporter: TelemetryReporter, uriHandler: UriEventHandler, tokenStorage: BetterTokenStorage<IStoredSession>): Promise<zycode.Disposable | undefined> {
+	const environment = zycode.workspace.getConfiguration('microsoft-sovereign-cloud').get<string | undefined>('environment');
 	let authProviderName: string | undefined;
 	if (!environment) {
 		return undefined;
 	}
 
 	if (environment === 'custom') {
-		const customEnv = vscode.workspace.getConfiguration('microsoft-sovereign-cloud').get<EnvironmentParameters>('customEnvironment');
+		const customEnv = zycode.workspace.getConfiguration('microsoft-sovereign-cloud').get<EnvironmentParameters>('customEnvironment');
 		if (!customEnv) {
-			const res = await vscode.window.showErrorMessage(vscode.l10n.t('You must also specify a custom environment in order to use the custom environment auth provider.'), vscode.l10n.t('Open settings'));
+			const res = await zycode.window.showErrorMessage(zycode.l10n.t('You must also specify a custom environment in order to use the custom environment auth provider.'), zycode.l10n.t('Open settings'));
 			if (res) {
-				await vscode.commands.executeCommand('workbench.action.openSettingsJson', 'microsoft-sovereign-cloud.customEnvironment');
+				await zycode.commands.executeCommand('workbench.action.openSettingsJson', 'microsoft-sovereign-cloud.customEnvironment');
 			}
 			return undefined;
 		}
 		try {
 			Environment.add(customEnv);
 		} catch (e) {
-			const res = await vscode.window.showErrorMessage(vscode.l10n.t('Error validating custom environment setting: {0}', e.message), vscode.l10n.t('Open settings'));
+			const res = await zycode.window.showErrorMessage(zycode.l10n.t('Error validating custom environment setting: {0}', e.message), zycode.l10n.t('Open settings'));
 			if (res) {
-				await vscode.commands.executeCommand('workbench.action.openSettings', 'microsoft-sovereign-cloud.customEnvironment');
+				await zycode.commands.executeCommand('workbench.action.openSettings', 'microsoft-sovereign-cloud.customEnvironment');
 			}
 			return undefined;
 		}
@@ -42,12 +42,12 @@ async function initMicrosoftSovereignCloudAuthProvider(context: vscode.Extension
 
 	const env = Environment.get(authProviderName);
 	if (!env) {
-		const res = await vscode.window.showErrorMessage(vscode.l10n.t('The environment `{0}` is not a valid environment.', authProviderName), vscode.l10n.t('Open settings'));
+		const res = await zycode.window.showErrorMessage(zycode.l10n.t('The environment `{0}` is not a valid environment.', authProviderName), zycode.l10n.t('Open settings'));
 		return undefined;
 	}
 
 	const aadService = new AzureActiveDirectoryService(
-		vscode.window.createOutputChannel(vscode.l10n.t('Microsoft Sovereign Cloud Authentication'), { log: true }),
+		zycode.window.createOutputChannel(zycode.l10n.t('Microsoft Sovereign Cloud Authentication'), { log: true }),
 		context,
 		uriHandler,
 		tokenStorage,
@@ -55,7 +55,7 @@ async function initMicrosoftSovereignCloudAuthProvider(context: vscode.Extension
 		env);
 	await aadService.initialize();
 
-	const disposable = vscode.authentication.registerAuthenticationProvider('microsoft-sovereign-cloud', authProviderName, {
+	const disposable = zycode.authentication.registerAuthenticationProvider('microsoft-sovereign-cloud', authProviderName, {
 		onDidChangeSessions: aadService.onDidChangeSessions,
 		getSessions: (scopes: string[]) => aadService.getSessions(scopes),
 		createSession: async (scopes: string[]) => {
@@ -103,17 +103,17 @@ async function initMicrosoftSovereignCloudAuthProvider(context: vscode.Extension
 	return disposable;
 }
 
-export async function activate(context: vscode.ExtensionContext) {
+export async function activate(context: zycode.ExtensionContext) {
 	const aiKey: string = context.extension.packageJSON.aiKey;
 	const telemetryReporter = new TelemetryReporter(aiKey);
 
 	const uriHandler = new UriEventHandler();
 	context.subscriptions.push(uriHandler);
-	context.subscriptions.push(vscode.window.registerUriHandler(uriHandler));
+	context.subscriptions.push(zycode.window.registerUriHandler(uriHandler));
 	const betterSecretStorage = new BetterTokenStorage<IStoredSession>('microsoft.login.keylist', context);
 
 	const loginService = new AzureActiveDirectoryService(
-		vscode.window.createOutputChannel(vscode.l10n.t('Microsoft Authentication'), { log: true }),
+		zycode.window.createOutputChannel(zycode.l10n.t('Microsoft Authentication'), { log: true }),
 		context,
 		uriHandler,
 		betterSecretStorage,
@@ -121,7 +121,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		Environment.AzureCloud);
 	await loginService.initialize();
 
-	context.subscriptions.push(vscode.authentication.registerAuthenticationProvider('microsoft', 'Microsoft', {
+	context.subscriptions.push(zycode.authentication.registerAuthenticationProvider('microsoft', 'Microsoft', {
 		onDidChangeSessions: loginService.onDidChangeSessions,
 		getSessions: (scopes: string[]) => loginService.getSessions(scopes),
 		createSession: async (scopes: string[]) => {
@@ -167,7 +167,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	let microsoftSovereignCloudAuthProviderDisposable = await initMicrosoftSovereignCloudAuthProvider(context, telemetryReporter, uriHandler, betterSecretStorage);
 
-	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async e => {
+	context.subscriptions.push(zycode.workspace.onDidChangeConfiguration(async e => {
 		if (e.affectsConfiguration('microsoft-sovereign-cloud')) {
 			microsoftSovereignCloudAuthProviderDisposable?.dispose();
 			microsoftSovereignCloudAuthProviderDisposable = await initMicrosoftSovereignCloudAuthProvider(context, telemetryReporter, uriHandler, betterSecretStorage);

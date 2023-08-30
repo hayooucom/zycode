@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { env, ExtensionContext, workspace, window, Disposable, commands, Uri, version as vscodeVersion, WorkspaceFolder, LogOutputChannel, l10n, LogLevel } from 'vscode';
+import { env, ExtensionContext, workspace, window, Disposable, commands, Uri, version as vscodeVersion, WorkspaceFolder, LogOutputChannel, l10n, LogLevel } from 'zycode';
 import { findGit, Git, IGit } from './git';
 import { Model } from './model';
 import { CommandCenter } from './commands';
@@ -11,7 +11,7 @@ import { GitFileSystemProvider } from './fileSystemProvider';
 import { GitDecorations } from './decorationProvider';
 import { Askpass } from './askpass';
 import { toDisposable, filterEvent, eventToPromise } from './util';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import TelemetryReporter from '@zycode/extension-telemetry';
 import { GitExtension } from './api/git';
 import { GitProtocolHandler } from './protocolHandler';
 import { GitExtensionImpl } from './api/extension';
@@ -82,7 +82,7 @@ async function createModel(context: ExtensionContext, logger: LogOutputChannel, 
 
 	const git = new Git({
 		gitPath: info.path,
-		userAgent: `git/${info.version} (${(os as any).version?.() ?? os.type()} ${os.release()}; ${os.platform()} ${os.arch()}) vscode/${vscodeVersion} (${env.appName})`,
+		userAgent: `git/${info.version} (${(os as any).version?.() ?? os.type()} ${os.release()}; ${os.platform()} ${os.arch()}) zycode/${vscodeVersion} (${env.appName})`,
 		version: info.version,
 		env: environment,
 	});
@@ -166,7 +166,7 @@ async function warnAboutMissingGit(): Promise<void> {
 	);
 
 	if (choice === download) {
-		commands.executeCommand('vscode.open', Uri.parse('https://aka.ms/vscode-download-git'));
+		commands.executeCommand('zycode.open', Uri.parse('https://aka.ms/zycode-download-git'));
 	} else if (choice === neverShowAgain) {
 		await config.update('ignoreMissingGitWarning', true, true);
 	}
@@ -263,7 +263,7 @@ async function checkGitv1(info: IGit): Promise<void> {
 	);
 
 	if (choice === update) {
-		commands.executeCommand('vscode.open', Uri.parse('https://aka.ms/vscode-download-git'));
+		commands.executeCommand('zycode.open', Uri.parse('https://aka.ms/zycode-download-git'));
 	} else if (choice === neverShowAgain) {
 		await config.update('ignoreLegacyWarning', true, true);
 	}
@@ -290,7 +290,7 @@ async function checkGitWindows(info: IGit): Promise<void> {
 	);
 
 	if (choice === update) {
-		commands.executeCommand('vscode.open', Uri.parse('https://aka.ms/vscode-download-git'));
+		commands.executeCommand('zycode.open', Uri.parse('https://aka.ms/zycode-download-git'));
 	} else if (choice === neverShowAgain) {
 		await config.update('ignoreWindowsGit27Warning', true, true);
 	}

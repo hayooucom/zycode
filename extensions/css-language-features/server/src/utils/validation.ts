@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CancellationToken, Connection, Diagnostic, Disposable, DocumentDiagnosticParams, DocumentDiagnosticReport, DocumentDiagnosticReportKind, TextDocuments } from 'vscode-languageserver';
-import { TextDocument } from 'vscode-css-languageservice';
+import { CancellationToken, Connection, Diagnostic, Disposable, DocumentDiagnosticParams, DocumentDiagnosticReport, DocumentDiagnosticReportKind, TextDocuments } from 'zycode-languageserver';
+import { TextDocument } from 'zycode-css-languageservice';
 import { formatError, runSafeAsync } from './runner';
 import { RuntimeEnvironment } from '../cssServer';
 

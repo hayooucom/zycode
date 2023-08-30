@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
-export class UriEventHandler extends vscode.EventEmitter<vscode.Uri> implements vscode.UriHandler {
-	public handleUri(uri: vscode.Uri) {
+export class UriEventHandler extends zycode.EventEmitter<zycode.Uri> implements zycode.UriHandler {
+	public handleUri(uri: zycode.Uri) {
 		this.fire(uri);
 	}
 }

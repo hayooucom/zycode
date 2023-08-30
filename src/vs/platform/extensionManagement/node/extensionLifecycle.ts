@@ -49,7 +49,7 @@ export class ExtensionsLifecycle extends Disposable {
 	}
 
 	private parseScript(extension: ILocalExtension, type: string): { script: string; args: string[] } | null {
-		const scriptKey = `vscode:${type}`;
+		const scriptKey = `zycode:${type}`;
 		if (extension.location.scheme === Schemas.file && extension.manifest && extension.manifest['scripts'] && typeof extension.manifest['scripts'][scriptKey] === 'string') {
 			const script = (<string>extension.manifest['scripts'][scriptKey]).split(' ');
 			if (script.length < 2 || script[0] !== 'node' || !script[1]) {

@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ExtensionContext, Uri, l10n } from 'vscode';
-import { BaseLanguageClient, LanguageClientOptions } from 'vscode-languageclient';
+import { ExtensionContext, Uri, l10n } from 'zycode';
+import { BaseLanguageClient, LanguageClientOptions } from 'zycode-languageclient';
 import { startClient, LanguageClientConstructor, SchemaRequestService } from '../jsonClient';
-import { LanguageClient } from 'vscode-languageclient/browser';
+import { LanguageClient } from 'zycode-languageclient/browser';
 
 declare const Worker: {
 	new(stringUrl: string): any;
@@ -16,7 +16,7 @@ declare function fetch(uri: string, options: any): any;
 
 let client: BaseLanguageClient | undefined;
 
-// this method is called when vs code is activated
+// this method is called when zy code is activated
 export async function activate(context: ExtensionContext) {
 	const serverMain = Uri.joinPath(context.extensionUri, 'server/dist/browser/jsonServerMain.js');
 	try {

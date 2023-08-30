@@ -627,7 +627,7 @@ suite('IndexTreeModel', () => {
 
 		model.splice([0], 0, [
 			{
-				element: 'vscode', children: [
+				element: 'zycode', children: [
 					{ element: '.build' },
 					{ element: 'git' },
 					{
@@ -651,13 +651,13 @@ suite('IndexTreeModel', () => {
 
 		query = /build/;
 		model.refilter();
-		assert.deepStrictEqual(toArray(list), ['vscode', '.build', 'github', 'build.js', 'build']);
+		assert.deepStrictEqual(toArray(list), ['zycode', '.build', 'github', 'build.js', 'build']);
 
 		model.setCollapsed([0], true);
-		assert.deepStrictEqual(toArray(list), ['vscode']);
+		assert.deepStrictEqual(toArray(list), ['zycode']);
 
 		model.setCollapsed([0], false);
-		assert.deepStrictEqual(toArray(list), ['vscode', '.build', 'github', 'build.js', 'build']);
+		assert.deepStrictEqual(toArray(list), ['zycode', '.build', 'github', 'build.js', 'build']);
 	});
 
 	test('recursive filter updates when children change (#133272)', async () => {
@@ -709,7 +709,7 @@ suite('IndexTreeModel', () => {
 
 		model.splice([0], 0, [
 			{
-				element: 'vscode', children: [
+				element: 'zycode', children: [
 					{ element: '.build' },
 					{ element: 'git' },
 					{
@@ -733,13 +733,13 @@ suite('IndexTreeModel', () => {
 
 		query = /gulp/;
 		model.refilter();
-		assert.deepStrictEqual(toArray(list), ['vscode', 'build', 'gulpfile.js']);
+		assert.deepStrictEqual(toArray(list), ['zycode', 'build', 'gulpfile.js']);
 
 		model.setCollapsed([0, 3], true);
-		assert.deepStrictEqual(toArray(list), ['vscode', 'build']);
+		assert.deepStrictEqual(toArray(list), ['zycode', 'build']);
 
 		model.setCollapsed([0], true);
-		assert.deepStrictEqual(toArray(list), ['vscode']);
+		assert.deepStrictEqual(toArray(list), ['zycode']);
 	});
 
 	test('recursive filter while collapsed', () => {
@@ -755,7 +755,7 @@ suite('IndexTreeModel', () => {
 
 		model.splice([0], 0, [
 			{
-				element: 'vscode', collapsed: true, children: [
+				element: 'zycode', collapsed: true, children: [
 					{ element: '.build' },
 					{ element: 'git' },
 					{
@@ -775,21 +775,21 @@ suite('IndexTreeModel', () => {
 			},
 		]);
 
-		assert.deepStrictEqual(toArray(list), ['vscode']);
+		assert.deepStrictEqual(toArray(list), ['zycode']);
 
 		query = /gulp/;
 		model.refilter();
-		assert.deepStrictEqual(toArray(list), ['vscode']);
+		assert.deepStrictEqual(toArray(list), ['zycode']);
 
 		model.setCollapsed([0], false);
-		assert.deepStrictEqual(toArray(list), ['vscode', 'build', 'gulpfile.js']);
+		assert.deepStrictEqual(toArray(list), ['zycode', 'build', 'gulpfile.js']);
 
 		model.setCollapsed([0], true);
-		assert.deepStrictEqual(toArray(list), ['vscode']);
+		assert.deepStrictEqual(toArray(list), ['zycode']);
 
 		query = new RegExp('');
 		model.refilter();
-		assert.deepStrictEqual(toArray(list), ['vscode']);
+		assert.deepStrictEqual(toArray(list), ['zycode']);
 
 		model.setCollapsed([0], false);
 		assert.deepStrictEqual(list.length, 10);

@@ -63,12 +63,12 @@ export abstract class BaseAssignmentService implements IAssignmentService {
 		// If not, use the async call with `checkCache: true`. This will allow the module to return a cached value if it is present.
 		// Otherwise it will await the initial fetch to return the most up to date value.
 		if (this.networkInitialized) {
-			result = client.getTreatmentVariable<T>('vscode', name);
+			result = client.getTreatmentVariable<T>('zycode', name);
 		} else {
-			result = await client.getTreatmentVariableAsync<T>('vscode', name, true);
+			result = await client.getTreatmentVariableAsync<T>('zycode', name, true);
 		}
 
-		result = client.getTreatmentVariable<T>('vscode', name);
+		result = client.getTreatmentVariable<T>('zycode', name);
 		return result;
 	}
 

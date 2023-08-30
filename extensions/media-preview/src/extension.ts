@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { registerAudioPreviewSupport } from './audioPreview';
 import { BinarySizeStatusBarEntry } from './binarySizeStatusBarEntry';
 import { registerImagePreviewSupport } from './imagePreview';
 import { registerVideoPreviewSupport } from './videoPreview';
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: zycode.ExtensionContext) {
 	const binarySizeStatusBarEntry = new BinarySizeStatusBarEntry();
 	context.subscriptions.push(binarySizeStatusBarEntry);
 

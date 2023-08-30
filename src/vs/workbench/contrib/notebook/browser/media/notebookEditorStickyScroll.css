@@ -6,7 +6,7 @@
 .monaco-workbench .notebookOverlay .notebook-sticky-scroll-container {
 	display: none;
 	position: absolute;
-	background-color: var(--vscode-notebook-editorBackground);
+	background-color: var(--zycode-notebook-editorBackground);
 	z-index: var(--z-index-notebook-sticky-scroll);
 	width: 100%;
 	font-family: var(--notebook-cell-input-preview-font-family);
@@ -15,7 +15,7 @@
 	.notebookOverlay
 	.notebook-sticky-scroll-container
 	.notebook-sticky-scroll-line {
-	background-color: var(--vscode-notebook-editorBackground);
+	background-color: var(--zycode-notebook-editorBackground);
 	position: relative;
 	z-index: 0;
 	padding-left: 12px;
@@ -24,15 +24,15 @@
 
 .monaco-workbench.hc-light .notebookOverlay .notebook-sticky-scroll-container,
 .monaco-workbench.hc-black .notebookOverlay .notebook-sticky-scroll-container {
-	background-color: var(--vscode-editorStickyScroll-background);
-	border-bottom: 1px solid var(--vscode-contrastBorder);
+	background-color: var(--zycode-editorStickyScroll-background);
+	border-bottom: 1px solid var(--zycode-contrastBorder);
 }
 
 .monaco-workbench
 	.notebookOverlay
 	.notebook-sticky-scroll-container
 	.notebook-sticky-scroll-line:hover {
-	background-color: var(--vscode-editorStickyScrollHover-background);
+	background-color: var(--zycode-editorStickyScrollHover-background);
 	cursor: pointer;
 }
 
@@ -45,5 +45,5 @@
 	left: 3px;
 	height: 3px;
 	width: 100%;
-	box-shadow: var(--vscode-scrollbar-shadow) 0 6px 6px -6px inset;
+	box-shadow: var(--zycode-scrollbar-shadow) 0 6px 6px -6px inset;
 }

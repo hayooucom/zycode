@@ -12,7 +12,7 @@ const path = require('path');
 const fs = require('fs');
 const merge = require('merge-options');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const { NLSBundlePlugin } = require('vscode-nls-dev/lib/webpack-bundler');
+const { NLSBundlePlugin } = require('zycode-nls-dev/lib/webpack-bundler');
 const { DefinePlugin, optimize } = require('webpack');
 
 const tsLoaderOptions = {
@@ -38,9 +38,9 @@ function withNodeDefaults(/**@type WebpackConfig & { context: string }*/extConfi
 				test: /\.ts$/,
 				exclude: /node_modules/,
 				use: [{
-					// vscode-nls-dev loader:
+					// zycode-nls-dev loader:
 					// * rewrite nls-calls
-					loader: 'vscode-nls-dev/lib/webpack-loader',
+					loader: 'zycode-nls-dev/lib/webpack-loader',
 					options: {
 						base: path.join(extConfig.context, 'src')
 					}
@@ -58,7 +58,7 @@ function withNodeDefaults(/**@type WebpackConfig & { context: string }*/extConfi
 			}]
 		},
 		externals: {
-			'vscode': 'commonjs vscode', // ignored because it doesn't exist,
+			'zycode': 'commonjs zycode', // ignored because it doesn't exist,
 			'applicationinsights-native-metrics': 'commonjs applicationinsights-native-metrics', // ignored because we don't ship native module
 			'@azure/functions-core': 'commonjs azure/functions-core', // optioinal dependency of appinsights that we don't use
 			'@opentelemetry/tracing': 'commonjs @opentelemetry/tracing', // ignored because we don't ship this module
@@ -145,7 +145,7 @@ function withBrowserDefaults(/**@type WebpackConfig & { context: string }*/extCo
 			}]
 		},
 		externals: {
-			'vscode': 'commonjs vscode', // ignored because it doesn't exist,
+			'zycode': 'commonjs zycode', // ignored because it doesn't exist,
 			'applicationinsights-native-metrics': 'commonjs applicationinsights-native-metrics', // ignored because we don't ship native module
 			'@azure/functions-core': 'commonjs azure/functions-core', // optioinal dependency of appinsights that we don't use
 			'@opentelemetry/tracing': 'commonjs @opentelemetry/tracing', // ignored because we don't ship this module
@@ -194,7 +194,7 @@ function browserPlugins(context) {
 			'process.env': JSON.stringify({}),
 			'process.env.BROWSER_ENV': JSON.stringify('true')
 		}),
-		// TODO: bring this back once vscode-nls-dev supports browser
+		// TODO: bring this back once zycode-nls-dev supports browser
 		// new NLSBundlePlugin(id)
 	];
 }

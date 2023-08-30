@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import * as interfaces from './interfaces';
 
-export default class MergeConflictCodeLensProvider implements vscode.CodeLensProvider, vscode.Disposable {
-	private codeLensRegistrationHandle?: vscode.Disposable | null;
+export default class MergeConflictCodeLensProvider implements zycode.CodeLensProvider, zycode.Disposable {
+	private codeLensRegistrationHandle?: zycode.Disposable | null;
 	private config?: interfaces.IExtensionConfiguration;
 	private tracker: interfaces.IDocumentMergeConflictTracker;
 
@@ -44,7 +44,7 @@ export default class MergeConflictCodeLensProvider implements vscode.CodeLensPro
 		}
 	}
 
-	async provideCodeLenses(document: vscode.TextDocument, _token: vscode.CancellationToken): Promise<vscode.CodeLens[] | null> {
+	async provideCodeLenses(document: zycode.TextDocument, _token: zycode.CancellationToken): Promise<zycode.CodeLens[] | null> {
 
 		if (!this.config || !this.config.enableCodeLens) {
 			return null;
@@ -52,45 +52,45 @@ export default class MergeConflictCodeLensProvider implements vscode.CodeLensPro
 
 		const conflicts = await this.tracker.getConflicts(document);
 		const conflictsCount = conflicts?.length ?? 0;
-		vscode.commands.executeCommand('setContext', 'mergeConflictsCount', conflictsCount);
+		zycode.commands.executeCommand('setContext', 'mergeConflictsCount', conflictsCount);
 
 		if (!conflictsCount) {
 			return null;
 		}
 
-		const items: vscode.CodeLens[] = [];
+		const items: zycode.CodeLens[] = [];
 
 		conflicts.forEach(conflict => {
-			const acceptCurrentCommand: vscode.Command = {
+			const acceptCurrentCommand: zycode.Command = {
 				command: 'merge-conflict.accept.current',
-				title: vscode.l10n.t("Accept Current Change"),
+				title: zycode.l10n.t("Accept Current Change"),
 				arguments: ['known-conflict', conflict]
 			};
 
-			const acceptIncomingCommand: vscode.Command = {
+			const acceptIncomingCommand: zycode.Command = {
 				command: 'merge-conflict.accept.incoming',
-				title: vscode.l10n.t("Accept Incoming Change"),
+				title: zycode.l10n.t("Accept Incoming Change"),
 				arguments: ['known-conflict', conflict]
 			};
 
-			const acceptBothCommand: vscode.Command = {
+			const acceptBothCommand: zycode.Command = {
 				command: 'merge-conflict.accept.both',
-				title: vscode.l10n.t("Accept Both Changes"),
+				title: zycode.l10n.t("Accept Both Changes"),
 				arguments: ['known-conflict', conflict]
 			};
 
-			const diffCommand: vscode.Command = {
+			const diffCommand: zycode.Command = {
 				command: 'merge-conflict.compare',
-				title: vscode.l10n.t("Compare Changes"),
+				title: zycode.l10n.t("Compare Changes"),
 				arguments: [conflict]
 			};
 
 			const range = document.lineAt(conflict.range.start.line).range;
 			items.push(
-				new vscode.CodeLens(range, acceptCurrentCommand),
-				new vscode.CodeLens(range, acceptIncomingCommand),
-				new vscode.CodeLens(range, acceptBothCommand),
-				new vscode.CodeLens(range, diffCommand)
+				new zycode.CodeLens(range, acceptCurrentCommand),
+				new zycode.CodeLens(range, acceptIncomingCommand),
+				new zycode.CodeLens(range, acceptBothCommand),
+				new zycode.CodeLens(range, diffCommand)
 			);
 		});
 
@@ -98,11 +98,11 @@ export default class MergeConflictCodeLensProvider implements vscode.CodeLensPro
 	}
 
 	private registerCodeLensProvider() {
-		this.codeLensRegistrationHandle = vscode.languages.registerCodeLensProvider([
+		this.codeLensRegistrationHandle = zycode.languages.registerCodeLensProvider([
 			{ scheme: 'file' },
-			{ scheme: 'vscode-vfs' },
+			{ scheme: 'zycode-vfs' },
 			{ scheme: 'untitled' },
-			{ scheme: 'vscode-userdata' },
+			{ scheme: 'zycode-userdata' },
 		], this);
 	}
 }

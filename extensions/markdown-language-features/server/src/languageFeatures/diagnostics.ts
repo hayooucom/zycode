@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Connection, FullDocumentDiagnosticReport, TextDocuments, UnchangedDocumentDiagnosticReport } from 'vscode-languageserver';
-import * as md from 'vscode-markdown-languageservice';
-import { Disposable } from 'vscode-notebook-renderer/events';
-import { URI } from 'vscode-uri';
+import { Connection, FullDocumentDiagnosticReport, TextDocuments, UnchangedDocumentDiagnosticReport } from 'zycode-languageserver';
+import * as md from 'zycode-markdown-languageservice';
+import { Disposable } from 'zycode-notebook-renderer/events';
+import { URI } from 'zycode-uri';
 import { ConfigurationManager, ValidateEnabled } from '../configuration';
 import { disposeAll } from '../util/dispose';
 

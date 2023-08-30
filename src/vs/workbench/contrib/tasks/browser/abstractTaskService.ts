@@ -1552,7 +1552,7 @@ export abstract class AbstractTaskService extends Disposable implements ITaskSer
 			if (editorConfig.editor.insertSpaces) {
 				content = content.replace(/(\n)(\t+)/g, (_, s1, s2) => s1 + ' '.repeat(s2.length * editorConfig.editor.tabSize));
 			}
-			await this._textFileService.create([{ resource: workspaceFolder.toResource('.vscode/tasks.json'), value: content }]);
+			await this._textFileService.create([{ resource: workspaceFolder.toResource('.zycode/tasks.json'), value: content }]);
 		} else {
 			// We have a global task configuration
 			if ((index === -1) && properties) {
@@ -1629,7 +1629,7 @@ export abstract class AbstractTaskService extends Disposable implements ITaskSer
 			}
 			return uri;
 		} else {
-			return task.getWorkspaceFolder()!.toResource('.vscode/tasks.json');
+			return task.getWorkspaceFolder()!.toResource('.zycode/tasks.json');
 		}
 	}
 
@@ -1638,7 +1638,7 @@ export abstract class AbstractTaskService extends Disposable implements ITaskSer
 		if (task) {
 			resource = this._getResourceForTask(task);
 		} else {
-			resource = (this._workspaceFolders && (this._workspaceFolders.length > 0)) ? this._workspaceFolders[0].toResource('.vscode/tasks.json') : undefined;
+			resource = (this._workspaceFolders && (this._workspaceFolders.length > 0)) ? this._workspaceFolders[0].toResource('.zycode/tasks.json') : undefined;
 		}
 		return this._openEditorAtTask(resource, task ? task._label : undefined, task ? task._source.config.index : -1);
 	}
@@ -3249,7 +3249,7 @@ export abstract class AbstractTaskService extends Disposable implements ITaskSer
 			const taskQuickPick = this._instantiationService.createInstance(TaskQuickPick);
 			taskQuickPick.handleSettingOption(selection.settingType);
 		} else if (selection.folder && (this._contextService.getWorkbenchState() !== WorkbenchState.EMPTY)) {
-			this._openTaskFile(selection.folder.toResource('.vscode/tasks.json'), TaskSourceKind.Workspace);
+			this._openTaskFile(selection.folder.toResource('.zycode/tasks.json'), TaskSourceKind.Workspace);
 		} else {
 			const resource = this._getResourceForKind(TaskSourceKind.User);
 			if (resource) {
@@ -3286,7 +3286,7 @@ export abstract class AbstractTaskService extends Disposable implements ITaskSer
 		}
 
 		const stats = this._contextService.getWorkspace().folders.map<Promise<IFileStatWithPartialMetadata | undefined>>((folder) => {
-			return this._fileService.stat(folder.toResource('.vscode/tasks.json')).then(stat => stat, () => undefined);
+			return this._fileService.stat(folder.toResource('.zycode/tasks.json')).then(stat => stat, () => undefined);
 		});
 
 		const createLabel = nls.localize('TaskService.createJsonFile', 'Create tasks.json file from template');
@@ -3527,7 +3527,7 @@ export abstract class AbstractTaskService extends Disposable implements ITaskSer
 	}
 
 	private async _createTasksDotOld(folder: IWorkspaceFolder): Promise<[URI, URI] | undefined> {
-		const tasksFile = folder.toResource('.vscode/tasks.json');
+		const tasksFile = folder.toResource('.zycode/tasks.json');
 		if (await this._fileService.exists(tasksFile)) {
 			const oldFile = tasksFile.with({ path: `${tasksFile.path}.old` });
 			await this._fileService.copy(tasksFile, oldFile, true);

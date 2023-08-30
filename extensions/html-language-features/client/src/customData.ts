@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { workspace, extensions, Uri, EventEmitter, Disposable } from 'vscode';
+import { workspace, extensions, Uri, EventEmitter, Disposable } from 'zycode';
 import { Runtime } from './htmlClient';
-import { Utils } from 'vscode-uri';
+import { Utils } from 'zycode-uri';
 
 
 export function getCustomDataSource(runtime: Runtime, toDispose: Disposable[]) {

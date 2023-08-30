@@ -5,10 +5,10 @@
 
 div.share-dialog-input-text,
 div.share-dialog-input-link {
-	border: 1px solid var(--vscode-input-border, transparent);
+	border: 1px solid var(--zycode-input-border, transparent);
 	border-radius: 2px;
-	color: var(--vscode-input-foreground);
-	background-color: var(--vscode-input-background);
+	color: var(--zycode-input-foreground);
+	background-color: var(--zycode-input-background);
 	padding: 2px;
 	user-select: all;
 	line-height: 24px;

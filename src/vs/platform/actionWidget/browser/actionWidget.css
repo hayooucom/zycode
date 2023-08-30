@@ -11,10 +11,10 @@
 	z-index: 40;
 	display: block;
 	width: 100%;
-	border: 1px solid var(--vscode-editorWidget-border) !important;
+	border: 1px solid var(--zycode-editorWidget-border) !important;
 	border-radius: 2px;
-	background-color: var(--vscode-editorWidget-background);
-	color: var(--vscode-editorWidget-foreground);
+	background-color: var(--zycode-editorWidget-background);
+	color: var(--zycode-editorWidget-foreground);
 }
 
 .context-view-block {
@@ -62,14 +62,14 @@
 }
 
 .action-widget .monaco-list .monaco-list-row.action.focused:not(.option-disabled) {
-	background-color: var(--vscode-quickInputList-focusBackground) !important;
-	color: var(--vscode-quickInputList-focusForeground);
-	outline: 1px solid var(--vscode-menu-selectionBorder, transparent);
+	background-color: var(--zycode-quickInputList-focusBackground) !important;
+	color: var(--zycode-quickInputList-focusForeground);
+	outline: 1px solid var(--zycode-menu-selectionBorder, transparent);
 	outline-offset: -1px;
 }
 
 .action-widget .monaco-list-row.group-header {
-	color: var(--vscode-descriptionForeground) !important;
+	color: var(--zycode-descriptionForeground) !important;
 	font-weight: 600;
 }
 
@@ -96,7 +96,7 @@
 .action-widget .monaco-list:focus .monaco-list-row.focused.action.option-disabled,
 .action-widget .monaco-list-row.action.option-disabled .codicon,
 .action-widget .monaco-list:not(.drop-target):not(.dragging) .monaco-list-row:hover:not(.selected):not(.focused).option-disabled {
-	color: var(--vscode-disabledForeground);
+	color: var(--zycode-disabledForeground);
 }
 
 
@@ -113,8 +113,8 @@
 /* Action bar */
 
 .action-widget .action-widget-action-bar {
-	background-color: var(--vscode-editorHoverWidget-statusBarBackground);
-	border-top: 1px solid var(--vscode-editorHoverWidget-border);
+	background-color: var(--zycode-editorHoverWidget-statusBarBackground);
+	border-top: 1px solid var(--zycode-editorHoverWidget-border);
 }
 
 .action-widget .action-widget-action-bar::before {
@@ -128,7 +128,7 @@
 }
 
 .action-widget-action-bar .action-label {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 	font-size: 12px;
 	line-height: 22px;
 	padding: 0;
@@ -146,5 +146,5 @@
 
 .monaco-action-bar .actions-container.highlight-toggled .action-label.checked {
 	/* The important gives this rule precedence over the hover rule. */
-	background: var(--vscode-actionBar-toggledBackground) !important;
+	background: var(--zycode-actionBar-toggledBackground) !important;
 }

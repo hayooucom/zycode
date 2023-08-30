@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import * as util from 'util';
 import { randomUUID } from 'crypto';
 
@@ -26,7 +26,7 @@ const CSI_SEQUENCE = /(:?\x1b\[|\x9B)[=?>!]?[\d;:]*["$#'* ]?[a-zA-Z@^`{}|~]/g;
 
 /**
  * Froms vs/base/common/strings.ts in core
- * @see https://github.com/microsoft/vscode/blob/22a2a0e833175c32a2005b977d7fbd355582e416/src/vs/base/common/strings.ts#L736
+ * @see https://github.com/microsoft/zycode/blob/22a2a0e833175c32a2005b977d7fbd355582e416/src/vs/base/common/strings.ts#L736
  */
 function removeAnsiEscapeCodes(str: string): string {
 	if (str) {
@@ -48,18 +48,18 @@ class Trigger {
 	}
 }
 
-class ServerReadyDetector extends vscode.Disposable {
+class ServerReadyDetector extends zycode.Disposable {
 
-	private static detectors = new Map<vscode.DebugSession, ServerReadyDetector>();
-	private static terminalDataListener: vscode.Disposable | undefined;
+	private static detectors = new Map<zycode.DebugSession, ServerReadyDetector>();
+	private static terminalDataListener: zycode.Disposable | undefined;
 
 	private trigger: Trigger;
 	private shellPid?: number;
 	private regexp: RegExp;
-	private disposables: vscode.Disposable[] = [];
-	private lateDisposables = new Set<vscode.Disposable>([]);
+	private disposables: zycode.Disposable[] = [];
+	private lateDisposables = new Set<zycode.Disposable>([]);
 
-	static start(session: vscode.DebugSession): ServerReadyDetector | undefined {
+	static start(session: zycode.DebugSession): ServerReadyDetector | undefined {
 		if (session.configuration.serverReadyAction) {
 			let detector = ServerReadyDetector.detectors.get(session);
 			if (!detector) {
@@ -71,7 +71,7 @@ class ServerReadyDetector extends vscode.Disposable {
 		return undefined;
 	}
 
-	static stop(session: vscode.DebugSession): void {
+	static stop(session: zycode.DebugSession): void {
 		const detector = ServerReadyDetector.detectors.get(session);
 		if (detector) {
 			ServerReadyDetector.detectors.delete(session);
@@ -79,7 +79,7 @@ class ServerReadyDetector extends vscode.Disposable {
 		}
 	}
 
-	static rememberShellPid(session: vscode.DebugSession, pid: number) {
+	static rememberShellPid(session: zycode.DebugSession, pid: number) {
 		const detector = ServerReadyDetector.detectors.get(session);
 		if (detector) {
 			detector.shellPid = pid;
@@ -88,7 +88,7 @@ class ServerReadyDetector extends vscode.Disposable {
 
 	static async startListeningTerminalData() {
 		if (!this.terminalDataListener) {
-			this.terminalDataListener = vscode.window.onDidWriteTerminalData(async e => {
+			this.terminalDataListener = zycode.window.onDidWriteTerminalData(async e => {
 
 				// first find the detector with a matching pid
 				const pid = await e.terminal.processId;
@@ -110,7 +110,7 @@ class ServerReadyDetector extends vscode.Disposable {
 		}
 	}
 
-	private constructor(private session: vscode.DebugSession) {
+	private constructor(private session: zycode.DebugSession) {
 		super(() => this.internalDispose());
 
 		// Re-used the triggered of the parent session, if one exists
@@ -146,7 +146,7 @@ class ServerReadyDetector extends vscode.Disposable {
 		return false;
 	}
 
-	private openExternalWithString(session: vscode.DebugSession, captureString: string) {
+	private openExternalWithString(session: zycode.DebugSession, captureString: string) {
 
 		const args: ServerReadyAction = session.configuration.serverReadyAction;
 
@@ -156,8 +156,8 @@ class ServerReadyDetector extends vscode.Disposable {
 			// verify that format does not contain '%s'
 			const format = args.uriFormat || '';
 			if (format.indexOf('%s') >= 0) {
-				const errMsg = vscode.l10n.t("Format uri ('{0}') uses a substitution placeholder but pattern did not capture anything.", format);
-				vscode.window.showErrorMessage(errMsg, { modal: true }).then(_ => undefined);
+				const errMsg = zycode.l10n.t("Format uri ('{0}') uses a substitution placeholder but pattern did not capture anything.", format);
+				zycode.window.showErrorMessage(errMsg, { modal: true }).then(_ => undefined);
 				return;
 			}
 			uri = format;
@@ -167,8 +167,8 @@ class ServerReadyDetector extends vscode.Disposable {
 			// verify that format only contains a single '%s'
 			const s = format.split('%s');
 			if (s.length !== 2) {
-				const errMsg = vscode.l10n.t("Format uri ('{0}') must contain exactly one substitution placeholder.", format);
-				vscode.window.showErrorMessage(errMsg, { modal: true }).then(_ => undefined);
+				const errMsg = zycode.l10n.t("Format uri ('{0}') must contain exactly one substitution placeholder.", format);
+				zycode.window.showErrorMessage(errMsg, { modal: true }).then(_ => undefined);
 				return;
 			}
 			uri = util.format(format, captureString);
@@ -177,13 +177,13 @@ class ServerReadyDetector extends vscode.Disposable {
 		this.openExternalWithUri(session, uri);
 	}
 
-	private async openExternalWithUri(session: vscode.DebugSession, uri: string) {
+	private async openExternalWithUri(session: zycode.DebugSession, uri: string) {
 
 		const args: ServerReadyAction = session.configuration.serverReadyAction;
 		switch (args.action || 'openExternally') {
 
 			case 'openExternally':
-				await vscode.env.openExternal(vscode.Uri.parse(uri));
+				await zycode.env.openExternal(zycode.Uri.parse(uri));
 				break;
 
 			case 'debugWithChrome':
@@ -204,7 +204,7 @@ class ServerReadyDetector extends vscode.Disposable {
 		}
 	}
 
-	private async debugWithBrowser(type: string, session: vscode.DebugSession, uri: string) {
+	private async debugWithBrowser(type: string, session: zycode.DebugSession, uri: string) {
 		const args = session.configuration.serverReadyAction as ServerReadyAction;
 		if (!args.killOnServerStop) {
 			await this.startBrowserDebugSession(type, session, uri);
@@ -212,7 +212,7 @@ class ServerReadyDetector extends vscode.Disposable {
 		}
 
 		const trackerId = randomUUID();
-		const cts = new vscode.CancellationTokenSource();
+		const cts = new zycode.CancellationTokenSource();
 		const newSessionPromise = this.catchStartedDebugSession(session => session.configuration._debugServerReadySessionId === trackerId, cts.token);
 
 		if (!await this.startBrowserDebugSession(type, session, uri, trackerId)) {
@@ -228,18 +228,18 @@ class ServerReadyDetector extends vscode.Disposable {
 			return;
 		}
 
-		const stopListener = vscode.debug.onDidTerminateDebugSession(async (terminated) => {
+		const stopListener = zycode.debug.onDidTerminateDebugSession(async (terminated) => {
 			if (terminated === session) {
 				stopListener.dispose();
 				this.lateDisposables.delete(stopListener);
-				await vscode.debug.stopDebugging(createdSession);
+				await zycode.debug.stopDebugging(createdSession);
 			}
 		});
 		this.lateDisposables.add(stopListener);
 	}
 
-	private startBrowserDebugSession(type: string, session: vscode.DebugSession, uri: string, trackerId?: string) {
-		return vscode.debug.startDebugging(session.workspaceFolder, {
+	private startBrowserDebugSession(type: string, session: zycode.DebugSession, uri: string, trackerId?: string) {
+		return zycode.debug.startDebugging(session.workspaceFolder, {
 			type,
 			name: 'Browser Debug',
 			request: 'launch',
@@ -249,17 +249,17 @@ class ServerReadyDetector extends vscode.Disposable {
 		});
 	}
 
-	private async startNamedDebugSession(session: vscode.DebugSession, name: string) {
+	private async startNamedDebugSession(session: zycode.DebugSession, name: string) {
 		const args = session.configuration.serverReadyAction as ServerReadyAction;
 		if (!args.killOnServerStop) {
-			await vscode.debug.startDebugging(session.workspaceFolder, name);
+			await zycode.debug.startDebugging(session.workspaceFolder, name);
 			return;
 		}
 
-		const cts = new vscode.CancellationTokenSource();
+		const cts = new zycode.CancellationTokenSource();
 		const newSessionPromise = this.catchStartedDebugSession(x => x.name === name, cts.token);
 
-		if (!await vscode.debug.startDebugging(session.workspaceFolder, name)) {
+		if (!await zycode.debug.startDebugging(session.workspaceFolder, name)) {
 			cts.cancel();
 			cts.dispose();
 			return;
@@ -272,19 +272,19 @@ class ServerReadyDetector extends vscode.Disposable {
 			return;
 		}
 
-		const stopListener = vscode.debug.onDidTerminateDebugSession(async (terminated) => {
+		const stopListener = zycode.debug.onDidTerminateDebugSession(async (terminated) => {
 			if (terminated === session) {
 				stopListener.dispose();
 				this.lateDisposables.delete(stopListener);
-				await vscode.debug.stopDebugging(createdSession);
+				await zycode.debug.stopDebugging(createdSession);
 			}
 		});
 		this.lateDisposables.add(stopListener);
 	}
 
-	private catchStartedDebugSession(predicate: (session: vscode.DebugSession) => boolean, cancellationToken: vscode.CancellationToken): Promise<vscode.DebugSession | undefined> {
-		return new Promise<vscode.DebugSession | undefined>(_resolve => {
-			const done = (value?: vscode.DebugSession) => {
+	private catchStartedDebugSession(predicate: (session: zycode.DebugSession) => boolean, cancellationToken: zycode.CancellationToken): Promise<zycode.DebugSession | undefined> {
+		return new Promise<zycode.DebugSession | undefined>(_resolve => {
+			const done = (value?: zycode.DebugSession) => {
 				listener.dispose();
 				cancellationListener.dispose();
 				this.lateDisposables.delete(listener);
@@ -293,7 +293,7 @@ class ServerReadyDetector extends vscode.Disposable {
 			};
 
 			const cancellationListener = cancellationToken.onCancellationRequested(done);
-			const listener = vscode.debug.onDidStartDebugSession(session => {
+			const listener = zycode.debug.onDidStartDebugSession(session => {
 				if (predicate(session)) {
 					done(session);
 				}
@@ -306,9 +306,9 @@ class ServerReadyDetector extends vscode.Disposable {
 	}
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: zycode.ExtensionContext) {
 
-	context.subscriptions.push(vscode.debug.onDidStartDebugSession(session => {
+	context.subscriptions.push(zycode.debug.onDidStartDebugSession(session => {
 		if (session.configuration.serverReadyAction) {
 			const detector = ServerReadyDetector.start(session);
 			if (detector) {
@@ -317,14 +317,14 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}));
 
-	context.subscriptions.push(vscode.debug.onDidTerminateDebugSession(session => {
+	context.subscriptions.push(zycode.debug.onDidTerminateDebugSession(session => {
 		ServerReadyDetector.stop(session);
 	}));
 
 	const trackers = new Set<string>();
 
-	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('*', {
-		resolveDebugConfigurationWithSubstitutedVariables(_folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration) {
+	context.subscriptions.push(zycode.debug.registerDebugConfigurationProvider('*', {
+		resolveDebugConfigurationWithSubstitutedVariables(_folder: zycode.WorkspaceFolder | undefined, debugConfiguration: zycode.DebugConfiguration) {
 			if (debugConfiguration.type && debugConfiguration.serverReadyAction) {
 				if (!trackers.has(debugConfiguration.type)) {
 					trackers.add(debugConfiguration.type);
@@ -336,11 +336,11 @@ export function activate(context: vscode.ExtensionContext) {
 	}));
 }
 
-function startTrackerForType(context: vscode.ExtensionContext, type: string) {
+function startTrackerForType(context: zycode.ExtensionContext, type: string) {
 
 	// scan debug console output for a PORT message
-	context.subscriptions.push(vscode.debug.registerDebugAdapterTrackerFactory(type, {
-		createDebugAdapterTracker(session: vscode.DebugSession) {
+	context.subscriptions.push(zycode.debug.registerDebugAdapterTrackerFactory(type, {
+		createDebugAdapterTracker(session: zycode.DebugSession) {
 			const detector = ServerReadyDetector.start(session);
 			if (detector) {
 				let runInTerminalRequestSeq: number | undefined;

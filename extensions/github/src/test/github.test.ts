@@ -5,14 +5,14 @@
 
 import 'mocha';
 import * as assert from 'assert';
-import { workspace, extensions, Uri, commands } from 'vscode';
+import { workspace, extensions, Uri, commands } from 'zycode';
 import { findPullRequestTemplates, pickPullRequestTemplate } from '../pushErrorHandler';
 
 suite('github smoke test', function () {
 	const cwd = workspace.workspaceFolders![0].uri;
 
 	suiteSetup(async function () {
-		const ext = extensions.getExtension('vscode.github');
+		const ext = extensions.getExtension('zycode.github');
 		await ext?.activate();
 	});
 

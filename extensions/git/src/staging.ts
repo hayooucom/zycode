@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { TextDocument, Range, LineChange, Selection } from 'vscode';
+import { TextDocument, Range, LineChange, Selection } from 'zycode';
 
 export function applyLineChanges(original: TextDocument, modified: TextDocument, diffs: LineChange[]): string {
 	const result: string[] = [];
@@ -18,7 +18,7 @@ export function applyLineChanges(original: TextDocument, modified: TextDocument,
 
 		// if this is a deletion at the very end of the document,then we need to account
 		// for a newline at the end of the last line which may have been deleted
-		// https://github.com/microsoft/vscode/issues/59670
+		// https://github.com/microsoft/zycode/issues/59670
 		if (isDeletion && diff.originalEndLineNumber === original.lineCount) {
 			endLine -= 1;
 			endCharacter = original.lineAt(endLine).range.end.character;

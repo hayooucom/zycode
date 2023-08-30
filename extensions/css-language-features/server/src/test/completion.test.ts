@@ -5,10 +5,10 @@
 import 'mocha';
 import * as assert from 'assert';
 import * as path from 'path';
-import { URI } from 'vscode-uri';
-import { TextDocument, CompletionList, TextEdit } from 'vscode-languageserver-types';
-import { WorkspaceFolder } from 'vscode-languageserver-protocol';
-import { getCSSLanguageService, LanguageServiceOptions, getSCSSLanguageService } from 'vscode-css-languageservice';
+import { URI } from 'zycode-uri';
+import { TextDocument, CompletionList, TextEdit } from 'zycode-languageserver-types';
+import { WorkspaceFolder } from 'zycode-languageserver-protocol';
+import { getCSSLanguageService, LanguageServiceOptions, getSCSSLanguageService } from 'zycode-css-languageservice';
 import { getNodeFSRequestService } from '../node/nodeFs';
 import { getDocumentContext } from '../utils/documentContext';
 

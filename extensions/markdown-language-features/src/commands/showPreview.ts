@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Command } from '../commandManager';
 import { DynamicPreviewSettings, MarkdownPreviewManager } from '../preview/previewManager';
 import { TelemetryReporter } from '../telemetryReporter';
@@ -17,36 +17,36 @@ interface ShowPreviewSettings {
 async function showPreview(
 	webviewManager: MarkdownPreviewManager,
 	telemetryReporter: TelemetryReporter,
-	uri: vscode.Uri | undefined,
+	uri: zycode.Uri | undefined,
 	previewSettings: ShowPreviewSettings,
 ): Promise<any> {
 	let resource = uri;
-	if (!(resource instanceof vscode.Uri)) {
-		if (vscode.window.activeTextEditor) {
+	if (!(resource instanceof zycode.Uri)) {
+		if (zycode.window.activeTextEditor) {
 			// we are relaxed and don't check for markdown files
-			resource = vscode.window.activeTextEditor.document.uri;
+			resource = zycode.window.activeTextEditor.document.uri;
 		}
 	}
 
-	if (!(resource instanceof vscode.Uri)) {
-		if (!vscode.window.activeTextEditor) {
+	if (!(resource instanceof zycode.Uri)) {
+		if (!zycode.window.activeTextEditor) {
 			// this is most likely toggling the preview
-			return vscode.commands.executeCommand('markdown.showSource');
+			return zycode.commands.executeCommand('markdown.showSource');
 		}
 		// nothing found that could be shown or toggled
 		return;
 	}
 
-	const resourceColumn = (vscode.window.activeTextEditor && vscode.window.activeTextEditor.viewColumn) || vscode.ViewColumn.One;
+	const resourceColumn = (zycode.window.activeTextEditor && zycode.window.activeTextEditor.viewColumn) || zycode.ViewColumn.One;
 	webviewManager.openDynamicPreview(resource, {
 		resourceColumn: resourceColumn,
-		previewColumn: previewSettings.sideBySide ? vscode.ViewColumn.Beside : resourceColumn,
+		previewColumn: previewSettings.sideBySide ? zycode.ViewColumn.Beside : resourceColumn,
 		locked: !!previewSettings.locked
 	});
 
 	telemetryReporter.sendTelemetryEvent('openPreview', {
 		where: previewSettings.sideBySide ? 'sideBySide' : 'inPlace',
-		how: (uri instanceof vscode.Uri) ? 'action' : 'pallete'
+		how: (uri instanceof zycode.Uri) ? 'action' : 'pallete'
 	});
 }
 
@@ -58,7 +58,7 @@ export class ShowPreviewCommand implements Command {
 		private readonly _telemetryReporter: TelemetryReporter
 	) { }
 
-	public execute(mainUri?: vscode.Uri, allUris?: vscode.Uri[], previewSettings?: DynamicPreviewSettings) {
+	public execute(mainUri?: zycode.Uri, allUris?: zycode.Uri[], previewSettings?: DynamicPreviewSettings) {
 		for (const uri of Array.isArray(allUris) ? allUris : [mainUri]) {
 			showPreview(this._webviewManager, this._telemetryReporter, uri, {
 				sideBySide: false,
@@ -76,7 +76,7 @@ export class ShowPreviewToSideCommand implements Command {
 		private readonly _telemetryReporter: TelemetryReporter
 	) { }
 
-	public execute(uri?: vscode.Uri, previewSettings?: DynamicPreviewSettings) {
+	public execute(uri?: zycode.Uri, previewSettings?: DynamicPreviewSettings) {
 		showPreview(this._webviewManager, this._telemetryReporter, uri, {
 			sideBySide: true,
 			locked: previewSettings && previewSettings.locked
@@ -93,7 +93,7 @@ export class ShowLockedPreviewToSideCommand implements Command {
 		private readonly _telemetryReporter: TelemetryReporter
 	) { }
 
-	public execute(uri?: vscode.Uri) {
+	public execute(uri?: zycode.Uri) {
 		showPreview(this._webviewManager, this._telemetryReporter, uri, {
 			sideBySide: true,
 			locked: true

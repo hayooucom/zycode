@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Command, CommandManager } from '../commands/commandManager';
 import { isSupportedLanguageMode } from '../configuration/languageIds';
 import { API } from '../tsServer/api';
@@ -22,33 +22,33 @@ class FileReferencesCommand implements Command {
 		private readonly client: ITypeScriptServiceClient
 	) { }
 
-	public async execute(resource?: vscode.Uri) {
+	public async execute(resource?: zycode.Uri) {
 		if (this.client.apiVersion.lt(FileReferencesCommand.minVersion)) {
-			vscode.window.showErrorMessage(vscode.l10n.t("Find file references failed. Requires TypeScript 4.2+."));
+			zycode.window.showErrorMessage(zycode.l10n.t("Find file references failed. Requires TypeScript 4.2+."));
 			return;
 		}
 
-		resource ??= vscode.window.activeTextEditor?.document.uri;
+		resource ??= zycode.window.activeTextEditor?.document.uri;
 		if (!resource) {
-			vscode.window.showErrorMessage(vscode.l10n.t("Find file references failed. No resource provided."));
+			zycode.window.showErrorMessage(zycode.l10n.t("Find file references failed. No resource provided."));
 			return;
 		}
 
-		const document = await vscode.workspace.openTextDocument(resource);
+		const document = await zycode.workspace.openTextDocument(resource);
 		if (!isSupportedLanguageMode(document)) {
-			vscode.window.showErrorMessage(vscode.l10n.t("Find file references failed. Unsupported file type."));
+			zycode.window.showErrorMessage(zycode.l10n.t("Find file references failed. Unsupported file type."));
 			return;
 		}
 
 		const openedFiledPath = this.client.toOpenTsFilePath(document);
 		if (!openedFiledPath) {
-			vscode.window.showErrorMessage(vscode.l10n.t("Find file references failed. Unknown file type."));
+			zycode.window.showErrorMessage(zycode.l10n.t("Find file references failed. Unknown file type."));
 			return;
 		}
 
-		await vscode.window.withProgress({
-			location: vscode.ProgressLocation.Window,
-			title: vscode.l10n.t("Finding file references")
+		await zycode.window.withProgress({
+			location: zycode.ProgressLocation.Window,
+			title: zycode.l10n.t("Finding file references")
 		}, async (_progress, token) => {
 
 			const response = await this.client.execute('fileReferences', {
@@ -58,15 +58,15 @@ class FileReferencesCommand implements Command {
 				return;
 			}
 
-			const locations: vscode.Location[] = response.body.refs.map(reference =>
+			const locations: zycode.Location[] = response.body.refs.map(reference =>
 				typeConverters.Location.fromTextSpan(this.client.toResource(reference.file), reference));
 
-			const config = vscode.workspace.getConfiguration('references');
+			const config = zycode.workspace.getConfiguration('references');
 			const existingSetting = config.inspect<string>('preferredLocation');
 
 			await config.update('preferredLocation', 'view');
 			try {
-				await vscode.commands.executeCommand('editor.action.showReferences', resource, new vscode.Position(0, 0), locations);
+				await zycode.commands.executeCommand('editor.action.showReferences', resource, new zycode.Position(0, 0), locations);
 			} finally {
 				await config.update('preferredLocation', existingSetting?.workspaceFolderValue ?? existingSetting?.workspaceValue);
 			}
@@ -80,7 +80,7 @@ export function register(
 	commandManager: CommandManager
 ) {
 	function updateContext() {
-		vscode.commands.executeCommand('setContext', FileReferencesCommand.context, client.apiVersion.gte(FileReferencesCommand.minVersion));
+		zycode.commands.executeCommand('setContext', FileReferencesCommand.context, client.apiVersion.gte(FileReferencesCommand.minVersion));
 	}
 	updateContext();
 

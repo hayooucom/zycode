@@ -22,7 +22,7 @@ import { applyZoom, zoomIn, zoomOut } from 'vs/platform/window/electron-sandbox/
 import { CancellationError } from 'vs/base/common/errors';
 
 // GitHub has let us know that we could up our limit here to 8k. We chose 7500 to play it safe.
-// ref https://github.com/microsoft/vscode/issues/159191
+// ref https://github.com/microsoft/zycode/issues/159191
 const MAX_URL_LENGTH = 7500;
 
 interface SearchResult {
@@ -32,7 +32,7 @@ interface SearchResult {
 }
 
 enum IssueSource {
-	VSCode = 'vscode',
+	VSCode = 'zycode',
 	Extension = 'extension',
 	Marketplace = 'marketplace'
 }
@@ -549,7 +549,7 @@ export class IssueReporter extends Disposable {
 
 	@debounce(300)
 	private searchDuplicates(title: string, body?: string): void {
-		const url = 'https://vscode-probot.westus.cloudapp.azure.com:7890/duplicate_candidates';
+		const url = 'https://zycode-probot.westus.cloudapp.azure.com:7890/duplicate_candidates';
 		const init = {
 			method: 'POST',
 			body: JSON.stringify({
@@ -665,7 +665,7 @@ export class IssueReporter extends Disposable {
 
 		sourceSelect.innerText = '';
 		sourceSelect.append(this.makeOption('', localize('selectSource', "Select source"), true));
-		sourceSelect.append(this.makeOption('vscode', localize('vscode', "Visual Studio Code"), false));
+		sourceSelect.append(this.makeOption('zycode', localize('zycode', "ZY Studio Code"), false));
 		sourceSelect.append(this.makeOption('extension', localize('extension', "An extension"), false));
 		if (this.configuration.product.reportMarketplaceIssueUrl) {
 			sourceSelect.append(this.makeOption('marketplace', localize('marketplace', "Extensions marketplace"), false));

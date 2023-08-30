@@ -24,7 +24,7 @@ import { IAdapterDescriptor } from 'vs/workbench/contrib/debug/common/debug';
 import { ExecutableDebugAdapter, NamedPipeDebugAdapter, SocketDebugAdapter } from 'vs/workbench/contrib/debug/node/debugAdapter';
 import { hasChildProcesses, prepareCommand } from 'vs/workbench/contrib/debug/node/terminals';
 import { ExtensionDescriptionRegistry } from 'vs/workbench/services/extensions/common/extensionDescriptionRegistry';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ExtHostConfigProvider, IExtHostConfiguration } from '../common/extHostConfiguration';
 
 export class ExtHostDebugService extends ExtHostDebugServiceBase {
@@ -94,7 +94,7 @@ export class ExtHostDebugService extends ExtHostDebugServiceBase {
 			let giveShellTimeToInitialize = false;
 
 			if (!terminal) {
-				const options: vscode.TerminalOptions = {
+				const options: zycode.TerminalOptions = {
 					shellPath: shell,
 					shellArgs: shellArgs,
 					cwd: args.cwd,
@@ -178,7 +178,7 @@ class DebugTerminalCollection {
 	 */
 	private static minUseDelay = 1000;
 
-	private _terminalInstances = new Map<vscode.Terminal, { lastUsedAt: number; config: string }>();
+	private _terminalInstances = new Map<zycode.Terminal, { lastUsedAt: number; config: string }>();
 
 	public async checkout(config: string, name: string) {
 		const entries = [...this._terminalInstances.entries()];
@@ -207,21 +207,21 @@ class DebugTerminalCollection {
 			return terminal;
 		}));
 
-		return await firstParallel(promises, (t): t is vscode.Terminal => !!t);
+		return await firstParallel(promises, (t): t is zycode.Terminal => !!t);
 	}
 
-	public insert(terminal: vscode.Terminal, termConfig: string) {
+	public insert(terminal: zycode.Terminal, termConfig: string) {
 		this._terminalInstances.set(terminal, { lastUsedAt: Date.now(), config: termConfig });
 	}
 
-	public free(terminal: vscode.Terminal) {
+	public free(terminal: zycode.Terminal) {
 		const info = this._terminalInstances.get(terminal);
 		if (info) {
 			info.lastUsedAt = -1;
 		}
 	}
 
-	public onTerminalClosed(terminal: vscode.Terminal) {
+	public onTerminalClosed(terminal: zycode.Terminal) {
 		this._terminalInstances.delete(terminal);
 	}
 }

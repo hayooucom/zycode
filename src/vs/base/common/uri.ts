@@ -443,7 +443,7 @@ interface UriState extends UriComponents {
 
 const _pathSepMarker = isWindows ? 1 : undefined;
 
-// This class exists so that URI is compatible with vscode.Uri (API).
+// This class exists so that URI is compatible with zycode.Uri (API).
 class Uri extends URI {
 
 	_formatted: string | null = null;
@@ -486,7 +486,7 @@ class Uri extends URI {
 		}
 		// TODO
 		// this isn't correct and can violate the UriComponents contract but
-		// this is part of the vscode.Uri API and we shouldn't change how that
+		// this is part of the zycode.Uri API and we shouldn't change how that
 		// works anymore
 		if (this.scheme) {
 			res.scheme = this.scheme;

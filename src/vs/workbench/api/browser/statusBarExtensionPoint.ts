@@ -123,8 +123,8 @@ class ExtensionStatusBarItemService implements IExtensionStatusBarItemService {
 				// We cannot enforce unique priorities across all extensions, so we
 				// use the extension identifier as a secondary sort key to reduce
 				// the likelyhood of collisions.
-				// See https://github.com/microsoft/vscode/issues/177835
-				// See https://github.com/microsoft/vscode/issues/123827
+				// See https://github.com/microsoft/zycode/issues/177835
+				// See https://github.com/microsoft/zycode/issues/123827
 				entryPriority = { primary: priority, secondary: hash(extensionId) };
 			} else {
 				entryPriority = priority;
@@ -198,7 +198,7 @@ const statusBarItemSchema: IJSONSchema = {
 	properties: {
 		id: {
 			type: 'string',
-			markdownDescription: localize('id', 'The identifier of the status bar entry. Must be unique within the extension. The same value must be used when calling the `vscode.window.createStatusBarItem(id, ...)`-API')
+			markdownDescription: localize('id', 'The identifier of the status bar entry. Must be unique within the extension. The same value must be used when calling the `zycode.window.createStatusBarItem(id, ...)`-API')
 		},
 		name: {
 			type: 'string',
@@ -243,7 +243,7 @@ const statusBarItemSchema: IJSONSchema = {
 };
 
 const statusBarItemsSchema: IJSONSchema = {
-	description: localize('vscode.extension.contributes.statusBarItems', "Contributes items to the status bar."),
+	description: localize('zycode.extension.contributes.statusBarItems', "Contributes items to the status bar."),
 	oneOf: [
 		statusBarItemSchema,
 		{

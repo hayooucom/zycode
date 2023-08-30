@@ -44,7 +44,7 @@ export class ExtensionStoragePaths extends CommonExtensionStoragePaths {
 
 			await mkdir(workspaceStoragePath);
 
-			const lockfile = path.join(workspaceStoragePath, 'vscode.lock');
+			const lockfile = path.join(workspaceStoragePath, 'zycode.lock');
 			const lock = await tryAcquireLock(this._logService, lockfile, false);
 			if (lock) {
 				this._workspaceStorageLock = lock;

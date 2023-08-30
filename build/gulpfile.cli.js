@@ -117,12 +117,12 @@ const compileFromSources = (callback) => {
 const acquireBuiltOpenSSL = (callback) => {
 	const untar = require('gulp-untar');
 	const gunzip = require('gulp-gunzip');
-	const dir = path.join(tmpdir(), 'vscode-openssl-download');
+	const dir = path.join(tmpdir(), 'zycode-openssl-download');
 	mkdirSync(dir, { recursive: true });
 
 	cp.spawnSync(
 		process.platform === 'win32' ? 'npm.cmd' : 'npm',
-		['pack', '@vscode/openssl-prebuilt'],
+		['pack', '@zycode/openssl-prebuilt'],
 		{ stdio: ['ignore', 'ignore', 'inherit'], cwd: dir }
 	);
 

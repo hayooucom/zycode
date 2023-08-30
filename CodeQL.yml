@@ -19,7 +19,7 @@ path_classifiers:
     # generated code.
     - out
     - "out-build"
-    - "out-vscode"
+    - "out-zycode"
     - "**/out/**"
 
   # The default behavior is to tag library code as `library`. Results are hidden

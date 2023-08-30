@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { AuthProviderType } from '../github';
 
 export class Log {
-	private output: vscode.LogOutputChannel;
+	private output: zycode.LogOutputChannel;
 
 	constructor(private readonly type: AuthProviderType) {
 		const friendlyName = this.type === AuthProviderType.github ? 'GitHub' : 'GitHub Enterprise';
-		this.output = vscode.window.createOutputChannel(`${friendlyName} Authentication`, { log: true });
+		this.output = zycode.window.createOutputChannel(`${friendlyName} Authentication`, { log: true });
 	}
 
 	public trace(message: string): void {

@@ -7,13 +7,13 @@ resources:
   repositories:
     - repository: templates
       type: github
-      name: microsoft/vscode-engineering
+      name: microsoft/zycode-engineering
       ref: main
       endpoint: Monaco
 
 parameters:
   - name: publishPackage
-    displayName: Publish vscode-markdown-languageserver
+    displayName: Publish zycode-markdown-languageserver
     type: boolean
     default: false
 
@@ -21,7 +21,7 @@ extends:
   template: azure-pipelines/npm-package/pipeline.yml@templates
   parameters:
     npmPackages:
-      - name: vscode-markdown-languageserver
+      - name: zycode-markdown-languageserver
         workingDirectory: extensions/markdown-language-features/server
 
         buildSteps:

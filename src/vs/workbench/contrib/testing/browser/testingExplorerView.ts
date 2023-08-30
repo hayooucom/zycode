@@ -724,7 +724,7 @@ class TestingExplorerViewModel extends Disposable {
 
 		this._register(this.tree.onDidOpen(e => {
 			if (e.element instanceof TestItemTreeElement && !e.element.children.size && e.element.test.item.uri) {
-				commandService.executeCommand('vscode.revealTest', e.element.test.item.extId);
+				commandService.executeCommand('zycode.revealTest', e.element.test.item.extId);
 			}
 		}));
 

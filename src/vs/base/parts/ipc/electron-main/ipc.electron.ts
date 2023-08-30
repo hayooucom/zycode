@@ -31,7 +31,7 @@ export class Server extends IPCServer {
 	private static readonly Clients = new Map<number, IDisposable>();
 
 	private static getOnDidClientConnect(): Event<ClientConnectionEvent> {
-		const onHello = Event.fromNodeEventEmitter<WebContents>(validatedIpcMain, 'vscode:hello', ({ sender }) => sender);
+		const onHello = Event.fromNodeEventEmitter<WebContents>(validatedIpcMain, 'zycode:hello', ({ sender }) => sender);
 
 		return Event.map(onHello, webContents => {
 			const id = webContents.id;
@@ -42,8 +42,8 @@ export class Server extends IPCServer {
 			const onDidClientReconnect = new Emitter<void>();
 			Server.Clients.set(id, toDisposable(() => onDidClientReconnect.fire()));
 
-			const onMessage = createScopedOnMessageEvent(id, 'vscode:message') as Event<VSBuffer>;
-			const onDidClientDisconnect = Event.any(Event.signal(createScopedOnMessageEvent(id, 'vscode:disconnect')), onDidClientReconnect.event);
+			const onMessage = createScopedOnMessageEvent(id, 'zycode:message') as Event<VSBuffer>;
+			const onDidClientDisconnect = Event.any(Event.signal(createScopedOnMessageEvent(id, 'zycode:disconnect')), onDidClientReconnect.event);
 			const protocol = new ElectronProtocol(webContents, onMessage);
 
 			return { protocol, onDidClientDisconnect };

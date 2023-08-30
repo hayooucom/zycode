@@ -257,8 +257,8 @@ export const machineOverridableSettings: { properties: IStringDictionary<IConfig
 export const windowSettings: { properties: IStringDictionary<IConfigurationPropertySchema>; patternProperties: IStringDictionary<IConfigurationPropertySchema> } = { properties: {}, patternProperties: {} };
 export const resourceSettings: { properties: IStringDictionary<IConfigurationPropertySchema>; patternProperties: IStringDictionary<IConfigurationPropertySchema> } = { properties: {}, patternProperties: {} };
 
-export const resourceLanguageSettingsSchemaId = 'vscode://schemas/settings/resourceLanguage';
-export const configurationDefaultsSchemaId = 'vscode://schemas/settings/configurationDefaults';
+export const resourceLanguageSettingsSchemaId = 'zycode://schemas/settings/resourceLanguage';
+export const configurationDefaultsSchemaId = 'zycode://schemas/settings/configurationDefaults';
 
 const contributionRegistry = Registry.as<IJSONContributionRegistry>(JSONExtensions.JSONContribution);
 

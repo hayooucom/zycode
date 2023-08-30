@@ -25,7 +25,7 @@ export class TerminalNativeContribution extends Disposable implements IWorkbench
 	) {
 		super();
 
-		ipcRenderer.on('vscode:openFiles', (_: unknown, request: INativeOpenFileRequest) => { this._onOpenFileRequest(request); });
+		ipcRenderer.on('zycode:openFiles', (_: unknown, request: INativeOpenFileRequest) => { this._onOpenFileRequest(request); });
 		this._register(nativeHostService.onDidResumeOS(() => this._onOsResume()));
 
 		this._terminalService.setNativeDelegate({
@@ -48,7 +48,7 @@ export class TerminalNativeContribution extends Disposable implements IWorkbench
 		// if the request to open files is coming in from the integrated terminal (identified though
 		// the termProgram variable) and we are instructed to wait for editors close, wait for the
 		// marker file to get deleted and then focus back to the integrated terminal.
-		if (request.termProgram === 'vscode' && request.filesToWait) {
+		if (request.termProgram === 'zycode' && request.filesToWait) {
 			const waitMarkerFileUri = URI.revive(request.filesToWait.waitMarkerFileUri);
 			await this._whenFileDeleted(waitMarkerFileUri);
 

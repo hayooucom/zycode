@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 export interface ILogDirectoryProvider {
-	getNewLogDirectory(): vscode.Uri | undefined;
+	getNewLogDirectory(): zycode.Uri | undefined;
 }
 
 export const noopLogDirectoryProvider = new class implements ILogDirectoryProvider {

@@ -1,53 +1,53 @@
 <svg width="476" height="480" viewBox="0 0 476 480" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<rect y="308" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="44" y="88" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="44" y="132" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="44" y="176" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="44" y="308" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="44" y="352" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="88" y="44" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="88" y="88" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="88" y="176" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="88" y="220" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="88" y="264" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="88" y="308" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="132" y="176" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="132" y="264" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="176" y="44" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="176" y="132" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="176" y="176" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="176" y="220" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="176" y="308" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="220" y="88" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="220" y="396" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="264" y="132" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="264" y="176" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="264" y="308" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="264" y="264" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="220" y="264" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="264" y="352" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="264" y="396" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="308" y="88" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="308" y="176" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="308" y="264" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="352" y="44" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="352" y="88" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="352" y="176" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="352" y="220" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="352" y="352" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="352" y="396" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="396" y="44" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="396" y="264" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="396" y="308" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="396" y="352" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
-	<rect x="440" y="180" width="32" height="32" rx="2" fill="var(--vscode-quickInput-background)" />
+	<rect y="308" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="44" y="88" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="44" y="132" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="44" y="176" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="44" y="308" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="44" y="352" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="88" y="44" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="88" y="88" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="88" y="176" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="88" y="220" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="88" y="264" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="88" y="308" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="132" y="176" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="132" y="264" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="176" y="44" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="176" y="132" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="176" y="176" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="176" y="220" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="176" y="308" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="220" y="88" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="220" y="396" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="264" y="132" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="264" y="176" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="264" y="308" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="264" y="264" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="220" y="264" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="264" y="352" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="264" y="396" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="308" y="88" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="308" y="176" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="308" y="264" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="352" y="44" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="352" y="88" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="352" y="176" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="352" y="220" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="352" y="352" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="352" y="396" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="396" y="44" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="396" y="264" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="396" y="308" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="396" y="352" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
+	<rect x="440" y="180" width="32" height="32" rx="2" fill="var(--zycode-quickInput-background)" />
 	<a xlink:href="command:workbench.extensions.search?%22@id:Tyriar.luna-paint%22">
 		<g filter="url(#filter0_d_703:9950)">
 			<rect x="60" y="140" width="48" height="48" rx="4" fill="white" />
 			<rect x="64" y="144" width="40" height="40" fill="url(#pattern0)" />
 		</g>
 	</a>
-	<a xlink:href="command:workbench.extensions.search?%22@id:ms-vscode.hexeditor%22">
+	<a xlink:href="command:workbench.extensions.search?%22@id:ms-zycode.hexeditor%22">
 		<g filter="url(#filter1_d_703:9950)">
 			<rect x="236" y="316" width="48" height="48" rx="4" fill="white" />
 			<rect x="236" y="316" width="48" height="48" fill="url(#pattern1)" />
@@ -59,18 +59,18 @@
 			<rect x="376" y="368" width="40" height="40" fill="url(#pattern2)" />
 		</g>
 	</a>
-	<a xlink:href="command:workbench.extensions.search?%22@id:hediet.vscode-drawio%22">
+	<a xlink:href="command:workbench.extensions.search?%22@id:hediet.zycode-drawio%22">
 		<g filter="url(#filter3_d_703:9950)">
 			<rect x="148" y="60" width="48" height="48" fill="url(#pattern3)" />
 		</g>
 	</a>
-		<a xlink:href="command:workbench.extensions.search?%22@id:GitHub.vscode-pull-request-github%22">
+		<a xlink:href="command:workbench.extensions.search?%22@id:GitHub.zycode-pull-request-github%22">
 			<g filter="url(#filter4_d_703:9950)">
 				<rect x="276" y="228" width="48" height="48" rx="4" fill="white" />
 				<rect x="278" y="230" width="44" height="44" fill="url(#pattern4)" />
 			</g>
 		</a>
-		<a xlink:href="command:workbench.extensions.search?%22@id:ms-vscode.vscode-github-issue-notebooks%22">
+		<a xlink:href="command:workbench.extensions.search?%22@id:ms-zycode.zycode-github-issue-notebooks%22">
 			<g filter="url(#filter5_d_703:9950)">
 				<rect x="60" y="320" width="48" height="48" rx="4" fill="white" />
 				<rect x="64" y="324" width="40" height="40" fill="url(#pattern5)" />

@@ -31,9 +31,9 @@ function src(base: string, maps = `${base}/**/*.map`) {
 function main(): Promise<void> {
 	const sources: any[] = [];
 
-	// vscode client maps (default)
+	// zycode client maps (default)
 	if (!base) {
-		const vs = src('out-vscode-min'); // client source-maps only
+		const vs = src('out-zycode-min'); // client source-maps only
 		sources.push(vs);
 
 		const productionDependencies: { name: string; path: string; version: string }[] = deps.getProductionDependencies(root);

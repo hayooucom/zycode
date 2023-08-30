@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-// keytar depends on a native module shipped in vscode, so this is
+// keytar depends on a native module shipped in zycode, so this is
 // how we load it
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Log } from './logger';
 
 export class Keychain {
 	constructor(
-		private readonly context: vscode.ExtensionContext,
+		private readonly context: zycode.ExtensionContext,
 		private readonly serviceId: string,
 		private readonly Logger: Log
 	) { }

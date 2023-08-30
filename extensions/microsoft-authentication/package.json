@@ -1,12 +1,12 @@
 {
   "name": "microsoft-authentication",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "license": "MIT",
   "displayName": "%displayName%",
   "description": "%description%",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.42.0"
+    "zycode": "^1.42.0"
   },
   "icon": "media/icon.png",
   "categories": [
@@ -102,7 +102,7 @@
   "main": "./out/extension.js",
   "browser": "./dist/browser/extension.js",
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "zycode:prepublish": "npm run compile",
     "compile": "gulp compile-extension:microsoft-authentication",
     "compile-web": "npx webpack-cli --config extension-browser.webpack.config --mode none",
     "watch": "gulp watch-extension:microsoft-authentication",
@@ -118,10 +118,10 @@
   "dependencies": {
     "node-fetch": "2.6.7",
     "@azure/ms-rest-azure-env": "^2.0.0",
-    "@vscode/extension-telemetry": "^0.8.4"
+    "@zycode/extension-telemetry": "^0.8.4"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

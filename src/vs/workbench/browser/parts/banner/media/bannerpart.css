@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 .monaco-workbench .part.banner {
-	background-color: var(--vscode-banner-background);
-	color: var(--vscode-banner-foreground);
+	background-color: var(--zycode-banner-background);
+	color: var(--zycode-banner-foreground);
 	box-sizing: border-box;
 	cursor: default;
 	width: 100%;
@@ -23,7 +23,7 @@
 }
 
 .monaco-workbench .part.banner .icon-container .codicon {
-	color: var(--vscode-banner-iconForeground);
+	color: var(--zycode-banner-iconForeground);
 }
 
 .monaco-workbench .part.banner .icon-container.custom-icon {
@@ -44,7 +44,7 @@
 }
 
 .monaco-workbench .part.banner .message-container a {
-	color: var(--vscode-banner-foreground);
+	color: var(--zycode-banner-foreground);
 }
 
 .monaco-workbench .part.banner .message-container p {
@@ -59,7 +59,7 @@
 }
 
 .monaco-workbench .part.banner .message-actions-container a {
-	color: var(--vscode-banner-foreground);
+	color: var(--zycode-banner-foreground);
 	padding: 3px;
 	margin-left: 12px;
 	text-decoration: underline;
@@ -76,5 +76,5 @@
 }
 
 .monaco-workbench .part.banner .action-container .codicon {
-	color: var(--vscode-banner-foreground);
+	color: var(--zycode-banner-foreground);
 }

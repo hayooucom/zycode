@@ -5,5 +5,5 @@
 
 .monaco-editor .mwh {
 	position: absolute;
-	color: var(--vscode-editorWhitespace-foreground) !important;
+	color: var(--zycode-editorWhitespace-foreground) !important;
 }

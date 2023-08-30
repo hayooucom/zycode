@@ -388,8 +388,8 @@ export class Menubar {
 				const lastActiveWindow = this.windowsMainService.getLastActiveWindow();
 				if (
 					this.windowsMainService.getWindowCount() === 0 || 	// allow to quit when no more windows are open
-					!!BrowserWindow.getFocusedWindow() ||				// allow to quit when window has focus (fix for https://github.com/microsoft/vscode/issues/39191)
-					lastActiveWindow?.isMinimized()						// allow to quit when window has no focus but is minimized (https://github.com/microsoft/vscode/issues/63000)
+					!!BrowserWindow.getFocusedWindow() ||				// allow to quit when window has focus (fix for https://github.com/microsoft/zycode/issues/39191)
+					lastActiveWindow?.isMinimized()						// allow to quit when window has no focus but is minimized (https://github.com/microsoft/zycode/issues/63000)
 				) {
 					const confirmed = await this.confirmBeforeQuit(event);
 					if (confirmed) {
@@ -734,10 +734,10 @@ export class Menubar {
 
 	private runActionInRenderer(invocation: IMenuItemInvocation): void {
 		// We make sure to not run actions when the window has no focus, this helps
-		// for https://github.com/microsoft/vscode/issues/25907 and specifically for
-		// https://github.com/microsoft/vscode/issues/11928
+		// for https://github.com/microsoft/zycode/issues/25907 and specifically for
+		// https://github.com/microsoft/zycode/issues/11928
 		// Still allow to run when the last active window is minimized though for
-		// https://github.com/microsoft/vscode/issues/63000
+		// https://github.com/microsoft/zycode/issues/63000
 		let activeBrowserWindow = BrowserWindow.getFocusedWindow();
 		if (!activeBrowserWindow) {
 			const lastActiveWindow = this.windowsMainService.getLastActiveWindow();
@@ -752,7 +752,7 @@ export class Menubar {
 
 			if (isMacintosh && !this.environmentMainService.isBuilt && !activeWindow.isReady) {
 				if ((invocation.type === 'commandId' && invocation.commandId === 'workbench.action.toggleDevTools') || (invocation.type !== 'commandId' && invocation.userSettingsLabel === 'alt+cmd+i')) {
-					// prevent this action from running twice on macOS (https://github.com/microsoft/vscode/issues/62719)
+					// prevent this action from running twice on macOS (https://github.com/microsoft/zycode/issues/62719)
 					// we already register a keybinding in bootstrap-window.js for opening developer tools in case something
 					// goes wrong and that keybinding is only removed when the application has loaded (= window ready).
 					return;
@@ -761,10 +761,10 @@ export class Menubar {
 
 			if (invocation.type === 'commandId') {
 				const runActionPayload: INativeRunActionInWindowRequest = { id: invocation.commandId, from: 'menu' };
-				activeWindow.sendWhenReady('vscode:runAction', CancellationToken.None, runActionPayload);
+				activeWindow.sendWhenReady('zycode:runAction', CancellationToken.None, runActionPayload);
 			} else {
 				const runKeybindingPayload: INativeRunKeybindingInWindowRequest = { userSettingsLabel: invocation.userSettingsLabel };
-				activeWindow.sendWhenReady('vscode:runKeybinding', CancellationToken.None, runKeybindingPayload);
+				activeWindow.sendWhenReady('zycode:runKeybinding', CancellationToken.None, runKeybindingPayload);
 			}
 		} else {
 			this.logService.trace('menubar#runActionInRenderer: no active window found', invocation);

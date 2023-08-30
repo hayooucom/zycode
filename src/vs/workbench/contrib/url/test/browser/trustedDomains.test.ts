@@ -22,18 +22,18 @@ suite('GitHub remote extraction', () => {
 			extractGitHubRemotesFromGitConfig(
 				`
 [remote "1"]
-			url = git@github.com:sshgit/vscode.git
+			url = git@github.com:sshgit/zycode.git
 [remote "2"]
-			url = git@github.com:ssh/vscode
+			url = git@github.com:ssh/zycode
 [remote "3"]
-			url = https://github.com/httpsgit/vscode.git
+			url = https://github.com/httpsgit/zycode.git
 [remote "4"]
-			url = https://github.com/https/vscode`),
+			url = https://github.com/https/zycode`),
 			[
-				'https://github.com/sshgit/vscode/',
-				'https://github.com/ssh/vscode/',
-				'https://github.com/httpsgit/vscode/',
-				'https://github.com/https/vscode/'
+				'https://github.com/sshgit/zycode/',
+				'https://github.com/ssh/zycode/',
+				'https://github.com/httpsgit/zycode/',
+				'https://github.com/https/zycode/'
 			]);
 	});
 });
@@ -125,12 +125,12 @@ suite('Link protection domain matching', () => {
 	});
 
 	test('case normalization', () => {
-		// https://github.com/microsoft/vscode/issues/99294
-		linkAllowedByRules('https://github.com/microsoft/vscode/issues/new', ['https://github.com/microsoft']);
-		linkAllowedByRules('https://github.com/microsoft/vscode/issues/new', ['https://github.com/microsoft']);
+		// https://github.com/microsoft/zycode/issues/99294
+		linkAllowedByRules('https://github.com/microsoft/zycode/issues/new', ['https://github.com/microsoft']);
+		linkAllowedByRules('https://github.com/microsoft/zycode/issues/new', ['https://github.com/microsoft']);
 	});
 
-	test('ignore query & fragment - https://github.com/microsoft/vscode/issues/156839', () => {
+	test('ignore query & fragment - https://github.com/microsoft/zycode/issues/156839', () => {
 		linkAllowedByRules('https://github.com/login/oauth/authorize?foo=4', ['https://github.com/login/oauth/authorize']);
 		linkAllowedByRules('https://github.com/login/oauth/authorize#foo', ['https://github.com/login/oauth/authorize']);
 	});

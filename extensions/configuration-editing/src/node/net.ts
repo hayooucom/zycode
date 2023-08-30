@@ -6,7 +6,7 @@
 import { Agent, globalAgent } from 'https';
 import { URL } from 'url';
 import { httpsOverHttp } from 'tunnel';
-import { window } from 'vscode';
+import { window } from 'zycode';
 
 export const agent = getAgent();
 

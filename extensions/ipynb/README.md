@@ -1,6 +1,6 @@
-# Jupyter for Visual Studio Code
+# Jupyter for ZY Studio Code
 
-**Notice:** This extension is bundled with Visual Studio Code. It can be disabled but not uninstalled.
+**Notice:** This extension is bundled with ZY Studio Code. It can be disabled but not uninstalled.
 
 ## Features
 

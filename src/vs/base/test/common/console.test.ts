@@ -10,7 +10,7 @@ import { normalize } from 'vs/base/common/path';
 suite('Console', () => {
 
 	test('getFirstFrame', () => {
-		let stack = 'at vscode.commands.registerCommand (/Users/someone/Desktop/test-ts/out/src/extension.js:18:17)';
+		let stack = 'at zycode.commands.registerCommand (/Users/someone/Desktop/test-ts/out/src/extension.js:18:17)';
 		let frame = getFirstFrame(stack)!;
 
 		assert.strictEqual(frame.uri.fsPath, normalize('/Users/someone/Desktop/test-ts/out/src/extension.js'));

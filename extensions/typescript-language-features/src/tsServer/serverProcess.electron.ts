@@ -7,7 +7,7 @@ import * as child_process from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { Readable } from 'stream';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { TypeScriptServiceConfiguration } from '../configuration/configuration';
 import { Disposable } from '../utils/dispose';
 import { API } from './api';
@@ -100,10 +100,10 @@ class Reader<T> extends Disposable {
 		readable.on('data', data => this.onLengthData(data));
 	}
 
-	private readonly _onError = this._register(new vscode.EventEmitter<Error>());
+	private readonly _onError = this._register(new zycode.EventEmitter<Error>());
 	public readonly onError = this._onError.event;
 
-	private readonly _onData = this._register(new vscode.EventEmitter<T>());
+	private readonly _onData = this._register(new zycode.EventEmitter<T>());
 	public readonly onData = this._onData.event;
 
 	private onLengthData(data: Buffer | string): void {
@@ -178,11 +178,11 @@ function getDebugPort(kind: TsServerProcessKind): number | undefined {
 }
 
 function getTssDebug(): string | undefined {
-	return process.env[vscode.env.remoteName ? 'TSS_REMOTE_DEBUG' : 'TSS_DEBUG'];
+	return process.env[zycode.env.remoteName ? 'TSS_REMOTE_DEBUG' : 'TSS_DEBUG'];
 }
 
 function getTssDebugBrk(): string | undefined {
-	return process.env[vscode.env.remoteName ? 'TSS_REMOTE_DEBUG_BRK' : 'TSS_DEBUG_BRK'];
+	return process.env[zycode.env.remoteName ? 'TSS_REMOTE_DEBUG_BRK' : 'TSS_DEBUG_BRK'];
 }
 
 class IpcChildServerProcess extends Disposable implements TsServerProcess {
@@ -258,7 +258,7 @@ export class ElectronServiceProcessFactory implements TsServerProcessFactory {
 		let tsServerPath = version.tsServerPath;
 
 		if (!fs.existsSync(tsServerPath)) {
-			vscode.window.showWarningMessage(vscode.l10n.t("The path {0} doesn\'t point to a valid tsserver install. Falling back to bundled TypeScript version.", tsServerPath));
+			zycode.window.showWarningMessage(zycode.l10n.t("The path {0} doesn\'t point to a valid tsserver install. Falling back to bundled TypeScript version.", tsServerPath));
 			versionManager.reset();
 			tsServerPath = versionManager.currentVersion.tsServerPath;
 		}

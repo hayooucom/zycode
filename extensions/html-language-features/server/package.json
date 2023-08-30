@@ -1,5 +1,5 @@
 {
-  "name": "vscode-html-languageserver",
+  "name": "zycode-html-languageserver",
   "description": "HTML language server",
   "version": "1.0.0",
   "author": "Microsoft Corporation",
@@ -9,12 +9,12 @@
   },
   "main": "./out/node/htmlServerMain",
   "dependencies": {
-    "@vscode/l10n": "^0.0.16",
-    "vscode-css-languageservice": "^6.2.7",
-    "vscode-html-languageservice": "^5.0.7",
-    "vscode-languageserver": "^8.2.0-next.3",
-    "vscode-languageserver-textdocument": "^1.0.8",
-    "vscode-uri": "^3.0.7"
+    "@zycode/l10n": "^0.0.16",
+    "zycode-css-languageservice": "^6.2.7",
+    "zycode-html-languageservice": "^5.0.7",
+    "zycode-languageserver": "^8.2.0-next.3",
+    "zycode-languageserver-textdocument": "^1.0.8",
+    "zycode-uri": "^3.0.7"
   },
   "devDependencies": {
     "@types/mocha": "^9.1.1",
@@ -23,10 +23,10 @@
   "scripts": {
     "compile": "npx gulp compile-extension:html-language-features-server",
     "watch": "npx gulp watch-extension:html-language-features-server",
-    "install-service-next": "yarn add vscode-css-languageservice@next && yarn add vscode-html-languageservice@next",
-    "install-service-local": "yarn link vscode-css-languageservice && yarn link vscode-html-languageservice",
-    "install-server-next": "yarn add vscode-languageserver@next",
-    "install-server-local": "yarn link vscode-languageserver",
+    "install-service-next": "yarn add zycode-css-languageservice@next && yarn add zycode-html-languageservice@next",
+    "install-service-local": "yarn link zycode-css-languageservice && yarn link zycode-html-languageservice",
+    "install-server-next": "yarn add zycode-languageserver@next",
+    "install-server-local": "yarn link zycode-languageserver",
     "test": "yarn compile && node ./test/index.js"
   }
 }

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Command, CommandManager } from '../commands/commandManager';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { TelemetryReporter } from '../logging/telemetry';
@@ -21,30 +21,30 @@ interface OrganizeImportsCommandMetadata {
 	readonly ids: readonly string[];
 	readonly title: string;
 	readonly minVersion?: API;
-	readonly kind: vscode.CodeActionKind;
+	readonly kind: zycode.CodeActionKind;
 	readonly mode: OrganizeImportsMode;
 }
 
 const organizeImportsCommand: OrganizeImportsCommandMetadata = {
 	ids: ['typescript.organizeImports'],
-	title: vscode.l10n.t("Organize Imports"),
-	kind: vscode.CodeActionKind.SourceOrganizeImports,
+	title: zycode.l10n.t("Organize Imports"),
+	kind: zycode.CodeActionKind.SourceOrganizeImports,
 	mode: OrganizeImportsMode.All,
 };
 
 const sortImportsCommand: OrganizeImportsCommandMetadata = {
 	ids: ['typescript.sortImports', 'javascript.sortImports'],
 	minVersion: API.v430,
-	title: vscode.l10n.t("Sort Imports"),
-	kind: vscode.CodeActionKind.Source.append('sortImports'),
+	title: zycode.l10n.t("Sort Imports"),
+	kind: zycode.CodeActionKind.Source.append('sortImports'),
 	mode: OrganizeImportsMode.SortAndCombine,
 };
 
 const removeUnusedImportsCommand: OrganizeImportsCommandMetadata = {
 	ids: ['typescript.removeUnusedImports', 'javascript.removeUnusedImports'],
 	minVersion: API.v490,
-	title: vscode.l10n.t("Remove Unused Imports"),
-	kind: vscode.CodeActionKind.Source.append('removeUnusedImports'),
+	title: zycode.l10n.t("Remove Unused Imports"),
+	kind: zycode.CodeActionKind.Source.append('removeUnusedImports'),
 	mode: OrganizeImportsMode.RemoveUnused,
 };
 
@@ -68,17 +68,17 @@ class OrganizeImportsCommand implements Command {
 		*/
 		this.telemetryReporter.logTelemetry('organizeImports.execute', {});
 		if (!file) {
-			const activeEditor = vscode.window.activeTextEditor;
+			const activeEditor = zycode.window.activeTextEditor;
 			if (!activeEditor) {
-				vscode.window.showErrorMessage(vscode.l10n.t("Organize Imports failed. No resource provided."));
+				zycode.window.showErrorMessage(zycode.l10n.t("Organize Imports failed. No resource provided."));
 				return;
 			}
 
 			const resource = activeEditor.document.uri;
-			const document = await vscode.workspace.openTextDocument(resource);
+			const document = await zycode.workspace.openTextDocument(resource);
 			const openedFiledPath = this.client.toOpenTsFilePath(document);
 			if (!openedFiledPath) {
-				vscode.window.showErrorMessage(vscode.l10n.t("Organize Imports failed. Unknown file type."));
+				zycode.window.showErrorMessage(zycode.l10n.t("Organize Imports failed. Unknown file type."));
 				return;
 			}
 
@@ -103,12 +103,12 @@ class OrganizeImportsCommand implements Command {
 
 		if (response.body.length) {
 			const edits = typeConverters.WorkspaceEdit.fromFileCodeEdits(this.client, response.body);
-			return vscode.workspace.applyEdit(edits);
+			return zycode.workspace.applyEdit(edits);
 		}
 	}
 }
 
-class ImportsCodeActionProvider implements vscode.CodeActionProvider {
+class ImportsCodeActionProvider implements zycode.CodeActionProvider {
 
 	constructor(
 		private readonly client: ITypeScriptServiceClient,
@@ -123,11 +123,11 @@ class ImportsCodeActionProvider implements vscode.CodeActionProvider {
 	}
 
 	public provideCodeActions(
-		document: vscode.TextDocument,
-		_range: vscode.Range,
-		context: vscode.CodeActionContext,
-		token: vscode.CancellationToken
-	): vscode.CodeAction[] {
+		document: zycode.TextDocument,
+		_range: zycode.Range,
+		context: zycode.CodeActionContext,
+		token: zycode.CancellationToken
+	): zycode.CodeAction[] {
 		const file = this.client.toOpenTsFilePath(document);
 		if (!file) {
 			return [];
@@ -139,7 +139,7 @@ class ImportsCodeActionProvider implements vscode.CodeActionProvider {
 
 		this.fileConfigManager.ensureConfigurationForDocument(document, token);
 
-		const action = new vscode.CodeAction(this.commandMetadata.title, this.commandMetadata.kind);
+		const action = new zycode.CodeAction(this.commandMetadata.title, this.commandMetadata.kind);
 		action.command = { title: '', command: this.commandMetadata.ids[0], arguments: [file] };
 		return [action];
 	}
@@ -151,8 +151,8 @@ export function register(
 	commandManager: CommandManager,
 	fileConfigurationManager: FileConfigurationManager,
 	telemetryReporter: TelemetryReporter,
-): vscode.Disposable {
-	const disposables: vscode.Disposable[] = [];
+): zycode.Disposable {
+	const disposables: zycode.Disposable[] = [];
 
 	for (const command of [organizeImportsCommand, sortImportsCommand, removeUnusedImportsCommand]) {
 		disposables.push(conditionalRegistration([
@@ -160,11 +160,11 @@ export function register(
 			requireSomeCapability(client, ClientCapability.Semantic),
 		], () => {
 			const provider = new ImportsCodeActionProvider(client, command, commandManager, fileConfigurationManager, telemetryReporter);
-			return vscode.languages.registerCodeActionsProvider(selector.semantic, provider, {
+			return zycode.languages.registerCodeActionsProvider(selector.semantic, provider, {
 				providedCodeActionKinds: [command.kind]
 			});
 		}));
 	}
 
-	return vscode.Disposable.from(...disposables);
+	return zycode.Disposable.from(...disposables);
 }

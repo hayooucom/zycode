@@ -456,7 +456,7 @@ export class NativeHostMainService extends Disposable implements INativeHostMain
 	}
 
 	async writeElevated(windowId: number | undefined, source: URI, target: URI, options?: { unlock?: boolean }): Promise<void> {
-		const sudoPrompt = await import('@vscode/sudo-prompt');
+		const sudoPrompt = await import('@zycode/sudo-prompt');
 
 		return new Promise<void>((resolve, reject) => {
 			const sudoCommand: string[] = [`"${this.cliPath}"`];
@@ -662,7 +662,7 @@ export class NativeHostMainService extends Disposable implements INativeHostMain
 			// the reload and rather go back to an empty window. Transient
 			// workspaces should never restore, even when the user wants
 			// to reload.
-			// For: https://github.com/microsoft/vscode/issues/119695
+			// For: https://github.com/microsoft/zycode/issues/119695
 			if (isWorkspaceIdentifier(window.openedWorkspace)) {
 				const configPath = window.openedWorkspace.configPath;
 				if (configPath.scheme === Schemas.file) {
@@ -774,7 +774,7 @@ export class NativeHostMainService extends Disposable implements INativeHostMain
 			return undefined;
 		}
 
-		const Registry = await import('@vscode/windows-registry');
+		const Registry = await import('@zycode/windows-registry');
 		try {
 			return Registry.GetStringRegKey(hive, path, name);
 		} catch {

@@ -363,12 +363,12 @@ suite('TerminalLinkParsing', () => {
 
 		test('should detect both suffix and non-suffix links on a single line', () => {
 			deepStrictEqual(
-				detectLinks('PS C:\\Github\\microsoft\\vscode> echo \'"foo", line 5, col 6\'', OperatingSystem.Windows),
+				detectLinks('PS C:\\Github\\microsoft\\zycode> echo \'"foo", line 5, col 6\'', OperatingSystem.Windows),
 				[
 					{
 						path: {
 							index: 3,
-							text: 'C:\\Github\\microsoft\\vscode'
+							text: 'C:\\Github\\microsoft\\zycode'
 						},
 						prefix: undefined,
 						suffix: undefined
@@ -400,12 +400,12 @@ suite('TerminalLinkParsing', () => {
 		suite('"|"', () => {
 			test('should exclude pipe characters from link paths', () => {
 				deepStrictEqual(
-					detectLinks('|C:\\Github\\microsoft\\vscode|', OperatingSystem.Windows),
+					detectLinks('|C:\\Github\\microsoft\\zycode|', OperatingSystem.Windows),
 					[
 						{
 							path: {
 								index: 1,
-								text: 'C:\\Github\\microsoft\\vscode'
+								text: 'C:\\Github\\microsoft\\zycode'
 							},
 							prefix: undefined,
 							suffix: undefined
@@ -415,12 +415,12 @@ suite('TerminalLinkParsing', () => {
 			});
 			test('should exclude pipe characters from link paths with suffixes', () => {
 				deepStrictEqual(
-					detectLinks('|C:\\Github\\microsoft\\vscode:400|', OperatingSystem.Windows),
+					detectLinks('|C:\\Github\\microsoft\\zycode:400|', OperatingSystem.Windows),
 					[
 						{
 							path: {
 								index: 1,
-								text: 'C:\\Github\\microsoft\\vscode'
+								text: 'C:\\Github\\microsoft\\zycode'
 							},
 							prefix: undefined,
 							suffix: {

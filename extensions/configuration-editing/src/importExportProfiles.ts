@@ -4,20 +4,20 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Octokit } from '@octokit/rest';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { basename } from 'path';
 import { agent } from './node/net';
 
-class GitHubGistProfileContentHandler implements vscode.ProfileContentHandler {
+class GitHubGistProfileContentHandler implements zycode.ProfileContentHandler {
 
-	readonly name = vscode.l10n.t('GitHub');
-	readonly description = vscode.l10n.t('gist');
+	readonly name = zycode.l10n.t('GitHub');
+	readonly description = zycode.l10n.t('gist');
 
 	private _octokit: Promise<Octokit> | undefined;
 	private getOctokit(): Promise<Octokit> {
 		if (!this._octokit) {
 			this._octokit = (async () => {
-				const session = await vscode.authentication.getSession('github', ['gist', 'user:email'], { createIfNone: true });
+				const session = await zycode.authentication.getSession('github', ['gist', 'user:email'], { createIfNone: true });
 				const token = session.accessToken;
 
 				const { Octokit } = await import('@octokit/rest');
@@ -32,7 +32,7 @@ class GitHubGistProfileContentHandler implements vscode.ProfileContentHandler {
 		return this._octokit;
 	}
 
-	async saveProfile(name: string, content: string): Promise<{ readonly id: string; readonly link: vscode.Uri } | null> {
+	async saveProfile(name: string, content: string): Promise<{ readonly id: string; readonly link: zycode.Uri } | null> {
 		const octokit = await this.getOctokit();
 		const result = await octokit.gists.create({
 			public: false,
@@ -43,7 +43,7 @@ class GitHubGistProfileContentHandler implements vscode.ProfileContentHandler {
 			}
 		});
 		if (result.data.id && result.data.html_url) {
-			const link = vscode.Uri.parse(result.data.html_url);
+			const link = zycode.Uri.parse(result.data.html_url);
 			return { id: result.data.id, link };
 		}
 		return null;
@@ -61,8 +61,8 @@ class GitHubGistProfileContentHandler implements vscode.ProfileContentHandler {
 	}
 
 	async readProfile(id: string): Promise<string | null>;
-	async readProfile(uri: vscode.Uri): Promise<string | null>;
-	async readProfile(arg: string | vscode.Uri): Promise<string | null> {
+	async readProfile(uri: zycode.Uri): Promise<string | null>;
+	async readProfile(arg: string | zycode.Uri): Promise<string | null> {
 		const gist_id = typeof arg === 'string' ? arg : basename(arg.path);
 		const octokit = await this.getPublicOctokit();
 		try {
@@ -78,4 +78,4 @@ class GitHubGistProfileContentHandler implements vscode.ProfileContentHandler {
 
 }
 
-vscode.window.registerProfileContentHandler('github', new GitHubGistProfileContentHandler());
+zycode.window.registerProfileContentHandler('github', new GitHubGistProfileContentHandler());

@@ -48,8 +48,8 @@ suite('Buffer Content Tracker', () => {
 	let capabilities: TerminalCapabilityStore;
 	let configHelper: TerminalConfigHelper;
 	let bufferTracker: BufferContentTracker;
-	const prompt = 'vscode-git:(prompt/more-tests)';
-	const promptPlusData = 'vscode-git:(prompt/more-tests) ' + 'some data';
+	const prompt = 'zycode-git:(prompt/more-tests)';
+	const promptPlusData = 'zycode-git:(prompt/more-tests) ' + 'some data';
 	setup(async () => {
 		configurationService = new TestConfigurationService({ terminal: { integrated: defaultTerminalConfig } });
 		instantiationService = new TestInstantiationService();

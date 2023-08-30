@@ -41,7 +41,7 @@ if [ $IN_WSL = true ]; then
 	CLI=$(wslpath -m "$VSCODE_PATH/resources/app/out/cli.js")
 
 	# use the Remote WSL extension if installed
-	WSL_EXT_ID="ms-vscode-remote.remote-wsl"
+	WSL_EXT_ID="ms-zycode-remote.remote-wsl"
 
 	ELECTRON_RUN_AS_NODE=1 "$ELECTRON" "$CLI" --ms-enable-electron-run-as-node --locate-extension $WSL_EXT_ID >/tmp/remote-wsl-loc.txt 2>/dev/null </dev/null
 	WSL_EXT_WLOC=$(cat /tmp/remote-wsl-loc.txt)

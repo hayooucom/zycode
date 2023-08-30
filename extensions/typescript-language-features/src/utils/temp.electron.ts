@@ -21,7 +21,7 @@ const getRootTempDir = (() => {
 	let dir: string | undefined;
 	return () => {
 		if (!dir) {
-			const filename = `vscode-typescript${process.platform !== 'win32' && process.getuid ? process.getuid() : ''}`;
+			const filename = `zycode-typescript${process.platform !== 'win32' && process.getuid ? process.getuid() : ''}`;
 			dir = path.join(os.tmpdir(), filename);
 		}
 		if (!fs.existsSync(dir)) {

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { IExperimentationTelemetryReporter } from './experimentTelemetryReporter';
 import { DiagnosticKind, DiagnosticsManager } from './languageFeatures/diagnostics';
 import * as Proto from './tsServer/protocol/protocol';
@@ -34,12 +34,12 @@ import { Schemes } from './configuration/schemes';
 
 export interface TsDiagnostics {
 	readonly kind: DiagnosticKind;
-	readonly resource: vscode.Uri;
+	readonly resource: zycode.Uri;
 	readonly diagnostics: Proto.Diagnostic[];
 }
 
 interface ToCancelOnResourceChanged {
-	readonly resource: vscode.Uri;
+	readonly resource: zycode.Uri;
 	cancel(): void;
 }
 
@@ -127,7 +127,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 	private readonly processFactory: TsServerProcessFactory;
 
 	constructor(
-		private readonly context: vscode.ExtensionContext,
+		private readonly context: zycode.ExtensionContext,
 		onCaseInsenitiveFileSystem: boolean,
 		services: {
 			pluginManager: PluginManager;
@@ -185,7 +185,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 			this.cancelInflightRequestsForResource(resource);
 		});
 
-		vscode.workspace.onDidChangeConfiguration(() => {
+		zycode.workspace.onDidChangeConfiguration(() => {
 			const oldConfiguration = this._configuration;
 			this._configuration = services.serviceConfigurationProvider.loadFromWorkspace();
 
@@ -256,14 +256,14 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 			ClientCapability.Semantic);
 	}
 
-	private readonly _onDidChangeCapabilities = this._register(new vscode.EventEmitter<void>());
+	private readonly _onDidChangeCapabilities = this._register(new zycode.EventEmitter<void>());
 	readonly onDidChangeCapabilities = this._onDidChangeCapabilities.event;
 
 	private isProjectWideIntellisenseOnWebEnabled(): boolean {
 		return isWebAndHasSharedArrayBuffers() && this._configuration.webProjectWideIntellisenseEnabled;
 	}
 
-	private cancelInflightRequestsForResource(resource: vscode.Uri): void {
+	private cancelInflightRequestsForResource(resource: zycode.Uri): void {
 		if (this.serverState.type !== ServerState.Type.Running) {
 			return;
 		}
@@ -308,31 +308,31 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 		this.serverState = this.startService(true);
 	}
 
-	private readonly _onTsServerStarted = this._register(new vscode.EventEmitter<{ version: TypeScriptVersion; usedApiVersion: API }>());
+	private readonly _onTsServerStarted = this._register(new zycode.EventEmitter<{ version: TypeScriptVersion; usedApiVersion: API }>());
 	public readonly onTsServerStarted = this._onTsServerStarted.event;
 
-	private readonly _onDiagnosticsReceived = this._register(new vscode.EventEmitter<TsDiagnostics>());
+	private readonly _onDiagnosticsReceived = this._register(new zycode.EventEmitter<TsDiagnostics>());
 	public readonly onDiagnosticsReceived = this._onDiagnosticsReceived.event;
 
-	private readonly _onConfigDiagnosticsReceived = this._register(new vscode.EventEmitter<Proto.ConfigFileDiagnosticEvent>());
+	private readonly _onConfigDiagnosticsReceived = this._register(new zycode.EventEmitter<Proto.ConfigFileDiagnosticEvent>());
 	public readonly onConfigDiagnosticsReceived = this._onConfigDiagnosticsReceived.event;
 
-	private readonly _onResendModelsRequested = this._register(new vscode.EventEmitter<void>());
+	private readonly _onResendModelsRequested = this._register(new zycode.EventEmitter<void>());
 	public readonly onResendModelsRequested = this._onResendModelsRequested.event;
 
-	private readonly _onProjectLanguageServiceStateChanged = this._register(new vscode.EventEmitter<Proto.ProjectLanguageServiceStateEventBody>());
+	private readonly _onProjectLanguageServiceStateChanged = this._register(new zycode.EventEmitter<Proto.ProjectLanguageServiceStateEventBody>());
 	public readonly onProjectLanguageServiceStateChanged = this._onProjectLanguageServiceStateChanged.event;
 
-	private readonly _onDidBeginInstallTypings = this._register(new vscode.EventEmitter<Proto.BeginInstallTypesEventBody>());
+	private readonly _onDidBeginInstallTypings = this._register(new zycode.EventEmitter<Proto.BeginInstallTypesEventBody>());
 	public readonly onDidBeginInstallTypings = this._onDidBeginInstallTypings.event;
 
-	private readonly _onDidEndInstallTypings = this._register(new vscode.EventEmitter<Proto.EndInstallTypesEventBody>());
+	private readonly _onDidEndInstallTypings = this._register(new zycode.EventEmitter<Proto.EndInstallTypesEventBody>());
 	public readonly onDidEndInstallTypings = this._onDidEndInstallTypings.event;
 
-	private readonly _onTypesInstallerInitializationFailed = this._register(new vscode.EventEmitter<Proto.TypesInstallerInitializationFailedEventBody>());
+	private readonly _onTypesInstallerInitializationFailed = this._register(new zycode.EventEmitter<Proto.TypesInstallerInitializationFailedEventBody>());
 	public readonly onTypesInstallerInitializationFailed = this._onTypesInstallerInitializationFailed.event;
 
-	private readonly _onSurveyReady = this._register(new vscode.EventEmitter<Proto.SurveyReadyEventBody>());
+	private readonly _onSurveyReady = this._register(new zycode.EventEmitter<Proto.SurveyReadyEventBody>());
 	public readonly onSurveyReady = this._onSurveyReady.event;
 
 	public get apiVersion(): API {
@@ -380,7 +380,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 
 		let version = this._versionManager.currentVersion;
 		if (!version.isValid) {
-			vscode.window.showWarningMessage(vscode.l10n.t("The path {0} doesn't point to a valid tsserver install. Falling back to bundled TypeScript version.", version.path));
+			zycode.window.showWarningMessage(zycode.l10n.t("The path {0} doesn't point to a valid tsserver install. Falling back to bundled TypeScript version.", version.path));
 
 			this._versionManager.reset();
 			version = this._versionManager.currentVersion;
@@ -418,7 +418,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 			}
 
 			if (err) {
-				vscode.window.showErrorMessage(vscode.l10n.t("TypeScript language server exited with error. Error message is: {0}", err.message || err.name));
+				zycode.window.showErrorMessage(zycode.l10n.t("TypeScript language server exited with error. Error message is: {0}", err.message || err.name));
 			}
 
 			this.serverState = new ServerState.Errored(err, handle.tsServerLog);
@@ -486,14 +486,14 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 
 	public async openTsServerLogFile(): Promise<boolean> {
 		if (this._configuration.tsServerLogLevel === TsServerLogLevel.Off) {
-			vscode.window.showErrorMessage<vscode.MessageItem>(
-				vscode.l10n.t("TS Server logging is off. Please set 'typescript.tsserver.log' and restart the TS server to enable logging"),
+			zycode.window.showErrorMessage<zycode.MessageItem>(
+				zycode.l10n.t("TS Server logging is off. Please set 'typescript.tsserver.log' and restart the TS server to enable logging"),
 				{
-					title: vscode.l10n.t("Enable logging and restart TS server"),
+					title: zycode.l10n.t("Enable logging and restart TS server"),
 				})
 				.then(selection => {
 					if (selection) {
-						return vscode.workspace.getConfiguration().update('typescript.tsserver.log', 'verbose', true).then(() => {
+						return zycode.workspace.getConfiguration().update('typescript.tsserver.log', 'verbose', true).then(() => {
 							this.restartTsServer();
 						});
 					}
@@ -503,7 +503,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 		}
 
 		if (this.serverState.type !== ServerState.Type.Running || !this.serverState.server.tsServerLog) {
-			vscode.window.showWarningMessage(vscode.l10n.t("TS Server has not started logging."));
+			zycode.window.showWarningMessage(zycode.l10n.t("TS Server has not started logging."));
 			return false;
 		}
 
@@ -514,18 +514,18 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 			}
 			case 'file': {
 				try {
-					const doc = await vscode.workspace.openTextDocument(this.serverState.server.tsServerLog.uri);
-					await vscode.window.showTextDocument(doc);
+					const doc = await zycode.workspace.openTextDocument(this.serverState.server.tsServerLog.uri);
+					await zycode.window.showTextDocument(doc);
 					return true;
 				} catch {
 					// noop
 				}
 
 				try {
-					await vscode.commands.executeCommand('revealFileInOS', this.serverState.server.tsServerLog.uri);
+					await zycode.commands.executeCommand('revealFileInOS', this.serverState.server.tsServerLog.uri);
 					return true;
 				} catch {
-					vscode.window.showWarningMessage(vscode.l10n.t("Could not open TS Server log file"));
+					zycode.window.showWarningMessage(zycode.l10n.t("Could not open TS Server log file"));
 					return false;
 				}
 			}
@@ -540,7 +540,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 			: undefined;
 
 		const configureOptions: Proto.ConfigureRequestArguments = {
-			hostInfo: 'vscode',
+			hostInfo: 'zycode',
 			preferences: {
 				providePrefixAndSuffixTextForRename: true,
 				allowRenameOfImportPath: true,
@@ -591,10 +591,10 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 			let startService = true;
 
 			const pluginExtensionList = this.pluginManager.plugins.map(plugin => plugin.extension.id).join(', ');
-			const reportIssueItem: vscode.MessageItem = {
-				title: vscode.l10n.t("Report Issue"),
+			const reportIssueItem: zycode.MessageItem = {
+				title: zycode.l10n.t("Report Issue"),
 			};
-			let prompt: Thenable<undefined | vscode.MessageItem> | undefined = undefined;
+			let prompt: Thenable<undefined | zycode.MessageItem> | undefined = undefined;
 
 			if (this.numberRestarts > 5) {
 				this.numberRestarts = 0;
@@ -603,11 +603,11 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 					startService = false;
 					this.hasServerFatallyCrashedTooManyTimes = true;
 					if (this.pluginManager.plugins.length) {
-						prompt = vscode.window.showErrorMessage<vscode.MessageItem>(
-							vscode.l10n.t("The JS/TS language service immediately crashed 5 times. The service will not be restarted.\nThis may be caused by a plugin contributed by one of these extensions: {0}.\nPlease try disabling these extensions before filing an issue against VS Code.", pluginExtensionList));
+						prompt = zycode.window.showErrorMessage<zycode.MessageItem>(
+							zycode.l10n.t("The JS/TS language service immediately crashed 5 times. The service will not be restarted.\nThis may be caused by a plugin contributed by one of these extensions: {0}.\nPlease try disabling these extensions before filing an issue against VS Code.", pluginExtensionList));
 					} else {
-						prompt = vscode.window.showErrorMessage(
-							vscode.l10n.t("The JS/TS language service immediately crashed 5 times. The service will not be restarted."),
+						prompt = zycode.window.showErrorMessage(
+							zycode.l10n.t("The JS/TS language service immediately crashed 5 times. The service will not be restarted."),
 							reportIssueItem);
 					}
 
@@ -624,25 +624,25 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 					this.lastStart = Date.now();
 					if (!this._isPromptingAfterCrash) {
 						if (this.pluginManager.plugins.length) {
-							prompt = vscode.window.showWarningMessage<vscode.MessageItem>(
-								vscode.l10n.t("The JS/TS language service crashed 5 times in the last 5 Minutes.\nThis may be caused by a plugin contributed by one of these extensions: {0}\nPlease try disabling these extensions before filing an issue against VS Code.", pluginExtensionList));
+							prompt = zycode.window.showWarningMessage<zycode.MessageItem>(
+								zycode.l10n.t("The JS/TS language service crashed 5 times in the last 5 Minutes.\nThis may be caused by a plugin contributed by one of these extensions: {0}\nPlease try disabling these extensions before filing an issue against VS Code.", pluginExtensionList));
 						} else {
-							prompt = vscode.window.showWarningMessage(
-								vscode.l10n.t("The JS/TS language service crashed 5 times in the last 5 Minutes."),
+							prompt = zycode.window.showWarningMessage(
+								zycode.l10n.t("The JS/TS language service crashed 5 times in the last 5 Minutes."),
 								reportIssueItem);
 						}
 					}
 				}
-			} else if (['vscode-insiders', 'code-oss'].includes(vscode.env.uriScheme)) {
+			} else if (['zycode-insiders', 'code-oss'].includes(zycode.env.uriScheme)) {
 				// Prompt after a single restart
 				this.numberRestarts = 0;
 				if (!this._isPromptingAfterCrash) {
 					if (this.pluginManager.plugins.length) {
-						prompt = vscode.window.showWarningMessage<vscode.MessageItem>(
-							vscode.l10n.t("The JS/TS language service crashed.\nThis may be caused by a plugin contributed by one of these extensions: {0}.\nPlease try disabling these extensions before filing an issue against VS Code.", pluginExtensionList));
+						prompt = zycode.window.showWarningMessage<zycode.MessageItem>(
+							zycode.l10n.t("The JS/TS language service crashed.\nThis may be caused by a plugin contributed by one of these extensions: {0}.\nPlease try disabling these extensions before filing an issue against VS Code.", pluginExtensionList));
 					} else {
-						prompt = vscode.window.showWarningMessage(
-							vscode.l10n.t("The JS/TS language service crashed."),
+						prompt = zycode.window.showWarningMessage(
+							zycode.l10n.t("The JS/TS language service crashed."),
 							reportIssueItem);
 					}
 				}
@@ -664,11 +664,11 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 						previousState.error instanceof TypeScriptServerError &&
 						previousState.error.version.apiVersion?.lt(minModernTsVersion)
 					) {
-						vscode.window.showWarningMessage(
-							vscode.l10n.t("Please update your TypeScript version"),
+						zycode.window.showWarningMessage(
+							zycode.l10n.t("Please update your TypeScript version"),
 							{
 								modal: true,
-								detail: vscode.l10n.t(
+								detail: zycode.l10n.t(
 									"The workspace is using an old version of TypeScript ({0}).\n\nBefore reporting an issue, please update the workspace to use TypeScript {1} or newer to make sure the bug has not already been fixed.",
 									previousState.error.version.apiVersion.displayName,
 									minModernTsVersion.displayName),
@@ -677,7 +677,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 						const args = previousState.type === ServerState.Type.Errored && previousState.error instanceof TypeScriptServerError
 							? getReportIssueArgsForError(previousState.error, previousState.tsServerLog, this.pluginManager.plugins)
 							: undefined;
-						vscode.commands.executeCommand('workbench.action.openIssueReporter', args);
+						zycode.commands.executeCommand('workbench.action.openIssueReporter', args);
 					}
 				}
 			});
@@ -688,7 +688,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 		}
 	}
 
-	public toTsFilePath(resource: vscode.Uri): string | undefined {
+	public toTsFilePath(resource: zycode.Uri): string | undefined {
 		if (fileSchemes.disabledSchemes.has(resource.scheme)) {
 			return undefined;
 		}
@@ -705,7 +705,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 	}
 
 
-	public toOpenTsFilePath(document: vscode.TextDocument, options: { suppressAlertOnFailure?: boolean } = {}): string | undefined {
+	public toOpenTsFilePath(document: zycode.TextDocument, options: { suppressAlertOnFailure?: boolean } = {}): string | undefined {
 		if (!this.bufferSyncSupport.ensureHasBuffer(document.uri)) {
 			if (!options.suppressAlertOnFailure && !fileSchemes.disabledSchemes.has(document.uri.scheme)) {
 				console.error(`Unexpected resource ${document.uri}`);
@@ -715,7 +715,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 		return this.toTsFilePath(document.uri);
 	}
 
-	public hasCapabilityForResource(resource: vscode.Uri, capability: ClientCapability): boolean {
+	public hasCapabilityForResource(resource: zycode.Uri, capability: ClientCapability): boolean {
 		if (!this.capabilities.has(capability)) {
 			return false;
 		}
@@ -731,17 +731,17 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 		}
 	}
 
-	public toResource(filepath: string): vscode.Uri {
+	public toResource(filepath: string): zycode.Uri {
 		if (isWeb()) {
 			// On web, the stdlib paths that TS return look like: '/lib.es2015.collection.d.ts'
 			// TODO: Find out what extensionUri is when testing (should be http://localhost:8080/static/sources/extensions/typescript-language-features/)
 			// TODO:  make sure that this code path is getting hit
 			if (filepath.startsWith('/lib.') && filepath.endsWith('.d.ts')) {
-				return vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'browser', 'typescript', filepath.slice(1));
+				return zycode.Uri.joinPath(this.context.extensionUri, 'dist', 'browser', 'typescript', filepath.slice(1));
 			}
 			const parts = filepath.match(/^\/([^\/]+)\/([^\/]*)\/(.+)$/);
 			if (parts) {
-				const resource = vscode.Uri.parse(parts[1] + '://' + (parts[2] === emptyAuthority ? '' : parts[2]) + '/' + parts[3]);
+				const resource = zycode.Uri.parse(parts[1] + '://' + (parts[2] === emptyAuthority ? '' : parts[2]) + '/' + parts[3]);
 				return this.bufferSyncSupport.toVsCodeResource(resource);
 			}
 		}
@@ -749,22 +749,22 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 		if (filepath.startsWith(inMemoryResourcePrefix)) {
 			const parts = filepath.match(/^\^\/([^\/]+)\/([^\/]*)\/(.+)$/);
 			if (parts) {
-				const resource = vscode.Uri.parse(parts[1] + '://' + (parts[2] === emptyAuthority ? '' : parts[2]) + '/' + parts[3]);
+				const resource = zycode.Uri.parse(parts[1] + '://' + (parts[2] === emptyAuthority ? '' : parts[2]) + '/' + parts[3]);
 				return this.bufferSyncSupport.toVsCodeResource(resource);
 			}
 		}
 		return this.bufferSyncSupport.toResource(filepath);
 	}
 
-	public getWorkspaceRootForResource(resource: vscode.Uri): vscode.Uri | undefined {
-		const roots = vscode.workspace.workspaceFolders ? Array.from(vscode.workspace.workspaceFolders) : undefined;
+	public getWorkspaceRootForResource(resource: zycode.Uri): zycode.Uri | undefined {
+		const roots = zycode.workspace.workspaceFolders ? Array.from(zycode.workspace.workspaceFolders) : undefined;
 		if (!roots?.length) {
 			return undefined;
 		}
 
 		// For notebook cells, we need to use the notebook document to look up the workspace
 		if (resource.scheme === Schemes.notebookCell) {
-			for (const notebook of vscode.workspace.notebookDocuments) {
+			for (const notebook of zycode.workspace.notebookDocuments) {
 				for (const cell of notebook.getCells()) {
 					if (cell.document.uri.toString() === resource.toString()) {
 						resource = notebook.uri;
@@ -782,16 +782,16 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 			}
 		}
 
-		return vscode.workspace.getWorkspaceFolder(resource)?.uri;
+		return zycode.workspace.getWorkspaceFolder(resource)?.uri;
 	}
 
-	public execute(command: keyof TypeScriptRequests, args: any, token: vscode.CancellationToken, config?: ExecConfig): Promise<ServerResponse.Response<Proto.Response>> {
+	public execute(command: keyof TypeScriptRequests, args: any, token: zycode.CancellationToken, config?: ExecConfig): Promise<ServerResponse.Response<Proto.Response>> {
 		let executions: Array<Promise<ServerResponse.Response<Proto.Response>> | undefined> | undefined;
 
 		if (config?.cancelOnResourceChange) {
 			const runningServerState = this.serverState;
 			if (runningServerState.type === ServerState.Type.Running) {
-				const source = new vscode.CancellationTokenSource();
+				const source = new zycode.CancellationTokenSource();
 				token.onCancellationRequested(() => source.cancel());
 
 				const inFlight: ToCancelOnResourceChanged = {
@@ -844,7 +844,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 		});
 	}
 
-	public executeAsync(command: keyof TypeScriptRequests, args: Proto.GeterrRequestArgs, token: vscode.CancellationToken): Promise<ServerResponse.Response<Proto.Response>> {
+	public executeAsync(command: keyof TypeScriptRequests, args: Proto.GeterrRequestArgs, token: zycode.CancellationToken): Promise<ServerResponse.Response<Proto.Response>> {
 		return this.executeImpl(command, args, {
 			isAsync: true,
 			token,
@@ -852,7 +852,7 @@ export default class TypeScriptServiceClient extends Disposable implements IType
 		})[0]!;
 	}
 
-	private executeImpl(command: keyof TypeScriptRequests, args: any, executeInfo: { isAsync: boolean; token?: vscode.CancellationToken; expectsResult: boolean; lowPriority?: boolean; requireSemantic?: boolean }): Array<Promise<ServerResponse.Response<Proto.Response>> | undefined> {
+	private executeImpl(command: keyof TypeScriptRequests, args: any, executeInfo: { isAsync: boolean; token?: zycode.CancellationToken; expectsResult: boolean; lowPriority?: boolean; requireSemantic?: boolean }): Array<Promise<ServerResponse.Response<Proto.Response>> | undefined> {
 		const serverState = this.serverState;
 		if (serverState.type === ServerState.Type.Running) {
 			this.bufferSyncSupport.beforeCommand(command);
@@ -1084,7 +1084,7 @@ ${error.serverStack}
 \`\`\``);
 
 	return {
-		extensionId: 'vscode.typescript-language-features',
+		extensionId: 'zycode.typescript-language-features',
 		issueTitle: `TS Server fatal error:  ${error.serverMessage}`,
 
 		issueBody: sections.join('\n\n')
@@ -1119,9 +1119,9 @@ class ServerInitializingIndicator extends Disposable {
 		// the incoming project loading task is.
 		this.reset();
 
-		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Window,
-			title: vscode.l10n.t("Initializing JS/TS language features"),
+		zycode.window.withProgress({
+			location: zycode.ProgressLocation.Window,
+			title: zycode.l10n.t("Initializing JS/TS language features"),
 		}, () => new Promise<void>(resolve => {
 			this._task = { project: projectName, resolve };
 		}));

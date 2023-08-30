@@ -5,17 +5,17 @@
 
 import type * as nbformat from '@jupyterlab/nbformat';
 import * as detectIndent from 'detect-indent';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { defaultNotebookFormat } from './constants';
 import { getPreferredLanguage, jupyterNotebookModelToNotebookData } from './deserializers';
 import { createJupyterCellFromNotebookCell, pruneCell, sortObjectPropertiesRecursively } from './serializers';
 import * as fnv from '@enonic/fnv-plus';
 
-export class NotebookSerializer implements vscode.NotebookSerializer {
-	constructor(readonly context: vscode.ExtensionContext) {
+export class NotebookSerializer implements zycode.NotebookSerializer {
+	constructor(readonly context: zycode.ExtensionContext) {
 	}
 
-	public async deserializeNotebook(content: Uint8Array, _token: vscode.CancellationToken): Promise<vscode.NotebookData> {
+	public async deserializeNotebook(content: Uint8Array, _token: zycode.CancellationToken): Promise<zycode.NotebookData> {
 		let contents = '';
 		try {
 			contents = new TextDecoder().decode(content);
@@ -27,11 +27,11 @@ export class NotebookSerializer implements vscode.NotebookSerializer {
 		if (json.__webview_backup) {
 			const backupId = json.__webview_backup;
 			const uri = this.context.globalStorageUri;
-			const folder = uri.with({ path: this.context.globalStorageUri.path.replace('vscode.ipynb', 'ms-toolsai.jupyter') });
+			const folder = uri.with({ path: this.context.globalStorageUri.path.replace('zycode.ipynb', 'ms-toolsai.jupyter') });
 			const fileHash = fnv.fast1a32hex(backupId) as string;
 			const fileName = `${fileHash}.ipynb`;
-			const file = vscode.Uri.joinPath(folder, fileName);
-			const data = await vscode.workspace.fs.readFile(file);
+			const file = zycode.Uri.joinPath(folder, fileName);
+			const data = await zycode.workspace.fs.readFile(file);
 			json = data ? JSON.parse(data.toString()) : {};
 
 			if (json.contents && typeof json.contents === 'string') {
@@ -77,14 +77,14 @@ export class NotebookSerializer implements vscode.NotebookSerializer {
 		return data;
 	}
 
-	public serializeNotebook(data: vscode.NotebookData, _token: vscode.CancellationToken): Uint8Array {
+	public serializeNotebook(data: zycode.NotebookData, _token: zycode.CancellationToken): Uint8Array {
 		return new TextEncoder().encode(this.serializeNotebookToString(data));
 	}
 
-	public serializeNotebookToString(data: vscode.NotebookData): string {
+	public serializeNotebookToString(data: zycode.NotebookData): string {
 		const notebookContent = getNotebookMetadata(data);
 		// use the preferred language from document metadata or the first cell language as the notebook preferred cell language
-		const preferredCellLanguage = notebookContent.metadata?.language_info?.name ?? data.cells.find(cell => cell.kind === vscode.NotebookCellKind.Code)?.languageId;
+		const preferredCellLanguage = notebookContent.metadata?.language_info?.name ?? data.cells.find(cell => cell.kind === zycode.NotebookCellKind.Code)?.languageId;
 
 		notebookContent.cells = data.cells
 			.map(cell => createJupyterCellFromNotebookCell(cell, preferredCellLanguage))
@@ -98,7 +98,7 @@ export class NotebookSerializer implements vscode.NotebookSerializer {
 	}
 }
 
-export function getNotebookMetadata(document: vscode.NotebookDocument | vscode.NotebookData) {
+export function getNotebookMetadata(document: zycode.NotebookDocument | zycode.NotebookData) {
 	const notebookContent: Partial<nbformat.INotebookContent> = document.metadata?.custom || {};
 	notebookContent.cells = notebookContent.cells || [];
 	notebookContent.nbformat = notebookContent.nbformat || 4;

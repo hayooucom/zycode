@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import 'mocha';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { disposeAll } from '../../utils/dispose';
 import { acceptFirstSuggestion } from '../suggestTestHelpers';
 import { assertEditorContents, Config, createTestEditor, CURSOR, enumerateConfig, insertModesValues, joinLines, updateConfig, VsCodeConfiguration } from '../testUtils';
 
-const testDocumentUri = vscode.Uri.parse('untitled:test.ts');
+const testDocumentUri = zycode.Uri.parse('untitled:test.ts');
 
 suite('JSDoc Completions', () => {
-	const _disposables: vscode.Disposable[] = [];
+	const _disposables: zycode.Disposable[] = [];
 
 	const configDefaults = Object.freeze<VsCodeConfiguration>({
 		[Config.snippetSuggestions]: 'inline',
@@ -22,7 +22,7 @@ suite('JSDoc Completions', () => {
 
 	setup(async () => {
 		// the tests assume that typescript features are registered
-		await vscode.extensions.getExtension('vscode.typescript-language-features')!.activate();
+		await zycode.extensions.getExtension('zycode.typescript-language-features')!.activate();
 
 		// Save off config and apply defaults
 		oldConfig = await updateConfig(testDocumentUri, configDefaults);
@@ -34,7 +34,7 @@ suite('JSDoc Completions', () => {
 		// Restore config
 		await updateConfig(testDocumentUri, oldConfig);
 
-		return vscode.commands.executeCommand('workbench.action.closeAllEditors');
+		return zycode.commands.executeCommand('workbench.action.closeAllEditors');
 	});
 
 	test('Should complete jsdoc inside single line comment', async () => {

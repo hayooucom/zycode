@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 export function isWeb(): boolean {
-	return 'navigator' in globalThis && vscode.env.uiKind === vscode.UIKind.Web;
+	return 'navigator' in globalThis && zycode.env.uiKind === zycode.UIKind.Web;
 }
 
 export function isWebAndHasSharedArrayBuffers(): boolean {

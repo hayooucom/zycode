@@ -132,7 +132,7 @@ suite('ModelService', () => {
 		assert.deepStrictEqual(result.toString(), expected.toString());
 	});
 
-	test('issue #149130: vscode freezes because of Bracket Pair Colorization', () => {
+	test('issue #149130: zycode freezes because of Bracket Pair Colorization', () => {
 		const languageId = 'q';
 		disposables.add(languageService.registerLanguage({ id: languageId }));
 		const legend = {

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { HoverProvider, Hover, MarkedString, TextDocument, CancellationToken, Position, workspace } from 'vscode';
+import { HoverProvider, Hover, MarkedString, TextDocument, CancellationToken, Position, workspace } from 'zycode';
 import { textToMarkedString } from './utils/markedTextUtil';
 import * as phpGlobals from './phpGlobals';
 import * as phpGlobalFunctions from './phpGlobalFunctions';

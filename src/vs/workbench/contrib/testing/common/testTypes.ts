@@ -20,7 +20,7 @@ export const enum TestResultState {
 	Errored = 6
 }
 
-/** note: keep in sync with TestRunProfileKind in vscode.d.ts */
+/** note: keep in sync with TestRunProfileKind in zycode.d.ts */
 export const enum ExtTestRunProfileKind {
 	Run = 1,
 	Debug = 2,

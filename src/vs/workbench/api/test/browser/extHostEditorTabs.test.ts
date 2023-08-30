@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as assert from 'assert';
 import { URI } from 'vs/base/common/uri';
 import { mock } from 'vs/base/test/common/mock';
@@ -120,7 +120,7 @@ suite('ExtHostEditorTabs', function () {
 			tabs: []
 		}]);
 		assert.ok(extHostEditorTabs.tabGroups.activeTabGroup);
-		const activeTabGroup: vscode.TabGroup = extHostEditorTabs.tabGroups.activeTabGroup;
+		const activeTabGroup: zycode.TabGroup = extHostEditorTabs.tabGroups.activeTabGroup;
 		assert.strictEqual(extHostEditorTabs.tabGroups.all.length, 1);
 		assert.strictEqual(activeTabGroup.tabs.length, 0);
 		assert.strictEqual(count, 1);
@@ -141,7 +141,7 @@ suite('ExtHostEditorTabs', function () {
 		};
 		const group2Data: IEditorTabGroupDto = { ...group1Data, groupId: 13 };
 
-		const events: vscode.TabGroupChangeEvent[] = [];
+		const events: zycode.TabGroupChangeEvent[] = [];
 		extHostEditorTabs.tabGroups.onDidChangeTabGroups(e => events.push(e));
 		// OPEN
 		extHostEditorTabs.$acceptEditorTabModel([group1Data]);
@@ -350,7 +350,7 @@ suite('ExtHostEditorTabs', function () {
 		assert.strictEqual(activeTab1?.isActive, false);
 	});
 
-	test('vscode.window.tagGroups is immutable', function () {
+	test('zycode.window.tagGroups is immutable', function () {
 
 		const extHostEditorTabs = new ExtHostEditorTabs(
 			SingleProxyRPCProtocol(new class extends mock<MainThreadEditorTabsShape>() {
@@ -446,7 +446,7 @@ suite('ExtHostEditorTabs', function () {
 
 		const tab = extHostEditorTabs.tabGroups.all[0].tabs[0];
 
-		const p = new Promise<vscode.TabChangeEvent>(resolve => extHostEditorTabs.tabGroups.onDidChangeTabs(resolve));
+		const p = new Promise<zycode.TabChangeEvent>(resolve => extHostEditorTabs.tabGroups.onDidChangeTabs(resolve));
 
 		extHostEditorTabs.$acceptTabOperation({
 			groupId: 12,

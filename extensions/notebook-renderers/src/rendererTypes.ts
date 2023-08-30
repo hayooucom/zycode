@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OutputItem, RendererContext } from 'vscode-notebook-renderer';
-import { Event } from 'vscode';
+import { OutputItem, RendererContext } from 'zycode-notebook-renderer';
+import { Event } from 'zycode';
 
 export interface IDisposable {
 	dispose(): void;

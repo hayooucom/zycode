@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { TextDocument } from 'vscode-languageserver-textdocument';
-import { URI, Utils } from 'vscode-uri';
+import { TextDocument } from 'zycode-languageserver-textdocument';
+import { URI, Utils } from 'zycode-uri';
 import { LsConfiguration } from '../config';
 
 export function looksLikeMarkdownPath(config: LsConfiguration, resolvedHrefPath: URI) {

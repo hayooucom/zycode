@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Connection, Emitter, FileChangeType, NotebookDocuments, Position, Range, TextDocuments } from 'vscode-languageserver';
-import { TextDocument } from 'vscode-languageserver-textdocument';
-import * as md from 'vscode-markdown-languageservice';
-import { URI } from 'vscode-uri';
+import { Connection, Emitter, FileChangeType, NotebookDocuments, Position, Range, TextDocuments } from 'zycode-languageserver';
+import { TextDocument } from 'zycode-languageserver-textdocument';
+import * as md from 'zycode-markdown-languageservice';
+import { URI } from 'zycode-uri';
 import { LsConfiguration } from './config';
 import * as protocol from './protocol';
 import { isMarkdownFile, looksLikeMarkdownPath } from './util/file';
@@ -409,7 +409,7 @@ export class VsCodeClientWorkspace implements md.IWorkspaceWithWatching {
 	}
 
 	private isRelevantMarkdownDocument(doc: TextDocument) {
-		return isMarkdownFile(doc) && URI.parse(doc.uri).scheme !== 'vscode-bulkeditpreview';
+		return isMarkdownFile(doc) && URI.parse(doc.uri).scheme !== 'zycode-bulkeditpreview';
 	}
 
 	private doDeleteDocument(uri: URI) {

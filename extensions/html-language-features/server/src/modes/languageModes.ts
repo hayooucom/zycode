@@ -3,18 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { getCSSLanguageService } from 'vscode-css-languageservice';
+import { getCSSLanguageService } from 'zycode-css-languageservice';
 import {
 	DocumentContext, getLanguageService as getHTMLLanguageService, IHTMLDataProvider, ClientCapabilities
-} from 'vscode-html-languageservice';
+} from 'zycode-html-languageservice';
 import {
 	SelectionRange,
 	CompletionItem, CompletionList, Definition, Diagnostic, DocumentHighlight, DocumentLink, FoldingRange, FormattingOptions,
 	Hover, Location, Position, Range, SignatureHelp, SymbolInformation, TextEdit,
 	Color, ColorInformation, ColorPresentation, WorkspaceEdit,
 	WorkspaceFolder
-} from 'vscode-languageserver';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+} from 'zycode-languageserver';
+import { TextDocument } from 'zycode-languageserver-textdocument';
 
 import { getLanguageModelCache, LanguageModelCache } from '../languageModelCache';
 import { getCSSMode } from './cssMode';
@@ -30,11 +30,11 @@ export {
 	Color, ColorInformation, ColorPresentation, WorkspaceEdit,
 	SignatureInformation, ParameterInformation, DiagnosticSeverity,
 	SelectionRange, TextDocumentIdentifier
-} from 'vscode-languageserver';
+} from 'zycode-languageserver';
 
-export { ClientCapabilities, DocumentContext, LanguageService, HTMLDocument, HTMLFormatConfiguration, TokenType } from 'vscode-html-languageservice';
+export { ClientCapabilities, DocumentContext, LanguageService, HTMLDocument, HTMLFormatConfiguration, TokenType } from 'zycode-html-languageservice';
 
-export { TextDocument } from 'vscode-languageserver-textdocument';
+export { TextDocument } from 'zycode-languageserver-textdocument';
 
 export interface Settings {
 	readonly css?: any;

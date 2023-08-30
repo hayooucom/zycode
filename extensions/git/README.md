@@ -1,6 +1,6 @@
-# Git integration for Visual Studio Code
+# Git integration for ZY Studio Code
 
-**Notice:** This extension is bundled with Visual Studio Code. It can be disabled but not uninstalled.
+**Notice:** This extension is bundled with ZY Studio Code. It can be disabled but not uninstalled.
 
 ## Features
 
@@ -15,6 +15,6 @@ The Git extension exposes an API, reachable by any other extension.
 3. Get a hold of the API with the following snippet:
 
  ```ts
- const gitExtension = vscode.extensions.getExtension<GitExtension>('vscode.git').exports;
+ const gitExtension = zycode.extensions.getExtension<GitExtension>('zycode.git').exports;
  const git = gitExtension.getAPI(1);
  ```

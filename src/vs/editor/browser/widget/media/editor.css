@@ -21,24 +21,24 @@
 	position: relative;
 	overflow: visible;
 	-webkit-text-size-adjust: 100%;
-	color: var(--vscode-editor-foreground);
-	background-color: var(--vscode-editor-background);
+	color: var(--zycode-editor-foreground);
+	background-color: var(--zycode-editor-background);
 }
 .monaco-editor-background {
-	background-color: var(--vscode-editor-background);
+	background-color: var(--zycode-editor-background);
 }
 .monaco-editor .rangeHighlight {
-	background-color: var(--vscode-editor-rangeHighlightBackground);
+	background-color: var(--zycode-editor-rangeHighlightBackground);
 	box-sizing: border-box;
-	border: 1px solid var(--vscode-editor-rangeHighlightBorder);
+	border: 1px solid var(--zycode-editor-rangeHighlightBorder);
 }
 .monaco-editor.hc-black .rangeHighlight, .monaco-editor.hc-light .rangeHighlight {
 	border-style: dotted;
 }
 .monaco-editor .symbolHighlight {
-	background-color: var(--vscode-editor-symbolHighlightBackground);
+	background-color: var(--zycode-editor-symbolHighlightBackground);
 	box-sizing: border-box;
-	border: 1px solid var(--vscode-editor-symbolHighlightBorder);
+	border: 1px solid var(--zycode-editor-symbolHighlightBorder);
 }
 .monaco-editor.hc-black .symbolHighlight, .monaco-editor.hc-light .symbolHighlight {
 	border-style: dotted;
@@ -64,42 +64,42 @@
 
 
 .monaco-editor .squiggly-error {
-	border-bottom: 4px double var(--vscode-editorError-border);
+	border-bottom: 4px double var(--zycode-editorError-border);
 }
 .monaco-editor .squiggly-error::before {
 	display: block;
 	content: '';
 	width: 100%;
 	height: 100%;
-	background: var(--vscode-editorError-background);
+	background: var(--zycode-editorError-background);
 }
 .monaco-editor .squiggly-warning {
-	border-bottom: 4px double var(--vscode-editorWarning-border);
+	border-bottom: 4px double var(--zycode-editorWarning-border);
 }
 .monaco-editor .squiggly-warning::before {
 	display: block;
 	content: '';
 	width: 100%;
 	height: 100%;
-	background: var(--vscode-editorWarning-background);
+	background: var(--zycode-editorWarning-background);
 }
 .monaco-editor .squiggly-info {
-	border-bottom: 4px double var(--vscode-editorInfo-border);
+	border-bottom: 4px double var(--zycode-editorInfo-border);
 }
 .monaco-editor .squiggly-info::before {
 	display: block;
 	content: '';
 	width: 100%;
 	height: 100%;
-	background: var(--vscode-editorInfo-background);
+	background: var(--zycode-editorInfo-background);
 }
 .monaco-editor .squiggly-hint {
-	border-bottom: 2px dotted var(--vscode-editorHint-border);
+	border-bottom: 2px dotted var(--zycode-editorHint-border);
 }
 .monaco-editor.showUnused .squiggly-unnecessary {
-	border-bottom: 2px dashed var(--vscode-editorUnnecessaryCode-border);
+	border-bottom: 2px dashed var(--zycode-editorUnnecessaryCode-border);
 }
 .monaco-editor.showDeprecated .squiggly-inline-deprecated {
 	text-decoration: line-through;
-	text-decoration-color: var(--vscode-editor-foreground, inherit);
+	text-decoration-color: var(--zycode-editor-foreground, inherit);
 }

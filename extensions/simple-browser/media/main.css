@@ -29,16 +29,16 @@ textarea {
 	width: 100%;
 	border: none;
 	margin-right: 0.3em;
-	font-family: var(--vscode-font-family);
+	font-family: var(--zycode-font-family);
 	padding: var(--input-padding-vertical) var(--input-padding-horizontal);
-	color: var(--vscode-input-foreground);
-	outline-color: var(--vscode-input-border);
-	background-color: var(--vscode-input-background);
+	color: var(--zycode-input-foreground);
+	outline-color: var(--zycode-input-border);
+	background-color: var(--zycode-input-background);
 }
 
 input::placeholder,
 textarea::placeholder {
-	color: var(--vscode-input-placeholderForeground);
+	color: var(--zycode-input-placeholderForeground);
 }
 
 button {
@@ -46,15 +46,15 @@ button {
 	padding: 3px;
 	text-align: center;
 	outline: 1px solid transparent;
-	color: var(--vscode-icon-foreground);
+	color: var(--zycode-icon-foreground);
 	background: none;
 	border-radius: 5px;
 }
 
 button:hover:not(:disabled) {
 	cursor: pointer;
-	color: var(--vscode-toolbar-hoverForeground);
-	background: var(--vscode-toolbar-hoverBackground);
+	color: var(--zycode-toolbar-hoverForeground);
+	background: var(--zycode-toolbar-hoverBackground);
 }
 
 button:disabled {
@@ -63,7 +63,7 @@ button:disabled {
 
 input:focus,
 button:focus {
-	outline-color: var(--vscode-focusBorder);
+	outline-color: var(--zycode-focusBorder);
 }
 
 .header {
@@ -102,8 +102,8 @@ iframe {
 	display: none;
 	position: absolute;
 	bottom: 1em;
-	background: var(--vscode-editorWidget-background);
-	color: var(--vscode-editorWidget-foreground);
+	background: var(--zycode-editorWidget-background);
+	color: var(--zycode-editorWidget-foreground);
 	padding: 0.2em 0.2em;
 	border-radius: 4px;
 

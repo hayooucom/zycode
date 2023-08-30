@@ -5,7 +5,7 @@
 
 /* Based on @sergeche's work in his emmet plugin */
 
-import { TextDocument } from 'vscode';
+import { TextDocument } from 'zycode';
 
 /**
  * A stream reader for VSCode's `TextDocument`

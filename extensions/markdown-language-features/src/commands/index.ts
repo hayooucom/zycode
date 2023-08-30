@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { CommandManager } from '../commandManager';
 import { MarkdownItEngine } from '../markdownEngine';
 import { MarkdownPreviewManager } from '../preview/previewManager';
@@ -25,7 +25,7 @@ export function registerMarkdownCommands(
 	telemetryReporter: TelemetryReporter,
 	cspArbiter: ContentSecurityPolicyArbiter,
 	engine: MarkdownItEngine,
-): vscode.Disposable {
+): zycode.Disposable {
 	const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
 
 	commandManager.register(new CopyImageCommand(previewManager));

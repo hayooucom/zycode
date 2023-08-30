@@ -1,10 +1,10 @@
 {
 	"information_for_contributors": [
-		"This file has been converted from https://github.com/emilast/vscode-logfile-highlighter/blob/master/syntaxes/log.tmLanguage",
+		"This file has been converted from https://github.com/emilast/zycode-logfile-highlighter/blob/master/syntaxes/log.tmLanguage",
 		"If you want to provide a fix or improvement, please create a pull request against the original repository.",
 		"Once accepted there, we are happy to receive an update request."
 	],
-	"version": "https://github.com/emilast/vscode-logfile-highlighter/commit/8acba9307254d1887ac770057767698c82d926c6",
+	"version": "https://github.com/emilast/zycode-logfile-highlighter/commit/8acba9307254d1887ac770057767698c82d926c6",
 	"name": "Log file",
 	"scopeName": "text.log",
 	"patterns": [

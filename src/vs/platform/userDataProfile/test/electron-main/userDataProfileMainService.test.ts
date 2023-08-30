@@ -17,7 +17,7 @@ import { UserDataProfilesMainService } from 'vs/platform/userDataProfile/electro
 import { SaveStrategy, StateService } from 'vs/platform/state/node/stateService';
 import { UriIdentityService } from 'vs/platform/uriIdentity/common/uriIdentityService';
 
-const ROOT = URI.file('tests').with({ scheme: 'vscode-tests' });
+const ROOT = URI.file('tests').with({ scheme: 'zycode-tests' });
 
 class TestEnvironmentService extends AbstractNativeEnvironmentService {
 	constructor(private readonly _appSettingsHome: URI) {

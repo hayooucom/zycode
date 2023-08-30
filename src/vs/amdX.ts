@@ -62,7 +62,7 @@ class AMDModuleImporter {
 					if (value.startsWith(window.location.origin)) {
 						return value;
 					}
-					if (value.startsWith('vscode-file://vscode-app')) {
+					if (value.startsWith('zycode-file://zycode-app')) {
 						return value;
 					}
 					throw new Error(`[trusted_script_src] Invalid script url: ${value}`);
@@ -170,14 +170,14 @@ if (typeof globalThis.require === 'object') {
  * Utility for importing an AMD node module. This util supports AMD and ESM contexts and should be used while the ESM adoption
  * is on its way.
  *
- * e.g. pass in `vscode-textmate/release/main.js`
+ * e.g. pass in `zycode-textmate/release/main.js`
  */
 export async function importAMDNodeModule<T>(nodeModuleName: string, pathInsideNodeModule: string, isBuilt?: boolean): Promise<T> {
 	if (isESM) {
 
 		if (isBuilt === undefined) {
 			const product = globalThis._VSCODE_PRODUCT_JSON as unknown as IProductConfiguration;
-			isBuilt = Boolean((product ?? (<any>globalThis).vscode?.context?.configuration()?.product)?.commit);
+			isBuilt = Boolean((product ?? (<any>globalThis).zycode?.context?.configuration()?.product)?.commit);
 		}
 
 		if (_paths[nodeModuleName]) {

@@ -12,23 +12,23 @@ import { ExtHostDocumentsAndEditors } from 'vs/workbench/api/common/extHostDocum
 import { ExtHostTextEditor, TextEditorDecorationType } from 'vs/workbench/api/common/extHostTextEditor';
 import * as TypeConverters from 'vs/workbench/api/common/extHostTypeConverters';
 import { TextEditorSelectionChangeKind } from 'vs/workbench/api/common/extHostTypes';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 
 export class ExtHostEditors implements ExtHostEditorsShape {
 
-	private readonly _onDidChangeTextEditorSelection = new Emitter<vscode.TextEditorSelectionChangeEvent>({ onListenerError: onUnexpectedExternalError });
-	private readonly _onDidChangeTextEditorOptions = new Emitter<vscode.TextEditorOptionsChangeEvent>({ onListenerError: onUnexpectedExternalError });
-	private readonly _onDidChangeTextEditorVisibleRanges = new Emitter<vscode.TextEditorVisibleRangesChangeEvent>({ onListenerError: onUnexpectedExternalError });
-	private readonly _onDidChangeTextEditorViewColumn = new Emitter<vscode.TextEditorViewColumnChangeEvent>({ onListenerError: onUnexpectedExternalError });
-	private readonly _onDidChangeActiveTextEditor = new Emitter<vscode.TextEditor | undefined>({ onListenerError: onUnexpectedExternalError });
-	private readonly _onDidChangeVisibleTextEditors = new Emitter<readonly vscode.TextEditor[]>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidChangeTextEditorSelection = new Emitter<zycode.TextEditorSelectionChangeEvent>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidChangeTextEditorOptions = new Emitter<zycode.TextEditorOptionsChangeEvent>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidChangeTextEditorVisibleRanges = new Emitter<zycode.TextEditorVisibleRangesChangeEvent>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidChangeTextEditorViewColumn = new Emitter<zycode.TextEditorViewColumnChangeEvent>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidChangeActiveTextEditor = new Emitter<zycode.TextEditor | undefined>({ onListenerError: onUnexpectedExternalError });
+	private readonly _onDidChangeVisibleTextEditors = new Emitter<readonly zycode.TextEditor[]>({ onListenerError: onUnexpectedExternalError });
 
-	readonly onDidChangeTextEditorSelection: Event<vscode.TextEditorSelectionChangeEvent> = this._onDidChangeTextEditorSelection.event;
-	readonly onDidChangeTextEditorOptions: Event<vscode.TextEditorOptionsChangeEvent> = this._onDidChangeTextEditorOptions.event;
-	readonly onDidChangeTextEditorVisibleRanges: Event<vscode.TextEditorVisibleRangesChangeEvent> = this._onDidChangeTextEditorVisibleRanges.event;
-	readonly onDidChangeTextEditorViewColumn: Event<vscode.TextEditorViewColumnChangeEvent> = this._onDidChangeTextEditorViewColumn.event;
-	readonly onDidChangeActiveTextEditor: Event<vscode.TextEditor | undefined> = this._onDidChangeActiveTextEditor.event;
-	readonly onDidChangeVisibleTextEditors: Event<readonly vscode.TextEditor[]> = this._onDidChangeVisibleTextEditors.event;
+	readonly onDidChangeTextEditorSelection: Event<zycode.TextEditorSelectionChangeEvent> = this._onDidChangeTextEditorSelection.event;
+	readonly onDidChangeTextEditorOptions: Event<zycode.TextEditorOptionsChangeEvent> = this._onDidChangeTextEditorOptions.event;
+	readonly onDidChangeTextEditorVisibleRanges: Event<zycode.TextEditorVisibleRangesChangeEvent> = this._onDidChangeTextEditorVisibleRanges.event;
+	readonly onDidChangeTextEditorViewColumn: Event<zycode.TextEditorViewColumnChangeEvent> = this._onDidChangeTextEditorViewColumn.event;
+	readonly onDidChangeActiveTextEditor: Event<zycode.TextEditor | undefined> = this._onDidChangeActiveTextEditor.event;
+	readonly onDidChangeVisibleTextEditors: Event<readonly zycode.TextEditor[]> = this._onDidChangeVisibleTextEditors.event;
 
 	private readonly _proxy: MainThreadTextEditorsShape;
 
@@ -43,23 +43,23 @@ export class ExtHostEditors implements ExtHostEditorsShape {
 		this._extHostDocumentsAndEditors.onDidChangeActiveTextEditor(e => this._onDidChangeActiveTextEditor.fire(e));
 	}
 
-	getActiveTextEditor(): vscode.TextEditor | undefined {
+	getActiveTextEditor(): zycode.TextEditor | undefined {
 		return this._extHostDocumentsAndEditors.activeEditor();
 	}
 
-	getVisibleTextEditors(): vscode.TextEditor[];
+	getVisibleTextEditors(): zycode.TextEditor[];
 	getVisibleTextEditors(internal: true): ExtHostTextEditor[];
-	getVisibleTextEditors(internal?: true): ExtHostTextEditor[] | vscode.TextEditor[] {
+	getVisibleTextEditors(internal?: true): ExtHostTextEditor[] | zycode.TextEditor[] {
 		const editors = this._extHostDocumentsAndEditors.allEditors();
 		return internal
 			? editors
 			: editors.map(editor => editor.value);
 	}
 
-	showTextDocument(document: vscode.TextDocument, column: vscode.ViewColumn, preserveFocus: boolean): Promise<vscode.TextEditor>;
-	showTextDocument(document: vscode.TextDocument, options: { column: vscode.ViewColumn; preserveFocus: boolean; pinned: boolean }): Promise<vscode.TextEditor>;
-	showTextDocument(document: vscode.TextDocument, columnOrOptions: vscode.ViewColumn | vscode.TextDocumentShowOptions | undefined, preserveFocus?: boolean): Promise<vscode.TextEditor>;
-	async showTextDocument(document: vscode.TextDocument, columnOrOptions: vscode.ViewColumn | vscode.TextDocumentShowOptions | undefined, preserveFocus?: boolean): Promise<vscode.TextEditor> {
+	showTextDocument(document: zycode.TextDocument, column: zycode.ViewColumn, preserveFocus: boolean): Promise<zycode.TextEditor>;
+	showTextDocument(document: zycode.TextDocument, options: { column: zycode.ViewColumn; preserveFocus: boolean; pinned: boolean }): Promise<zycode.TextEditor>;
+	showTextDocument(document: zycode.TextDocument, columnOrOptions: zycode.ViewColumn | zycode.TextDocumentShowOptions | undefined, preserveFocus?: boolean): Promise<zycode.TextEditor>;
+	async showTextDocument(document: zycode.TextDocument, columnOrOptions: zycode.ViewColumn | zycode.TextDocumentShowOptions | undefined, preserveFocus?: boolean): Promise<zycode.TextEditor> {
 		let options: ITextDocumentShowOptions;
 		if (typeof columnOrOptions === 'number') {
 			options = {
@@ -93,7 +93,7 @@ export class ExtHostEditors implements ExtHostEditorsShape {
 		}
 	}
 
-	createTextEditorDecorationType(extension: IExtensionDescription, options: vscode.DecorationRenderOptions): vscode.TextEditorDecorationType {
+	createTextEditorDecorationType(extension: IExtensionDescription, options: zycode.DecorationRenderOptions): zycode.TextEditorDecorationType {
 		return new TextEditorDecorationType(this._proxy, extension, options).value;
 	}
 
@@ -157,7 +157,7 @@ export class ExtHostEditors implements ExtHostEditorsShape {
 		}
 	}
 
-	getDiffInformation(id: string): Promise<vscode.LineChange[]> {
+	getDiffInformation(id: string): Promise<zycode.LineChange[]> {
 		return Promise.resolve(this._proxy.$getDiffInformation(id));
 	}
 }

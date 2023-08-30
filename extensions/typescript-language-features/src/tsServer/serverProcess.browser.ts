@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 /// <reference lib='webworker' />
-import { ServiceConnection } from '@vscode/sync-api-common/browser';
-import { ApiService, Requests } from '@vscode/sync-api-service';
-import * as vscode from 'vscode';
+import { ServiceConnection } from '@zycode/sync-api-common/browser';
+import { ApiService, Requests } from '@zycode/sync-api-service';
+import * as zycode from 'zycode';
 import { TypeScriptServiceConfiguration } from '../configuration/configuration';
 import { Logger } from '../logging/logger';
 import { FileWatcherManager } from './fileWatchingManager';
@@ -30,7 +30,7 @@ type BrowserWatchEvent = {
 
 export class WorkerServerProcessFactory implements TsServerProcessFactory {
 	constructor(
-		private readonly _extensionUri: vscode.Uri,
+		private readonly _extensionUri: zycode.Uri,
 		private readonly _logger: Logger,
 	) { }
 
@@ -78,7 +78,7 @@ class WorkerServerProcess implements TsServerProcess {
 	public constructor(
 		private readonly kind: TsServerProcessKind,
 		tsServerPath: string,
-		extensionUri: vscode.Uri,
+		extensionUri: zycode.Uri,
 		args: readonly string[],
 		private readonly tsServerLog: TsServerLog | undefined,
 		logger: Logger,
@@ -112,7 +112,7 @@ class WorkerServerProcess implements TsServerProcess {
 				}
 				case 'watchDirectory':
 				case 'watchFile': {
-					this._watches.create(event.data.id, vscode.Uri.from(event.data.uri), /*watchParentDirs*/ true, !!event.data.recursive, {
+					this._watches.create(event.data.id, zycode.Uri.from(event.data.uri), /*watchParentDirs*/ true, !!event.data.recursive, {
 						change: uri => this._watcher.postMessage({ type: 'watch', event: 'change', uri }),
 						create: uri => this._watcher.postMessage({ type: 'watch', event: 'create', uri }),
 						delete: uri => this._watcher.postMessage({ type: 'watch', event: 'delete', uri }),
@@ -147,7 +147,7 @@ class WorkerServerProcess implements TsServerProcess {
 		);
 
 		const connection = new ServiceConnection<Requests>(syncChannel.port2);
-		new ApiService('vscode-wasm-typescript', connection);
+		new ApiService('zycode-wasm-typescript', connection);
 		connection.signalReady();
 	}
 

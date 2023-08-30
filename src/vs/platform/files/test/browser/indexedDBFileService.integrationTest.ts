@@ -63,9 +63,9 @@ flakySuite('IndexedDBFileSystemProvider', function () {
 		service = new FileService(logService);
 		disposables.add(service);
 
-		const indexedDB = await IndexedDB.create('vscode-web-db-test', 1, ['vscode-userdata-store', 'vscode-logs-store']);
+		const indexedDB = await IndexedDB.create('zycode-web-db-test', 1, ['zycode-userdata-store', 'zycode-logs-store']);
 
-		userdataFileProvider = new IndexedDBFileSystemProvider(Schemas.vscodeUserData, indexedDB, 'vscode-userdata-store', true);
+		userdataFileProvider = new IndexedDBFileSystemProvider(Schemas.vscodeUserData, indexedDB, 'zycode-userdata-store', true);
 		disposables.add(service.registerProvider(Schemas.vscodeUserData, userdataFileProvider));
 		disposables.add(userdataFileProvider);
 	};

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import * as typeConverters from 'vs/workbench/api/common/extHostTypeConverters';
 import { IEditorTabDto, IEditorTabGroupDto, IExtHostEditorTabsShape, MainContext, MainThreadEditorTabsShape, TabInputKind, TabModelOperationKind, TabOperation } from 'vs/workbench/api/common/extHost.protocol';
 import { URI } from 'vs/base/common/uri';
@@ -16,7 +16,7 @@ import { diffSets } from 'vs/base/common/collections';
 
 export interface IExtHostEditorTabs extends IExtHostEditorTabsShape {
 	readonly _serviceBrand: undefined;
-	tabGroups: vscode.TabGroups;
+	tabGroups: zycode.TabGroups;
 }
 
 export const IExtHostEditorTabs = createDecorator<IExtHostEditorTabs>('IExtHostEditorTabs');
@@ -24,7 +24,7 @@ export const IExtHostEditorTabs = createDecorator<IExtHostEditorTabs>('IExtHostE
 type AnyTabInput = TextTabInput | TextDiffTabInput | CustomEditorTabInput | NotebookEditorTabInput | NotebookDiffEditorTabInput | WebviewEditorTabInput | TerminalEditorTabInput | InteractiveWindowInput;
 
 class ExtHostEditorTab {
-	private _apiObject: vscode.Tab | undefined;
+	private _apiObject: zycode.Tab | undefined;
 	private _dto!: IEditorTabDto;
 	private _input: AnyTabInput | undefined;
 	private _parentGroup: ExtHostEditorTabGroup;
@@ -36,11 +36,11 @@ class ExtHostEditorTab {
 		this.acceptDtoUpdate(dto);
 	}
 
-	get apiObject(): vscode.Tab {
+	get apiObject(): zycode.Tab {
 		if (!this._apiObject) {
 			// Don't want to lose reference to parent `this` in the getters
 			const that = this;
-			const obj: vscode.Tab = {
+			const obj: zycode.Tab = {
 				get isActive() {
 					// We use a getter function here to always ensure at most 1 active tab per group and prevent iteration for being required
 					return that._dto.id === that._activeTabIdGetter();
@@ -64,7 +64,7 @@ class ExtHostEditorTab {
 					return that._parentGroup.apiObject;
 				}
 			};
-			this._apiObject = Object.freeze<vscode.Tab>(obj);
+			this._apiObject = Object.freeze<zycode.Tab>(obj);
 		}
 		return this._apiObject;
 	}
@@ -106,7 +106,7 @@ class ExtHostEditorTab {
 
 class ExtHostEditorTabGroup {
 
-	private _apiObject: vscode.TabGroup | undefined;
+	private _apiObject: zycode.TabGroup | undefined;
 	private _dto: IEditorTabGroupDto;
 	private _tabs: ExtHostEditorTab[] = [];
 	private _activeTabId: string = '';
@@ -124,11 +124,11 @@ class ExtHostEditorTabGroup {
 		}
 	}
 
-	get apiObject(): vscode.TabGroup {
+	get apiObject(): zycode.TabGroup {
 		if (!this._apiObject) {
 			// Don't want to lose reference to parent `this` in the getters
 			const that = this;
-			const obj: vscode.TabGroup = {
+			const obj: zycode.TabGroup = {
 				get isActive() {
 					// We use a getter function here to always ensure at most 1 active group and prevent iteration for being required
 					return that._dto.groupId === that._activeGroupIdGetter();
@@ -143,7 +143,7 @@ class ExtHostEditorTabGroup {
 					return Object.freeze(that._tabs.map(tab => tab.apiObject));
 				}
 			};
-			this._apiObject = Object.freeze<vscode.TabGroup>(obj);
+			this._apiObject = Object.freeze<zycode.TabGroup>(obj);
 		}
 		return this._apiObject;
 	}
@@ -217,24 +217,24 @@ export class ExtHostEditorTabs implements IExtHostEditorTabs {
 	readonly _serviceBrand: undefined;
 
 	private readonly _proxy: MainThreadEditorTabsShape;
-	private readonly _onDidChangeTabs = new Emitter<vscode.TabChangeEvent>();
-	private readonly _onDidChangeTabGroups = new Emitter<vscode.TabGroupChangeEvent>();
+	private readonly _onDidChangeTabs = new Emitter<zycode.TabChangeEvent>();
+	private readonly _onDidChangeTabGroups = new Emitter<zycode.TabGroupChangeEvent>();
 
 	// Have to use ! because this gets initialized via an RPC proxy
 	private _activeGroupId!: number;
 
 	private _extHostTabGroups: ExtHostEditorTabGroup[] = [];
 
-	private _apiObject: vscode.TabGroups | undefined;
+	private _apiObject: zycode.TabGroups | undefined;
 
 	constructor(@IExtHostRpcService extHostRpc: IExtHostRpcService) {
 		this._proxy = extHostRpc.getProxy(MainContext.MainThreadEditorTabs);
 	}
 
-	get tabGroups(): vscode.TabGroups {
+	get tabGroups(): zycode.TabGroups {
 		if (!this._apiObject) {
 			const that = this;
-			const obj: vscode.TabGroups = {
+			const obj: zycode.TabGroups = {
 				// never changes -> simple value
 				onDidChangeTabGroups: that._onDidChangeTabGroups.event,
 				onDidChangeTabs: that._onDidChangeTabs.event,
@@ -247,7 +247,7 @@ export class ExtHostEditorTabs implements IExtHostEditorTabs {
 					const activeTabGroup = assertIsDefined(that._extHostTabGroups.find(candidate => candidate.groupId === activeTabGroupId)?.apiObject);
 					return activeTabGroup;
 				},
-				close: async (tabOrTabGroup: vscode.Tab | readonly vscode.Tab[] | vscode.TabGroup | readonly vscode.TabGroup[], preserveFocus?: boolean) => {
+				close: async (tabOrTabGroup: zycode.Tab | readonly zycode.Tab[] | zycode.TabGroup | readonly zycode.TabGroup[], preserveFocus?: boolean) => {
 					const tabsOrTabGroups = Array.isArray(tabOrTabGroup) ? tabOrTabGroup : [tabOrTabGroup];
 					if (!tabsOrTabGroups.length) {
 						return true;
@@ -255,12 +255,12 @@ export class ExtHostEditorTabs implements IExtHostEditorTabs {
 					// Check which type was passed in and call the appropriate close
 					// Casting is needed as typescript doesn't seem to infer enough from this
 					if (isTabGroup(tabsOrTabGroups[0])) {
-						return this._closeGroups(tabsOrTabGroups as vscode.TabGroup[], preserveFocus);
+						return this._closeGroups(tabsOrTabGroups as zycode.TabGroup[], preserveFocus);
 					} else {
-						return this._closeTabs(tabsOrTabGroups as vscode.Tab[], preserveFocus);
+						return this._closeTabs(tabsOrTabGroups as zycode.Tab[], preserveFocus);
 					}
 				},
-				// move: async (tab: vscode.Tab, viewColumn: ViewColumn, index: number, preserveFocus?: boolean) => {
+				// move: async (tab: zycode.Tab, viewColumn: ViewColumn, index: number, preserveFocus?: boolean) => {
 				// 	const extHostTab = this._findExtHostTabFromApi(tab);
 				// 	if (!extHostTab) {
 				// 		throw new Error('Invalid tab');
@@ -280,9 +280,9 @@ export class ExtHostEditorTabs implements IExtHostEditorTabs {
 		const groupIdsAfter = new Set(tabGroups.map(dto => dto.groupId));
 		const diff = diffSets(groupIdsBefore, groupIdsAfter);
 
-		const closed: vscode.TabGroup[] = this._extHostTabGroups.filter(group => diff.removed.includes(group.groupId)).map(group => group.apiObject);
-		const opened: vscode.TabGroup[] = [];
-		const changed: vscode.TabGroup[] = [];
+		const closed: zycode.TabGroup[] = this._extHostTabGroups.filter(group => diff.removed.includes(group.groupId)).map(group => group.apiObject);
+		const opened: zycode.TabGroup[] = [];
+		const changed: zycode.TabGroup[] = [];
 
 
 		this._extHostTabGroups = tabGroups.map(tabGroup => {
@@ -349,7 +349,7 @@ export class ExtHostEditorTabs implements IExtHostEditorTabs {
 		}
 	}
 
-	private _findExtHostTabFromApi(apiTab: vscode.Tab): ExtHostEditorTab | undefined {
+	private _findExtHostTabFromApi(apiTab: zycode.Tab): ExtHostEditorTab | undefined {
 		for (const group of this._extHostTabGroups) {
 			for (const tab of group.tabs) {
 				if (tab.apiObject === apiTab) {
@@ -360,11 +360,11 @@ export class ExtHostEditorTabs implements IExtHostEditorTabs {
 		return;
 	}
 
-	private _findExtHostTabGroupFromApi(apiTabGroup: vscode.TabGroup): ExtHostEditorTabGroup | undefined {
+	private _findExtHostTabGroupFromApi(apiTabGroup: zycode.TabGroup): ExtHostEditorTabGroup | undefined {
 		return this._extHostTabGroups.find(candidate => candidate.apiObject === apiTabGroup);
 	}
 
-	private async _closeTabs(tabs: vscode.Tab[], preserveFocus?: boolean): Promise<boolean> {
+	private async _closeTabs(tabs: zycode.Tab[], preserveFocus?: boolean): Promise<boolean> {
 		const extHostTabIds: string[] = [];
 		for (const tab of tabs) {
 			const extHostTab = this._findExtHostTabFromApi(tab);
@@ -376,7 +376,7 @@ export class ExtHostEditorTabs implements IExtHostEditorTabs {
 		return this._proxy.$closeTab(extHostTabIds, preserveFocus);
 	}
 
-	private async _closeGroups(groups: vscode.TabGroup[], preserverFoucs?: boolean): Promise<boolean> {
+	private async _closeGroups(groups: zycode.TabGroup[], preserverFoucs?: boolean): Promise<boolean> {
 		const extHostGroupIds: number[] = [];
 		for (const group of groups) {
 			const extHostGroup = this._findExtHostTabGroupFromApi(group);
@@ -390,8 +390,8 @@ export class ExtHostEditorTabs implements IExtHostEditorTabs {
 }
 
 //#region Utils
-function isTabGroup(obj: unknown): obj is vscode.TabGroup {
-	const tabGroup = obj as vscode.TabGroup;
+function isTabGroup(obj: unknown): obj is zycode.TabGroup {
+	const tabGroup = obj as zycode.TabGroup;
 	if (tabGroup.tabs !== undefined) {
 		return true;
 	}

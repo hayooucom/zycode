@@ -5,7 +5,7 @@
 
 // Based on @sergeche's work on the emmet plugin for atom
 
-import { TextEditor, Position, window, TextEdit } from 'vscode';
+import { TextEditor, Position, window, TextEdit } from 'zycode';
 import * as path from 'path';
 import { getImageSize, ImageInfoWithScale } from './imageSizeHelper';
 import { getFlatNode, iterateCSSToken, getCssPropertyFromRule, isStyleSheet, validate, offsetRangeToVsRange } from './util';

@@ -68,7 +68,7 @@
 		try {
 			let workerUrl = '../../../../base/worker/workerMain.js';
 			if(globalThis.crossOriginIsolated) {
-				workerUrl += '?vscode-coi=2'; // COEP
+				workerUrl += '?zycode-coi=2'; // COEP
 			}
 
 			const worker = new Worker(workerUrl, { name });

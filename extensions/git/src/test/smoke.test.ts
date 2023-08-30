@@ -5,7 +5,7 @@
 
 import 'mocha';
 import * as assert from 'assert';
-import { workspace, commands, window, Uri, WorkspaceEdit, Range, TextDocument, extensions } from 'vscode';
+import { workspace, commands, window, Uri, WorkspaceEdit, Range, TextDocument, extensions } from 'zycode';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -50,7 +50,7 @@ suite('git smoke test', function () {
 		cp.execSync('git commit -m "initial commit"', { cwd });
 
 		// make sure git is activated
-		const ext = extensions.getExtension<GitExtension>('vscode.git');
+		const ext = extensions.getExtension<GitExtension>('zycode.git');
 		await ext?.activate();
 		git = ext!.exports.getAPI(1);
 

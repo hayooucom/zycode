@@ -9,7 +9,7 @@ import { Schemas } from 'vs/base/common/network';
 import { URI, UriComponents } from 'vs/base/common/uri';
 import * as languages from 'vs/editor/common/languages';
 import { ExtensionIdentifier } from 'vs/platform/extensions/common/extensions';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { ExtHostUriOpenersShape, IMainContext, MainContext, MainThreadUriOpenersShape } from './extHost.protocol';
 
 
@@ -19,7 +19,7 @@ export class ExtHostUriOpeners implements ExtHostUriOpenersShape {
 
 	private readonly _proxy: MainThreadUriOpenersShape;
 
-	private readonly _openers = new Map<string, vscode.ExternalUriOpener>();
+	private readonly _openers = new Map<string, zycode.ExternalUriOpener>();
 
 	constructor(
 		mainContext: IMainContext,
@@ -30,9 +30,9 @@ export class ExtHostUriOpeners implements ExtHostUriOpenersShape {
 	registerExternalUriOpener(
 		extensionId: ExtensionIdentifier,
 		id: string,
-		opener: vscode.ExternalUriOpener,
-		metadata: vscode.ExternalUriOpenerMetadata,
-	): vscode.Disposable {
+		opener: zycode.ExternalUriOpener,
+		metadata: zycode.ExternalUriOpenerMetadata,
+	): zycode.Disposable {
 		if (this._openers.has(id)) {
 			throw new Error(`Opener with id '${id}' already registered`);
 		}

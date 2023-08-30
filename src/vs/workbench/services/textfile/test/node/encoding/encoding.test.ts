@@ -213,7 +213,7 @@ suite('Encoding', () => {
 				if (err) {
 					reject(err);
 				} else {
-					resolve(importAMDNodeModule<typeof import('@vscode/iconv-lite-umd')>('@vscode/iconv-lite-umd', 'lib/iconv-lite-umd.js').then(iconv => iconv.decode(data, encoding.toNodeEncoding(fileEncoding!))));
+					resolve(importAMDNodeModule<typeof import('@zycode/iconv-lite-umd')>('@zycode/iconv-lite-umd', 'lib/iconv-lite-umd.js').then(iconv => iconv.decode(data, encoding.toNodeEncoding(fileEncoding!))));
 				}
 			});
 		});
@@ -385,7 +385,7 @@ suite('Encoding', () => {
 		const path = FileAccess.asFileUri('vs/workbench/services/textfile/test/node/encoding/fixtures/some_utf16be.css').fsPath;
 		const source = await readAndDecodeFromDisk(path, encoding.UTF16be);
 
-		const iconv = await importAMDNodeModule<typeof import('@vscode/iconv-lite-umd')>('@vscode/iconv-lite-umd', 'lib/iconv-lite-umd.js');
+		const iconv = await importAMDNodeModule<typeof import('@zycode/iconv-lite-umd')>('@zycode/iconv-lite-umd', 'lib/iconv-lite-umd.js');
 
 		const expected = VSBuffer.wrap(
 			iconv.encode(source, encoding.toNodeEncoding(encoding.UTF16be))
@@ -448,7 +448,7 @@ suite('Encoding', () => {
 			if (enc === encoding.UTF8_with_bom) {
 				continue; // skip over encodings from us
 			}
-			const iconv = await importAMDNodeModule<typeof import('@vscode/iconv-lite-umd')>('@vscode/iconv-lite-umd', 'lib/iconv-lite-umd.js');
+			const iconv = await importAMDNodeModule<typeof import('@zycode/iconv-lite-umd')>('@zycode/iconv-lite-umd', 'lib/iconv-lite-umd.js');
 			assert.strictEqual(iconv.encodingExists(enc), true, enc);
 		}
 	});

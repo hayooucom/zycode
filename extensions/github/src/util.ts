@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Repository } from './typings/git';
 
 export class DisposableStore {
 
-	private disposables = new Set<vscode.Disposable>();
+	private disposables = new Set<zycode.Disposable>();
 
-	add(disposable: vscode.Disposable): void {
+	add(disposable: zycode.Disposable): void {
 		this.disposables.add(disposable);
 	}
 

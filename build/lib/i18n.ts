@@ -14,8 +14,8 @@ import * as xml2js from 'xml2js';
 import * as gulp from 'gulp';
 import * as fancyLog from 'fancy-log';
 import * as ansiColors from 'ansi-colors';
-import * as iconv from '@vscode/iconv-lite-umd';
-import { l10nJsonFormat, getL10nXlf, l10nJsonDetails, getL10nFilesFromXlf, getL10nJson } from '@vscode/l10n-dev';
+import * as iconv from '@zycode/iconv-lite-umd';
+import { l10nJsonFormat, getL10nXlf, l10nJsonDetails, getL10nFilesFromXlf, getL10nJson } from '@zycode/l10n-dev';
 
 function log(message: any, ...rest: any[]): void {
 	fancyLog(ansiColors.green('[i18n]'), message, ...rest);
@@ -393,10 +393,10 @@ function processCoreBundleFormat(fileHeader: string, languages: Language[], json
 		});
 	});
 
-	const languageDirectory = path.join(__dirname, '..', '..', '..', 'vscode-loc', 'i18n');
+	const languageDirectory = path.join(__dirname, '..', '..', '..', 'zycode-loc', 'i18n');
 	if (!fs.existsSync(languageDirectory)) {
 		log(`No VS Code localization repository found. Looking at ${languageDirectory}`);
-		log(`To bundle translations please check out the vscode-loc repository as a sibling of the vscode repository.`);
+		log(`To bundle translations please check out the zycode-loc repository as a sibling of the zycode repository.`);
 	}
 	const sortedLanguages = sortLanguages(languages);
 	sortedLanguages.forEach((language) => {
@@ -407,7 +407,7 @@ function processCoreBundleFormat(fileHeader: string, languages: Language[], json
 		statistics[language.id] = 0;
 		const localizedModules: Record<string, string[]> = Object.create(null);
 		const languageFolderName = language.translationId || language.id;
-		const i18nFile = path.join(languageDirectory, `vscode-language-pack-${languageFolderName}`, 'translations', 'main.i18n.json');
+		const i18nFile = path.join(languageDirectory, `zycode-language-pack-${languageFolderName}`, 'translations', 'main.i18n.json');
 		let allMessages: I18nFormat | undefined;
 		if (fs.existsSync(i18nFile)) {
 			const content = stripComments(fs.readFileSync(i18nFile, 'utf8'));
@@ -499,11 +499,11 @@ export function processNlsFiles(opts: { fileHeader: string; languages: Language[
 	});
 }
 
-const editorProject: string = 'vscode-editor',
-	workbenchProject: string = 'vscode-workbench',
-	extensionsProject: string = 'vscode-extensions',
-	setupProject: string = 'vscode-setup',
-	serverProject: string = 'vscode-server';
+const editorProject: string = 'zycode-editor',
+	workbenchProject: string = 'zycode-workbench',
+	extensionsProject: string = 'zycode-extensions',
+	setupProject: string = 'zycode-setup',
+	serverProject: string = 'zycode-server';
 
 export function getResource(sourceFile: string): Resource {
 	let resource: string;
@@ -586,9 +586,9 @@ function createL10nBundleForExtension(extensionFolderName: string, prefixWithBui
 		.src([
 			// For source code of extensions
 			`${prefix}extensions/${extensionFolderName}/{src,client,server}/**/*.{ts,tsx}`,
-			// // For any dependencies pulled in (think vscode-css-languageservice or @vscode/emmet-helper)
-			`${prefix}extensions/${extensionFolderName}/**/node_modules/{@vscode,vscode-*}/**/*.{js,jsx}`,
-			// // For any dependencies pulled in that bundle @vscode/l10n. They needed to export the bundle
+			// // For any dependencies pulled in (think zycode-css-languageservice or @zycode/emmet-helper)
+			`${prefix}extensions/${extensionFolderName}/**/node_modules/{@zycode,zycode-*}/**/*.{js,jsx}`,
+			// // For any dependencies pulled in that bundle @zycode/l10n. They needed to export the bundle
 			`${prefix}extensions/${extensionFolderName}/**/bundle.l10n.json`,
 		])
 		.pipe(map(function (data, callback) {
@@ -645,9 +645,9 @@ function createL10nBundleForExtension(extensionFolderName: string, prefixWithBui
 }
 
 export const EXTERNAL_EXTENSIONS = [
-	'ms-vscode.js-debug',
-	'ms-vscode.js-debug-companion',
-	'ms-vscode.vscode-js-profile-table',
+	'ms-zycode.js-debug',
+	'ms-zycode.js-debug-companion',
+	'ms-zycode.zycode-js-profile-table',
 ];
 
 export function createXlfFilesForExtensions(): ThroughStream {
@@ -844,7 +844,7 @@ export function prepareI18nPackFiles(resultingTranslationPaths: TranslationPath[
 	const errors: any[] = [];
 	return through(function (this: ThroughStream, xlf: File) {
 		let project = path.basename(path.dirname(path.dirname(xlf.relative)));
-		// strip `-new` since vscode-extensions-loc uses the `-new` suffix to indicate that it's from the new loc pipeline
+		// strip `-new` since zycode-extensions-loc uses the `-new` suffix to indicate that it's from the new loc pipeline
 		const resource = path.basename(path.basename(xlf.relative, '.xlf'), '-new');
 		if (EXTERNAL_EXTENSIONS.find(e => e === resource)) {
 			project = extensionsProject;
@@ -883,7 +883,7 @@ export function prepareI18nPackFiles(resultingTranslationPaths: TranslationPath[
 					throw errors;
 				}
 				const translatedMainFile = createI18nFile('./main', mainPack);
-				resultingTranslationPaths.push({ id: 'vscode', resourceName: 'main.i18n.json' });
+				resultingTranslationPaths.push({ id: 'zycode', resourceName: 'main.i18n.json' });
 
 				this.queue(translatedMainFile);
 				for (const extensionId in extensionsPacks) {

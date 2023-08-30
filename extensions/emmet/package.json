@@ -3,10 +3,10 @@
   "displayName": "Emmet",
   "description": "%description%",
   "version": "1.0.0",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.13.0"
+    "zycode": "^1.13.0"
   },
   "icon": "images/icon.png",
   "categories": [
@@ -14,7 +14,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   },
   "activationEvents": [
     "onCommand:emmet.expandAbbreviation",
@@ -476,18 +476,18 @@
   "scripts": {
     "watch": "gulp watch-extension:emmet",
     "compile": "gulp compile-extension:emmet",
-    "deps": "yarn add @vscode/emmet-helper"
+    "deps": "yarn add @zycode/emmet-helper"
   },
   "devDependencies": {
     "@types/node": "18.x"
   },
   "dependencies": {
-    "@emmetio/css-parser": "ramya-rao-a/css-parser#vscode",
+    "@emmetio/css-parser": "ramya-rao-a/css-parser#zycode",
     "@emmetio/html-matcher": "^0.3.3",
     "@emmetio/math-expression": "^1.0.5",
-    "@vscode/emmet-helper": "^2.8.8",
+    "@zycode/emmet-helper": "^2.8.8",
     "image-size": "~1.0.0",
-    "vscode-languageserver-textdocument": "^1.0.1"
+    "zycode-languageserver-textdocument": "^1.0.1"
   },
   "capabilities": {
     "virtualWorkspaces": true,

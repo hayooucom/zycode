@@ -25,7 +25,7 @@ import { IRemoteAgentService } from 'vs/workbench/services/remote/common/remoteA
 import { TestRPCProtocol } from 'vs/workbench/api/test/common/testRPCProtocol';
 import { TestQuickInputService, TestRemoteAgentService } from 'vs/workbench/test/browser/workbenchTestServices';
 import { TestActivityService, TestExtensionService, TestStorageService } from 'vs/workbench/test/common/workbenchTestServices';
-import type { AuthenticationProvider, AuthenticationSession } from 'vscode';
+import type { AuthenticationProvider, AuthenticationSession } from 'zycode';
 
 class AuthQuickPick {
 	private listener: ((e: IQuickPickDidAcceptEvent) => any) | undefined;

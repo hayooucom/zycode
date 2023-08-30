@@ -77,17 +77,17 @@
 }
 
 .monaco-editor .char-insert, .monaco-diff-editor .char-insert {
-	background-color: var(--vscode-diffEditor-insertedTextBackground);
+	background-color: var(--zycode-diffEditor-insertedTextBackground);
 }
 
 .monaco-editor .line-insert, .monaco-diff-editor .line-insert {
-	background-color: var(--vscode-diffEditor-insertedLineBackground, var(--vscode-diffEditor-insertedTextBackground));
+	background-color: var(--zycode-diffEditor-insertedLineBackground, var(--zycode-diffEditor-insertedTextBackground));
 }
 
 .monaco-editor .line-insert,
 .monaco-editor .char-insert {
 	box-sizing: border-box;
-	border: 1px solid var(--vscode-diffEditor-insertedTextBorder);
+	border: 1px solid var(--zycode-diffEditor-insertedTextBorder);
 }
 .monaco-editor.hc-black .line-insert, .monaco-editor.hc-light .line-insert,
 .monaco-editor.hc-black .char-insert, .monaco-editor.hc-light .char-insert {
@@ -97,7 +97,7 @@
 .monaco-editor .line-delete,
 .monaco-editor .char-delete {
 	box-sizing: border-box;
-	border: 1px solid var(--vscode-diffEditor-removedTextBorder);
+	border: 1px solid var(--zycode-diffEditor-removedTextBorder);
 }
 .monaco-editor.hc-black .line-delete, .monaco-editor.hc-light .line-delete,
 .monaco-editor.hc-black .char-delete, .monaco-editor.hc-light .char-delete {
@@ -106,35 +106,35 @@
 
 .monaco-editor .inline-added-margin-view-zone,
 .monaco-editor .gutter-insert, .monaco-diff-editor .gutter-insert {
-	background-color: var(--vscode-diffEditorGutter-insertedLineBackground, var(--vscode-diffEditor-insertedLineBackground), var(--vscode-diffEditor-insertedTextBackground));
+	background-color: var(--zycode-diffEditorGutter-insertedLineBackground, var(--zycode-diffEditor-insertedLineBackground), var(--zycode-diffEditor-insertedTextBackground));
 }
 
 .monaco-editor .char-delete, .monaco-diff-editor .char-delete {
-	background-color: var(--vscode-diffEditor-removedTextBackground);
+	background-color: var(--zycode-diffEditor-removedTextBackground);
 }
 
 .monaco-editor .line-delete, .monaco-diff-editor .line-delete {
-	background-color: var(--vscode-diffEditor-removedLineBackground, var(--vscode-diffEditor-removedTextBackground));
+	background-color: var(--zycode-diffEditor-removedLineBackground, var(--zycode-diffEditor-removedTextBackground));
 }
 
 .monaco-editor .inline-deleted-margin-view-zone,
 .monaco-editor .gutter-delete, .monaco-diff-editor .gutter-delete {
-	background-color: var(--vscode-diffEditorGutter-removedLineBackground, var(--vscode-diffEditor-removedLineBackground), var(--vscode-diffEditor-removedTextBackground));
+	background-color: var(--zycode-diffEditorGutter-removedLineBackground, var(--zycode-diffEditor-removedLineBackground), var(--zycode-diffEditor-removedTextBackground));
 }
 
 .monaco-diff-editor.side-by-side .editor.modified {
-	box-shadow: -6px 0 5px -5px var(--vscode-scrollbar-shadow);
-	border-left: 1px solid var(--vscode-diffEditor-border);
+	box-shadow: -6px 0 5px -5px var(--zycode-scrollbar-shadow);
+	border-left: 1px solid var(--zycode-diffEditor-border);
 }
 
 .monaco-diff-editor .diffViewport {
-	background: var(--vscode-scrollbarSlider-background);
+	background: var(--zycode-scrollbarSlider-background);
 }
 
 .monaco-diff-editor .diffViewport:hover {
-	background: var(--vscode-scrollbarSlider-hoverBackground);
+	background: var(--zycode-scrollbarSlider-hoverBackground);
 }
 
 .monaco-diff-editor .diffViewport:active {
-	background: var(--vscode-scrollbarSlider-activeBackground);
+	background: var(--zycode-scrollbarSlider-activeBackground);
 }

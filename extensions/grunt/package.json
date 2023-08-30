@@ -1,13 +1,13 @@
 {
   "name": "grunt",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "description": "Extension to add Grunt capabilities to VS Code.",
   "displayName": "Grunt support for VS Code",
   "version": "1.0.0",
   "icon": "images/grunt.png",
   "license": "MIT",
   "engines": {
-    "vscode": "*"
+    "zycode": "*"
   },
   "categories": [
     "Other"
@@ -74,6 +74,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

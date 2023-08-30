@@ -7,8 +7,8 @@ steps:
   - task: AzureKeyVault@1
     displayName: "Azure Key Vault: Get Secrets"
     inputs:
-      azureSubscription: "vscode-builds-subscription"
-      KeyVaultName: vscode-build-secrets
+      azureSubscription: "zycode-builds-subscription"
+      KeyVaultName: zycode-build-secrets
       SecretsFilter: "ESRP-PKI,esrp-aad-username,esrp-aad-password"
 
   - task: UseDotNet@2

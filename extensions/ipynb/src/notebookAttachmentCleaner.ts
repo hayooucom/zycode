@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { ATTACHMENT_CLEANUP_COMMANDID, JUPYTER_NOTEBOOK_MARKDOWN_SELECTOR } from './constants';
 import { deepClone, objectEquals, Delayer } from './helper';
 
 interface AttachmentCleanRequest {
-	notebook: vscode.NotebookDocument;
-	document: vscode.TextDocument;
-	cell: vscode.NotebookCell;
+	notebook: zycode.NotebookDocument;
+	document: zycode.TextDocument;
+	cell: zycode.NotebookCell;
 }
 
 interface IAttachmentData {
@@ -19,39 +19,39 @@ interface IAttachmentData {
 
 interface IAttachmentDiagnostic {
 	name: string;
-	ranges: vscode.Range[];
+	ranges: zycode.Range[];
 }
 
 export enum DiagnosticCode {
 	missing_attachment = 'notebook.missing-attachment'
 }
 
-export class AttachmentCleaner implements vscode.CodeActionProvider {
+export class AttachmentCleaner implements zycode.CodeActionProvider {
 	private _attachmentCache:
 		Map<string /** uri */, Map<string /** cell fragment*/, Map<string /** attachment filename */, IAttachmentData>>> = new Map();
 
-	private _disposables: vscode.Disposable[];
-	private _imageDiagnosticCollection: vscode.DiagnosticCollection;
+	private _disposables: zycode.Disposable[];
+	private _imageDiagnosticCollection: zycode.DiagnosticCollection;
 	private readonly _delayer = new Delayer(750);
 
 	constructor() {
 		this._disposables = [];
-		this._imageDiagnosticCollection = vscode.languages.createDiagnosticCollection('Notebook Image Attachment');
+		this._imageDiagnosticCollection = zycode.languages.createDiagnosticCollection('Notebook Image Attachment');
 		this._disposables.push(this._imageDiagnosticCollection);
 
-		this._disposables.push(vscode.commands.registerCommand(ATTACHMENT_CLEANUP_COMMANDID, async (document: vscode.Uri, range: vscode.Range) => {
-			const workspaceEdit = new vscode.WorkspaceEdit();
+		this._disposables.push(zycode.commands.registerCommand(ATTACHMENT_CLEANUP_COMMANDID, async (document: zycode.Uri, range: zycode.Range) => {
+			const workspaceEdit = new zycode.WorkspaceEdit();
 			workspaceEdit.delete(document, range);
-			await vscode.workspace.applyEdit(workspaceEdit);
+			await zycode.workspace.applyEdit(workspaceEdit);
 		}));
 
-		this._disposables.push(vscode.languages.registerCodeActionsProvider(JUPYTER_NOTEBOOK_MARKDOWN_SELECTOR, this, {
+		this._disposables.push(zycode.languages.registerCodeActionsProvider(JUPYTER_NOTEBOOK_MARKDOWN_SELECTOR, this, {
 			providedCodeActionKinds: [
-				vscode.CodeActionKind.QuickFix
+				zycode.CodeActionKind.QuickFix
 			],
 		}));
 
-		this._disposables.push(vscode.workspace.onDidChangeNotebookDocument(e => {
+		this._disposables.push(zycode.workspace.onDidChangeNotebookDocument(e => {
 			this._delayer.trigger(() => {
 
 				e.cellChanges.forEach(change => {
@@ -59,7 +59,7 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 						return;
 					}
 
-					if (change.cell.kind !== vscode.NotebookCellKind.Markup) {
+					if (change.cell.kind !== zycode.NotebookCellKind.Markup) {
 						return;
 					}
 
@@ -69,17 +69,17 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 						document: change.document
 					});
 					if (metadataEdit) {
-						const workspaceEdit = new vscode.WorkspaceEdit();
+						const workspaceEdit = new zycode.WorkspaceEdit();
 						workspaceEdit.set(e.notebook.uri, [metadataEdit]);
-						vscode.workspace.applyEdit(workspaceEdit);
+						zycode.workspace.applyEdit(workspaceEdit);
 					}
 				});
 			});
 		}));
 
 
-		this._disposables.push(vscode.workspace.onWillSaveNotebookDocument(e => {
-			if (e.reason === vscode.TextDocumentSaveReason.Manual) {
+		this._disposables.push(zycode.workspace.onWillSaveNotebookDocument(e => {
+			if (e.reason === zycode.TextDocumentSaveReason.Manual) {
 				this._delayer.dispose();
 
 				e.waitUntil(new Promise((resolve) => {
@@ -87,9 +87,9 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 						return;
 					}
 
-					const notebookEdits: vscode.NotebookEdit[] = [];
+					const notebookEdits: zycode.NotebookEdit[] = [];
 					for (const cell of e.notebook.getCells()) {
-						if (cell.kind !== vscode.NotebookCellKind.Markup) {
+						if (cell.kind !== zycode.NotebookCellKind.Markup) {
 							continue;
 						}
 
@@ -104,7 +104,7 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 						}
 					}
 
-					const workspaceEdit = new vscode.WorkspaceEdit();
+					const workspaceEdit = new zycode.WorkspaceEdit();
 					workspaceEdit.set(e.notebook.uri, notebookEdits);
 
 					resolve(workspaceEdit);
@@ -112,11 +112,11 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 			}
 		}));
 
-		this._disposables.push(vscode.workspace.onDidCloseNotebookDocument(e => {
+		this._disposables.push(zycode.workspace.onDidCloseNotebookDocument(e => {
 			this._attachmentCache.delete(e.uri.toString());
 		}));
 
-		this._disposables.push(vscode.workspace.onWillRenameFiles(e => {
+		this._disposables.push(zycode.workspace.onWillRenameFiles(e => {
 			const re = /\.ipynb$/;
 			for (const file of e.files) {
 				if (!re.exec(file.oldUri.toString())) {
@@ -131,29 +131,29 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 			}
 		}));
 
-		this._disposables.push(vscode.workspace.onDidOpenTextDocument(e => {
+		this._disposables.push(zycode.workspace.onDidOpenTextDocument(e => {
 			this.analyzeMissingAttachments(e);
 		}));
 
-		this._disposables.push(vscode.workspace.onDidCloseTextDocument(e => {
+		this._disposables.push(zycode.workspace.onDidCloseTextDocument(e => {
 			this.analyzeMissingAttachments(e);
 		}));
 
-		vscode.workspace.textDocuments.forEach(document => {
+		zycode.workspace.textDocuments.forEach(document => {
 			this.analyzeMissingAttachments(document);
 		});
 	}
 
-	provideCodeActions(document: vscode.TextDocument, _range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, _token: vscode.CancellationToken): vscode.ProviderResult<(vscode.CodeAction | vscode.Command)[]> {
-		const fixes: vscode.CodeAction[] = [];
+	provideCodeActions(document: zycode.TextDocument, _range: zycode.Range | zycode.Selection, context: zycode.CodeActionContext, _token: zycode.CancellationToken): zycode.ProviderResult<(zycode.CodeAction | zycode.Command)[]> {
+		const fixes: zycode.CodeAction[] = [];
 
 		for (const diagnostic of context.diagnostics) {
 			switch (diagnostic.code) {
 				case DiagnosticCode.missing_attachment:
 					{
-						const fix = new vscode.CodeAction(
+						const fix = new zycode.CodeAction(
 							'Remove invalid image attachment reference',
-							vscode.CodeActionKind.QuickFix);
+							zycode.CodeActionKind.QuickFix);
 
 						fix.command = {
 							command: ATTACHMENT_CLEANUP_COMMANDID,
@@ -172,9 +172,9 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 	/**
 	 * take in a NotebookDocumentChangeEvent, and clean the attachment data for the cell(s) that have had their markdown source code changed
 	 * @param e NotebookDocumentChangeEvent from the onDidChangeNotebookDocument listener
-	 * @returns vscode.NotebookEdit, the metadata alteration performed on the json behind the ipynb
+	 * @returns zycode.NotebookEdit, the metadata alteration performed on the json behind the ipynb
 	 */
-	private cleanNotebookAttachments(e: AttachmentCleanRequest): vscode.NotebookEdit | undefined {
+	private cleanNotebookAttachments(e: AttachmentCleanRequest): zycode.NotebookEdit | undefined {
 
 		if (e.notebook.isClosed) {
 			return;
@@ -236,14 +236,14 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 			} else {
 				updateMetadata.attachments = markdownAttachmentsInUse;
 			}
-			const metadataEdit = vscode.NotebookEdit.updateCellMetadata(cell.index, updateMetadata);
+			const metadataEdit = zycode.NotebookEdit.updateCellMetadata(cell.index, updateMetadata);
 			return metadataEdit;
 		}
 		return;
 	}
 
-	private analyzeMissingAttachments(document: vscode.TextDocument): void {
-		if (document.uri.scheme !== 'vscode-notebook-cell') {
+	private analyzeMissingAttachments(document: zycode.TextDocument): void {
+		if (document.uri.scheme !== 'zycode-notebook-cell') {
 			// not notebook
 			return;
 		}
@@ -253,9 +253,9 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 			return;
 		}
 
-		let notebook: vscode.NotebookDocument | undefined;
-		let activeCell: vscode.NotebookCell | undefined;
-		for (const notebookDocument of vscode.workspace.notebookDocuments) {
+		let notebook: zycode.NotebookDocument | undefined;
+		let activeCell: zycode.NotebookCell | undefined;
+		for (const notebookDocument of zycode.workspace.notebookDocuments) {
 			const cell = notebookDocument.getCells().find(cell => cell.document === document);
 			if (cell) {
 				notebook = notebookDocument;
@@ -282,11 +282,11 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 		this.updateDiagnostics(activeCell.document.uri, diagnostics);
 	}
 
-	private updateDiagnostics(cellUri: vscode.Uri, diagnostics: IAttachmentDiagnostic[]) {
-		const vscodeDiagnostics: vscode.Diagnostic[] = [];
+	private updateDiagnostics(cellUri: zycode.Uri, diagnostics: IAttachmentDiagnostic[]) {
+		const vscodeDiagnostics: zycode.Diagnostic[] = [];
 		for (const currDiagnostic of diagnostics) {
 			currDiagnostic.ranges.forEach(range => {
-				const diagnostic = new vscode.Diagnostic(range, `The image named: '${currDiagnostic.name}' is not present in cell metadata.`, vscode.DiagnosticSeverity.Warning);
+				const diagnostic = new zycode.Diagnostic(range, `The image named: '${currDiagnostic.name}' is not present in cell metadata.`, zycode.DiagnosticSeverity.Warning);
 				diagnostic.code = DiagnosticCode.missing_attachment;
 				vscodeDiagnostics.push(diagnostic);
 			});
@@ -365,9 +365,9 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 	 * pass in all of the markdown source code, and get a dictionary of all images referenced in the markdown. keys are image filenames, values are render state
 	 * @param document the text document for the cell, formatted as a string
 	 */
-	private getAttachmentNames(document: vscode.TextDocument) {
+	private getAttachmentNames(document: zycode.TextDocument) {
 		const source = document.getText();
-		const filenames: Map<string, { valid: boolean; ranges: vscode.Range[] }> = new Map();
+		const filenames: Map<string, { valid: boolean; ranges: zycode.Range[] }> = new Map();
 		const re = /!\[.*?\]\(<?attachment:(?<filename>.*?)>?\)/gm;
 
 		let match;
@@ -377,7 +377,7 @@ export class AttachmentCleaner implements vscode.CodeActionProvider {
 				const length = match[0].length;
 				const startPosition = document.positionAt(index);
 				const endPosition = document.positionAt(index + length);
-				const range = new vscode.Range(startPosition, endPosition);
+				const range = new zycode.Range(startPosition, endPosition);
 				const filename = filenames.get(match.groups.filename) ?? { valid: false, ranges: [] };
 				filenames.set(match.groups.filename, filename);
 				filename.ranges.push(range);

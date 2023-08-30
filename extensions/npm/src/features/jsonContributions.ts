@@ -11,7 +11,7 @@ import { XHRRequest } from 'request-light';
 import {
 	CompletionItem, CompletionItemProvider, CompletionList, TextDocument, Position, Hover, HoverProvider,
 	CancellationToken, Range, DocumentSelector, languages, Disposable, Uri, MarkdownString
-} from 'vscode';
+} from 'zycode';
 
 export interface ISuggestionsCollector {
 	add(suggestion: CompletionItem): void;

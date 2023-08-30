@@ -14,7 +14,7 @@ import {
 	Uri,
 	workspace,
 	l10n
-} from 'vscode';
+} from 'zycode';
 import { findPreferredPM } from './preferred-pm';
 import { readScripts } from './readScripts';
 

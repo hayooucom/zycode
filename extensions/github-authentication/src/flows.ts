@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import { ProgressLocation, Uri, commands, env, l10n, window } from 'vscode';
+import { ProgressLocation, Uri, commands, env, l10n, window } from 'zycode';
 import { Log } from './common/logger';
 import { Config } from './config';
 import { UriEventHandler } from './github';

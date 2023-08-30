@@ -5,7 +5,7 @@
 
 import * as os from 'os';
 import * as path from 'path';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { BaseServiceConfigurationProvider } from './configuration';
 
 export class ElectronServiceConfigurationProvider extends BaseServiceConfigurationProvider {
@@ -20,7 +20,7 @@ export class ElectronServiceConfigurationProvider extends BaseServiceConfigurati
 		return inspectValue;
 	}
 
-	protected readGlobalTsdk(configuration: vscode.WorkspaceConfiguration): string | null {
+	protected readGlobalTsdk(configuration: zycode.WorkspaceConfiguration): string | null {
 		const inspect = configuration.inspect('typescript.tsdk');
 		if (inspect && typeof inspect.globalValue === 'string') {
 			return this.fixPathPrefixes(inspect.globalValue);
@@ -28,7 +28,7 @@ export class ElectronServiceConfigurationProvider extends BaseServiceConfigurati
 		return null;
 	}
 
-	protected readLocalTsdk(configuration: vscode.WorkspaceConfiguration): string | null {
+	protected readLocalTsdk(configuration: zycode.WorkspaceConfiguration): string | null {
 		const inspect = configuration.inspect('typescript.tsdk');
 		if (inspect && typeof inspect.workspaceValue === 'string') {
 			return this.fixPathPrefixes(inspect.workspaceValue);

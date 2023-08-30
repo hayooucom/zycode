@@ -183,7 +183,7 @@ async function main(): Promise<void> {
 	const storagePipelineOptions: StoragePipelineOptions = { retryOptions: { retryPolicyType: StorageRetryPolicyType.EXPONENTIAL, maxTries: 6, tryTimeoutInMs: 10 * 60 * 1000 } };
 
 	const credential = new ClientSecretCredential(process.env['AZURE_TENANT_ID']!, process.env['AZURE_CLIENT_ID']!, process.env['AZURE_CLIENT_SECRET']!);
-	const blobServiceClient = new BlobServiceClient(`https://vscode.blob.core.windows.net`, credential, storagePipelineOptions);
+	const blobServiceClient = new BlobServiceClient(`https://zycode.blob.core.windows.net`, credential, storagePipelineOptions);
 	const containerClient = blobServiceClient.getContainerClient(quality);
 	const blobClient = containerClient.getBlockBlobClient(blobName);
 
@@ -211,7 +211,7 @@ async function main(): Promise<void> {
 
 	if (shouldUploadToMooncake) {
 		const mooncakeCredential = new ClientSecretCredential(process.env['AZURE_MOONCAKE_TENANT_ID']!, process.env['AZURE_MOONCAKE_CLIENT_ID']!, process.env['AZURE_MOONCAKE_CLIENT_SECRET']!);
-		const mooncakeBlobServiceClient = new BlobServiceClient(`https://vscode.blob.core.chinacloudapi.cn`, mooncakeCredential, storagePipelineOptions);
+		const mooncakeBlobServiceClient = new BlobServiceClient(`https://zycode.blob.core.chinacloudapi.cn`, mooncakeCredential, storagePipelineOptions);
 		const mooncakeContainerClient = mooncakeBlobServiceClient.getContainerClient(quality);
 		const mooncakeBlobClient = mooncakeContainerClient.getBlockBlobClient(blobName);
 

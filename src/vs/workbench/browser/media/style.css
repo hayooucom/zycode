@@ -55,7 +55,7 @@ body.web {
 	position: relative;
 	z-index: 1;
 	overflow: hidden;
-	color: var(--vscode-foreground);
+	color: var(--zycode-foreground);
 }
 
 .monaco-workbench.web {
@@ -109,13 +109,13 @@ body.web {
 	font-size: 100%;
 }
 
-.monaco-workbench input::placeholder { color: var(--vscode-input-placeholderForeground); }
-.monaco-workbench input::-webkit-input-placeholder  { color: var(--vscode-input-placeholderForeground); }
-.monaco-workbench input::-moz-placeholder { color: var(--vscode-input-placeholderForeground); }
+.monaco-workbench input::placeholder { color: var(--zycode-input-placeholderForeground); }
+.monaco-workbench input::-webkit-input-placeholder  { color: var(--zycode-input-placeholderForeground); }
+.monaco-workbench input::-moz-placeholder { color: var(--zycode-input-placeholderForeground); }
 
-.monaco-workbench textarea::placeholder { color: var(--vscode-input-placeholderForeground); }
-.monaco-workbench textarea::-webkit-input-placeholder { color: var(--vscode-input-placeholderForeground); }
-.monaco-workbench textarea::-moz-placeholder { color: var(--vscode-input-placeholderForeground); }
+.monaco-workbench textarea::placeholder { color: var(--zycode-input-placeholderForeground); }
+.monaco-workbench textarea::-webkit-input-placeholder { color: var(--zycode-input-placeholderForeground); }
+.monaco-workbench textarea::-moz-placeholder { color: var(--zycode-input-placeholderForeground); }
 
 .monaco-workbench .pointer {
 	cursor: pointer;
@@ -143,15 +143,15 @@ body.web {
 }
 
 .monaco-workbench .codicon {
-	color: var(--vscode-icon-foreground);
+	color: var(--zycode-icon-foreground);
 }
 
 .monaco-workbench .codicon[class*='codicon-'] {
-	font-size: 16px; /* sets font-size for codicons in workbench (https://github.com/microsoft/vscode/issues/98495) */
+	font-size: 16px; /* sets font-size for codicons in workbench (https://github.com/microsoft/zycode/issues/98495) */
 }
 
 .monaco-workbench.modal-dialog-visible .monaco-progress-container.infinite .progress-bit {
-	display: none; /* stop progress animations when dialogs are visible (https://github.com/microsoft/vscode/issues/138396) */
+	display: none; /* stop progress animations when dialogs are visible (https://github.com/microsoft/zycode/issues/138396) */
 }
 
 /* Custom Dropdown (select) Arrows */
@@ -199,7 +199,7 @@ body.web {
 	outline-width: 1px;
 	outline-style: solid;
 	outline-offset: -1px;
-	outline-color: var(--vscode-focusBorder);
+	outline-color: var(--zycode-focusBorder);
 	opacity: 1;
 }
 
@@ -221,7 +221,7 @@ body.web {
 }
 
 .monaco-workbench.mac select:focus {
-	border-color: transparent; /* outline is a square, but border has a radius, so we avoid this glitch when focused (https://github.com/microsoft/vscode/issues/26045) */
+	border-color: transparent; /* outline is a square, but border has a radius, so we avoid this glitch when focused (https://github.com/microsoft/zycode/issues/26045) */
 }
 
 .monaco-workbench .monaco-list:not(.element-focused):focus:before {
@@ -237,15 +237,15 @@ body.web {
 	outline-width: 1px;
 	outline-style: solid;
 	outline-offset: -1px;
-	outline-color: var(--vscode-focusBorder);
+	outline-color: var(--zycode-focusBorder);
 }
 
 .monaco-workbench .monaco-list .monaco-list-row .monaco-highlighted-label .highlight {
-	color: var(--vscode-list-highlightForeground);
+	color: var(--zycode-list-highlightForeground);
 }
 
 .monaco-workbench .monaco-list .monaco-list-row.focused .monaco-highlighted-label .highlight {
-	color: var(--vscode-list-focusHighlightForeground);
+	color: var(--zycode-list-focusHighlightForeground);
 }
 
 .monaco-workbench .synthetic-focus :focus {
@@ -271,15 +271,15 @@ body.web {
 
 .monaco-workbench .monaco-action-bar:not(.vertical) .action-label:not(.disabled):hover,
 .monaco-workbench .monaco-action-bar:not(.vertical) .monaco-dropdown-with-primary:not(.disabled):hover {
-	background-color: var(--vscode-toolbar-hoverBackground);
+	background-color: var(--zycode-toolbar-hoverBackground);
 }
 
 .monaco-workbench .monaco-action-bar:not(.vertical) .action-item.active .action-label:not(.disabled),
 .monaco-workbench .monaco-action-bar:not(.vertical) .monaco-dropdown.active .action-label:not(.disabled) {
-	background-color: var(--vscode-toolbar-activeBackground);
+	background-color: var(--zycode-toolbar-activeBackground);
 }
 
 .monaco-workbench .monaco-action-bar:not(.vertical) .action-item .action-label:hover:not(.disabled) {
-	outline: 1px dashed var(--vscode-toolbar-hoverOutline);
+	outline: 1px dashed var(--zycode-toolbar-hoverOutline);
 	outline-offset: -1px;
 }

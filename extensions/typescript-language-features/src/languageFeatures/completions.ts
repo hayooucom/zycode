@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { Command, CommandManager } from '../commands/commandManager';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { LanguageDescription } from '../configuration/languageDescription';
@@ -24,7 +24,7 @@ import * as Previewer from './util/textRendering';
 
 
 interface DotAccessorContext {
-	readonly range: vscode.Range;
+	readonly range: zycode.Range;
 	readonly text: string;
 }
 
@@ -37,22 +37,22 @@ interface CompletionContext {
 	readonly enableCallCompletions: boolean;
 	readonly completeFunctionCalls: boolean;
 
-	readonly wordRange: vscode.Range | undefined;
+	readonly wordRange: zycode.Range | undefined;
 	readonly line: string;
 }
 
 type ResolvedCompletionItem = {
-	readonly edits?: readonly vscode.TextEdit[];
-	readonly commands: readonly vscode.Command[];
+	readonly edits?: readonly zycode.TextEdit[];
+	readonly commands: readonly zycode.Command[];
 };
 
-class MyCompletionItem extends vscode.CompletionItem {
+class MyCompletionItem extends zycode.CompletionItem {
 
 	public readonly useCodeSnippet: boolean;
 
 	constructor(
-		public readonly position: vscode.Position,
-		public readonly document: vscode.TextDocument,
+		public readonly position: zycode.Position,
+		public readonly document: zycode.TextDocument,
 		public readonly tsEntry: Proto.CompletionEntry,
 		private readonly completionContext: CompletionContext,
 		public readonly metadata: any | undefined,
@@ -63,7 +63,7 @@ class MyCompletionItem extends vscode.CompletionItem {
 
 		if (tsEntry.source && tsEntry.hasAction && client.apiVersion.lt(API.v490)) {
 			// De-prioritze auto-imports
-			// https://github.com/microsoft/vscode/issues/40311
+			// https://github.com/microsoft/zycode/issues/40311
 			this.sortText = '\uffff' + tsEntry.sortText;
 		} else {
 			this.sortText = tsEntry.sortText;
@@ -71,7 +71,7 @@ class MyCompletionItem extends vscode.CompletionItem {
 
 		if (tsEntry.source && tsEntry.hasAction) {
 			// Render "fancy" when source is a workspace path
-			const qualifierCandidate = vscode.workspace.asRelativePath(tsEntry.source);
+			const qualifierCandidate = zycode.workspace.asRelativePath(tsEntry.source);
 			if (qualifierCandidate !== tsEntry.source) {
 				this.label = { label, description: qualifierCandidate };
 			}
@@ -89,14 +89,14 @@ class MyCompletionItem extends vscode.CompletionItem {
 
 		this.preselect = tsEntry.isRecommended;
 		this.position = position;
-		this.useCodeSnippet = completionContext.completeFunctionCalls && (this.kind === vscode.CompletionItemKind.Function || this.kind === vscode.CompletionItemKind.Method);
+		this.useCodeSnippet = completionContext.completeFunctionCalls && (this.kind === zycode.CompletionItemKind.Function || this.kind === zycode.CompletionItemKind.Method);
 
 		this.range = this.getRangeFromReplacementSpan(tsEntry, completionContext);
 		this.commitCharacters = MyCompletionItem.getCommitCharacters(completionContext, tsEntry);
-		this.insertText = isSnippet && tsEntry.insertText ? new vscode.SnippetString(tsEntry.insertText) : tsEntry.insertText;
+		this.insertText = isSnippet && tsEntry.insertText ? new zycode.SnippetString(tsEntry.insertText) : tsEntry.insertText;
 		this.filterText = tsEntry.filterText || this.getFilterText(completionContext.line, tsEntry.insertText);
 
-		if (completionContext.isMemberCompletion && completionContext.dotAccessorContext && !(this.insertText instanceof vscode.SnippetString)) {
+		if (completionContext.isMemberCompletion && completionContext.dotAccessorContext && !(this.insertText instanceof zycode.SnippetString)) {
 			this.filterText = completionContext.dotAccessorContext.text + (this.insertText || this.textLabel);
 			if (!this.range) {
 				const replacementRange = this.completionContext.wordRange;
@@ -125,11 +125,11 @@ class MyCompletionItem extends vscode.CompletionItem {
 				}
 			}
 			if (kindModifiers.has(PConst.KindModifiers.deprecated)) {
-				this.tags = [vscode.CompletionItemTag.Deprecated];
+				this.tags = [zycode.CompletionItemTag.Deprecated];
 			}
 
 			if (kindModifiers.has(PConst.KindModifiers.color)) {
-				this.kind = vscode.CompletionItemKind.Color;
+				this.kind = zycode.CompletionItemKind.Color;
 			}
 
 			this.detail = getScriptKindDetails(tsEntry);
@@ -143,14 +143,14 @@ class MyCompletionItem extends vscode.CompletionItem {
 	}
 
 	private _resolvedPromise?: {
-		readonly requestToken: vscode.CancellationTokenSource;
+		readonly requestToken: zycode.CancellationTokenSource;
 		readonly promise: Promise<ResolvedCompletionItem | undefined>;
 		waiting: number;
 	};
 
 	public async resolveCompletionItem(
 		client: ITypeScriptServiceClient,
-		token: vscode.CancellationToken,
+		token: zycode.CancellationToken,
 	): Promise<ResolvedCompletionItem | undefined> {
 		token.onCancellationRequested(() => {
 			if (this._resolvedPromise && --this._resolvedPromise.waiting <= 0) {
@@ -168,7 +168,7 @@ class MyCompletionItem extends vscode.CompletionItem {
 			return this._resolvedPromise.promise;
 		}
 
-		const requestToken = new vscode.CancellationTokenSource();
+		const requestToken = new zycode.CancellationTokenSource();
 
 		const promise = (async (): Promise<ResolvedCompletionItem | undefined> => {
 			const filepath = client.toOpenTsFilePath(this.document);
@@ -201,7 +201,7 @@ class MyCompletionItem extends vscode.CompletionItem {
 			this.documentation = this.getDocumentation(client, detail, this.document.uri);
 
 			const codeAction = this.getCodeActions(detail, filepath);
-			const commands: vscode.Command[] = [{
+			const commands: zycode.Command[] = [{
 				command: CompletionAcceptedCommand.ID,
 				title: '',
 				arguments: [this]
@@ -217,9 +217,9 @@ class MyCompletionItem extends vscode.CompletionItem {
 					const { snippet, parameterCount } = snippetForFunctionCall({ ...this, label: this.textLabel }, detail.displayParts);
 					this.insertText = snippet;
 					if (parameterCount > 0) {
-						//Fix for https://github.com/microsoft/vscode/issues/104059
+						//Fix for https://github.com/microsoft/zycode/issues/104059
 						//Don't show parameter hints if "editor.parameterHints.enabled": false
-						if (vscode.workspace.getConfiguration('editor.parameterHints').get('enabled')) {
+						if (zycode.workspace.getConfiguration('editor.parameterHints').get('enabled')) {
 							commands.push({ title: 'triggerParameterHints', command: 'editor.action.triggerParameterHints' });
 						}
 					}
@@ -260,9 +260,9 @@ class MyCompletionItem extends vscode.CompletionItem {
 	private getDocumentation(
 		client: ITypeScriptServiceClient,
 		detail: Proto.CompletionEntryDetails,
-		baseUri: vscode.Uri,
-	): vscode.MarkdownString | undefined {
-		const documentation = new vscode.MarkdownString();
+		baseUri: zycode.Uri,
+	): zycode.MarkdownString | undefined {
+		const documentation = new zycode.MarkdownString();
 		Previewer.appendDocumentationAsMarkdown(documentation, detail.documentation, detail.tags, client);
 		documentation.baseUri = baseUri;
 		return documentation.value.length ? documentation : undefined;
@@ -271,9 +271,9 @@ class MyCompletionItem extends vscode.CompletionItem {
 	private async isValidFunctionCompletionContext(
 		client: ITypeScriptServiceClient,
 		filepath: string,
-		position: vscode.Position,
-		document: vscode.TextDocument,
-		token: vscode.CancellationToken
+		position: zycode.Position,
+		document: zycode.TextDocument,
+		token: zycode.CancellationToken
 	): Promise<boolean> {
 		// Workaround for https://github.com/microsoft/TypeScript/issues/12677
 		// Don't complete function calls inside of destructive assignments or imports
@@ -295,7 +295,7 @@ class MyCompletionItem extends vscode.CompletionItem {
 
 		const line = document.lineAt(position.line);
 		// Don't complete function call if there is already something that looks like a function call
-		// https://github.com/microsoft/vscode/issues/18131
+		// https://github.com/microsoft/zycode/issues/18131
 
 		const after = line.text.slice(position.character);
 		if (after.match(/^[a-z_$0-9]*\s*\(/gi)) {
@@ -314,15 +314,15 @@ class MyCompletionItem extends vscode.CompletionItem {
 	private getCodeActions(
 		detail: Proto.CompletionEntryDetails,
 		filepath: string
-	): { command?: vscode.Command; additionalTextEdits?: vscode.TextEdit[] } {
+	): { command?: zycode.Command; additionalTextEdits?: zycode.TextEdit[] } {
 		if (!detail.codeActions?.length) {
 			return {};
 		}
 
 		// Try to extract out the additionalTextEdits for the current file.
 		// Also check if we still have to apply other workspace edits and commands
-		// using a vscode command
-		const additionalTextEdits: vscode.TextEdit[] = [];
+		// using a zycode command
+		const additionalTextEdits: zycode.TextEdit[] = [];
 		let hasRemainingCommandsOrEdits = false;
 		for (const tsAction of detail.codeActions) {
 			if (tsAction.commands) {
@@ -341,7 +341,7 @@ class MyCompletionItem extends vscode.CompletionItem {
 			}
 		}
 
-		let command: vscode.Command | undefined = undefined;
+		let command: zycode.Command | undefined = undefined;
 		if (hasRemainingCommandsOrEdits) {
 			// Create command that applies all edits not in the current file.
 			command = {
@@ -369,7 +369,7 @@ class MyCompletionItem extends vscode.CompletionItem {
 		let replaceRange = typeConverters.Range.fromTextSpan(tsEntry.replacementSpan);
 		// Make sure we only replace a single line at most
 		if (!replaceRange.isSingleLine) {
-			replaceRange = new vscode.Range(replaceRange.start.line, replaceRange.start.character, replaceRange.start.line, completionContext.line.length);
+			replaceRange = new zycode.Range(replaceRange.start.line, replaceRange.start.character, replaceRange.start.line, completionContext.line.length);
 		}
 
 		// If TS returns an explicit replacement range, we should use it for both types of completion
@@ -423,17 +423,17 @@ class MyCompletionItem extends vscode.CompletionItem {
 		const replaceRange = this.completionContext.wordRange;
 		if (replaceRange) {
 			this.range = {
-				inserting: new vscode.Range(replaceRange.start, this.position),
+				inserting: new zycode.Range(replaceRange.start, this.position),
 				replacing: replaceRange
 			};
 		}
 	}
 
-	private static convertKind(kind: string): vscode.CompletionItemKind {
+	private static convertKind(kind: string): zycode.CompletionItemKind {
 		switch (kind) {
 			case PConst.Kind.primitiveType:
 			case PConst.Kind.keyword:
-				return vscode.CompletionItemKind.Keyword;
+				return zycode.CompletionItemKind.Keyword;
 
 			case PConst.Kind.const:
 			case PConst.Kind.let:
@@ -441,54 +441,54 @@ class MyCompletionItem extends vscode.CompletionItem {
 			case PConst.Kind.localVariable:
 			case PConst.Kind.alias:
 			case PConst.Kind.parameter:
-				return vscode.CompletionItemKind.Variable;
+				return zycode.CompletionItemKind.Variable;
 
 			case PConst.Kind.memberVariable:
 			case PConst.Kind.memberGetAccessor:
 			case PConst.Kind.memberSetAccessor:
-				return vscode.CompletionItemKind.Field;
+				return zycode.CompletionItemKind.Field;
 
 			case PConst.Kind.function:
 			case PConst.Kind.localFunction:
-				return vscode.CompletionItemKind.Function;
+				return zycode.CompletionItemKind.Function;
 
 			case PConst.Kind.method:
 			case PConst.Kind.constructSignature:
 			case PConst.Kind.callSignature:
 			case PConst.Kind.indexSignature:
-				return vscode.CompletionItemKind.Method;
+				return zycode.CompletionItemKind.Method;
 
 			case PConst.Kind.enum:
-				return vscode.CompletionItemKind.Enum;
+				return zycode.CompletionItemKind.Enum;
 
 			case PConst.Kind.enumMember:
-				return vscode.CompletionItemKind.EnumMember;
+				return zycode.CompletionItemKind.EnumMember;
 
 			case PConst.Kind.module:
 			case PConst.Kind.externalModuleName:
-				return vscode.CompletionItemKind.Module;
+				return zycode.CompletionItemKind.Module;
 
 			case PConst.Kind.class:
 			case PConst.Kind.type:
-				return vscode.CompletionItemKind.Class;
+				return zycode.CompletionItemKind.Class;
 
 			case PConst.Kind.interface:
-				return vscode.CompletionItemKind.Interface;
+				return zycode.CompletionItemKind.Interface;
 
 			case PConst.Kind.warning:
-				return vscode.CompletionItemKind.Text;
+				return zycode.CompletionItemKind.Text;
 
 			case PConst.Kind.script:
-				return vscode.CompletionItemKind.File;
+				return zycode.CompletionItemKind.File;
 
 			case PConst.Kind.directory:
-				return vscode.CompletionItemKind.Folder;
+				return zycode.CompletionItemKind.Folder;
 
 			case PConst.Kind.string:
-				return vscode.CompletionItemKind.Constant;
+				return zycode.CompletionItemKind.Constant;
 
 			default:
-				return vscode.CompletionItemKind.Property;
+				return zycode.CompletionItemKind.Property;
 		}
 	}
 
@@ -534,11 +534,11 @@ class CompletionAcceptedCommand implements Command {
 	public readonly id = CompletionAcceptedCommand.ID;
 
 	public constructor(
-		private readonly onCompletionAccepted: (item: vscode.CompletionItem) => void,
+		private readonly onCompletionAccepted: (item: zycode.CompletionItem) => void,
 		private readonly telemetryReporter: TelemetryReporter,
 	) { }
 
-	public execute(item: vscode.CompletionItem) {
+	public execute(item: zycode.CompletionItem) {
 		this.onCompletionAccepted(item);
 		if (item instanceof MyCompletionItem) {
 			/* __GDPR__
@@ -579,15 +579,15 @@ class ApplyCompletionCommand implements Command {
 		const { edits, commands } = resolved;
 
 		if (edits) {
-			const workspaceEdit = new vscode.WorkspaceEdit();
+			const workspaceEdit = new zycode.WorkspaceEdit();
 			for (const edit of edits) {
 				workspaceEdit.replace(item.document.uri, edit.range, edit.newText);
 			}
-			await vscode.workspace.applyEdit(workspaceEdit);
+			await zycode.workspace.applyEdit(workspaceEdit);
 		}
 
 		for (const command of commands) {
-			await vscode.commands.executeCommand(command.command, ...(command.arguments ?? []));
+			await zycode.commands.executeCommand(command.command, ...(command.arguments ?? []));
 		}
 	}
 }
@@ -609,13 +609,13 @@ class ApplyCompletionCodeActionCommand implements Command {
 			return applyCodeAction(this.client, codeActions[0], nulToken);
 		}
 
-		const selection = await vscode.window.showQuickPick(
+		const selection = await zycode.window.showQuickPick(
 			codeActions.map(action => ({
 				label: action.description,
 				description: '',
 				action,
 			})), {
-			placeHolder: vscode.l10n.t("Select code action to apply")
+			placeHolder: zycode.l10n.t("Select code action to apply")
 		});
 
 		if (selection) {
@@ -642,9 +642,9 @@ namespace CompletionConfiguration {
 
 	export function getConfigurationForResource(
 		modeId: string,
-		resource: vscode.Uri
+		resource: zycode.Uri
 	): CompletionConfiguration {
-		const config = vscode.workspace.getConfiguration(modeId, resource);
+		const config = zycode.workspace.getConfiguration(modeId, resource);
 		return {
 			completeFunctionCalls: config.get<boolean>(CompletionConfiguration.completeFunctionCalls, false),
 			pathSuggestions: config.get<boolean>(CompletionConfiguration.pathSuggestions, true),
@@ -655,7 +655,7 @@ namespace CompletionConfiguration {
 	}
 }
 
-class TypeScriptCompletionItemProvider implements vscode.CompletionItemProvider<MyCompletionItem> {
+class TypeScriptCompletionItemProvider implements zycode.CompletionItemProvider<MyCompletionItem> {
 
 	public static readonly triggerCharacters = ['.', '"', '\'', '`', '/', '@', '<', '#', ' '];
 
@@ -666,7 +666,7 @@ class TypeScriptCompletionItemProvider implements vscode.CompletionItemProvider<
 		private readonly fileConfigurationManager: FileConfigurationManager,
 		commandManager: CommandManager,
 		private readonly telemetryReporter: TelemetryReporter,
-		onCompletionAccepted: (item: vscode.CompletionItem) => void
+		onCompletionAccepted: (item: zycode.CompletionItem) => void
 	) {
 		commandManager.register(new ApplyCompletionCodeActionCommand(this.client));
 		commandManager.register(new CompletionAcceptedCommand(onCompletionAccepted, this.telemetryReporter));
@@ -674,22 +674,22 @@ class TypeScriptCompletionItemProvider implements vscode.CompletionItemProvider<
 	}
 
 	public async provideCompletionItems(
-		document: vscode.TextDocument,
-		position: vscode.Position,
-		token: vscode.CancellationToken,
-		context: vscode.CompletionContext
-	): Promise<vscode.CompletionList<MyCompletionItem> | undefined> {
-		if (!vscode.workspace.getConfiguration(this.language.id, document).get('suggest.enabled')) {
+		document: zycode.TextDocument,
+		position: zycode.Position,
+		token: zycode.CancellationToken,
+		context: zycode.CompletionContext
+	): Promise<zycode.CompletionList<MyCompletionItem> | undefined> {
+		if (!zycode.workspace.getConfiguration(this.language.id, document).get('suggest.enabled')) {
 			return undefined;
 		}
 
 		if (this.typingsStatus.isAcquiringTypings) {
-			return Promise.reject<vscode.CompletionList<MyCompletionItem>>({
-				label: vscode.l10n.t({
+			return Promise.reject<zycode.CompletionList<MyCompletionItem>>({
+				label: zycode.l10n.t({
 					message: "Acquiring typings...",
 					comment: ['Typings refers to the *.d.ts typings files that power our IntelliSense. It should not be localized'],
 				}),
-				detail: vscode.l10n.t({
+				detail: zycode.l10n.t({
 					message: "Acquiring typings definitions for IntelliSense.",
 					comment: ['Typings refers to the *.d.ts typings files that power our IntelliSense. It should not be localized'],
 				})
@@ -711,7 +711,7 @@ class TypeScriptCompletionItemProvider implements vscode.CompletionItemProvider<
 		let wordRange = document.getWordRangeAtPosition(position);
 		if (wordRange && !wordRange.isEmpty) {
 			const secondCharPosition = wordRange.start.translate(0, 1);
-			const firstChar = document.getText(new vscode.Range(wordRange.start, secondCharPosition));
+			const firstChar = document.getText(new zycode.Range(wordRange.start, secondCharPosition));
 			if (firstChar === '@') {
 				wordRange = wordRange.with(secondCharPosition);
 			}
@@ -752,7 +752,7 @@ class TypeScriptCompletionItemProvider implements vscode.CompletionItemProvider<
 			if (isMemberCompletion) {
 				const dotMatch = line.text.slice(0, position.character).match(/\??\.\s*$/) || undefined;
 				if (dotMatch) {
-					const range = new vscode.Range(position.translate({ characterDelta: -dotMatch[0].length }), position);
+					const range = new zycode.Range(position.translate({ characterDelta: -dotMatch[0].length }), position);
 					const text = document.getText(range);
 					dotAccessorContext = { range, text };
 				}
@@ -799,7 +799,7 @@ class TypeScriptCompletionItemProvider implements vscode.CompletionItemProvider<
 		if (duration !== undefined) {
 			this.logCompletionsTelemetry(duration, response, includesPackageJsonImport, includesImportStatementCompletion);
 		}
-		return new vscode.CompletionList(items, isIncomplete);
+		return new zycode.CompletionList(items, isIncomplete);
 	}
 
 	private logCompletionsTelemetry(
@@ -840,7 +840,7 @@ class TypeScriptCompletionItemProvider implements vscode.CompletionItemProvider<
 		});
 	}
 
-	private getTsTriggerCharacter(context: vscode.CompletionContext): Proto.CompletionsTriggerCharacter | undefined {
+	private getTsTriggerCharacter(context: zycode.CompletionContext): Proto.CompletionsTriggerCharacter | undefined {
 		switch (context.triggerCharacter) {
 			case '@': { // Workaround for https://github.com/microsoft/TypeScript/issues/27321
 				return this.client.apiVersion.gte(API.v310) && this.client.apiVersion.lt(API.v320) ? undefined : '@';
@@ -867,16 +867,16 @@ class TypeScriptCompletionItemProvider implements vscode.CompletionItemProvider<
 
 	public async resolveCompletionItem(
 		item: MyCompletionItem,
-		token: vscode.CancellationToken
+		token: zycode.CancellationToken
 	): Promise<MyCompletionItem | undefined> {
 		await item.resolveCompletionItem(this.client, token);
 		return item;
 	}
 
 	private shouldTrigger(
-		context: vscode.CompletionContext,
-		line: vscode.TextLine,
-		position: vscode.Position,
+		context: zycode.CompletionContext,
+		line: zycode.TextLine,
+		position: zycode.Position,
 		configuration: CompletionConfiguration,
 	): boolean {
 		if (context.triggerCharacter === ' ') {
@@ -910,12 +910,12 @@ export function register(
 	fileConfigurationManager: FileConfigurationManager,
 	commandManager: CommandManager,
 	telemetryReporter: TelemetryReporter,
-	onCompletionAccepted: (item: vscode.CompletionItem) => void
+	onCompletionAccepted: (item: zycode.CompletionItem) => void
 ) {
 	return conditionalRegistration([
 		requireSomeCapability(client, ClientCapability.EnhancedSyntax, ClientCapability.Semantic),
 	], () => {
-		return vscode.languages.registerCompletionItemProvider(selector.syntax,
+		return zycode.languages.registerCompletionItemProvider(selector.syntax,
 			new TypeScriptCompletionItemProvider(client, language, typingsStatus, fileConfigurationManager, commandManager, telemetryReporter, onCompletionAccepted),
 			...TypeScriptCompletionItemProvider.triggerCharacters);
 	});

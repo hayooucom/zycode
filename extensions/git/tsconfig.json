@@ -9,13 +9,13 @@
 	},
 	"include": [
 		"src/**/*",
-		"../../src/vscode-dts/vscode.d.ts",
-		"../../src/vscode-dts/vscode.proposed.diffCommand.d.ts",
-		"../../src/vscode-dts/vscode.proposed.scmActionButton.d.ts",
-		"../../src/vscode-dts/vscode.proposed.scmSelectedProvider.d.ts",
-		"../../src/vscode-dts/vscode.proposed.scmValidation.d.ts",
-		"../../src/vscode-dts/vscode.proposed.tabInputTextMerge.d.ts",
-		"../../src/vscode-dts/vscode.proposed.timeline.d.ts",
+		"../../src/zycode-dts/zycode.d.ts",
+		"../../src/zycode-dts/zycode.proposed.diffCommand.d.ts",
+		"../../src/zycode-dts/zycode.proposed.scmActionButton.d.ts",
+		"../../src/zycode-dts/zycode.proposed.scmSelectedProvider.d.ts",
+		"../../src/zycode-dts/zycode.proposed.scmValidation.d.ts",
+		"../../src/zycode-dts/zycode.proposed.tabInputTextMerge.d.ts",
+		"../../src/zycode-dts/zycode.proposed.timeline.d.ts",
 		"../types/lib.textEncoder.d.ts"
 	]
 }

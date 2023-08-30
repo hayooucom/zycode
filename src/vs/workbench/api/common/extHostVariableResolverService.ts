@@ -16,7 +16,7 @@ import { CustomEditorTabInput, NotebookDiffEditorTabInput, NotebookEditorTabInpu
 import { IExtHostWorkspace } from 'vs/workbench/api/common/extHostWorkspace';
 import { IConfigurationResolverService } from 'vs/workbench/services/configurationResolver/common/configurationResolver';
 import { AbstractVariableResolverService } from 'vs/workbench/services/configurationResolver/common/variableResolver';
-import * as vscode from 'vscode';
+import * as zycode from 'zycode';
 import { ExtHostConfigProvider, IExtHostConfiguration } from './extHostConfiguration';
 
 export interface IExtHostVariableResolverProvider {
@@ -27,7 +27,7 @@ export interface IExtHostVariableResolverProvider {
 export const IExtHostVariableResolverProvider = createDecorator<IExtHostVariableResolverProvider>('IExtHostVariableResolverProvider');
 
 interface DynamicContext {
-	folders: vscode.WorkspaceFolder[];
+	folders: zycode.WorkspaceFolder[];
 }
 
 class ExtHostVariableResolverService extends AbstractVariableResolverService {

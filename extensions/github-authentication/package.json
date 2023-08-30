@@ -2,11 +2,11 @@
   "name": "github-authentication",
   "displayName": "%displayName%",
   "description": "%description%",
-  "publisher": "vscode",
+  "publisher": "zycode",
   "license": "MIT",
   "version": "0.0.2",
   "engines": {
-    "vscode": "^1.41.0"
+    "zycode": "^1.41.0"
   },
   "icon": "images/icon.png",
   "categories": [
@@ -56,12 +56,12 @@
     "compile-web": "npx webpack-cli --config extension-browser.webpack.config --mode none",
     "watch": "gulp watch-extension:github-authentication",
     "watch-web": "npx webpack-cli --config extension-browser.webpack.config --mode none --watch --info-verbosity verbose",
-    "vscode:prepublish": "npm run compile"
+    "zycode:prepublish": "npm run compile"
   },
   "dependencies": {
     "node-fetch": "2.6.7",
-    "@vscode/extension-telemetry": "^0.8.4",
-    "vscode-tas-client": "^0.1.47"
+    "@zycode/extension-telemetry": "^0.8.4",
+    "zycode-tas-client": "^0.1.47"
   },
   "devDependencies": {
     "@types/node": "18.x",
@@ -69,6 +69,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/microsoft/zycode.git"
   }
 }

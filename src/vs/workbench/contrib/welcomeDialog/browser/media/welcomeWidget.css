@@ -8,7 +8,7 @@
 
 .dialog-message-detail-title > div > p > .codicon[class*='codicon-']::before{
 	position: relative;
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 	padding-right: 10px;
 	font-size: larger;
 }

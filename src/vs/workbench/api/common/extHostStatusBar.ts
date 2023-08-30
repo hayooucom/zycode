@@ -6,7 +6,7 @@
 /* eslint-disable local/code-no-native-private */
 
 import { StatusBarAlignment as ExtHostStatusBarAlignment, Disposable, ThemeColor, asStatusBarItemIdentifier } from './extHostTypes';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 import { MainContext, MainThreadStatusBarShape, IMainContext, ICommandDto, ExtHostStatusBarShape, StatusBarItemDto } from './extHost.protocol';
 import { localize } from 'vs/nls';
 import { CommandsConverter } from 'vs/workbench/api/common/extHostCommands';
@@ -16,7 +16,7 @@ import { MarkdownString } from 'vs/workbench/api/common/extHostTypeConverters';
 import { isNumber } from 'vs/base/common/types';
 
 
-export class ExtHostStatusBarEntry implements vscode.StatusBarItem {
+export class ExtHostStatusBarEntry implements zycode.StatusBarItem {
 
 	private static ID_GEN = 0;
 
@@ -42,19 +42,19 @@ export class ExtHostStatusBarEntry implements vscode.StatusBarItem {
 	private _visible?: boolean;
 
 	private _text: string = '';
-	private _tooltip?: string | vscode.MarkdownString;
+	private _tooltip?: string | zycode.MarkdownString;
 	private _name?: string;
 	private _color?: string | ThemeColor;
 	private _backgroundColor?: ThemeColor;
 	private _latestCommandRegistration?: DisposableStore;
 	private readonly _staleCommandRegistrations = new DisposableStore();
 	private _command?: {
-		readonly fromApi: string | vscode.Command;
+		readonly fromApi: string | zycode.Command;
 		readonly internal: ICommandDto;
 	};
 
 	private _timeoutHandle: any;
-	private _accessibilityInformation?: vscode.AccessibilityInformation;
+	private _accessibilityInformation?: zycode.AccessibilityInformation;
 
 	constructor(proxy: MainThreadStatusBarShape, commands: CommandsConverter, staticItems: ReadonlyMap<string, StatusBarItemDto>, extension: IExtensionDescription, id?: string, alignment?: ExtHostStatusBarAlignment, priority?: number);
 	constructor(proxy: MainThreadStatusBarShape, commands: CommandsConverter, staticItems: ReadonlyMap<string, StatusBarItemDto>, extension: IExtensionDescription | undefined, id: string, alignment?: ExtHostStatusBarAlignment, priority?: number);
@@ -95,7 +95,7 @@ export class ExtHostStatusBarEntry implements vscode.StatusBarItem {
 		// Our RPC mechanism use JSON to serialize data which does
 		// not support `Infinity` so we need to fill in the number
 		// equivalent as close as possible.
-		// https://github.com/microsoft/vscode/issues/133317
+		// https://github.com/microsoft/zycode/issues/133317
 
 		if (priority === Number.POSITIVE_INFINITY) {
 			return Number.MAX_VALUE;
@@ -112,7 +112,7 @@ export class ExtHostStatusBarEntry implements vscode.StatusBarItem {
 		return this._id ?? this._extension!.identifier.value;
 	}
 
-	public get alignment(): vscode.StatusBarAlignment {
+	public get alignment(): zycode.StatusBarAlignment {
 		return this._alignment;
 	}
 
@@ -128,7 +128,7 @@ export class ExtHostStatusBarEntry implements vscode.StatusBarItem {
 		return this._name;
 	}
 
-	public get tooltip(): vscode.MarkdownString | string | undefined {
+	public get tooltip(): zycode.MarkdownString | string | undefined {
 		return this._tooltip;
 	}
 
@@ -140,11 +140,11 @@ export class ExtHostStatusBarEntry implements vscode.StatusBarItem {
 		return this._backgroundColor;
 	}
 
-	public get command(): string | vscode.Command | undefined {
+	public get command(): string | zycode.Command | undefined {
 		return this._command?.fromApi;
 	}
 
-	public get accessibilityInformation(): vscode.AccessibilityInformation | undefined {
+	public get accessibilityInformation(): zycode.AccessibilityInformation | undefined {
 		return this._accessibilityInformation;
 	}
 
@@ -158,7 +158,7 @@ export class ExtHostStatusBarEntry implements vscode.StatusBarItem {
 		this.update();
 	}
 
-	public set tooltip(tooltip: vscode.MarkdownString | string | undefined) {
+	public set tooltip(tooltip: zycode.MarkdownString | string | undefined) {
 		this._tooltip = tooltip;
 		this.update();
 	}
@@ -177,7 +177,7 @@ export class ExtHostStatusBarEntry implements vscode.StatusBarItem {
 		this.update();
 	}
 
-	public set command(command: string | vscode.Command | undefined) {
+	public set command(command: string | zycode.Command | undefined) {
 		if (this._command?.fromApi === command) {
 			return;
 		}
@@ -202,7 +202,7 @@ export class ExtHostStatusBarEntry implements vscode.StatusBarItem {
 		this.update();
 	}
 
-	public set accessibilityInformation(accessibilityInformation: vscode.AccessibilityInformation | undefined) {
+	public set accessibilityInformation(accessibilityInformation: zycode.AccessibilityInformation | undefined) {
 		this._accessibilityInformation = accessibilityInformation;
 		this.update();
 	}
@@ -277,7 +277,7 @@ export class ExtHostStatusBarEntry implements vscode.StatusBarItem {
 
 class StatusBarMessage {
 
-	private readonly _item: vscode.StatusBarItem;
+	private readonly _item: zycode.StatusBarItem;
 	private readonly _messages: { message: string }[] = [];
 
 	constructor(statusBar: ExtHostStatusBar) {
@@ -333,9 +333,9 @@ export class ExtHostStatusBar implements ExtHostStatusBarShape {
 		}
 	}
 
-	createStatusBarEntry(extension: IExtensionDescription | undefined, id: string, alignment?: ExtHostStatusBarAlignment, priority?: number): vscode.StatusBarItem;
-	createStatusBarEntry(extension: IExtensionDescription, id?: string, alignment?: ExtHostStatusBarAlignment, priority?: number): vscode.StatusBarItem;
-	createStatusBarEntry(extension: IExtensionDescription, id: string, alignment?: ExtHostStatusBarAlignment, priority?: number): vscode.StatusBarItem {
+	createStatusBarEntry(extension: IExtensionDescription | undefined, id: string, alignment?: ExtHostStatusBarAlignment, priority?: number): zycode.StatusBarItem;
+	createStatusBarEntry(extension: IExtensionDescription, id?: string, alignment?: ExtHostStatusBarAlignment, priority?: number): zycode.StatusBarItem;
+	createStatusBarEntry(extension: IExtensionDescription, id: string, alignment?: ExtHostStatusBarAlignment, priority?: number): zycode.StatusBarItem {
 		return new ExtHostStatusBarEntry(this._proxy, this._commands, this._existingItems, extension, id, alignment, priority);
 	}
 

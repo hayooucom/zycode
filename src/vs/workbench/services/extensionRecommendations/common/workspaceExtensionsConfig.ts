@@ -20,7 +20,7 @@ import { URI } from 'vs/base/common/uri';
 import { IJSONEditingService, IJSONValue } from 'vs/workbench/services/configuration/common/jsonEditing';
 import { ResourceMap } from 'vs/base/common/map';
 
-export const EXTENSIONS_CONFIG = '.vscode/extensions.json';
+export const EXTENSIONS_CONFIG = '.zycode/extensions.json';
 
 export interface IExtensionsConfigContent {
 	recommendations?: string[];

@@ -18,7 +18,7 @@ export namespace Schemas {
 	/**
 	 * A schema that is used for setting files
 	 */
-	export const vscode = 'vscode';
+	export const zycode = 'zycode';
 
 	/**
 	 * A schema that is used for internal private files
@@ -49,28 +49,28 @@ export namespace Schemas {
 
 	export const command = 'command';
 
-	export const vscodeRemote = 'vscode-remote';
+	export const vscodeRemote = 'zycode-remote';
 
-	export const vscodeRemoteResource = 'vscode-remote-resource';
+	export const vscodeRemoteResource = 'zycode-remote-resource';
 
-	export const vscodeManagedRemoteResource = 'vscode-managed-remote-resource';
+	export const vscodeManagedRemoteResource = 'zycode-managed-remote-resource';
 
-	export const vscodeUserData = 'vscode-userdata';
+	export const vscodeUserData = 'zycode-userdata';
 
-	export const vscodeCustomEditor = 'vscode-custom-editor';
+	export const vscodeCustomEditor = 'zycode-custom-editor';
 
-	export const vscodeNotebookCell = 'vscode-notebook-cell';
-	export const vscodeNotebookCellMetadata = 'vscode-notebook-cell-metadata';
-	export const vscodeNotebookCellOutput = 'vscode-notebook-cell-output';
-	export const vscodeInteractiveInput = 'vscode-interactive-input';
+	export const vscodeNotebookCell = 'zycode-notebook-cell';
+	export const vscodeNotebookCellMetadata = 'zycode-notebook-cell-metadata';
+	export const vscodeNotebookCellOutput = 'zycode-notebook-cell-output';
+	export const vscodeInteractiveInput = 'zycode-interactive-input';
 
-	export const vscodeSettings = 'vscode-settings';
+	export const vscodeSettings = 'zycode-settings';
 
-	export const vscodeWorkspaceTrust = 'vscode-workspace-trust';
+	export const vscodeWorkspaceTrust = 'zycode-workspace-trust';
 
-	export const vscodeTerminal = 'vscode-terminal';
+	export const vscodeTerminal = 'zycode-terminal';
 
-	export const vscodeChatSesssion = 'vscode-chat-editor';
+	export const vscodeChatSesssion = 'zycode-chat-editor';
 
 	/**
 	 * Scheme used internally for webviews that aren't linked to a resource (i.e. not custom editors)
@@ -80,7 +80,7 @@ export namespace Schemas {
 	/**
 	 * Scheme used for loading the wrapper html and script in webviews.
 	 */
-	export const vscodeWebview = 'vscode-webview';
+	export const vscodeWebview = 'zycode-webview';
 
 	/**
 	 * Scheme used for extension pages
@@ -91,7 +91,7 @@ export namespace Schemas {
 	 * Scheme used as a replacement of `file` scheme to load
 	 * files with our custom protocol handler (desktop only).
 	 */
-	export const vscodeFileResource = 'vscode-file';
+	export const vscodeFileResource = 'zycode-file';
 
 	/**
 	 * Scheme used for temporary resources
@@ -106,10 +106,10 @@ export namespace Schemas {
 	/**
 	 * Scheme used for the Source Control commit input's text document
 	 */
-	export const vscodeSourceControl = 'vscode-scm';
+	export const vscodeSourceControl = 'zycode-scm';
 }
 
-export const connectionTokenCookieName = 'vscode-tkn';
+export const connectionTokenCookieName = 'zycode-tkn';
 export const connectionTokenQueryName = 'tkn';
 
 class RemoteAuthoritiesImpl {
@@ -194,7 +194,7 @@ export const nodeModulesAsarUnpackedPath: AppResourcePath = 'vs/../../node_modul
 
 class FileAccessImpl {
 
-	private static readonly FALLBACK_AUTHORITY = 'vscode-app';
+	private static readonly FALLBACK_AUTHORITY = 'zycode-app';
 
 	/**
 	 * Returns a URI to use in contexts where the browser is responsible
@@ -219,7 +219,7 @@ class FileAccessImpl {
 			return RemoteAuthorities.rewrite(uri);
 		}
 
-		// Convert to `vscode-file` resource..
+		// Convert to `zycode-file` resource..
 		if (
 			// ...only ever for `file` resources
 			uri.scheme === Schemas.file &&
@@ -259,7 +259,7 @@ class FileAccessImpl {
 	 * is responsible for loading.
 	 */
 	uriToFileUri(uri: URI): URI {
-		// Only convert the URI if it is `vscode-file:` scheme
+		// Only convert the URI if it is `zycode-file:` scheme
 		if (uri.scheme === Schemas.vscodeFileResource) {
 			return uri.with({
 				scheme: Schemas.file,
@@ -297,10 +297,10 @@ export namespace COI {
 
 	export const CoopAndCoep = Object.freeze(coiHeaders.get('3'));
 
-	const coiSearchParamName = 'vscode-coi';
+	const coiSearchParamName = 'zycode-coi';
 
 	/**
-	 * Extract desired headers from `vscode-coi` invocation
+	 * Extract desired headers from `zycode-coi` invocation
 	 */
 	export function getHeadersFromQuery(url: string | URI | URL): Record<string, string> | undefined {
 		let params: URLSearchParams | undefined;
@@ -319,7 +319,7 @@ export namespace COI {
 	}
 
 	/**
-	 * Add the `vscode-coi` query attribute based on wanting `COOP` and `COEP`. Will be a noop when `crossOriginIsolated`
+	 * Add the `zycode-coi` query attribute based on wanting `COOP` and `COEP`. Will be a noop when `crossOriginIsolated`
 	 * isn't enabled the current context
 	 */
 	export function addSearchParam(urlOrSearch: URLSearchParams | Record<string, string>, coop: boolean, coep: boolean): void {

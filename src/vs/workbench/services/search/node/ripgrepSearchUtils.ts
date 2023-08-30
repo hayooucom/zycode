@@ -16,7 +16,7 @@ export function anchorGlob(glob: string): string {
 }
 
 /**
- * Create a vscode.TextSearchMatch by using our internal TextSearchMatch type for its previewOptions logic.
+ * Create a zycode.TextSearchMatch by using our internal TextSearchMatch type for its previewOptions logic.
  */
 export function createTextSearchResult(uri: URI, text: string, range: searchExtTypes.Range | searchExtTypes.Range[], previewOptions?: searchExtTypes.TextSearchPreviewOptions): searchExtTypes.TextSearchMatch {
 	const searchRange = mapArrayOrNot(range, rangeToSearchRange);

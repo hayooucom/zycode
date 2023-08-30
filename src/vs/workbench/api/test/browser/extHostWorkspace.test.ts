@@ -548,7 +548,7 @@ suite('ExtHostWorkspace', function () {
 		finish();
 	});
 
-	test('`vscode.workspace.getWorkspaceFolder(file)` don\'t return workspace folder when file open from command line. #36221', function () {
+	test('`zycode.workspace.getWorkspaceFolder(file)` don\'t return workspace folder when file open from command line. #36221', function () {
 		if (isWindows) {
 
 			const ws = createExtHostWorkspace(new TestRPCProtocol(), {

@@ -29,7 +29,7 @@
 		"./server-main.js",
 		"./typings",
 		"./vs/**/*.ts",
-		"vscode-dts/vscode.proposed.*.d.ts",
-		"vscode-dts/vscode.d.ts"
+		"zycode-dts/zycode.proposed.*.d.ts",
+		"zycode-dts/zycode.d.ts"
 	]
 }

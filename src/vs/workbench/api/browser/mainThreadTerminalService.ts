@@ -18,7 +18,7 @@ import { deserializeEnvironmentDescriptionMap, deserializeEnvironmentVariableCol
 import { IStartExtensionTerminalRequest, ITerminalProcessExtHostProxy, ITerminalProfileResolverService, ITerminalProfileService } from 'vs/workbench/contrib/terminal/common/terminal';
 import { IRemoteAgentService } from 'vs/workbench/services/remote/common/remoteAgentService';
 import { OperatingSystem, OS } from 'vs/base/common/platform';
-import { TerminalEditorLocationOptions } from 'vscode';
+import { TerminalEditorLocationOptions } from 'zycode';
 import { Promises } from 'vs/base/common/async';
 import { ISerializableEnvironmentDescriptionMap, ISerializableEnvironmentVariableCollection } from 'vs/platform/terminal/common/environmentVariable';
 import { ITerminalLinkProviderService } from 'vs/workbench/contrib/terminalContrib/links/browser/links';

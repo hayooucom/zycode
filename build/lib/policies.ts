@@ -7,7 +7,7 @@ import { spawn } from 'child_process';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as byline from 'byline';
-import { rgPath } from '@vscode/ripgrep';
+import { rgPath } from '@zycode/ripgrep';
 import * as Parser from 'tree-sitter';
 import fetch from 'node-fetch';
 const { typescript } = require('tree-sitter-typescript');
@@ -593,7 +593,7 @@ type Version = [number, number, number];
 async function getSpecificNLS(resourceUrlTemplate: string, languageId: string, version: Version) {
 	const resource = {
 		publisher: 'ms-ceintl',
-		name: `vscode-language-pack-${languageId}`,
+		name: `zycode-language-pack-${languageId}`,
 		version: `${version[0]}.${version[1]}.${version[2]}`,
 		path: 'extension/translations/main.i18n.json'
 	};
@@ -629,7 +629,7 @@ async function queryVersions(serviceUrl: string, languageId: string): Promise<Ve
 			'User-Agent': 'VS Code Build',
 		},
 		body: JSON.stringify({
-			filters: [{ criteria: [{ filterType: 7, value: `ms-ceintl.vscode-language-pack-${languageId}` }] }],
+			filters: [{ criteria: [{ filterType: 7, value: `ms-ceintl.zycode-language-pack-${languageId}` }] }],
 			flags: 0x1
 		})
 	});

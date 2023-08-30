@@ -7,7 +7,7 @@ import * as playwright from '@playwright/test';
 import { ChildProcess, spawn } from 'child_process';
 import { join } from 'path';
 import * as mkdirp from 'mkdirp';
-import { URI } from 'vscode-uri';
+import { URI } from 'zycode-uri';
 import { Logger, measureAndLog } from './logger';
 import type { LaunchOptions } from './code';
 import { PlaywrightDriver } from './playwrightDriver';

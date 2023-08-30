@@ -1,10 +1,10 @@
 {
 	"information_for_contributors": [
-		"This file has been converted from https://github.com/jlelong/vscode-latex-basics/blob/master/syntaxes/LaTeX.tmLanguage.json",
+		"This file has been converted from https://github.com/jlelong/zycode-latex-basics/blob/master/syntaxes/LaTeX.tmLanguage.json",
 		"If you want to provide a fix or improvement, please create a pull request against the original repository.",
 		"Once accepted there, we are happy to receive an update request."
 	],
-	"version": "https://github.com/jlelong/vscode-latex-basics/commit/30d04562e592305b6f6d41a539b3ccf326888aaf",
+	"version": "https://github.com/jlelong/zycode-latex-basics/commit/30d04562e592305b6f6d41a539b3ccf326888aaf",
 	"name": "LaTeX",
 	"scopeName": "text.tex.latex",
 	"patterns": [

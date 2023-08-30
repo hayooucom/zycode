@@ -20,7 +20,7 @@ import { FileSystemProviderErrorCode, markAsFileSystemProviderError } from 'vs/p
 import { RemoteAuthorityResolverErrorCode } from 'vs/platform/remote/common/remoteAuthorityResolver';
 import { IRelativePatternDto } from 'vs/workbench/api/common/extHost.protocol';
 import { CellEditType, ICellMetadataEdit, IDocumentMetadataEdit, isTextStreamMime } from 'vs/workbench/contrib/notebook/common/notebookCommon';
-import type * as vscode from 'vscode';
+import type * as zycode from 'zycode';
 
 /**
  * @deprecated
@@ -133,7 +133,7 @@ export class Position {
 		return false;
 	}
 
-	static of(obj: vscode.Position): Position {
+	static of(obj: zycode.Position): Position {
 		if (obj instanceof Position) {
 			return obj;
 		} else if (this.isPosition(obj)) {
@@ -272,7 +272,7 @@ export class Position {
 @es5ClassCompat
 export class Range {
 
-	static isRange(thing: any): thing is vscode.Range {
+	static isRange(thing: any): thing is zycode.Range {
 		if (thing instanceof Range) {
 			return true;
 		}
@@ -283,7 +283,7 @@ export class Range {
 			&& Position.isPosition((<Range>thing.end));
 	}
 
-	static of(obj: vscode.Range): Range {
+	static of(obj: zycode.Range): Range {
 		if (obj instanceof Range) {
 			return obj;
 		}
@@ -304,10 +304,10 @@ export class Range {
 		return this._end;
 	}
 
-	constructor(start: vscode.Position, end: vscode.Position);
+	constructor(start: zycode.Position, end: zycode.Position);
 	constructor(start: Position, end: Position);
 	constructor(startLine: number, startColumn: number, endLine: number, endColumn: number);
-	constructor(startLineOrStart: number | Position | vscode.Position, startColumnOrEnd: number | Position | vscode.Position, endLine?: number, endColumn?: number) {
+	constructor(startLineOrStart: number | Position | zycode.Position, startColumnOrEnd: number | Position | zycode.Position, endLine?: number, endColumn?: number) {
 		let start: Position | undefined;
 		let end: Position | undefined;
 
@@ -527,7 +527,7 @@ export class ManagedResolvedAuthority {
 			&& (resolvedAuthority.connectionToken === undefined || typeof resolvedAuthority.connectionToken === 'string');
 	}
 
-	constructor(public readonly makeConnection: () => Thenable<vscode.ManagedMessagePassing>, public readonly connectionToken?: string) {
+	constructor(public readonly makeConnection: () => Thenable<zycode.ManagedMessagePassing>, public readonly connectionToken?: string) {
 		if (typeof connectionToken !== 'undefined') {
 			validateConnectionToken(connectionToken);
 		}
@@ -656,7 +656,7 @@ export class TextEdit {
 }
 
 @es5ClassCompat
-export class NotebookEdit implements vscode.NotebookEdit {
+export class NotebookEdit implements zycode.NotebookEdit {
 
 	static isNotebookCellEdit(thing: any): thing is NotebookEdit {
 		if (thing instanceof NotebookEdit) {
@@ -673,7 +673,7 @@ export class NotebookEdit implements vscode.NotebookEdit {
 		return new NotebookEdit(range, newCells);
 	}
 
-	static insertCells(index: number, newCells: vscode.NotebookCellData[]): vscode.NotebookEdit {
+	static insertCells(index: number, newCells: zycode.NotebookCellData[]): zycode.NotebookEdit {
 		return new NotebookEdit(new NotebookRange(index, index), newCells);
 	}
 
@@ -704,7 +704,7 @@ export class NotebookEdit implements vscode.NotebookEdit {
 	}
 }
 
-export class SnippetTextEdit implements vscode.SnippetTextEdit {
+export class SnippetTextEdit implements zycode.SnippetTextEdit {
 
 	static isSnippetTextEdit(thing: any): thing is SnippetTextEdit {
 		if (thing instanceof SnippetTextEdit) {
@@ -740,7 +740,7 @@ export interface IFileOperationOptions {
 	readonly ignoreIfExists?: boolean;
 	readonly ignoreIfNotExists?: boolean;
 	readonly recursive?: boolean;
-	readonly contents?: Uint8Array | vscode.DataTransferFile;
+	readonly contents?: Uint8Array | zycode.DataTransferFile;
 }
 
 export const enum FileEditType {
@@ -756,22 +756,22 @@ export interface IFileOperation {
 	readonly from?: URI;
 	readonly to?: URI;
 	readonly options?: IFileOperationOptions;
-	readonly metadata?: vscode.WorkspaceEditEntryMetadata;
+	readonly metadata?: zycode.WorkspaceEditEntryMetadata;
 }
 
 export interface IFileTextEdit {
 	readonly _type: FileEditType.Text;
 	readonly uri: URI;
 	readonly edit: TextEdit;
-	readonly metadata?: vscode.WorkspaceEditEntryMetadata;
+	readonly metadata?: zycode.WorkspaceEditEntryMetadata;
 }
 
 export interface IFileSnippetTextEdit {
 	readonly _type: FileEditType.Snippet;
 	readonly uri: URI;
-	readonly range: vscode.Range;
-	readonly edit: vscode.SnippetString;
-	readonly metadata?: vscode.WorkspaceEditEntryMetadata;
+	readonly range: zycode.Range;
+	readonly edit: zycode.SnippetString;
+	readonly metadata?: zycode.WorkspaceEditEntryMetadata;
 }
 
 export interface IFileCellEdit {
@@ -779,23 +779,23 @@ export interface IFileCellEdit {
 	readonly uri: URI;
 	readonly edit?: ICellMetadataEdit | IDocumentMetadataEdit;
 	readonly notebookMetadata?: Record<string, any>;
-	readonly metadata?: vscode.WorkspaceEditEntryMetadata;
+	readonly metadata?: zycode.WorkspaceEditEntryMetadata;
 }
 
 export interface ICellEdit {
 	readonly _type: FileEditType.CellReplace;
-	readonly metadata?: vscode.WorkspaceEditEntryMetadata;
+	readonly metadata?: zycode.WorkspaceEditEntryMetadata;
 	readonly uri: URI;
 	readonly index: number;
 	readonly count: number;
-	readonly cells: vscode.NotebookCellData[];
+	readonly cells: zycode.NotebookCellData[];
 }
 
 
 type WorkspaceEditEntry = IFileOperation | IFileTextEdit | IFileSnippetTextEdit | IFileCellEdit | ICellEdit;
 
 @es5ClassCompat
-export class WorkspaceEdit implements vscode.WorkspaceEdit {
+export class WorkspaceEdit implements zycode.WorkspaceEdit {
 
 	private readonly _edits: WorkspaceEditEntry[] = [];
 
@@ -806,25 +806,25 @@ export class WorkspaceEdit implements vscode.WorkspaceEdit {
 
 	// --- file
 
-	renameFile(from: vscode.Uri, to: vscode.Uri, options?: { readonly overwrite?: boolean; readonly ignoreIfExists?: boolean }, metadata?: vscode.WorkspaceEditEntryMetadata): void {
+	renameFile(from: zycode.Uri, to: zycode.Uri, options?: { readonly overwrite?: boolean; readonly ignoreIfExists?: boolean }, metadata?: zycode.WorkspaceEditEntryMetadata): void {
 		this._edits.push({ _type: FileEditType.File, from, to, options, metadata });
 	}
 
-	createFile(uri: vscode.Uri, options?: { readonly overwrite?: boolean; readonly ignoreIfExists?: boolean; readonly contents?: Uint8Array | vscode.DataTransferFile }, metadata?: vscode.WorkspaceEditEntryMetadata): void {
+	createFile(uri: zycode.Uri, options?: { readonly overwrite?: boolean; readonly ignoreIfExists?: boolean; readonly contents?: Uint8Array | zycode.DataTransferFile }, metadata?: zycode.WorkspaceEditEntryMetadata): void {
 		this._edits.push({ _type: FileEditType.File, from: undefined, to: uri, options, metadata });
 	}
 
-	deleteFile(uri: vscode.Uri, options?: { readonly recursive?: boolean; readonly ignoreIfNotExists?: boolean }, metadata?: vscode.WorkspaceEditEntryMetadata): void {
+	deleteFile(uri: zycode.Uri, options?: { readonly recursive?: boolean; readonly ignoreIfNotExists?: boolean }, metadata?: zycode.WorkspaceEditEntryMetadata): void {
 		this._edits.push({ _type: FileEditType.File, from: uri, to: undefined, options, metadata });
 	}
 
 	// --- notebook
 
-	private replaceNotebookMetadata(uri: URI, value: Record<string, any>, metadata?: vscode.WorkspaceEditEntryMetadata): void {
+	private replaceNotebookMetadata(uri: URI, value: Record<string, any>, metadata?: zycode.WorkspaceEditEntryMetadata): void {
 		this._edits.push({ _type: FileEditType.Cell, metadata, uri, edit: { editType: CellEditType.DocumentMetadata, metadata: value }, notebookMetadata: value });
 	}
 
-	private replaceNotebookCells(uri: URI, startOrRange: vscode.NotebookRange, cellData: vscode.NotebookCellData[], metadata?: vscode.WorkspaceEditEntryMetadata): void {
+	private replaceNotebookCells(uri: URI, startOrRange: zycode.NotebookRange, cellData: zycode.NotebookCellData[], metadata?: zycode.WorkspaceEditEntryMetadata): void {
 		const start = startOrRange.start;
 		const end = startOrRange.end;
 
@@ -833,21 +833,21 @@ export class WorkspaceEdit implements vscode.WorkspaceEdit {
 		}
 	}
 
-	private replaceNotebookCellMetadata(uri: URI, index: number, cellMetadata: Record<string, any>, metadata?: vscode.WorkspaceEditEntryMetadata): void {
+	private replaceNotebookCellMetadata(uri: URI, index: number, cellMetadata: Record<string, any>, metadata?: zycode.WorkspaceEditEntryMetadata): void {
 		this._edits.push({ _type: FileEditType.Cell, metadata, uri, edit: { editType: CellEditType.Metadata, index, metadata: cellMetadata } });
 	}
 
 	// --- text
 
-	replace(uri: URI, range: Range, newText: string, metadata?: vscode.WorkspaceEditEntryMetadata): void {
+	replace(uri: URI, range: Range, newText: string, metadata?: zycode.WorkspaceEditEntryMetadata): void {
 		this._edits.push({ _type: FileEditType.Text, uri, edit: new TextEdit(range, newText), metadata });
 	}
 
-	insert(resource: URI, position: Position, newText: string, metadata?: vscode.WorkspaceEditEntryMetadata): void {
+	insert(resource: URI, position: Position, newText: string, metadata?: zycode.WorkspaceEditEntryMetadata): void {
 		this.replace(resource, new Range(position, position), newText, metadata);
 	}
 
-	delete(resource: URI, range: Range, metadata?: vscode.WorkspaceEditEntryMetadata): void {
+	delete(resource: URI, range: Range, metadata?: zycode.WorkspaceEditEntryMetadata): void {
 		this.replace(resource, range, '', metadata);
 	}
 
@@ -858,11 +858,11 @@ export class WorkspaceEdit implements vscode.WorkspaceEdit {
 	}
 
 	set(uri: URI, edits: ReadonlyArray<TextEdit | SnippetTextEdit>): void;
-	set(uri: URI, edits: ReadonlyArray<[TextEdit | SnippetTextEdit, vscode.WorkspaceEditEntryMetadata]>): void;
+	set(uri: URI, edits: ReadonlyArray<[TextEdit | SnippetTextEdit, zycode.WorkspaceEditEntryMetadata]>): void;
 	set(uri: URI, edits: readonly NotebookEdit[]): void;
-	set(uri: URI, edits: ReadonlyArray<[NotebookEdit, vscode.WorkspaceEditEntryMetadata]>): void;
+	set(uri: URI, edits: ReadonlyArray<[NotebookEdit, zycode.WorkspaceEditEntryMetadata]>): void;
 
-	set(uri: URI, edits: null | undefined | ReadonlyArray<TextEdit | SnippetTextEdit | NotebookEdit | [NotebookEdit, vscode.WorkspaceEditEntryMetadata] | [TextEdit | SnippetTextEdit, vscode.WorkspaceEditEntryMetadata]>): void {
+	set(uri: URI, edits: null | undefined | ReadonlyArray<TextEdit | SnippetTextEdit | NotebookEdit | [NotebookEdit, zycode.WorkspaceEditEntryMetadata] | [TextEdit | SnippetTextEdit, zycode.WorkspaceEditEntryMetadata]>): void {
 		if (!edits) {
 			// remove all text, snippet, or notebook edits for `uri`
 			for (let i = 0; i < this._edits.length; i++) {
@@ -886,7 +886,7 @@ export class WorkspaceEdit implements vscode.WorkspaceEdit {
 					continue;
 				}
 				let edit: TextEdit | SnippetTextEdit | NotebookEdit;
-				let metadata: vscode.WorkspaceEditEntryMetadata | undefined;
+				let metadata: zycode.WorkspaceEditEntryMetadata | undefined;
 				if (Array.isArray(editOrTuple)) {
 					edit = editOrTuple[0];
 					metadata = editOrTuple[1];
@@ -1055,7 +1055,7 @@ export enum DiagnosticSeverity {
 @es5ClassCompat
 export class Location {
 
-	static isLocation(thing: any): thing is vscode.Location {
+	static isLocation(thing: any): thing is zycode.Location {
 		if (thing instanceof Location) {
 			return true;
 		}
@@ -1179,11 +1179,11 @@ export class Diagnostic {
 @es5ClassCompat
 export class Hover {
 
-	public contents: (vscode.MarkdownString | vscode.MarkedString)[];
+	public contents: (zycode.MarkdownString | zycode.MarkedString)[];
 	public range: Range | undefined;
 
 	constructor(
-		contents: vscode.MarkdownString | vscode.MarkedString | (vscode.MarkdownString | vscode.MarkedString)[],
+		contents: zycode.MarkdownString | zycode.MarkedString | (zycode.MarkdownString | zycode.MarkedString)[],
 		range?: Range
 	) {
 		if (!contents) {
@@ -1344,7 +1344,7 @@ export enum CodeActionTriggerKind {
 export class CodeAction {
 	title: string;
 
-	command?: vscode.Command;
+	command?: zycode.Command;
 
 	edit?: WorkspaceEdit;
 
@@ -1456,20 +1456,20 @@ export class CallHierarchyItem {
 
 export class CallHierarchyIncomingCall {
 
-	from: vscode.CallHierarchyItem;
-	fromRanges: vscode.Range[];
+	from: zycode.CallHierarchyItem;
+	fromRanges: zycode.Range[];
 
-	constructor(item: vscode.CallHierarchyItem, fromRanges: vscode.Range[]) {
+	constructor(item: zycode.CallHierarchyItem, fromRanges: zycode.Range[]) {
 		this.fromRanges = fromRanges;
 		this.from = item;
 	}
 }
 export class CallHierarchyOutgoingCall {
 
-	to: vscode.CallHierarchyItem;
-	fromRanges: vscode.Range[];
+	to: zycode.CallHierarchyItem;
+	fromRanges: zycode.Range[];
 
-	constructor(item: vscode.CallHierarchyItem, fromRanges: vscode.Range[]) {
+	constructor(item: zycode.CallHierarchyItem, fromRanges: zycode.Range[]) {
 		this.fromRanges = fromRanges;
 		this.to = item;
 	}
@@ -1487,9 +1487,9 @@ export class CodeLens {
 
 	range: Range;
 
-	command: vscode.Command | undefined;
+	command: zycode.Command | undefined;
 
-	constructor(range: Range, command?: vscode.Command) {
+	constructor(range: Range, command?: zycode.Command) {
 		this.range = range;
 		this.command = command;
 	}
@@ -1500,11 +1500,11 @@ export class CodeLens {
 }
 
 @es5ClassCompat
-export class MarkdownString implements vscode.MarkdownString {
+export class MarkdownString implements zycode.MarkdownString {
 
 	readonly #delegate: BaseMarkdownString;
 
-	static isMarkdownString(thing: any): thing is vscode.MarkdownString {
+	static isMarkdownString(thing: any): thing is zycode.MarkdownString {
 		if (thing instanceof MarkdownString) {
 			return true;
 		}
@@ -1546,25 +1546,25 @@ export class MarkdownString implements vscode.MarkdownString {
 		this.#delegate.supportHtml = value;
 	}
 
-	get baseUri(): vscode.Uri | undefined {
+	get baseUri(): zycode.Uri | undefined {
 		return this.#delegate.baseUri;
 	}
 
-	set baseUri(value: vscode.Uri | undefined) {
+	set baseUri(value: zycode.Uri | undefined) {
 		this.#delegate.baseUri = value;
 	}
 
-	appendText(value: string): vscode.MarkdownString {
+	appendText(value: string): zycode.MarkdownString {
 		this.#delegate.appendText(value);
 		return this;
 	}
 
-	appendMarkdown(value: string): vscode.MarkdownString {
+	appendMarkdown(value: string): zycode.MarkdownString {
 		this.#delegate.appendMarkdown(value);
 		return this;
 	}
 
-	appendCodeblock(value: string, language?: string): vscode.MarkdownString {
+	appendCodeblock(value: string, language?: string): zycode.MarkdownString {
 		this.#delegate.appendCodeblock(language ?? '', value);
 		return this;
 	}
@@ -1574,9 +1574,9 @@ export class MarkdownString implements vscode.MarkdownString {
 export class ParameterInformation {
 
 	label: string | [number, number];
-	documentation?: string | vscode.MarkdownString;
+	documentation?: string | zycode.MarkdownString;
 
-	constructor(label: string | [number, number], documentation?: string | vscode.MarkdownString) {
+	constructor(label: string | [number, number], documentation?: string | zycode.MarkdownString) {
 		this.label = label;
 		this.documentation = documentation;
 	}
@@ -1586,11 +1586,11 @@ export class ParameterInformation {
 export class SignatureInformation {
 
 	label: string;
-	documentation?: string | vscode.MarkdownString;
+	documentation?: string | zycode.MarkdownString;
 	parameters: ParameterInformation[];
 	activeParameter?: number;
 
-	constructor(label: string, documentation?: string | vscode.MarkdownString) {
+	constructor(label: string, documentation?: string | zycode.MarkdownString) {
 		this.label = label;
 		this.documentation = documentation;
 		this.parameters = [];
@@ -1625,9 +1625,9 @@ export enum InlayHintKind {
 export class InlayHintLabelPart {
 
 	value: string;
-	tooltip?: string | vscode.MarkdownString;
+	tooltip?: string | zycode.MarkdownString;
 	location?: Location;
-	command?: vscode.Command;
+	command?: zycode.Command;
 
 	constructor(value: string) {
 		this.value = value;
@@ -1635,17 +1635,17 @@ export class InlayHintLabelPart {
 }
 
 @es5ClassCompat
-export class InlayHint implements vscode.InlayHint {
+export class InlayHint implements zycode.InlayHint {
 
 	label: string | InlayHintLabelPart[];
-	tooltip?: string | vscode.MarkdownString;
+	tooltip?: string | zycode.MarkdownString;
 	position: Position;
 	textEdits?: TextEdit[];
-	kind?: vscode.InlayHintKind;
+	kind?: zycode.InlayHintKind;
 	paddingLeft?: boolean;
 	paddingRight?: boolean;
 
-	constructor(position: Position, label: string | InlayHintLabelPart[], kind?: vscode.InlayHintKind) {
+	constructor(position: Position, label: string | InlayHintLabelPart[], kind?: zycode.InlayHintKind) {
 		this.position = position;
 		this.label = label;
 		this.kind = kind;
@@ -1704,13 +1704,13 @@ export interface CompletionItemLabel {
 }
 
 @es5ClassCompat
-export class CompletionItem implements vscode.CompletionItem {
+export class CompletionItem implements zycode.CompletionItem {
 
 	label: string | CompletionItemLabel;
 	kind?: CompletionItemKind;
 	tags?: CompletionItemTag[];
 	detail?: string;
-	documentation?: string | vscode.MarkdownString;
+	documentation?: string | zycode.MarkdownString;
 	sortText?: string;
 	filterText?: string;
 	preselect?: boolean;
@@ -1720,7 +1720,7 @@ export class CompletionItem implements vscode.CompletionItem {
 	commitCharacters?: string[];
 	textEdit?: TextEdit;
 	additionalTextEdits?: TextEdit[];
-	command?: vscode.Command;
+	command?: zycode.Command;
 
 	constructor(label: string | CompletionItemLabel, kind?: CompletionItemKind) {
 		this.label = label;
@@ -1746,23 +1746,23 @@ export class CompletionItem implements vscode.CompletionItem {
 export class CompletionList {
 
 	isIncomplete?: boolean;
-	items: vscode.CompletionItem[];
+	items: zycode.CompletionItem[];
 
-	constructor(items: vscode.CompletionItem[] = [], isIncomplete: boolean = false) {
+	constructor(items: zycode.CompletionItem[] = [], isIncomplete: boolean = false) {
 		this.items = items;
 		this.isIncomplete = isIncomplete;
 	}
 }
 
 @es5ClassCompat
-export class InlineSuggestion implements vscode.InlineCompletionItem {
+export class InlineSuggestion implements zycode.InlineCompletionItem {
 
 	filterText?: string;
 	insertText: string;
 	range?: Range;
-	command?: vscode.Command;
+	command?: zycode.Command;
 
-	constructor(insertText: string, range?: Range, command?: vscode.Command) {
+	constructor(insertText: string, range?: Range, command?: zycode.Command) {
 		this.insertText = insertText;
 		this.range = range;
 		this.command = command;
@@ -1770,14 +1770,14 @@ export class InlineSuggestion implements vscode.InlineCompletionItem {
 }
 
 @es5ClassCompat
-export class InlineSuggestionList implements vscode.InlineCompletionList {
-	items: vscode.InlineCompletionItem[];
+export class InlineSuggestionList implements zycode.InlineCompletionList {
+	items: zycode.InlineCompletionItem[];
 
-	commands: vscode.Command[] | undefined = undefined;
+	commands: zycode.Command[] | undefined = undefined;
 
 	suppressSuggestions: boolean | undefined = undefined;
 
-	constructor(items: vscode.InlineCompletionItem[]) {
+	constructor(items: zycode.InlineCompletionItem[]) {
 		this.items = items;
 	}
 }
@@ -1958,7 +1958,7 @@ export enum TerminalExitReason {
 	Extension = 4
 }
 
-export class TerminalLink implements vscode.TerminalLink {
+export class TerminalLink implements zycode.TerminalLink {
 	constructor(
 		public startIndex: number,
 		public length: number,
@@ -1977,8 +1977,8 @@ export class TerminalLink implements vscode.TerminalLink {
 }
 
 export class TerminalQuickFixOpener {
-	uri: vscode.Uri;
-	constructor(uri: vscode.Uri) {
+	uri: zycode.Uri;
+	constructor(uri: zycode.Uri) {
 		this.uri = uri;
 	}
 }
@@ -1995,9 +1995,9 @@ export enum TerminalLocation {
 	Editor = 2,
 }
 
-export class TerminalProfile implements vscode.TerminalProfile {
+export class TerminalProfile implements zycode.TerminalProfile {
 	constructor(
-		public options: vscode.TerminalOptions | vscode.ExtensionTerminalOptions
+		public options: zycode.TerminalOptions | zycode.ExtensionTerminalOptions
 	) {
 		if (typeof options !== 'object') {
 			throw illegalArgument('options');
@@ -2022,7 +2022,7 @@ export enum TaskPanelKind {
 }
 
 @es5ClassCompat
-export class TaskGroup implements vscode.TaskGroup {
+export class TaskGroup implements zycode.TaskGroup {
 
 	isDefault: boolean | undefined;
 	private _id: string;
@@ -2074,15 +2074,15 @@ function computeTaskExecutionId(values: string[]): string {
 }
 
 @es5ClassCompat
-export class ProcessExecution implements vscode.ProcessExecution {
+export class ProcessExecution implements zycode.ProcessExecution {
 
 	private _process: string;
 	private _args: string[];
-	private _options: vscode.ProcessExecutionOptions | undefined;
+	private _options: zycode.ProcessExecutionOptions | undefined;
 
-	constructor(process: string, options?: vscode.ProcessExecutionOptions);
-	constructor(process: string, args: string[], options?: vscode.ProcessExecutionOptions);
-	constructor(process: string, varg1?: string[] | vscode.ProcessExecutionOptions, varg2?: vscode.ProcessExecutionOptions) {
+	constructor(process: string, options?: zycode.ProcessExecutionOptions);
+	constructor(process: string, args: string[], options?: zycode.ProcessExecutionOptions);
+	constructor(process: string, varg1?: string[] | zycode.ProcessExecutionOptions, varg2?: zycode.ProcessExecutionOptions) {
 		if (typeof process !== 'string') {
 			throw illegalArgument('process');
 		}
@@ -2121,11 +2121,11 @@ export class ProcessExecution implements vscode.ProcessExecution {
 		this._args = value;
 	}
 
-	get options(): vscode.ProcessExecutionOptions | undefined {
+	get options(): zycode.ProcessExecutionOptions | undefined {
 		return this._options;
 	}
 
-	set options(value: vscode.ProcessExecutionOptions | undefined) {
+	set options(value: zycode.ProcessExecutionOptions | undefined) {
 		this._options = value;
 	}
 
@@ -2145,16 +2145,16 @@ export class ProcessExecution implements vscode.ProcessExecution {
 }
 
 @es5ClassCompat
-export class ShellExecution implements vscode.ShellExecution {
+export class ShellExecution implements zycode.ShellExecution {
 
 	private _commandLine: string | undefined;
-	private _command: string | vscode.ShellQuotedString | undefined;
-	private _args: (string | vscode.ShellQuotedString)[] = [];
-	private _options: vscode.ShellExecutionOptions | undefined;
+	private _command: string | zycode.ShellQuotedString | undefined;
+	private _args: (string | zycode.ShellQuotedString)[] = [];
+	private _options: zycode.ShellExecutionOptions | undefined;
 
-	constructor(commandLine: string, options?: vscode.ShellExecutionOptions);
-	constructor(command: string | vscode.ShellQuotedString, args: (string | vscode.ShellQuotedString)[], options?: vscode.ShellExecutionOptions);
-	constructor(arg0: string | vscode.ShellQuotedString, arg1?: vscode.ShellExecutionOptions | (string | vscode.ShellQuotedString)[], arg2?: vscode.ShellExecutionOptions) {
+	constructor(commandLine: string, options?: zycode.ShellExecutionOptions);
+	constructor(command: string | zycode.ShellQuotedString, args: (string | zycode.ShellQuotedString)[], options?: zycode.ShellExecutionOptions);
+	constructor(arg0: string | zycode.ShellQuotedString, arg1?: zycode.ShellExecutionOptions | (string | zycode.ShellQuotedString)[], arg2?: zycode.ShellExecutionOptions) {
 		if (Array.isArray(arg1)) {
 			if (!arg0) {
 				throw illegalArgument('command can\'t be undefined or null');
@@ -2163,7 +2163,7 @@ export class ShellExecution implements vscode.ShellExecution {
 				throw illegalArgument('command');
 			}
 			this._command = arg0;
-			this._args = arg1 as (string | vscode.ShellQuotedString)[];
+			this._args = arg1 as (string | zycode.ShellQuotedString)[];
 			this._options = arg2;
 		} else {
 			if (typeof arg0 !== 'string') {
@@ -2185,30 +2185,30 @@ export class ShellExecution implements vscode.ShellExecution {
 		this._commandLine = value;
 	}
 
-	get command(): string | vscode.ShellQuotedString {
+	get command(): string | zycode.ShellQuotedString {
 		return this._command ? this._command : '';
 	}
 
-	set command(value: string | vscode.ShellQuotedString) {
+	set command(value: string | zycode.ShellQuotedString) {
 		if (typeof value !== 'string' && typeof value.value !== 'string') {
 			throw illegalArgument('command');
 		}
 		this._command = value;
 	}
 
-	get args(): (string | vscode.ShellQuotedString)[] {
+	get args(): (string | zycode.ShellQuotedString)[] {
 		return this._args;
 	}
 
-	set args(value: (string | vscode.ShellQuotedString)[]) {
+	set args(value: (string | zycode.ShellQuotedString)[]) {
 		this._args = value || [];
 	}
 
-	get options(): vscode.ShellExecutionOptions | undefined {
+	get options(): zycode.ShellExecutionOptions | undefined {
 		return this._options;
 	}
 
-	set options(value: vscode.ShellExecutionOptions | undefined) {
+	set options(value: zycode.ShellExecutionOptions | undefined) {
 		this._options = value;
 	}
 
@@ -2241,26 +2241,26 @@ export enum TaskScope {
 	Workspace = 2
 }
 
-export class CustomExecution implements vscode.CustomExecution {
-	private _callback: (resolvedDefinition: vscode.TaskDefinition) => Thenable<vscode.Pseudoterminal>;
-	constructor(callback: (resolvedDefinition: vscode.TaskDefinition) => Thenable<vscode.Pseudoterminal>) {
+export class CustomExecution implements zycode.CustomExecution {
+	private _callback: (resolvedDefinition: zycode.TaskDefinition) => Thenable<zycode.Pseudoterminal>;
+	constructor(callback: (resolvedDefinition: zycode.TaskDefinition) => Thenable<zycode.Pseudoterminal>) {
 		this._callback = callback;
 	}
 	public computeId(): string {
 		return 'customExecution' + generateUuid();
 	}
 
-	public set callback(value: (resolvedDefinition: vscode.TaskDefinition) => Thenable<vscode.Pseudoterminal>) {
+	public set callback(value: (resolvedDefinition: zycode.TaskDefinition) => Thenable<zycode.Pseudoterminal>) {
 		this._callback = value;
 	}
 
-	public get callback(): ((resolvedDefinition: vscode.TaskDefinition) => Thenable<vscode.Pseudoterminal>) {
+	public get callback(): ((resolvedDefinition: zycode.TaskDefinition) => Thenable<zycode.Pseudoterminal>) {
 		return this._callback;
 	}
 }
 
 @es5ClassCompat
-export class Task implements vscode.Task {
+export class Task implements zycode.Task {
 
 	private static ExtensionCallbackType: string = 'customExecution';
 	private static ProcessType: string = 'process';
@@ -2270,8 +2270,8 @@ export class Task implements vscode.Task {
 	private __id: string | undefined;
 	private __deprecated: boolean = false;
 
-	private _definition: vscode.TaskDefinition;
-	private _scope: vscode.TaskScope.Global | vscode.TaskScope.Workspace | vscode.WorkspaceFolder | undefined;
+	private _definition: zycode.TaskDefinition;
+	private _scope: zycode.TaskScope.Global | zycode.TaskScope.Workspace | zycode.WorkspaceFolder | undefined;
 	private _name: string;
 	private _execution: ProcessExecution | ShellExecution | CustomExecution | undefined;
 	private _problemMatchers: string[];
@@ -2279,13 +2279,13 @@ export class Task implements vscode.Task {
 	private _isBackground: boolean;
 	private _source: string;
 	private _group: TaskGroup | undefined;
-	private _presentationOptions: vscode.TaskPresentationOptions;
-	private _runOptions: vscode.RunOptions;
+	private _presentationOptions: zycode.TaskPresentationOptions;
+	private _runOptions: zycode.RunOptions;
 	private _detail: string | undefined;
 
-	constructor(definition: vscode.TaskDefinition, name: string, source: string, execution?: ProcessExecution | ShellExecution | CustomExecution, problemMatchers?: string | string[]);
-	constructor(definition: vscode.TaskDefinition, scope: vscode.TaskScope.Global | vscode.TaskScope.Workspace | vscode.WorkspaceFolder, name: string, source: string, execution?: ProcessExecution | ShellExecution | CustomExecution, problemMatchers?: string | string[]);
-	constructor(definition: vscode.TaskDefinition, arg2: string | (vscode.TaskScope.Global | vscode.TaskScope.Workspace) | vscode.WorkspaceFolder, arg3: any, arg4?: any, arg5?: any, arg6?: any) {
+	constructor(definition: zycode.TaskDefinition, name: string, source: string, execution?: ProcessExecution | ShellExecution | CustomExecution, problemMatchers?: string | string[]);
+	constructor(definition: zycode.TaskDefinition, scope: zycode.TaskScope.Global | zycode.TaskScope.Workspace | zycode.WorkspaceFolder, name: string, source: string, execution?: ProcessExecution | ShellExecution | CustomExecution, problemMatchers?: string | string[]);
+	constructor(definition: zycode.TaskDefinition, arg2: string | (zycode.TaskScope.Global | zycode.TaskScope.Workspace) | zycode.WorkspaceFolder, arg3: any, arg4?: any, arg5?: any, arg6?: any) {
 		this._definition = this.definition = definition;
 		let problemMatchers: string | string[];
 		if (typeof arg2 === 'string') {
@@ -2367,11 +2367,11 @@ export class Task implements vscode.Task {
 		}
 	}
 
-	get definition(): vscode.TaskDefinition {
+	get definition(): zycode.TaskDefinition {
 		return this._definition;
 	}
 
-	set definition(value: vscode.TaskDefinition) {
+	set definition(value: zycode.TaskDefinition) {
 		if (value === undefined || value === null) {
 			throw illegalArgument('Kind can\'t be undefined or null');
 		}
@@ -2379,11 +2379,11 @@ export class Task implements vscode.Task {
 		this._definition = value;
 	}
 
-	get scope(): vscode.TaskScope.Global | vscode.TaskScope.Workspace | vscode.WorkspaceFolder | undefined {
+	get scope(): zycode.TaskScope.Global | zycode.TaskScope.Workspace | zycode.WorkspaceFolder | undefined {
 		return this._scope;
 	}
 
-	set target(value: vscode.TaskScope.Global | vscode.TaskScope.Workspace | vscode.WorkspaceFolder) {
+	set target(value: zycode.TaskScope.Global | zycode.TaskScope.Workspace | zycode.WorkspaceFolder) {
 		this.clear();
 		this._scope = value;
 	}
@@ -2484,11 +2484,11 @@ export class Task implements vscode.Task {
 		this._detail = value;
 	}
 
-	get presentationOptions(): vscode.TaskPresentationOptions {
+	get presentationOptions(): zycode.TaskPresentationOptions {
 		return this._presentationOptions;
 	}
 
-	set presentationOptions(value: vscode.TaskPresentationOptions) {
+	set presentationOptions(value: zycode.TaskPresentationOptions) {
 		if (value === null || value === undefined) {
 			value = Object.create(null);
 		}
@@ -2496,11 +2496,11 @@ export class Task implements vscode.Task {
 		this._presentationOptions = value;
 	}
 
-	get runOptions(): vscode.RunOptions {
+	get runOptions(): zycode.RunOptions {
 		return this._runOptions;
 	}
 
-	set runOptions(value: vscode.RunOptions) {
+	set runOptions(value: zycode.RunOptions) {
 		if (value === null || value === undefined) {
 			value = Object.create(null);
 		}
@@ -2517,8 +2517,8 @@ export enum ProgressLocation {
 }
 
 export namespace ViewBadge {
-	export function isViewBadge(thing: any): thing is vscode.ViewBadge {
-		const viewBadgeThing = thing as vscode.ViewBadge;
+	export function isViewBadge(thing: any): thing is zycode.ViewBadge {
+		const viewBadgeThing = thing as zycode.ViewBadge;
 
 		if (!isNumber(viewBadgeThing.value)) {
 			console.log('INVALID view badge, invalid value', viewBadgeThing.value);
@@ -2535,16 +2535,16 @@ export namespace ViewBadge {
 @es5ClassCompat
 export class TreeItem {
 
-	label?: string | vscode.TreeItemLabel;
+	label?: string | zycode.TreeItemLabel;
 	resourceUri?: URI;
 	iconPath?: string | URI | { light: string | URI; dark: string | URI } | ThemeIcon;
-	command?: vscode.Command;
+	command?: zycode.Command;
 	contextValue?: string;
-	tooltip?: string | vscode.MarkdownString;
-	checkboxState?: vscode.TreeItemCheckboxState;
+	tooltip?: string | zycode.MarkdownString;
+	checkboxState?: zycode.TreeItemCheckboxState;
 
 	static isTreeItem(thing: any, extension: IExtensionDescription): thing is TreeItem {
-		const treeItemThing = thing as vscode.TreeItem;
+		const treeItemThing = thing as zycode.TreeItem;
 
 		if (treeItemThing.checkboxState !== undefined) {
 			const checkbox = isNumber(treeItemThing.checkboxState) ? treeItemThing.checkboxState :
@@ -2568,7 +2568,7 @@ export class TreeItem {
 			console.log('INVALID tree item, invalid id', treeItemThing.id);
 			return false;
 		}
-		if ((treeItemThing.iconPath !== undefined) && !isString(treeItemThing.iconPath) && !URI.isUri(treeItemThing.iconPath) && (!treeItemThing.iconPath || !isString((treeItemThing.iconPath as vscode.ThemeIcon).id))) {
+		if ((treeItemThing.iconPath !== undefined) && !isString(treeItemThing.iconPath) && !URI.isUri(treeItemThing.iconPath) && (!treeItemThing.iconPath || !isString((treeItemThing.iconPath as zycode.ThemeIcon).id))) {
 			const asLightAndDarkThing = treeItemThing.iconPath as { light: string | URI; dark: string | URI } | null;
 			if (!asLightAndDarkThing || (!isString(asLightAndDarkThing.light) && !URI.isUri(asLightAndDarkThing.light) && !isString(asLightAndDarkThing.dark) && !URI.isUri(asLightAndDarkThing.dark))) {
 				console.log('INVALID tree item, invalid iconPath', treeItemThing.iconPath);
@@ -2607,9 +2607,9 @@ export class TreeItem {
 		return true;
 	}
 
-	constructor(label: string | vscode.TreeItemLabel, collapsibleState?: vscode.TreeItemCollapsibleState);
-	constructor(resourceUri: URI, collapsibleState?: vscode.TreeItemCollapsibleState);
-	constructor(arg1: string | vscode.TreeItemLabel | URI, public collapsibleState: vscode.TreeItemCollapsibleState = TreeItemCollapsibleState.None) {
+	constructor(label: string | zycode.TreeItemLabel, collapsibleState?: zycode.TreeItemCollapsibleState);
+	constructor(resourceUri: URI, collapsibleState?: zycode.TreeItemCollapsibleState);
+	constructor(arg1: string | zycode.TreeItemLabel | URI, public collapsibleState: zycode.TreeItemCollapsibleState = TreeItemCollapsibleState.None) {
 		if (URI.isUri(arg1)) {
 			this.resourceUri = arg1;
 		} else {
@@ -2631,13 +2631,13 @@ export enum TreeItemCheckboxState {
 }
 
 @es5ClassCompat
-export class DataTransferItem implements vscode.DataTransferItem {
+export class DataTransferItem implements zycode.DataTransferItem {
 
 	async asString(): Promise<string> {
 		return typeof this.value === 'string' ? this.value : JSON.stringify(this.value);
 	}
 
-	asFile(): undefined | vscode.DataTransferFile {
+	asFile(): undefined | zycode.DataTransferFile {
 		return undefined;
 	}
 
@@ -2660,9 +2660,9 @@ export class InternalDataTransferItem extends DataTransferItem { }
  */
 export class InternalFileDataTransferItem extends InternalDataTransferItem {
 
-	readonly #file: vscode.DataTransferFile;
+	readonly #file: zycode.DataTransferFile;
 
-	constructor(file: vscode.DataTransferFile) {
+	constructor(file: zycode.DataTransferFile) {
 		super('');
 		this.#file = file;
 	}
@@ -2675,15 +2675,15 @@ export class InternalFileDataTransferItem extends InternalDataTransferItem {
 /**
  * Intentionally not exported to extensions
  */
-export class DataTransferFile implements vscode.DataTransferFile {
+export class DataTransferFile implements zycode.DataTransferFile {
 
 	public readonly name: string;
-	public readonly uri: vscode.Uri | undefined;
+	public readonly uri: zycode.Uri | undefined;
 
 	public readonly _itemId: string;
 	private readonly _getData: () => Promise<Uint8Array>;
 
-	constructor(name: string, uri: vscode.Uri | undefined, itemId: string, getData: () => Promise<Uint8Array>) {
+	constructor(name: string, uri: zycode.Uri | undefined, itemId: string, getData: () => Promise<Uint8Array>) {
 		this.name = name;
 		this.uri = uri;
 		this._itemId = itemId;
@@ -2696,7 +2696,7 @@ export class DataTransferFile implements vscode.DataTransferFile {
 }
 
 @es5ClassCompat
-export class DataTransfer implements vscode.DataTransfer {
+export class DataTransfer implements zycode.DataTransfer {
 	#items = new Map<string, DataTransferItem[]>();
 
 	constructor(init?: Iterable<readonly [string, DataTransferItem]>) {
@@ -2728,7 +2728,7 @@ export class DataTransfer implements vscode.DataTransfer {
 		}
 	}
 
-	*[Symbol.iterator](): IterableIterator<[mimeType: string, item: vscode.DataTransferItem]> {
+	*[Symbol.iterator](): IterableIterator<[mimeType: string, item: zycode.DataTransferItem]> {
 		for (const [mime, items] of this.#items) {
 			for (const item of items) {
 				yield [mime, item];
@@ -2832,7 +2832,7 @@ export class RelativePattern implements IRelativePattern {
 		this._base = baseUri.fsPath;
 	}
 
-	constructor(base: vscode.WorkspaceFolder | URI | string, pattern: string) {
+	constructor(base: zycode.WorkspaceFolder | URI | string, pattern: string) {
 		if (typeof base !== 'string') {
 			if (!base || !URI.isUri(base) && !URI.isUri(base.uri)) {
 				throw illegalArgument('base');
@@ -2949,12 +2949,12 @@ export class DataBreakpoint extends Breakpoint {
 }
 
 @es5ClassCompat
-export class DebugAdapterExecutable implements vscode.DebugAdapterExecutable {
+export class DebugAdapterExecutable implements zycode.DebugAdapterExecutable {
 	readonly command: string;
 	readonly args: string[];
-	readonly options?: vscode.DebugAdapterExecutableOptions;
+	readonly options?: zycode.DebugAdapterExecutableOptions;
 
-	constructor(command: string, args: string[], options?: vscode.DebugAdapterExecutableOptions) {
+	constructor(command: string, args: string[], options?: zycode.DebugAdapterExecutableOptions) {
 		this.command = command;
 		this.args = args || [];
 		this.options = options;
@@ -2962,7 +2962,7 @@ export class DebugAdapterExecutable implements vscode.DebugAdapterExecutable {
 }
 
 @es5ClassCompat
-export class DebugAdapterServer implements vscode.DebugAdapterServer {
+export class DebugAdapterServer implements zycode.DebugAdapterServer {
 	readonly port: number;
 	readonly host?: string;
 
@@ -2973,16 +2973,16 @@ export class DebugAdapterServer implements vscode.DebugAdapterServer {
 }
 
 @es5ClassCompat
-export class DebugAdapterNamedPipeServer implements vscode.DebugAdapterNamedPipeServer {
+export class DebugAdapterNamedPipeServer implements zycode.DebugAdapterNamedPipeServer {
 	constructor(public readonly path: string) {
 	}
 }
 
 @es5ClassCompat
-export class DebugAdapterInlineImplementation implements vscode.DebugAdapterInlineImplementation {
-	readonly implementation: vscode.DebugAdapter;
+export class DebugAdapterInlineImplementation implements zycode.DebugAdapterInlineImplementation {
+	readonly implementation: zycode.DebugAdapter;
 
-	constructor(impl: vscode.DebugAdapter) {
+	constructor(impl: zycode.DebugAdapter) {
 		this.implementation = impl;
 	}
 }
@@ -2991,7 +2991,7 @@ export class DebugAdapterInlineImplementation implements vscode.DebugAdapterInli
 @es5ClassCompat
 export class StackFrameFocus {
 	constructor(
-		public readonly session: vscode.DebugSession,
+		public readonly session: zycode.DebugSession,
 		readonly threadId?: number,
 		readonly frameId?: number) { }
 }
@@ -2999,18 +2999,18 @@ export class StackFrameFocus {
 @es5ClassCompat
 export class ThreadFocus {
 	constructor(
-		public readonly session: vscode.DebugSession,
+		public readonly session: zycode.DebugSession,
 		readonly threadId?: number) { }
 }
 
 
 
 @es5ClassCompat
-export class EvaluatableExpression implements vscode.EvaluatableExpression {
-	readonly range: vscode.Range;
+export class EvaluatableExpression implements zycode.EvaluatableExpression {
+	readonly range: zycode.Range;
 	readonly expression?: string;
 
-	constructor(range: vscode.Range, expression?: string) {
+	constructor(range: zycode.Range, expression?: string) {
 		this.range = range;
 		this.expression = expression;
 	}
@@ -3022,7 +3022,7 @@ export enum InlineCompletionTriggerKind {
 }
 
 @es5ClassCompat
-export class InlineValueText implements vscode.InlineValueText {
+export class InlineValueText implements zycode.InlineValueText {
 	readonly range: Range;
 	readonly text: string;
 
@@ -3033,7 +3033,7 @@ export class InlineValueText implements vscode.InlineValueText {
 }
 
 @es5ClassCompat
-export class InlineValueVariableLookup implements vscode.InlineValueVariableLookup {
+export class InlineValueVariableLookup implements zycode.InlineValueVariableLookup {
 	readonly range: Range;
 	readonly variableName?: string;
 	readonly caseSensitiveLookup: boolean;
@@ -3046,7 +3046,7 @@ export class InlineValueVariableLookup implements vscode.InlineValueVariableLook
 }
 
 @es5ClassCompat
-export class InlineValueEvaluatableExpression implements vscode.InlineValueEvaluatableExpression {
+export class InlineValueEvaluatableExpression implements zycode.InlineValueEvaluatableExpression {
 	readonly range: Range;
 	readonly expression?: string;
 
@@ -3057,12 +3057,12 @@ export class InlineValueEvaluatableExpression implements vscode.InlineValueEvalu
 }
 
 @es5ClassCompat
-export class InlineValueContext implements vscode.InlineValueContext {
+export class InlineValueContext implements zycode.InlineValueContext {
 
 	readonly frameId: number;
-	readonly stoppedLocation: vscode.Range;
+	readonly stoppedLocation: zycode.Range;
 
-	constructor(frameId: number, range: vscode.Range) {
+	constructor(frameId: number, range: zycode.Range) {
 		this.frameId = frameId;
 		this.stoppedLocation = range;
 	}
@@ -3204,7 +3204,7 @@ export class SemanticTokensBuilder {
 	private _tokenModifierStrToInt: Map<string, number>;
 	private _hasLegend: boolean;
 
-	constructor(legend?: vscode.SemanticTokensLegend) {
+	constructor(legend?: zycode.SemanticTokensLegend) {
 		this._prevLine = 0;
 		this._prevChar = 0;
 		this._dataIsSortedAndDeltaEncoded = true;
@@ -3241,7 +3241,7 @@ export class SemanticTokensBuilder {
 		throw illegalArgument();
 	}
 
-	private _push(range: vscode.Range, tokenType: string, tokenModifiers?: string[]): void {
+	private _push(range: zycode.Range, tokenType: string, tokenModifiers?: string[]): void {
 		if (!this._hasLegend) {
 			throw new Error('Legend must be provided in constructor');
 		}
@@ -3422,7 +3422,7 @@ export enum DebugConsoleMode {
 @es5ClassCompat
 export class QuickInputButtons {
 
-	static readonly Back: vscode.QuickInputButton = { iconPath: new ThemeIcon('arrow-left') };
+	static readonly Back: zycode.QuickInputButton = { iconPath: new ThemeIcon('arrow-left') };
 
 	private constructor() { }
 }
@@ -3465,9 +3465,9 @@ export class FileDecoration {
 		return true;
 	}
 
-	badge?: string | vscode.ThemeIcon;
+	badge?: string | zycode.ThemeIcon;
 	tooltip?: string;
-	color?: vscode.ThemeColor;
+	color?: zycode.ThemeColor;
 	propagate?: boolean;
 
 	constructor(badge?: string | ThemeIcon, tooltip?: string, color?: ThemeColor) {
@@ -3480,7 +3480,7 @@ export class FileDecoration {
 //#region Theming
 
 @es5ClassCompat
-export class ColorTheme implements vscode.ColorTheme {
+export class ColorTheme implements zycode.ColorTheme {
 	constructor(public readonly kind: ColorThemeKind) {
 	}
 }
@@ -3497,7 +3497,7 @@ export enum ColorThemeKind {
 //#region Notebook
 
 export class NotebookRange {
-	static isNotebookRange(thing: any): thing is vscode.NotebookRange {
+	static isNotebookRange(thing: any): thing is zycode.NotebookRange {
 		if (thing instanceof NotebookRange) {
 			return true;
 		}
@@ -3570,11 +3570,11 @@ export class NotebookCellData {
 		}
 	}
 
-	static isNotebookCellDataArray(value: unknown): value is vscode.NotebookCellData[] {
+	static isNotebookCellDataArray(value: unknown): value is zycode.NotebookCellData[] {
 		return Array.isArray(value) && (<unknown[]>value).every(elem => NotebookCellData.isNotebookCellData(elem));
 	}
 
-	static isNotebookCellData(value: unknown): value is vscode.NotebookCellData {
+	static isNotebookCellData(value: unknown): value is zycode.NotebookCellData {
 		// return value instanceof NotebookCellData;
 		return true;
 	}
@@ -3583,11 +3583,11 @@ export class NotebookCellData {
 	value: string;
 	languageId: string;
 	mime?: string;
-	outputs?: vscode.NotebookCellOutput[];
+	outputs?: zycode.NotebookCellOutput[];
 	metadata?: Record<string, any>;
-	executionSummary?: vscode.NotebookCellExecutionSummary;
+	executionSummary?: zycode.NotebookCellExecutionSummary;
 
-	constructor(kind: NotebookCellKind, value: string, languageId: string, mime?: string, outputs?: vscode.NotebookCellOutput[], metadata?: Record<string, any>, executionSummary?: vscode.NotebookCellExecutionSummary) {
+	constructor(kind: NotebookCellKind, value: string, languageId: string, mime?: string, outputs?: zycode.NotebookCellOutput[], metadata?: Record<string, any>, executionSummary?: zycode.NotebookCellExecutionSummary) {
 		this.kind = kind;
 		this.value = value;
 		this.languageId = languageId;
@@ -3613,15 +3613,15 @@ export class NotebookData {
 
 export class NotebookCellOutputItem {
 
-	static isNotebookCellOutputItem(obj: unknown): obj is vscode.NotebookCellOutputItem {
+	static isNotebookCellOutputItem(obj: unknown): obj is zycode.NotebookCellOutputItem {
 		if (obj instanceof NotebookCellOutputItem) {
 			return true;
 		}
 		if (!obj) {
 			return false;
 		}
-		return typeof (<vscode.NotebookCellOutputItem>obj).mime === 'string'
-			&& (<vscode.NotebookCellOutputItem>obj).data instanceof Uint8Array;
+		return typeof (<zycode.NotebookCellOutputItem>obj).mime === 'string'
+			&& (<zycode.NotebookCellOutputItem>obj).data instanceof Uint8Array;
 	}
 
 	static error(err: Error | { name: string; message?: string; stack?: string }): NotebookCellOutputItem {
@@ -3671,7 +3671,7 @@ export class NotebookCellOutputItem {
 
 export class NotebookCellOutput {
 
-	static isNotebookCellOutput(candidate: any): candidate is vscode.NotebookCellOutput {
+	static isNotebookCellOutput(candidate: any): candidate is zycode.NotebookCellOutput {
 		if (candidate instanceof NotebookCellOutput) {
 			return true;
 		}
@@ -3770,7 +3770,7 @@ export class NotebookRendererScript {
 	public provides: readonly string[];
 
 	constructor(
-		public uri: vscode.Uri,
+		public uri: zycode.Uri,
 		provides: string | readonly string[] = []
 	) {
 		this.provides = asArray(provides);
@@ -3780,7 +3780,7 @@ export class NotebookRendererScript {
 export class NotebookKernelSourceAction {
 	description?: string;
 	detail?: string;
-	command?: vscode.Command;
+	command?: zycode.Command;
 	constructor(
 		public label: string
 	) { }
@@ -3791,7 +3791,7 @@ export class NotebookKernelSourceAction {
 //#region Timeline
 
 @es5ClassCompat
-export class TimelineItem implements vscode.TimelineItem {
+export class TimelineItem implements zycode.TimelineItem {
 	constructor(public label: string, public timestamp: number) { }
 }
 
@@ -3876,35 +3876,35 @@ export enum TestRunProfileKind {
 }
 
 @es5ClassCompat
-export class TestRunRequest implements vscode.TestRunRequest {
+export class TestRunRequest implements zycode.TestRunRequest {
 	constructor(
-		public readonly include: vscode.TestItem[] | undefined = undefined,
-		public readonly exclude: vscode.TestItem[] | undefined = undefined,
-		public readonly profile: vscode.TestRunProfile | undefined = undefined,
+		public readonly include: zycode.TestItem[] | undefined = undefined,
+		public readonly exclude: zycode.TestItem[] | undefined = undefined,
+		public readonly profile: zycode.TestRunProfile | undefined = undefined,
 		public readonly continuous = false,
 	) { }
 }
 
 @es5ClassCompat
-export class TestMessage implements vscode.TestMessage {
+export class TestMessage implements zycode.TestMessage {
 	public expectedOutput?: string;
 	public actualOutput?: string;
-	public location?: vscode.Location;
+	public location?: zycode.Location;
 	/** proposed: */
 	public contextValue?: string;
 
-	public static diff(message: string | vscode.MarkdownString, expected: string, actual: string) {
+	public static diff(message: string | zycode.MarkdownString, expected: string, actual: string) {
 		const msg = new TestMessage(message);
 		msg.expectedOutput = expected;
 		msg.actualOutput = actual;
 		return msg;
 	}
 
-	constructor(public message: string | vscode.MarkdownString) { }
+	constructor(public message: string | zycode.MarkdownString) { }
 }
 
 @es5ClassCompat
-export class TestTag implements vscode.TestTag {
+export class TestTag implements zycode.TestTag {
 	constructor(public readonly id: string) { }
 }
 
@@ -3912,13 +3912,13 @@ export class TestTag implements vscode.TestTag {
 
 //#region Test Coverage
 @es5ClassCompat
-export class CoveredCount implements vscode.CoveredCount {
+export class CoveredCount implements zycode.CoveredCount {
 	constructor(public covered: number, public total: number) { }
 }
 
 @es5ClassCompat
-export class FileCoverage implements vscode.FileCoverage {
-	public static fromDetails(uri: vscode.Uri, details: vscode.DetailedCoverage[]): vscode.FileCoverage {
+export class FileCoverage implements zycode.FileCoverage {
+	public static fromDetails(uri: zycode.Uri, details: zycode.DetailedCoverage[]): zycode.FileCoverage {
 		const statements = new CoveredCount(0, 0);
 		const branches = new CoveredCount(0, 0);
 		const fn = new CoveredCount(0, 0);
@@ -3950,35 +3950,35 @@ export class FileCoverage implements vscode.FileCoverage {
 		return coverage;
 	}
 
-	detailedCoverage?: vscode.DetailedCoverage[];
+	detailedCoverage?: zycode.DetailedCoverage[];
 
 	constructor(
-		public readonly uri: vscode.Uri,
-		public statementCoverage: vscode.CoveredCount,
-		public branchCoverage?: vscode.CoveredCount,
-		public functionCoverage?: vscode.CoveredCount,
+		public readonly uri: zycode.Uri,
+		public statementCoverage: zycode.CoveredCount,
+		public branchCoverage?: zycode.CoveredCount,
+		public functionCoverage?: zycode.CoveredCount,
 	) { }
 }
 
 @es5ClassCompat
-export class StatementCoverage implements vscode.StatementCoverage {
-	constructor(
-		public executionCount: number,
-		public location: Position | Range,
-		public branches: vscode.BranchCoverage[] = [],
-	) { }
-}
-
-@es5ClassCompat
-export class BranchCoverage implements vscode.BranchCoverage {
+export class StatementCoverage implements zycode.StatementCoverage {
 	constructor(
 		public executionCount: number,
 		public location: Position | Range,
+		public branches: zycode.BranchCoverage[] = [],
 	) { }
 }
 
 @es5ClassCompat
-export class FunctionCoverage implements vscode.FunctionCoverage {
+export class BranchCoverage implements zycode.BranchCoverage {
+	constructor(
+		public executionCount: number,
+		public location: Position | Range,
+	) { }
+}
+
+@es5ClassCompat
+export class FunctionCoverage implements zycode.FunctionCoverage {
 	constructor(
 		public executionCount: number,
 		public location: Position | Range,
@@ -4104,7 +4104,7 @@ export enum ChatVariableLevel {
 	Full = 3
 }
 
-export class ChatMessage implements vscode.ChatMessage {
+export class ChatMessage implements zycode.ChatMessage {
 
 	role: ChatMessageRole;
 	content: string;

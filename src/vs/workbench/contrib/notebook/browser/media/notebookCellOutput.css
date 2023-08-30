@@ -99,21 +99,21 @@
 /** Cell output show more*/
 .notebookOverlay .output-show-more-container a,
 .notebookOverlay div.output-show-more a {
-	color: var(--vscode-textLink-foreground);
+	color: var(--zycode-textLink-foreground);
 }
 
 .notebookOverlay .output-show-more-container a:active,
 .notebookOverlay .output-show-more a:active {
-	color: var(--vscode-textLink-activeForeground);
+	color: var(--zycode-textLink-activeForeground);
 }
 
 /** Notebook cell output background */
 .notebookOverlay .output,
 .notebookOverlay .output-element,
 .notebookOverlay .output-show-more-container {
-	background-color: var(--vscode-notebook-outputContainerBackgroundColor);
+	background-color: var(--zycode-notebook-outputContainerBackgroundColor);
 }
 
 .notebookOverlay .output-element {
-	border-top: none !important; border: 1px solid transparent; border-color: var(--vscode-notebook-outputContainerBorderColor) !important;
+	border-top: none !important; border: 1px solid transparent; border-color: var(--zycode-notebook-outputContainerBorderColor) !important;
 }
