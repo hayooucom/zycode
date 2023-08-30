@@ -1,0 +1,14 @@
+{
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "./out",
+		"types": [
+			"node"
+		]
+	},
+	"include": [
+		"src/**/*",
+		"../../src/zycode-dts/zycode.d.ts",
+		"../../src/zycode-dts/zycode.proposed.*.d.ts"
+	]
+}

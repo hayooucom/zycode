@@ -1,0 +1,18 @@
+{
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "./out",
+		"types": [
+			"node"
+		],
+		"lib": [
+			"WebWorker"
+		]
+	},
+	"include": [
+		"src/**/*",
+		"../../src/zycode-dts/zycode.d.ts",
+		"../../src/zycode-dts/zycode.proposed.tunnels.d.ts",
+		"../../src/zycode-dts/zycode.proposed.resolvers.d.ts"
+	]
+}
